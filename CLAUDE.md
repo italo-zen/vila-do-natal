@@ -61,3 +61,23 @@ O jogo final precisa receber novas versões (novos mapas, por exemplo) sem quebr
 - **Saves versionados:** o checkpoint guarda `saveVersion`; toda mudança de formato traz uma migração. Save de uma versão antiga continua abrindo.
 - **Versão visível** na tela de título e nos créditos.
 - Dono do pipeline: Generalista (scripts e workflows), com o Dev nas partes de código e o Especialista no ADR-002.
+
+## Métricas (log de interações)
+Objetivo: medir de forma simples quanto tempo, dinheiro e interação o jogo custou até ficar pronto. Você mantém `metrics/interacoes.md`.
+
+**Uma linha por interação**, em dois casos:
+1. **Delegação:** você chama um agente. De = Orquestrador, Para = agente. A resposta do agente fecha a mesma linha.
+2. **Conversa com o Diretor:** cada mensagem do Diretor e a sua resposta. De = Diretor, Para = Orquestrador.
+
+**Colunas:** id (sequencial, I-001, I-002...), data/hora, marco, modelo, de, para, tokens, tempo em segundos, custo estimado, nota (uma frase).
+
+**Como preencher:**
+- **Tokens e tempo de agente:** copie do resumo de uso que a chamada ao agente devolve (total de tokens e duração). Se o resumo não vier, escreva `~` e uma estimativa, ou deixe vazio. Nunca invente.
+- **Modelo:** o que está no briefing do agente (`model:`), ou o modelo da sua própria sessão quando for `inherit`/omitido.
+- **Tempo nas conversas com o Diretor:** meça o seu tempo de resposta com `date +%s` no começo e no fim do turno. O tempo que o Diretor leva para responder NÃO conta.
+- **Tokens nas conversas com o Diretor:** você não enxerga o próprio consumo por mensagem. Deixe vazio e cubra na reconciliação.
+- **Custo estimado:** tokens × preço de `metrics/precos.md`. Sem preço preenchido, deixe em branco.
+
+**Reconciliação (fim de cada marco, e antes de cada playtest):** peça ao Diretor para rodar `/cost` (ou `/usage`) no Claude Code e colar o resultado. Registre uma linha de total do marco ao fim da tabela: tokens e custo reais, número de interações com o Diretor, tempo corrido do marco. O total real manda sobre a soma das linhas.
+
+**Resumo final do projeto** (em `metrics/resumo.md`, ao fim da Release 1.0): tempo corrido total, custo total, número de interações com o Diretor, número de delegações por agente, e custo por marco.
