@@ -14,3 +14,4 @@
 | 2026-11-07 | Playtests entregues como artifact no Claude (HTML único), não no GitHub Pages | Retorno rápido do Diretor sem publicar versão incompleta | Diretor |
 | 2026-11-07 | GitHub Pages só para releases finais, via tag `vX.Y.Z`; SemVer; conteúdo em `content/` + manifesto; saves versionados com migração | Permitir novas versões com novos mapas sem quebrar o jogo nem os saves | Diretor |
 | 2026-11-07 | Texto da pista do hall: "os 3 últimos dígitos do ano em que {nome_do_personagem} nasceu" | Pista direta e adequada a crianças | Diretor |
+| 2026-11-07 | Orquestrador mantém log de interações (`metrics/interacoes.md`) com reconciliação por marco via `/cost` | Medir tempo, custo e interações até o fim do jogo | Diretor |
