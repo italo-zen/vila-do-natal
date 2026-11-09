@@ -5,9 +5,11 @@
   "titulo.versao": "v{versao}",
   "comojogar.titulo": "Como jogar",
   "comojogar.mover": "Mover: setas ou WASD",
+  "comojogar.mover.toque": "Mover: controle na tela.",
   "comojogar.botaoA": "Botão A: Z ou Enter.",
+  "comojogar.botaoA.toque": "Botão A: examinar, avançar.",
   "comojogar.botaoB": "Botão B: X ou Esc.",
-  "comojogar.celular": "No celular, em breve: botões na tela.",
+  "comojogar.botaoB.toque": "Botão B: voltar e fechar.",
   "comojogar.voltar": "Voltar",
   "selecao.titulo": "Quem vai jogar?",
   "intro.1": "Oi, {nome}!",
@@ -23,20 +25,31 @@
   "porta.abriu": "Clique! A porta abriu.",
   "painel.apagar": "Apagar",
   "painel.ok": "OK",
+  "painel.fechar": "Fechar",
   "luz.clique": "Clique!",
   "arvore.desmontada": "A árvore ainda está desmontada. Ela precisa de 3 partes.",
   "conquista.luzes": "Parabéns, você conseguiu acender as luzes.",
   "conquista.continuar": "Continuar",
   "barra.titulo": "Setas: escolher  Z: confirmar",
+  "barra.titulo.toque": "Mover: escolher  A: confirmar",
   "barra.comojogar": "Z ou X: voltar",
+  "barra.comojogar.toque": "A ou B: voltar",
   "barra.selecao1": "Setas: escolher  Z: confirmar",
+  "barra.selecao1.toque": "Mover: escolher  A: confirmar",
   "barra.selecao2": "X: voltar ao título",
+  "barra.selecao2.toque": "B: voltar ao título",
   "barra.intro": "Z: avançar  X: voltar",
+  "barra.intro.toque": "A: avançar  B: voltar",
   "barra.dialogo": "Z: avançar  X: fechar",
+  "barra.dialogo.toque": "A: avançar  B: fechar",
   "barra.painel1": "Setas: escolher  Z: apertar",
+  "barra.painel1.toque": "Toque nas teclas para digitar",
   "barra.painel2": "X: apagar  Esc: fechar",
+  "barra.painel2.toque": "Toque em Fechar para sair",
   "barra.conquista": "Z ou X: continuar",
+  "barra.conquista.toque": "A ou B: continuar",
   "barra.casa": "Setas: andar  Z: examinar",
+  "barra.casa.toque": "Mover: andar  A: examinar",
   "orientacao.1": "Vamos montar a árvore de Natal, {nome}!",
   "orientacao.2": "Abra a porta. Há um bilhete perto dela, com a dica.",
   "arvore.nascer.1": "A árvore ainda está desmontada.",
@@ -76,9 +89,13 @@
     "Essa é a parte de cima. Encontre a do meio antes."
   ],
   "barra.casa2": "X: farejar  H: dica",
+  "barra.casa2.toque": "B: farejar  ?: dica",
   "barra.dica": "Z ou X: voltar",
+  "barra.dica.toque": "A ou B: voltar",
   "comojogar.farejar": "Farejar: X, com o Nick acordado.",
+  "comojogar.farejar.toque": "Farejar: B, com o Nick acordado.",
   "comojogar.dica": "Dica: H, ou clique no ícone ?",
+  "comojogar.dica.toque": "Dica: toque no ícone ?",
   "dica.titulo": "Dica",
   "dica.voltar": "Voltar",
   "dica.porta": [
@@ -95,6 +112,11 @@
     "Procure o interruptor.",
     "Aperte X e o Nick fareja."
   ],
+  "dica.luzes.acordado.toque": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "Toque em B e o Nick fareja."
+  ],
   "dica.parte1.dormindo": [
     "Procure uma parte da árvore.",
     "O Nick ainda está dormindo."
@@ -102,6 +124,10 @@
   "dica.parte1.acordado": [
     "Procure uma parte da árvore.",
     "Aperte X e o Nick fareja."
+  ],
+  "dica.parte1.acordado.toque": [
+    "Procure uma parte da árvore.",
+    "Toque em B e o Nick fareja."
   ],
   "dica.parte2.dormindo": [
     "Procure a parte do meio.",
@@ -111,6 +137,10 @@
     "Procure a parte do meio.",
     "Aperte X e o Nick fareja."
   ],
+  "dica.parte2.acordado.toque": [
+    "Procure a parte do meio.",
+    "Toque em B e o Nick fareja."
+  ],
   "dica.parte3.dormindo": [
     "Procure em outro cômodo.",
     "O Nick ainda está dormindo."
@@ -119,9 +149,17 @@
     "Procure em outro cômodo.",
     "Aperte X e o Nick fareja."
   ],
+  "dica.parte3.acordado.toque": [
+    "Procure em outro cômodo.",
+    "Toque em B e o Nick fareja."
+  ],
   "nick.acordou": [
     "O Nick acordou! Ele vai seguir você.",
     "Aperte X para farejar."
+  ],
+  "nick.acordou.toque": [
+    "O Nick acordou! Ele vai seguir você.",
+    "Toque em B para farejar."
   ],
   "nick.latido": "Au!",
   "conquista.enfeites": "Parabéns, você conseguiu encontrar a caixa de enfeites de Natal!",
@@ -141,6 +179,10 @@
     "Procure a caixa de enfeites.",
     "Aperte X e o Nick fareja."
   ],
+  "dica.enfeites.acordado.toque": [
+    "Procure a caixa de enfeites.",
+    "Toque em B e o Nick fareja."
+  ],
   "creditos.titulo": "Créditos",
   "creditos.jogo": "Natal na Casa do Tio Ítalo e da Tia Nath",
   "creditos.sobrinho": "Obrigado, {nome}! A árvore ficou linda.",
@@ -148,5 +190,18 @@
   "creditos.agradecimento": "Feito com carinho para a família.",
   "creditos.versao": "Versão {versao}",
   "creditos.voltar": "Voltar ao título",
-  "barra.creditos": "Z ou X: voltar ao título"
+  "barra.creditos": "Z ou X: voltar ao título",
+  "barra.creditos.toque": "A ou B: voltar ao título",
+  "rotacao.1": "Gire o celular para o lado.",
+  "rotacao.2": "O jogo fica na horizontal.",
+  "barra.titulo.toque.menu": "Toque para escolher",
+  "barra.comojogar.toque.menu": "Toque em Voltar",
+  "barra.selecao1.toque.menu": "Toque para escolher",
+  "barra.selecao2.toque.menu": "Toque em Voltar ao título",
+  "barra.conquista.toque.menu": "Toque em Continuar",
+  "barra.dica.toque.menu": "Toque em Voltar",
+  "barra.creditos.toque.menu": "Toque em Voltar ao título",
+  "barra.painel1.toque.menu": "Toque nas teclas para digitar",
+  "barra.painel2.toque.menu": "Toque em Fechar",
+  "selecao.voltar.toque": "Voltar ao título"
 }

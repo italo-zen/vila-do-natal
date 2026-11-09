@@ -4,6 +4,8 @@ import { Barra } from './Barra';
 import { Botao, PRESSIONADO_MS } from './Botao';
 import { inicioCentrado } from './layout';
 import { teclaDoPainel } from '../input/mapaDeTeclas';
+import { areaDeToqueEmJogo, ALVO_DE_TOQUE_CSS } from './escala';
+import { comToqueDaCena, fatorDaCena } from './toque/toqueDaCena';
 
 export interface OpcoesDoPainel {
   pergunta: string;
@@ -17,14 +19,30 @@ export interface OpcoesDoPainel {
 
 /** Dígitos do código da porta (3, ADR-001 CodigoDaPorta). Campos e grade são desenhados a partir do perfil. */
 const CAMPOS = 3;
-/** Posições da grade de teclas (1-9, apagar, 0, OK), na ordem do GDD 14.9.4. */
-const APAGAR = 9;
-const OK = 11;
 /** Profundidades do painel (acima do fundo; teclas acima de tudo). */
 const PROFUNDIDADE_FUNDO = 2000;
 const PROFUNDIDADE_TEXTO = 2001;
 const PROFUNDIDADE_CAMPO = 2002;
 const PROFUNDIDADE_TECLA = 2010;
+/** Rótulo de Fechar na grade do toque (chave `painel.fechar`, GDD 18.12). */
+const ROTULO_FECHAR = 'Fechar';
+
+/** Tecla da grade: dígito, Apagar, OK ou Fechar (Fechar só existe no toque, ADR-007 seção 8.1). */
+type TipoDeTecla = 'digito' | 'apagar' | 'ok' | 'fechar';
+interface TeclaDaGrade {
+  botao: Botao;
+  tipo: TipoDeTecla;
+  valor: string;
+}
+interface DescricaoDaTecla {
+  tipo: TipoDeTecla;
+  valor: string;
+  rotulo: string;
+  /** Posição na grade (coluna e linha, a partir de 0) e quantas colunas a tecla ocupa. */
+  coluna: number;
+  linha: number;
+  colunas: number;
+}
 
 /**
  * Teclado numérico da porta (GDD 14.1 e 14.9.4). Teclado do computador (regras em `teclaDoPainel`):
@@ -32,15 +50,18 @@ const PROFUNDIDADE_TECLA = 2010;
  * - Backspace ou X apaga o último dígito; Esc fecha (única tecla que fecha);
  * - setas ou WASD movem o foco na grade (começa em OK, a cada abertura);
  * - Z ou Enter: aperta a tecla em foco; em OK, confirma.
+ * No toque (ADR-007 seção 8): grade de 5 colunas × 3 linhas com "Fechar" (bloco `toque.painel`). Tocar numa tecla age na
+ * hora, sem mover o foco visual (GDD 18.3, "sem foco"). No computador, a grade segue 3 × 4 e sem "Fechar".
  * As teclas são botões com caixa; a pergunta e as mensagens são texto informativo, sem caixa.
- * Campos, moldura e grade vêm do perfil (`painel`, `botao`); o painel ocupa a tela inteira.
+ * Campos, moldura e grade vêm do perfil (`painel`, `botao`, `toque`); o painel ocupa a tela inteira.
  */
 export class PainelDeCodigo {
   private digitos = '';
-  private foco = OK;
+  private foco = 0;
   private mensagem: Phaser.GameObjects.Text;
   private campos: Phaser.GameObjects.Text[] = [];
-  private teclas: { botao: Botao; valor: string }[] = [];
+  private teclas: TeclaDaGrade[] = [];
+  private colunas = 3;
   private objetos: Phaser.GameObjects.GameObject[] = [];
   private readonly barra: Barra;
   private readonly teclado: Phaser.Input.Keyboard.KeyboardPlugin;
@@ -88,22 +109,37 @@ export class PainelDeCodigo {
       .setDepth(PROFUNDIDADE_TEXTO);
     this.guardar(this.mensagem);
 
-    const grade = painel.grade;
+    const noToque = comToqueDaCena(cena) && p.toque !== undefined;
+    const grade = noToque ? p.toque!.painel : painel.grade;
+    const larguraTecla = noToque ? p.toque!.painel.larguraTecla : p.botao.larguraTecla;
+    const alturaTecla = noToque ? p.toque!.painel.alturaTecla : p.botao.alturaTecla;
+    const f = fatorDaCena(cena);
+    this.colunas = grade.colunas;
+
+    const grelha = this.grelha(noToque);
     const xDaGrade = inicioCentrado(largura, grade.colunas * grade.passoX);
-    const rotulos = ['1', '2', '3', '4', '5', '6', '7', '8', '9', opcoes.apagar, '0', opcoes.ok];
-    rotulos.forEach((rotulo, i) => {
-      const col = i % grade.colunas;
-      const lin = Math.floor(i / grade.colunas);
-      const botao = new Botao(cena, xDaGrade + col * grade.passoX + p.botao.larguraTecla / 2, grade.topo + lin * grade.passoY + p.botao.alturaTecla / 2, rotulo, {
-        w: p.botao.larguraTecla,
-        h: p.botao.alturaTecla,
+    // Teclas de 2 colunas (Apagar e Fechar, no toque) ocupam o passo de duas colunas menos o espaço entre elas.
+    const folga = grade.passoX - larguraTecla;
+    grelha.forEach((tecla) => {
+      const larguraDaTecla = tecla.colunas * grade.passoX - folga;
+      const botao = new Botao(cena, xDaGrade + tecla.coluna * grade.passoX + larguraDaTecla / 2, grade.topo + tecla.linha * grade.passoY + alturaTecla / 2, tecla.rotulo, {
+        w: larguraDaTecla,
+        h: alturaTecla,
         tamanho: p.fonte.corpo,
         bordaFoco: p.botao.bordaFocoTecla,
         // Acima do fundo do painel (2000) e das mensagens/barra do painel (2001-2002).
         profundidade: PROFUNDIDADE_TECLA,
+        // Área de toque de pelo menos 48 CSS px (ADR-007 seção 4.5). Sem toque, a zona não existe.
+        areaDeToque: {
+          w: areaDeToqueEmJogo(larguraDaTecla, ALVO_DE_TOQUE_CSS, f),
+          h: areaDeToqueEmJogo(alturaTecla, ALVO_DE_TOQUE_CSS, f),
+        },
       });
-      this.teclas.push({ botao, valor: rotulo });
+      const indice = this.teclas.length;
+      botao.sobreMouse?.on('pointerdown', () => this.pressionarTecla(indice));
+      this.teclas.push({ botao, tipo: tecla.tipo, valor: tecla.valor });
     });
+    this.foco = this.indiceDo('ok');
 
     this.barra = new Barra(cena, PROFUNDIDADE_TEXTO);
     this.barra.definir(opcoes.barra);
@@ -111,6 +147,40 @@ export class PainelDeCodigo {
     this.teclado.on('keydown', this.aoTeclar);
     this.atualizarCampos();
     this.desenharFoco();
+  }
+
+  /**
+   * Ordem da grade. Teclado: 1 a 9, Apagar, 0, OK (3 × 4). Toque: 1 a 9, 0, Apagar, OK, Fechar (5 × 3, ADR-007 seção 8.2).
+   * Os rótulos decidem a função de cada tecla; a posição não.
+   */
+  private grelha(noToque: boolean): DescricaoDaTecla[] {
+    const cores = noToque ? 5 : 3;
+    const celula = (d: Omit<DescricaoDaTecla, 'coluna' | 'linha' | 'colunas'>, i: number, colunas = 1, linhaFixa?: number, colunaFixa?: number): DescricaoDaTecla => ({
+      ...d,
+      coluna: colunaFixa ?? i % cores,
+      linha: linhaFixa ?? Math.floor(i / cores),
+      colunas,
+    });
+    const digitos = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => ({ tipo: 'digito' as const, valor: d, rotulo: d }));
+    const zero = { tipo: 'digito' as const, valor: '0', rotulo: '0' };
+    const apagar = { tipo: 'apagar' as const, valor: '', rotulo: this.opcoes.apagar };
+    const ok = { tipo: 'ok' as const, valor: '', rotulo: this.opcoes.ok };
+    if (noToque) {
+      // 5 × 3 (ADR-007 8.2). Linha 3: Apagar ocupa 2 colunas, OK 1 e Fechar 2 (os rótulos cabem; a grade não muda de forma).
+      const fechar = { tipo: 'fechar' as const, valor: '', rotulo: ROTULO_FECHAR };
+      return [
+        ...digitos.map((d, i) => celula(d, i)),
+        celula(zero, 9),
+        celula(apagar, 10, 2, 2, 0),
+        celula(ok, 11, 1, 2, 2),
+        celula(fechar, 12, 2, 2, 3),
+      ];
+    }
+    return [...digitos.map((d, i) => celula(d, i)), celula(apagar, 9), celula(zero, 10), celula(ok, 11)];
+  }
+
+  private indiceDo(tipo: TipoDeTecla): number {
+    return this.teclas.findIndex((t) => t.tipo === tipo);
   }
 
   mostrarMensagem(texto: string): void {
@@ -141,30 +211,46 @@ export class PainelDeCodigo {
       case 'fechar':
         return this.opcoes.aoFechar();
       case 'mover':
-        if (t.acao === 'cima') return this.mover(-this.colunas());
-        if (t.acao === 'baixo') return this.mover(this.colunas());
+        if (t.acao === 'cima') return this.mover(-this.colunas);
+        if (t.acao === 'baixo') return this.mover(this.colunas);
         return this.mover(t.acao === 'esquerda' ? -1 : 1);
       case 'digito':
         return this.digitar(t.valor);
       case 'apagar':
         return this.apagar();
       case 'apertar':
-        this.teclas[this.foco].botao.pressionar();
-        if (this.foco === OK) {
-          // Confirma depois dos 150 ms do estado pressionado.
-          const digitos = this.digitos;
-          return void this.cena.time.delayedCall(PRESSIONADO_MS, () => this.opcoes.aoConfirmar(digitos));
-        }
-        return this.apertarFoco();
+        // Teclado: aperta a tecla em foco (Z ou Enter), sem mudar o foco.
+        return this.pressionarTecla(this.foco);
     }
   };
 
-  private colunas(): number {
-    return perfilDe(this.cena).painel.grade.colunas;
+  /**
+   * Efeito de uma tecla da grade, pelo índice (ADR-007 seção 8.3). Usado pelo teclado (tecla em foco) e pelo toque
+   * (tecla tocada, sem mudar o foco). Digitar e apagar são imediatos; OK e Fechar esperam os 150 ms do pressionado.
+   */
+  private pressionarTecla(i: number): void {
+    const tecla = this.teclas[i];
+    if (!tecla) return;
+    tecla.botao.pressionar();
+    switch (tecla.tipo) {
+      case 'digito':
+        return this.digitar(tecla.valor);
+      case 'apagar':
+        return this.apagar();
+      case 'ok': {
+        // Confirma depois dos 150 ms do estado pressionado.
+        const digitos = this.digitos;
+        this.cena.time.delayedCall(PRESSIONADO_MS, () => this.opcoes.aoConfirmar(digitos));
+        return;
+      }
+      case 'fechar':
+        this.cena.time.delayedCall(PRESSIONADO_MS, () => this.opcoes.aoFechar());
+        return;
+    }
   }
 
   private mover(delta: number): void {
-    const colunas = this.colunas();
+    const colunas = this.colunas;
     const novo = this.foco + delta;
     const col = this.foco % colunas;
     if (delta === -1 || delta === 1) {
@@ -173,12 +259,6 @@ export class PainelDeCodigo {
     if (novo < 0 || novo > this.teclas.length - 1) return;
     this.foco = novo;
     this.desenharFoco();
-  }
-
-  private apertarFoco(): void {
-    if (this.foco === APAGAR) return this.apagar();
-    const tecla = this.teclas[this.foco];
-    if (/^[0-9]$/.test(tecla.valor)) this.digitar(tecla.valor);
   }
 
   private digitar(d: string): void {

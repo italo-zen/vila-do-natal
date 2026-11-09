@@ -3,6 +3,7 @@ import { estilo, numeroDaCor, perfilDe, servicosDe, telaDe } from '../ui/tema';
 import { barraDaTela } from '../ui/Barra';
 import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { ANIM_NICK, CHAVE_DA_ARVORE, CHAVE_NICK, sprites } from '../assets/registro';
 
 /** Fade de entrada e de saída da tela, em tempo de jogo (GDD 17.7: 0,5 s para entrar e sair). */
@@ -35,6 +36,7 @@ export class CreditosScene extends Phaser.Scene {
     const tela = p.telas.creditos;
     const sobrinho = sv.sessao.progresso.sobrinho;
     this.controles = new Controles(this);
+    toqueDaCena(this)?.mostrarPara('creditos');
     this.pronta = false;
     this.saindo = false;
 

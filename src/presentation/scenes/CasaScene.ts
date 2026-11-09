@@ -21,6 +21,9 @@ import type { Tile } from '../../domain/shared/Tile';
 import type { Direcao as DirecaoDoDominio } from '../../domain/shared/Direcao';
 import type { PosicaoDaCaixa } from '../ui/posicaoDoDialogo';
 import { PainelDeCodigo } from '../ui/PainelDeCodigo';
+import { textoDeEntrada } from '../ui/textoDeEntrada';
+import { caixaYDoDialogo } from '../ui/posicaoDoDialogo';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { criarIluminacao, type Iluminacao } from '../ui/iluminacao/Iluminacao';
 import {
   CHAVE,
@@ -197,6 +200,8 @@ export class CasaScene extends Phaser.Scene {
   /** Farejando (animação de 1,2 s antes da seta): a seta ainda não aparece e os 5 s não correm (ADR-005 seção 4.5). */
   private sniffando = false;
   private emIntro = false;
+  /** Posição da caixa do diálogo aberto (base ou topo), para reservar a área no toque. */
+  private posicaoDaCaixa: PosicaoDaCaixa = 'base';
   private balaoId = 0;
   /** Indicador estático de cada porta (para trocar pela seta de farejar, GDD 14.10.10). */
   private indicadoresDePorta = new Map<string, Phaser.GameObjects.Image>();
@@ -218,6 +223,7 @@ export class CasaScene extends Phaser.Scene {
     this.geo = geometriaDoSobrinho(this.perfil);
     const { largura, altura } = telaDe(this.perfil);
     this.controles = new Controles(this);
+    this.mostrarToque();
     this.cameras.main.setScroll(0, 0);
     this.estado = 'livre';
     this.bloqueadoAte = 0;
@@ -488,6 +494,8 @@ export class CasaScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    // Botões do toque conforme a tela (GDD 18.4). Só age quando a tela muda.
+    this.mostrarToque();
     // Tela da dica aberta: o mundo está parado (GDD 16.8.5). Só as teclas da dica agem.
     if (this.dica) {
       this.controles.atualizar();
@@ -536,6 +544,21 @@ export class CasaScene extends Phaser.Scene {
     if (this.estado === 'livre') this.barra.definir(['barra.casa', 'barra.casa2']);
     this.barra.setVisible(this.estado === 'livre');
     this.icone.setVisible(podeAbrirDica(modo));
+  }
+
+  /**
+   * Botões do toque para o modo atual (ADR-007 seção 6). Sem toque, não faz nada. Nos diálogos, a caixa de texto é
+   * reservada: no layout B, A e B ficam fora dela (ela cobre a parte de baixo ou de cima da tela).
+   */
+  private mostrarToque(): void {
+    const modo = this.modo();
+    let reserva: { topo: number; fundo: number } | null = null;
+    if (modo === 'dialogo' || modo === 'introducao') {
+      const altura = this.perfil.dialogo.altura;
+      const topo = caixaYDoDialogo(telaDe(this.perfil).altura, altura, this.posicaoDaCaixa);
+      reserva = { topo, fundo: topo + altura };
+    }
+    toqueDaCena(this)?.mostrarPara(modo, reserva);
   }
 
   /** Modo da tela (ADR-005 seção 1.4): a fonte dos bloqueios de B e H. */
@@ -1250,11 +1273,13 @@ export class CasaScene extends Phaser.Scene {
     const d = this.sv.montarDica.executar();
     if (!d) return;
     const t = this.sv.conteudo.textos;
-    const linhas = d.chavesDoTexto.flatMap((k) => t.paginas(k));
+    const entrada = textoDeEntrada(this);
+    const linhas = d.chavesDoTexto.flatMap((k) => entrada.paginas(k));
     this.pausarMundo(true);
+    // A barra é passada como chave: o Barra resolve o texto (e a versão de toque). Passar o texto virava "[texto]".
     this.dica = new DicaOverlay(
       this,
-      { titulo: t.t(d.tituloChave), linhas, estadoDaArvore: d.estadoDaArvore, voltar: t.t('dica.voltar'), barra: t.t('barra.dica') },
+      { titulo: t.t(d.tituloChave), linhas, estadoDaArvore: d.estadoDaArvore, voltar: t.t('dica.voltar'), barra: 'barra.dica' },
       () => this.fecharDica(),
     );
   }
@@ -1300,7 +1325,7 @@ export class CasaScene extends Phaser.Scene {
 
   /** Páginas de uma lista de chaves: cada chave pode ter uma ou várias páginas (avisos, ADR-002 seção 2.2). */
   private paginasDe(chaves: string[], vars: Record<string, string>): string[] {
-    const t = this.sv.conteudo.textos;
+    const t = textoDeEntrada(this);
     return chaves.flatMap((k) => t.paginas(k, vars));
   }
 
@@ -1317,6 +1342,7 @@ export class CasaScene extends Phaser.Scene {
     op: { posicao?: PosicaoDaCaixa; aoFim?: () => void; pausaAoFechar?: boolean } = {},
   ): void {
     this.estado = 'dialogo';
+    this.posicaoDaCaixa = op.posicao ?? 'base';
     this.dialogo.abrir(paginas, {
       barra: ['barra.dialogo'],
       posicao: op.posicao ?? 'base',

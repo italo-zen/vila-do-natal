@@ -4,6 +4,7 @@ import { Barra } from './Barra';
 import { CHAVE_DA_ARVORE } from '../assets/registro';
 import { estilo, numeroDaCor, perfilDe, telaDe } from './tema';
 import type { Controles } from '../input/Controles';
+import { toqueDaCena } from './toque/toqueDaCena';
 
 /** Profundidade da tela de dica: acima de tudo (penumbra, barra, ícone e fade). ADR-005 seção 5.1. */
 const PROFUNDIDADE_DICA = 1200;
@@ -14,6 +15,7 @@ export interface DadosDaDica {
   linhas: string[];
   estadoDaArvore: 0 | 1 | 2 | 3;
   voltar: string;
+  /** Chave de texto da barra (ex.: "barra.dica"); o Barra resolve o texto e a versão de toque. */
   barra: string;
 }
 
@@ -32,6 +34,8 @@ export class DicaOverlay {
     dados: DadosDaDica,
     private readonly aoFechar: () => void,
   ) {
+    // A dica já é a tela de dica: os botões do toque mudam antes da barra ser montada (barra "Toque em Voltar" no layout B).
+    toqueDaCena(cena)?.mostrarPara('dica');
     const p = perfilDe(cena);
     const { largura, altura } = telaDe(p);
     const m = p.espaco.medio;

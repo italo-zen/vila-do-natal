@@ -3,6 +3,59 @@
   "perfil": "hd-480x352",
   "imagens": [
     {
+      "arquivo": "ctl_analogico_base.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_bolinha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_bolinha_pressionada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_baixo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_cima.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_a.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_a_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_b.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_b_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_celular.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 288,
+        "h": 288
+      },
+      "quadros": 4
+    },
+    {
       "arquivo": "spr_arvore_1parte.png",
       "tipo": "imagem"
     },

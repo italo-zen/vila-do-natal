@@ -49,6 +49,15 @@ describe('regras de arquitetura (ADR-001)', () => {
     expect(problemas).toEqual([]);
   });
 
+  it('src/ inteiro não usa localStorage nem sessionStorage (ADR-002 seção 3; ADR-007 12.1)', () => {
+    const problemas: string[] = [];
+    for (const f of arquivos(SRC)) {
+      const texto = readFileSync(f, 'utf-8');
+      if (/\blocalStorage\b|\bsessionStorage\b/.test(texto)) problemas.push(f);
+    }
+    expect(problemas).toEqual([]);
+  });
+
   it('aplicação não importa infraestrutura nem apresentação', () => {
     const problemas: string[] = [];
     for (const f of arquivos(join(SRC, 'application'))) {
@@ -56,5 +65,18 @@ describe('regras de arquitetura (ADR-001)', () => {
       if (/from\s+['"](\.\.\/)+(infrastructure|presentation)/.test(texto)) problemas.push(f);
     }
     expect(problemas).toEqual([]);
+  });
+});
+
+/** ADR-007 12.1 (0.10.0): a direção do joystick é função pura; a pilha da cruz saiu do código. */
+describe('joystick (ADR-007 1.3 e 12.1)', () => {
+  it('direcaoDoAnalogico.ts não usa DOM nem Phaser', () => {
+    const codigo = readFileSync(join(SRC, 'presentation', 'input', 'direcaoDoAnalogico.ts'), 'utf-8');
+    expect(codigo).not.toMatch(/from\s+['"]phaser['"]/);
+    expect(codigo).not.toMatch(/\bwindow\b|\bdocument\b|\bnavigator\b/);
+  });
+
+  it('pilhaDaCruz.ts não existe mais no código', () => {
+    expect(() => statSync(join(SRC, 'presentation', 'input', 'pilhaDaCruz.ts'))).toThrow();
   });
 });

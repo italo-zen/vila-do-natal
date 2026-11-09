@@ -1,6 +1,6 @@
 {
   "name": "natal-na-casa-do-tio-italo",
-  "version": "0.8.1",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
   "description": "Natal na Casa do Tio Ítalo e da Tia Nath",
@@ -12,11 +12,12 @@
     "test": "vitest run",
     "gen:assets": "node tools/gerar-assets.mjs",
     "gen:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar",
-    "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas",
+    "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas && node tools/smoke-toque.mjs dist-playtest/index.html dist-playtest/capturas-toque",
     "validar:perfil": "node tools/validar-perfil.mjs",
     "comparar:capturas": "node tools/comparar-capturas.mjs",
     "verificar:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar --verificar",
-    "build:qa": "tsc --noEmit && vite build --config vite.qa.config.ts"
+    "build:qa": "tsc --noEmit && vite build --config vite.qa.config.ts",
+    "smoke:toque-menus": "node tools/smoke-toque-menus.mjs dist-qa/index.html dist-qa/capturas-menus"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.5",

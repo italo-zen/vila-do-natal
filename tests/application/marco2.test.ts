@@ -468,9 +468,9 @@ describe('Marco 2: exame da árvore em cada estado (GDD 15.4; BUG-M2-04)', () =>
 });
 
 describe('Marco 2: versão e perfil (backlog 057 e 054)', () => {
-  it('package.json está em 0.8.1 (ajuste do PT4a: texto da chegada da parte 3, 2026-11-09)', () => {
+  it('package.json está em 0.10.0 (joystick, GDD 18.19; antes 0.9.1, correção do PT4)', () => {
     const pkg = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf-8')) as { version: string };
-    expect(pkg.version).toBe('0.8.1');
+    expect(pkg.version).toBe('0.10.0');
   });
 
   it('o perfil HD tem a posição da tela de conquista da peça (telas.conquista.peca e personagemDaPeca)', () => {

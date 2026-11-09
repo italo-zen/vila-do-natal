@@ -3,6 +3,7 @@ import { estilo, numeroDaCor, perfilDe, servicosDe, telaDe } from '../ui/tema';
 import { barraDaTela } from '../ui/Barra';
 import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 
 /**
  * Título (GDD 14.1): nome, "Começar" (foco inicial) e "Como jogar", versão no canto.
@@ -24,6 +25,7 @@ export class TituloScene extends Phaser.Scene {
     const { largura, altura } = telaDe(p);
     const tela = p.telas.titulo;
     this.controles = new Controles(this);
+    toqueDaCena(this)?.mostrarPara('titulo');
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);
     this.add

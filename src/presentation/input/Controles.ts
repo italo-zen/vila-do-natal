@@ -1,45 +1,45 @@
-import Phaser from 'phaser';
-import { TECLAS, type Acao } from './mapaDeTeclas';
+import type Phaser from 'phaser';
+import type { Acao } from './mapaDeTeclas';
+import { FonteTeclado } from './FonteTeclado';
+import type { FonteDeToque } from './FonteDeToque';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 
 export type { Acao };
 
 /**
- * Entrada de uma cena. Chame `atualizar()` uma vez por quadro, no início do update:
- * depois, `apertada(acao)` vale só para o quadro atual (sem repetição de tecla).
- * O mapa de teclas está em `mapaDeTeclas.ts` (também usado pelo painel da porta).
+ * Entrada de uma cena (ADR-007 seção 1.1). Compõe duas fontes com o mesmo tipo `Acao`: o teclado (sempre) e o toque
+ * (só em aparelho com toque). Chame `atualizar()` uma vez por quadro, no início do update: depois, `apertada(acao)`
+ * vale só para o quadro atual. `segurada(d)` é o OU das duas fontes. Criar o Controles descarta toques pendentes
+ * (um toque dado na cena anterior não dispara esta).
  */
 export class Controles {
-  private readonly teclas: Record<Acao, Phaser.Input.Keyboard.Key[]>;
+  private readonly teclado: FonteTeclado;
+  private readonly toque: FonteDeToque | null;
   private apertadas = new Set<Acao>();
 
   constructor(cena: Phaser.Scene) {
-    const teclado = cena.input.keyboard!;
-    this.teclas = {
-      cima: [],
-      baixo: [],
-      esquerda: [],
-      direita: [],
-      a: [],
-      b: [],
-      dica: [],
-    };
-    for (const acao of Object.keys(TECLAS) as Acao[]) {
-      this.teclas[acao] = TECLAS[acao].map((nome) => teclado.addKey(nome, true));
-    }
+    this.teclado = new FonteTeclado(cena);
+    this.toque = toqueDaCena(cena)?.fonte ?? null;
+    this.toque?.descartar();
   }
 
   atualizar(): void {
-    this.apertadas.clear();
-    for (const acao of Object.keys(this.teclas) as Acao[]) {
-      if (this.teclas[acao].some((k) => Phaser.Input.Keyboard.JustDown(k))) this.apertadas.add(acao);
-    }
+    const doTeclado = this.teclado.atualizar();
+    const doToque = this.toque?.consumir() ?? new Set<Acao>();
+    this.apertadas = new Set([...doTeclado, ...doToque]);
   }
 
   segurada(acao: Acao): boolean {
-    return this.teclas[acao].some((k) => k.isDown);
+    return this.teclado.segurada(acao) || (this.toque?.segurada(acao) ?? false);
   }
 
   apertada(acao: Acao): boolean {
     return this.apertadas.has(acao);
+  }
+
+  /** Descarta bordas pendentes de qualquer fonte (fim do aviso de rotação, por exemplo). */
+  descartarEntradas(): void {
+    this.apertadas.clear();
+    this.toque?.descartar();
   }
 }

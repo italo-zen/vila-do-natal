@@ -46,7 +46,7 @@ describe('textos exatos do Marco 4 (GDD 17.8)', () => {
 
   it('creditos.versao usa {versao}, preenchida com a versão do package.json (ADR-002 seção 1)', () => {
     expect(t.t('creditos.versao', { versao: versaoDoPacote })).toBe(`Versão ${versaoDoPacote}`);
-    expect(versaoDoPacote).toBe('0.8.1');
+    expect(versaoDoPacote).toBe('0.10.0');
   });
 
   it('cada página cabe no teto de linhas de 28 caracteres (diálogo e créditos: 2; conquista e dica: 3, GDD 17.8)', () => {

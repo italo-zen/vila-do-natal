@@ -44,6 +44,9 @@ interface CasaPorDentro {
 
 export function instalarGancho(jogo: Phaser.Game): void {
   const casa = (): CasaPorDentro | null => {
+    // Só a Casa ativa: com a Conquista ou os créditos no ar, a Casa está encerrada (sprites destruídos) e a leitura
+    // seria do estado antigo. Devolve null, como antes da casa carregar.
+    if (!jogo.scene.isActive('Casa')) return null;
     const cena = jogo.scene.getScene('Casa') as unknown as CasaPorDentro | undefined;
     return cena && cena.mapa ? cena : null;
   };
@@ -116,5 +119,59 @@ export function instalarGancho(jogo: Phaser.Game): void {
       if (atual === 'luzes' || atual.startsWith('parte')) c.sv.devolverControle.executar();
     }
     return c.sv.sessao.fase === fase ? fase : null;
+  };
+  /**
+   * Estado do joystick (ADR-007 12.3; GDD 18.19): dono (há um dedo comandando), direção engajada, deslocamento do dedo
+   * (CSS px a partir do centro da base) e centro da bolinha na janela. Null sem toque. Só no build de QA.
+   */
+  janela.__analogico = () => {
+    const toque = jogo.registry.get('toque') as { estadoDoAnalogico(): unknown } | null | undefined;
+    return toque ? toque.estadoDoAnalogico() : null;
+  };
+  /**
+   * Foco do menu ativo (Título: 0 Começar, 1 Como jogar; Seleção: 0 a 3 no cartão). Só no build de QA, para o
+   * roteiro de toque provar que o joystick move o foco (PT4, 2026-11-09). Null se a cena não é um menu.
+   */
+  janela.__focoDoMenu = () => {
+    for (const chave of ['Titulo', 'Selecao', 'ComoJogar']) {
+      if (!jogo.scene.isActive(chave)) continue;
+      const cena = jogo.scene.getScene(chave) as unknown as { menu?: { focado: number }; foco?: number };
+      const foco = cena.menu?.focado ?? cena.foco ?? null;
+      return { cena: chave, foco };
+    }
+    return null;
+  };
+  /**
+   * Alvos de toque em CSS px da janela (ADR-007 seção 12.3): os controles em DOM (joystick, A, B) e as zonas do
+   * canvas (menus, cartões, teclas do painel, "?", "Continuar"). Cada alvo: nome, retângulo x/y/largura/altura.
+   * Só no build de QA; nunca no de playtest.
+   */
+  janela.__alvosDeToque = () => {
+    const alvos: { origem: string; nome: string; x: number; y: number; largura: number; altura: number }[] = [];
+    for (const el of Array.from(document.querySelectorAll<HTMLElement>('#controles-de-toque [data-alvo]'))) {
+      if (el.offsetParent === null && getComputedStyle(el).display === 'none') continue;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      alvos.push({ origem: 'dom', nome: el.dataset.alvo ?? '', x: r.left, y: r.top, largura: r.width, altura: r.height });
+    }
+    // Coordenadas do jogo (480×352 no HD) para CSS px: a escala do canvas na tela (fator de escala).
+    const rc = jogo.canvas.getBoundingClientRect();
+    const sx = rc.width / jogo.scale.width;
+    const sy = rc.height / jogo.scale.height;
+    for (const cena of jogo.scene.getScenes(true)) {
+      for (const objeto of cena.children.list) {
+        const zona = objeto as Phaser.GameObjects.Zone;
+        // Textos visíveis (origem "texto"): para a checagem de sobreposição com os controles (layout B, 2026-11-09).
+        if (objeto.type === 'Text' && (objeto as Phaser.GameObjects.Text).visible && (objeto as Phaser.GameObjects.Text).text.length > 0) {
+          const b = (objeto as Phaser.GameObjects.Text).getBounds();
+          alvos.push({ origem: 'texto', nome: `${cena.scene.key}:${(objeto as Phaser.GameObjects.Text).text.slice(0, 24)}`, x: rc.left + b.x * sx, y: rc.top + b.y * sy, largura: b.width * sx, altura: b.height * sy });
+          continue;
+        }
+        if (!zona.input || !zona.input.enabled || !zona.getBounds) continue;
+        const b = zona.getBounds();
+        alvos.push({ origem: 'canvas', nome: `${cena.scene.key}:${zona.type}`, x: rc.left + b.x * sx, y: rc.top + b.y * sy, largura: b.width * sx, altura: b.height * sy });
+      }
+    }
+    return alvos;
   };
 }

@@ -3,6 +3,7 @@ import { estilo, numeroDaCor, perfilDe, servicosDe, telaDe } from '../ui/tema';
 import { barraDaTela } from '../ui/Barra';
 import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { CHAVE, sprites } from '../assets/registro';
 
 export interface DadosDaConquista {
@@ -30,6 +31,7 @@ export class ConquistaScene extends Phaser.Scene {
     const { largura, altura } = telaDe(p);
     const tela = p.telas.conquista;
     this.controles = new Controles(this);
+    toqueDaCena(this)?.mostrarPara('conquista');
     this.dados = dados;
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);

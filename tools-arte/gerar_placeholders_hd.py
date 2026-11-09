@@ -35,6 +35,15 @@ Saída: assets/hd-480x352/
   sprites.json               lista de imagens do perfil (ADR-003 seção 4), com as do Nick (spr_nick_*, de
                              tools-arte/gerar_nick.py; as entradas são escritas aqui, para o JSON sair de um só gerador)
 
+  ctl_botao_a.png, ctl_botao_b.png (e _pressionado)  64 CSS px → 192×192, com a letra desenhada
+  ctl_celular.png            folhas 4 × (288×288), 96 CSS px por quadro: celular girando, sem texto (GDD 18.8)
+  ctl_analogico_base.png              360×360 (120 CSS px): base redonda do joystick, repouso (GDD 18.19.3)
+  ctl_analogico_bolinha.png           144×144 (48 CSS px): bolinha em repouso
+  ctl_analogico_bolinha_pressionada.png  144×144: bolinha com o dedo (creme #f4e9c8, borda #0b1030; separa do setor)
+  ctl_analogico_brilho_<dir>.png      360×360: anel de 90° #f4d35e, de 52 a 60 CSS px, uma direção (cima, baixo, esquerda, direita; GDD 18.19.7; ADR-007 5.5)
+  (o joystick não tem texto nem letra)
+  (ícone "?" e "Fechar" não têm sprite novo: o "?" é spr_icone_dica; "Fechar" é texto da grade do painel.)
+
 Os sobrinhos (spr_<nome>_*.png) não saem daqui: vêm de tools-arte/gerar_sobrinhos.py --perfil hd-480x352.
 
 Tiles: os índices do `chao` de content/maps/casa-real/*.json são gids do TMX da Arte (ADR-004 seção 6).
@@ -395,6 +404,9 @@ def seta_farejo(direcao):
 GLIFOS = {
     "z": [".....", ".....", "#####", "...#.", "..#..", ".#...", "#####"],
     "?": [".###.", "#...#", "...#.", "..#..", "..#..", ".....", "..#.."],
+    # Letras dos botões de toque (ADR-007 seção 5.5, V7): A e B desenhadas no botão, sem texto de jogo.
+    "A": [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+    "B": ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],
 }
 
 
@@ -570,6 +582,116 @@ def conquista_enfeites():
     return im
 
 
+# Controles de toque (ADR-007 seção 5.5; GDD 18.2). Desenhados em CSS px (1 pixel de arte = 1 CSS px do aparelho)
+# e ampliados 3× com vizinho mais próximo, então a PNG tem 3× o tamanho CSS (nítida em DPR 3, pixel art de blocos).
+# Só as cores de 14.9.4 (sem cor nova): caixa #1b2452, borda #9aa3c7, texto #f4e9c8, destaque #f4d35e, fundo #0b1030.
+# Sem texto no joystick e no celular. A letra de A e de B é desenho do botão (V7). Sem "Fechar" nem "?": são texto/ícone do jogo.
+CTL_ESCALA = 3
+CTL_BOTAO_CSS = 64    # diâmetro de A e B (toque.botaoCss)
+CTL_ROTACAO_CSS = 96  # quadro do aviso de rotação (toque.rotacao.tamanhoCss)
+CTL_ROTACAO_QUADROS = 4
+COR_CTL_CAIXA = (27, 36, 82, 255)        # #1b2452
+COR_CTL_BORDA = (154, 163, 199, 255)     # #9aa3c7
+COR_CTL_TEXTO = (244, 233, 200, 255)     # #f4e9c8
+COR_CTL_DESTAQUE = (244, 211, 94, 255)   # #f4d35e
+COR_CTL_FUNDO = (11, 16, 48, 255)        # #0b1030
+
+
+def _ampliar(im):
+    return im.resize((im.width * CTL_ESCALA, im.height * CTL_ESCALA), Image.Resampling.NEAREST)
+
+
+def ctl_botao(letra, pressionado=False):
+    """Botão A ou B: círculo de 64 CSS px, borda de 2 px e a letra desenhada (fonte 5×7 ampliada 3×)."""
+    fundo = COR_CTL_DESTAQUE if pressionado else COR_CTL_CAIXA
+    borda = COR_CTL_DESTAQUE if pressionado else COR_CTL_BORDA
+    texto = COR_CTL_FUNDO if pressionado else COR_CTL_TEXTO
+    im = canvas(CTL_BOTAO_CSS, CTL_BOTAO_CSS)
+    d = ImageDraw.Draw(im)
+    d.ellipse([0, 0, CTL_BOTAO_CSS - 1, CTL_BOTAO_CSS - 1], fill=fundo, outline=borda, width=2)
+    escala_letra = 3
+    largura_letra = 5 * escala_letra
+    altura_letra = 7 * escala_letra
+    desenhar_texto(d, letra, (CTL_BOTAO_CSS - largura_letra) // 2, (CTL_BOTAO_CSS - altura_letra) // 2, escala_letra, texto)
+    return _ampliar(im)
+
+
+def ctl_celular():
+    """Aviso de rotação (GDD 18.8): celular em pé girando até a horizontal, 4 quadros de 96 CSS px, sem texto.
+    O celular é a parte que gira; o arco dourado fica parado embaixo."""
+    tamanho = CTL_ROTACAO_CSS
+    centro = tamanho // 2
+    corpo = canvas(tamanho, tamanho)
+    d = ImageDraw.Draw(corpo)
+    d.rounded_rectangle([centro - 14, centro - 24, centro + 13, centro + 23], radius=5,
+                        fill=COR_CTL_CAIXA, outline=COR_CTL_BORDA, width=3)
+    d.rectangle([centro - 9, centro - 17, centro + 8, centro + 14], fill=COR_CTL_FUNDO)
+    d.ellipse([centro - 3, centro + 17, centro + 2, centro + 22], fill=COR_CTL_TEXTO)
+    arco = canvas(tamanho, tamanho)
+    da = ImageDraw.Draw(arco)
+    da.arc([6, 6, tamanho - 7, tamanho - 7], start=20, end=160, fill=COR_CTL_DESTAQUE, width=4)
+    da.polygon([(6, 55), (3, 64), (14, 60)], fill=COR_CTL_DESTAQUE)  # ponta do arco, no fim (160°), apontando para cima
+    quadros = canvas(tamanho * CTL_ROTACAO_QUADROS, tamanho)
+    for n in range(CTL_ROTACAO_QUADROS):
+        angulo = -90 * n / (CTL_ROTACAO_QUADROS - 1)  # 0°, -30°, -60°, -90°: do retrato à paisagem (sentido horário)
+        gira = corpo.rotate(angulo, resample=Image.Resampling.NEAREST, center=(centro, centro))
+        quadro = arco.copy()
+        quadro.alpha_composite(gira)
+        quadros.paste(quadro, (n * tamanho, 0))
+    return _ampliar(quadros)
+
+
+# Joystick virtual (ADR-007 5.5, revisão do ajuste 0.10.0; GDD 18.19; backlog 113). Desenhado em CSS px e ampliado 3×.
+# Só as cores de 14.9.4. Sem texto. Os números do bloco `toque.analogico` do perfil saem daqui (base e bolinha).
+CTL_ANALOGICO_BASE_CSS = 120     # diâmetro da base (toque.analogico.baseCss); área de toque inteira
+CTL_ANALOGICO_BOLINHA_CSS = 48   # diâmetro da bolinha (toque.analogico.bolinhaCss); só desenho
+CTL_ANALOGICO_AMARELO = (244, 211, 94, 255)  # #f4d35e: só o anel de feedback
+CTL_ANALOGICO_SETORES = {
+    "cima": (225, 315),
+    "baixo": (45, 135),
+    "esquerda": (135, 225),
+    "direita": (-45, 45),
+}
+
+
+def ctl_analogico_base():
+    """Base do joystick: círculo de 120 CSS px, caixa #1b2452 e borda de 2 px #9aa3c7 (repouso). Sem versão ativa: o brilho é o setor."""
+    t = CTL_ANALOGICO_BASE_CSS
+    im = canvas(t, t)
+    d = ImageDraw.Draw(im)
+    d.ellipse([0, 0, t - 1, t - 1], fill=COR_CTL_CAIXA, outline=COR_CTL_BORDA, width=2)
+    return _ampliar(im)
+
+
+def ctl_analogico_bolinha(pressionada=False):
+    """Bolinha do joystick: círculo de 48 CSS px. Repouso: #9aa3c7 com borda #f4e9c8. Pressionada: #f4e9c8 com borda
+    #0b1030 de 2 px, para não se confundir com o setor amarelo #f4d35e (que fica embaixo dela)."""
+    t = CTL_ANALOGICO_BOLINHA_CSS
+    im = canvas(t, t)
+    d = ImageDraw.Draw(im)
+    if pressionada:
+        d.ellipse([0, 0, t - 1, t - 1], fill=COR_CTL_TEXTO, outline=COR_CTL_FUNDO, width=2)
+    else:
+        d.ellipse([0, 0, t - 1, t - 1], fill=COR_CTL_BORDA, outline=COR_CTL_TEXTO, width=2)
+    return _ampliar(im)
+
+
+def ctl_analogico_brilho(direcao):
+    """Anel de feedback do joystick (ADR-007 5.5 revisado): setor de 90° em #f4d35e, de 52 a 60 CSS px do centro.
+    Fica na borda da base, acima da bolinha (que vai até 48 de raio no curso). Mesmo tamanho da base."""
+    t = CTL_ANALOGICO_BASE_CSS
+    c = t // 2
+    raio_externo, raio_interno = 60, 52
+    inicio, fim = CTL_ANALOGICO_SETORES[direcao]
+    mascara = Image.new("L", (t, t), 0)
+    dm = ImageDraw.Draw(mascara)
+    dm.pieslice([c - raio_externo, c - raio_externo, c + raio_externo, c + raio_externo], start=inicio, end=fim, fill=255)
+    dm.pieslice([c - raio_interno, c - raio_interno, c + raio_interno, c + raio_interno], start=inicio, end=fim, fill=0)
+    im = canvas(t, t)
+    im.paste(CTL_ANALOGICO_AMARELO, (0, 0, t, t), mascara)
+    return _ampliar(im)
+
+
 def sprites_json(imagens_sobrinho_quadro=(32, 48)):
     w, h = imagens_sobrinho_quadro
     imagens = [{"arquivo": "tiles_casa.png", "tipo": "tileset", "quadro": {"w": TILE, "h": TILE}}]
@@ -589,6 +711,17 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
         imagens.append({"arquivo": f"spr_{nome}.png", "tipo": "imagem"})
     imagens.append({"arquivo": "spr_fumaca_dormir.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 3})
     imagens.append({"arquivo": "spr_enfeite_caixa.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 2})
+    # Controles de toque (ADR-007 5.5): PNG em 3× o tamanho CSS. Sem texto no joystick e no celular.
+    for letra in ("a", "b"):
+        imagens.append({"arquivo": f"ctl_botao_{letra}.png", "tipo": "imagem"})
+        imagens.append({"arquivo": f"ctl_botao_{letra}_pressionado.png", "tipo": "imagem"})
+    imagens.append({"arquivo": "ctl_celular.png", "tipo": "folhas", "quadro": {"w": CTL_ROTACAO_CSS * CTL_ESCALA, "h": CTL_ROTACAO_CSS * CTL_ESCALA}, "quadros": CTL_ROTACAO_QUADROS})
+    # Joystick virtual (ADR-007 5.5 revisado; GDD 18.19): base, bolinha e setores de brilho.
+    imagens.append({"arquivo": "ctl_analogico_base.png", "tipo": "imagem"})
+    imagens.append({"arquivo": "ctl_analogico_bolinha.png", "tipo": "imagem"})
+    imagens.append({"arquivo": "ctl_analogico_bolinha_pressionada.png", "tipo": "imagem"})
+    for direcao in ("cima", "baixo", "esquerda", "direita"):
+        imagens.append({"arquivo": f"ctl_analogico_brilho_{direcao}.png", "tipo": "imagem"})
     # Nick (tools-arte/gerar_nick.py, a partir de assets/referencia/ref_nick_folha.webp). Quadro 32×32 (corpos.nick).
     for direcao in ("down", "up", "left", "right"):
         imagens.append({"arquivo": f"spr_nick_idle_{direcao}.png", "tipo": "imagem"})
@@ -638,6 +771,18 @@ def main():
         "spr_enfeite_caixa.png": caixa_folhas(),                    # caixa de enfeite: quadro 0 fechada, 1 aberta
         "spr_enfeite_flutuante.png": enfeite_flutuante(),           # enfeite que sobe até a árvore
         "spr_conquista_enfeites.png": conquista_enfeites(),         # conquista da caixa, 96×96 (GDD 17.4)
+        "ctl_botao_a.png": ctl_botao("A"),
+        "ctl_botao_a_pressionado.png": ctl_botao("A", True),
+        "ctl_botao_b.png": ctl_botao("B"),
+        "ctl_botao_b_pressionado.png": ctl_botao("B", True),
+        "ctl_celular.png": ctl_celular(),
+        "ctl_analogico_base.png": ctl_analogico_base(),              # joystick virtual (ADR-007 5.5 revisado; GDD 18.19)
+        "ctl_analogico_bolinha.png": ctl_analogico_bolinha(),
+        "ctl_analogico_bolinha_pressionada.png": ctl_analogico_bolinha(True),
+        "ctl_analogico_brilho_cima.png": ctl_analogico_brilho("cima"),
+        "ctl_analogico_brilho_baixo.png": ctl_analogico_brilho("baixo"),
+        "ctl_analogico_brilho_esquerda.png": ctl_analogico_brilho("esquerda"),
+        "ctl_analogico_brilho_direita.png": ctl_analogico_brilho("direita"),
     }
     for nome, im in desenhos.items():
         im.save(PASTA / nome, optimize=True)
