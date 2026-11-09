@@ -1,0 +1,234 @@
+{
+  "avisos": [
+    "W001 escritorio: piso de outra subárea em (11, -8) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (4, -12) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (5, -12) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (5, -13) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (6, -12) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (6, -13) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (7, -12) vira sem piso nesta caixa",
+    "W001 escritorio: piso de outra subárea em (7, -13) vira sem piso nesta caixa",
+    "W001 quarto: piso de outra subárea em (5, -9) vira sem piso nesta caixa",
+    "W001 quarto: piso de outra subárea em (6, -9) vira sem piso nesta caixa",
+    "W001 quarto: piso de outra subárea em (7, -9) vira sem piso nesta caixa",
+    "W001 sala: piso de outra subárea em (-1, -1) vira sem piso nesta caixa",
+    "W001 sala: piso de outra subárea em (0, -1) vira sem piso nesta caixa",
+    "W001 sala: piso de outra subárea em (3, -10) vira sem piso nesta caixa",
+    "W001 sala: piso de outra subárea em (3, -9) vira sem piso nesta caixa",
+    "W001 sala: piso de outra subárea em (4, -8) vira sem piso nesta caixa"
+  ],
+  "origemDaCasa": [
+    -6,
+    -20
+  ],
+  "rotacao": 90,
+  "subareas": [
+    {
+      "altura": 3,
+      "contagens": {
+        "bloqueadosComPiso": 2,
+        "livres": 7,
+        "objetos": {
+          "movel": 1
+        },
+        "piso": 9,
+        "semPiso": 0
+      },
+      "deslocamento": [
+        2,
+        -20
+      ],
+      "deslocamentoNaTela": [
+        6,
+        4
+      ],
+      "escuro": false,
+      "id": "banheiro_casal",
+      "largura": 3,
+      "sha256": "6a5cb0b469071ba2fe1640bd350b187723f451c6911e5434dc50e123a280ddc4"
+    },
+    {
+      "altura": 2,
+      "contagens": {
+        "bloqueadosComPiso": 1,
+        "livres": 3,
+        "objetos": {},
+        "piso": 4,
+        "semPiso": 0
+      },
+      "deslocamento": [
+        11,
+        -8
+      ],
+      "deslocamentoNaTela": [
+        6,
+        4
+      ],
+      "escuro": false,
+      "id": "banheiro_escritorio",
+      "largura": 2,
+      "sha256": "540b45cc4741324a8e398fcbe5f2506e70b80a9533c122b641ed5b3dad8e3c38"
+    },
+    {
+      "altura": 7,
+      "contagens": {
+        "bloqueadosComPiso": 21,
+        "livres": 15,
+        "objetos": {
+          "examinavel": 3,
+          "movel": 4,
+          "peca": 2,
+          "porta": 1,
+          "spawn": 1
+        },
+        "piso": 36,
+        "semPiso": 6
+      },
+      "deslocamento": [
+        6,
+        -5
+      ],
+      "deslocamentoNaTela": [
+        4,
+        2
+      ],
+      "escuro": true,
+      "id": "cozinha",
+      "largura": 6,
+      "sha256": "90ba657af5f691499f048269c980d3d6f04add7569342e302b21afa1e649e6ea"
+    },
+    {
+      "altura": 6,
+      "contagens": {
+        "bloqueadosComPiso": 7,
+        "livres": 12,
+        "objetos": {
+          "movel": 2,
+          "porta": 1,
+          "portaFechada": 1,
+          "spawn": 1
+        },
+        "piso": 19,
+        "semPiso": 29
+      },
+      "deslocamento": [
+        4,
+        -13
+      ],
+      "deslocamentoNaTela": [
+        3,
+        2
+      ],
+      "escuro": false,
+      "id": "escritorio",
+      "largura": 8,
+      "sha256": "3bc837770bc970fe0cd19b7b6f4a13ce902b901c05baa50afdd19c3ca7ee8e14"
+    },
+    {
+      "altura": 3,
+      "contagens": {
+        "bloqueadosComPiso": 1,
+        "livres": 7,
+        "objetos": {
+          "bilhete": 1,
+          "porta": 1,
+          "spawn": 2
+        },
+        "piso": 8,
+        "semPiso": 4
+      },
+      "deslocamento": [
+        -3,
+        -1
+      ],
+      "deslocamentoNaTela": [
+        5,
+        4
+      ],
+      "escuro": false,
+      "id": "hall",
+      "largura": 4,
+      "sha256": "f78b80b67add65208671ccfc6fad4a189486761e82fcb0c62d098155cb41426f"
+    },
+    {
+      "altura": 8,
+      "contagens": {
+        "bloqueadosComPiso": 3,
+        "livres": 14,
+        "objetos": {
+          "porta": 1,
+          "portaFechada": 1,
+          "spawn": 1
+        },
+        "piso": 17,
+        "semPiso": 23
+      },
+      "deslocamento": [
+        3,
+        -16
+      ],
+      "deslocamentoNaTela": [
+        5,
+        1
+      ],
+      "escuro": false,
+      "id": "quarto",
+      "largura": 5,
+      "sha256": "5455a2b3923f7b1265149d8d0625e1ba55fad5b794fa7b893de30fabc14d34c4"
+    },
+    {
+      "altura": 10,
+      "contagens": {
+        "bloqueadosComPiso": 13,
+        "livres": 62,
+        "objetos": {
+          "arvore": 1,
+          "interruptor": 1,
+          "movel": 4,
+          "peca": 1,
+          "porta": 4,
+          "portaFechada": 1,
+          "spawn": 4
+        },
+        "piso": 75,
+        "semPiso": 35
+      },
+      "deslocamento": [
+        -6,
+        -10
+      ],
+      "deslocamentoNaTela": [
+        2,
+        0
+      ],
+      "escuro": true,
+      "id": "sala",
+      "largura": 11,
+      "sha256": "fc6d6d2a8297d10f0d23e408ed880dc3f4c288a0051515db572872b51989924c"
+    },
+    {
+      "altura": 5,
+      "contagens": {
+        "bloqueadosComPiso": 8,
+        "livres": 16,
+        "objetos": {
+          "movel": 2
+        },
+        "piso": 24,
+        "semPiso": 6
+      },
+      "deslocamento": [
+        -4,
+        -16
+      ],
+      "deslocamentoNaTela": [
+        4,
+        3
+      ],
+      "escuro": false,
+      "id": "suite_casal",
+      "largura": 6,
+      "sha256": "dd0b1f85191e769000fcae32bfbf04cf2a3f942c6ab53db0cedc1c1ebf3d5e1b"
+    }
+  ]
+}

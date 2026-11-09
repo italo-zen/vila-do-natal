@@ -2,3 +2,17 @@ node_modules/
 dist/
 dist-playtest/
 .DS_Store
+*.log
+
+# Decisão do Diretor (2026-11-08): não versionar referências, arquivos de teste nem a planta original
+assets/referencia/
+assets/teste-sprite-hd/
+dist-qa/
+qa/evidencias/
+qa/baseline-014/
+maps/casa-real/our-home.tmx
+__pycache__/
+*.pyc
+tools-arte/previews/
+tools-arte/preview_*.png
+assets/**/preview.png

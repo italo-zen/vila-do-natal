@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 2,
+  "contentVersion": "1.0.0",
+  "locale": "pt-BR",
+  "artProfile": "hd-480x352",
+  "maps": [
+    {
+      "id": "hall",
+      "file": "maps/casa-real/hall.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "sala",
+      "file": "maps/casa-real/sala.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "cozinha",
+      "file": "maps/casa-real/cozinha.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "escritorio",
+      "file": "maps/casa-real/escritorio.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "banheiro_escritorio",
+      "file": "maps/casa-real/banheiro_escritorio.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "quarto",
+      "file": "maps/casa-real/quarto.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "banheiro_casal",
+      "file": "maps/casa-real/banheiro_casal.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "suite_casal",
+      "file": "maps/casa-real/suite_casal.json",
+      "tileset": "tiles_casa"
+    }
+  ],
+  "missions": [
+    {
+      "id": "marco1",
+      "file": "missions/marco1.json",
+      "maps": [
+        "hall",
+        "sala",
+        "cozinha"
+      ],
+      "requires": []
+    },
+    {
+      "id": "parte1",
+      "file": "missions/parte1.json",
+      "maps": [
+        "hall",
+        "sala",
+        "cozinha",
+        "quarto",
+        "escritorio"
+      ],
+      "requires": [
+        "marco1"
+      ]
+    },
+    {
+      "id": "parte2",
+      "file": "missions/parte2.json",
+      "maps": [
+        "hall",
+        "sala",
+        "cozinha",
+        "quarto",
+        "escritorio"
+      ],
+      "requires": [
+        "parte1"
+      ]
+    },
+    {
+      "id": "parte3",
+      "file": "missions/parte3.json",
+      "maps": [
+        "hall",
+        "sala",
+        "cozinha",
+        "quarto",
+        "escritorio"
+      ],
+      "requires": [
+        "parte2"
+      ]
+    }
+  ],
+  "texts": [
+    {
+      "locale": "pt-BR",
+      "file": "texts/pt-BR.json"
+    }
+  ]
+}

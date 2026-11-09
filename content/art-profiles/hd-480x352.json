@@ -1,0 +1,182 @@
+{
+  "barra": {
+    "alturaPorLinhas": {
+      "1": 32,
+      "2": 56
+    },
+    "entreLinhas": 20,
+    "margemInferior": 8,
+    "margemLateral": 16
+  },
+  "botao": {
+    "altura": 48,
+    "alturaTecla": 28,
+    "bordaFoco": 4,
+    "bordaFocoTecla": 2,
+    "bordaNormal": 2,
+    "bordaPressionada": 4,
+    "largura": 368,
+    "larguraTecla": 104,
+    "recuoMarca": 28
+  },
+  "corpos": {
+    "sobrinho": {
+      "fpsAndar": 6,
+      "pes": {
+        "h": 16,
+        "w": 24
+      },
+      "quadro": {
+        "h": 48,
+        "w": 32
+      },
+      "quadrosDeAndar": 2
+    }
+  },
+  "dialogo": {
+    "altura": 128,
+    "borda": 2,
+    "seta": {
+      "altura": 12,
+      "deTopo": 68,
+      "largura": 16,
+      "recuo": 16
+    }
+  },
+  "escala": {
+    "inteiraAPartirDe": 2,
+    "minima": 1,
+    "modo": "hibrida"
+  },
+  "escalaDeExibicao": {
+    "cartao": 1,
+    "conquista": 1
+  },
+  "espaco": {
+    "grande": 32,
+    "medio": 16,
+    "pequeno": 8
+  },
+  "fonte": {
+    "corpo": 16,
+    "entrelinhas": 8,
+    "entrelinhasFina": 4,
+    "familia": "Press Start 2P",
+    "grade": 8,
+    "titulo": 32
+  },
+  "id": "hd-480x352",
+  "luz": {
+    "alfa": 0.85,
+    "passoDegrau": 8,
+    "raioEmTiles": 3,
+    "tipo": "penumbra-degraus",
+    "tons": 3
+  },
+  "nome": "HD 480×352 (tile 32)",
+  "objetos": {
+    "brilhoInterruptor": {
+      "alfa": 0.28,
+      "raioEmTiles": 0.625
+    },
+    "halo": {
+      "margem": 8
+    }
+  },
+  "paleta": {
+    "maximoDeCores": 32,
+    "minimoDeCores": 16
+  },
+  "pasta": "assets/hd-480x352",
+  "sala": {
+    "colunas": 15,
+    "linhas": 11
+  },
+  "schemaVersion": 1,
+  "tema": {
+    "alfaBarra": 0.92,
+    "alfaCaixa": 0.94,
+    "caixa": "#1b2452",
+    "destaque": "#f4d35e",
+    "fraco": "#9aa3c7",
+    "fundo": "#0b1030",
+    "texto": "#f4e9c8"
+  },
+  "tile": 32,
+  "telas": {
+    "titulo": {
+      "nomeY": 36,
+      "versaoTopo": 6,
+      "menuY": [
+        192,
+        240
+      ]
+    },
+    "comoJogar": {
+      "tituloY": 12,
+      "listaX": 20,
+      "listaY": 64,
+      "listaLargura": 440,
+      "espacoEntreItens": 8,
+      "voltarY": 244
+    },
+    "selecao": {
+      "tituloY": 12,
+      "tituloLargura": 464,
+      "cartaoLargura": 104,
+      "cartaoAltura": 160,
+      "cartaoTopo": 104,
+      "espaco": 12,
+      "spriteDeTopo": 16,
+      "nomeDeTopo": 124
+    },
+    "conquista": {
+      "personagem": {
+        "x": 192,
+        "y": 20
+      },
+      "lampada": {
+        "x": 336,
+        "y": 36
+      },
+      "textoY": 144,
+      "textoLargura": 432,
+      "continuarY": 240,
+      "peca": {
+        "x": 168,
+        "y": 16,
+        "escala": 1
+      },
+      "personagemDaPeca": {
+        "x": 280,
+        "y": 40
+      }
+    }
+  },
+  "painel": {
+    "margemTopo": 12,
+    "campos": {
+      "passo": 48,
+      "largura": 40,
+      "altura": 32,
+      "topo": 40,
+      "textoDeTopo": 8
+    },
+    "mensagem": {
+      "x": 24,
+      "y": 84,
+      "largura": 432
+    },
+    "grade": {
+      "colunas": 3,
+      "passoX": 112,
+      "passoY": 32,
+      "topo": 132
+    }
+  },
+  "sprites": {
+    "sobrinho": {
+      "coresMin": 16
+    }
+  }
+}
