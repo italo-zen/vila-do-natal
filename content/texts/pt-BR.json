@@ -5,8 +5,8 @@
   "titulo.versao": "v{versao}",
   "comojogar.titulo": "Como jogar",
   "comojogar.mover": "Mover: setas ou WASD",
-  "comojogar.botaoA": "Botão A: Z ou Enter. Conversar, examinar e avançar textos.",
-  "comojogar.botaoB": "Botão B: X ou Esc. Voltar e fechar textos.",
+  "comojogar.botaoA": "Botão A: Z ou Enter.",
+  "comojogar.botaoB": "Botão B: X ou Esc.",
   "comojogar.celular": "No celular, em breve: botões na tela.",
   "comojogar.voltar": "Voltar",
   "selecao.titulo": "Quem vai jogar?",
@@ -52,10 +52,17 @@
   "conquista.parte3": "Parabéns, você conseguiu encontrar a última parte da árvore de Natal!",
   "arvore.estado.1": "Ela já tem 1 parte. Faltam 2 partes.",
   "arvore.estado.2": "Ela já tem 2 partes. Falta 1 parte.",
-  "arvore.estado.3": "A árvore está montada! Que linda!",
+  "arvore.estado.3": [
+    "A árvore está montada!",
+    "Falta a caixa de enfeites."
+  ],
   "arvore.chegada.1": "Agora a árvore tem 1 parte. Faltam 2 partes!",
   "arvore.chegada.2": "Agora a árvore tem 2 partes. Falta 1 parte!",
-  "arvore.chegada.3": "A árvore está montada! Que linda!",
+  "arvore.chegada.3": [
+    "A árvore está montada! Que linda!",
+    "Mas tem algo estranho... Ainda falta alguma coisa.",
+    "Deve estar perdida pela casa."
+  ],
   "aviso.peca2.antes1": [
     "Ainda não!",
     "Essa é a parte do meio. Encontre a base antes."
@@ -67,5 +74,79 @@
   "aviso.peca3.antes2": [
     "Ainda não!",
     "Essa é a parte de cima. Encontre a do meio antes."
-  ]
+  ],
+  "barra.casa2": "X: farejar  H: dica",
+  "barra.dica": "Z ou X: voltar",
+  "comojogar.farejar": "Farejar: X, com o Nick acordado.",
+  "comojogar.dica": "Dica: H, ou clique no ícone ?",
+  "dica.titulo": "Dica",
+  "dica.voltar": "Voltar",
+  "dica.porta": [
+    "Leia o bilhete na parede.",
+    "Ele tem a pista da senha."
+  ],
+  "dica.luzes.dormindo": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "O Nick está dormindo."
+  ],
+  "dica.luzes.acordado": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte1.dormindo": [
+    "Procure uma parte da árvore.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte1.acordado": [
+    "Procure uma parte da árvore.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte2.dormindo": [
+    "Procure a parte do meio.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte2.acordado": [
+    "Procure a parte do meio.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte3.dormindo": [
+    "Procure em outro cômodo.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte3.acordado": [
+    "Procure em outro cômodo.",
+    "Aperte X e o Nick fareja."
+  ],
+  "nick.acordou": [
+    "O Nick acordou! Ele vai seguir você.",
+    "Aperte X para farejar."
+  ],
+  "nick.latido": "Au!",
+  "conquista.enfeites": "Parabéns, você conseguiu encontrar a caixa de enfeites de Natal!",
+  "aviso.enfeite.antes3": [
+    "Ainda não!",
+    "Essa é a caixa de enfeites. Monte a árvore antes."
+  ],
+  "arvore.chegada.4": [
+    "Agora a árvore está toda enfeitada!",
+    "Feliz Natal para a família!"
+  ],
+  "dica.enfeites.dormindo": [
+    "Procure a caixa de enfeites.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.enfeites.acordado": [
+    "Procure a caixa de enfeites.",
+    "Aperte X e o Nick fareja."
+  ],
+  "creditos.titulo": "Créditos",
+  "creditos.jogo": "Natal na Casa do Tio Ítalo e da Tia Nath",
+  "creditos.sobrinho": "Obrigado, {nome}! A árvore ficou linda.",
+  "creditos.nick": "O Nick também ajudou muito!",
+  "creditos.agradecimento": "Feito com carinho para a família.",
+  "creditos.versao": "Versão {versao}",
+  "creditos.voltar": "Voltar ao título",
+  "barra.creditos": "Z ou X: voltar ao título"
 }

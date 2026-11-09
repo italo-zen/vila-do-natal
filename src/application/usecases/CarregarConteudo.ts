@@ -53,7 +53,13 @@ export class CarregarConteudo {
 
     const missoes: MissaoCarregada[] = [];
     for (const decl of manifesto.missions) {
-      missoes.push({ id: decl.id, requires: [...decl.requires], maps: [...decl.maps], missao: interpretarMissao(await this.fonte.missao(decl.id)) });
+      missoes.push({
+        id: decl.id,
+        requires: [...decl.requires],
+        maps: [...decl.maps],
+        missao: interpretarMissao(await this.fonte.missao(decl.id)),
+        final: decl.final === true,
+      });
     }
     const iniciais = manifesto.missions.filter((m) => m.requires.length === 0);
     if (iniciais.length !== 1) throw new ConteudoInvalidoError([`Deve haver exatamente uma missão inicial (sem "requires"); há ${iniciais.length}.`]);

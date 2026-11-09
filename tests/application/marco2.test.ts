@@ -88,10 +88,12 @@ describe('Marco 2: textos exatos (GDD 15.8; backlog 051, critério 3)', () => {
     'conquista.parte3': 'Parabéns, você conseguiu encontrar a última parte da árvore de Natal!',
     'arvore.estado.1': 'Ela já tem 1 parte. Faltam 2 partes.',
     'arvore.estado.2': 'Ela já tem 2 partes. Falta 1 parte.',
-    'arvore.estado.3': 'A árvore está montada! Que linda!',
+    // Muda no Marco 4 (GDD 17.5 e 17.8): o exame do estado 3 diz o que falta. Antes era "A árvore está montada! Que linda!".
+    'arvore.estado.3': ['A árvore está montada!', 'Falta a caixa de enfeites.'],
     'arvore.chegada.1': 'Agora a árvore tem 1 parte. Faltam 2 partes!',
     'arvore.chegada.2': 'Agora a árvore tem 2 partes. Falta 1 parte!',
-    'arvore.chegada.3': 'A árvore está montada! Que linda!',
+    // Três páginas desde a 0.8.1 (pedido do Diretor, PT4a): o texto literal, com a quebra em páginas de até 2 linhas.
+    'arvore.chegada.3': ['A árvore está montada! Que linda!', 'Mas tem algo estranho... Ainda falta alguma coisa.', 'Deve estar perdida pela casa.'],
     'aviso.peca2.antes1': ['Ainda não!', 'Essa é a parte do meio. Encontre a base antes.'],
     'aviso.peca3.antes1': ['Ainda não!', 'Essa é a parte de cima. Encontre as outras antes.'],
     'aviso.peca3.antes2': ['Ainda não!', 'Essa é a parte de cima. Encontre a do meio antes.'],
@@ -118,10 +120,10 @@ describe('Marco 2: textos exatos (GDD 15.8; backlog 051, critério 3)', () => {
 });
 
 describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () => {
-  it('manifesto: marco1, parte1, parte2 e parte3 com requires encadeado e maps da opção B', async () => {
+  it('manifesto: marco1, parte1, parte2, parte3 e enfeites (Marco 4) com requires encadeado e maps da opção B', async () => {
     const c = await carregar(lerConteudo());
-    expect(c.missoes.map((m) => m.id)).toEqual(['marco1', 'parte1', 'parte2', 'parte3']);
-    expect(c.missoes.map((m) => m.requires)).toEqual([[], ['marco1'], ['parte1'], ['parte2']]);
+    expect(c.missoes.map((m) => m.id)).toEqual(['marco1', 'parte1', 'parte2', 'parte3', 'enfeites']);
+    expect(c.missoes.map((m) => m.requires)).toEqual([[], ['marco1'], ['parte1'], ['parte2'], ['parte3']]);
     expect(c.missoes[0].maps).toEqual(['hall', 'sala', 'cozinha']);
     for (const m of c.missoes.slice(1)) {
       // Quarto (P2) e Escritório (P3) abrem depois das luzes; a Suíte segue fechada (pergunta 30; ADR-004 seção 9.1).
@@ -140,7 +142,7 @@ describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () 
     expect(conducaoDaFase(c.missoes, 'parte2' as Fase)).toEqual({ mapa: 'sala', x: 3, y: 7, direcao: 'baixo' });
   });
 
-  it('missão ativa: marco1, depois parte1, parte2 e parte3; depois de tudo, a última (jogo livre, GDD 15.6.8)', async () => {
+  it('missão ativa: marco1, parte1, parte2, parte3 e enfeites; depois da final, a própria final (ADR-006 seção 1.4)', async () => {
     const c = await carregar(lerConteudo());
     const ativa = (concluidas: Fase[]) => missaoAtiva(c.missoes, (f) => concluidas.includes(f)).id;
     expect(ativa([])).toBe('marco1');
@@ -148,7 +150,9 @@ describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () 
     expect(ativa(['luzes'])).toBe('parte1');
     expect(ativa(['luzes', 'parte1'])).toBe('parte2');
     expect(ativa(['luzes', 'parte1', 'parte2'])).toBe('parte3');
-    expect(ativa(['luzes', 'parte1', 'parte2', 'parte3'])).toBe('parte3');
+    // Depois da parte 3 a caixa de enfeite é a missão ativa (GDD 17.2); depois da final, vale a última.
+    expect(ativa(['luzes', 'parte1', 'parte2', 'parte3'])).toBe('enfeites');
+    expect(ativa(['luzes', 'parte1', 'parte2', 'parte3', 'enfeites'])).toBe('enfeites');
   });
 
   it('o contexto da partida abre Quarto (P2) e Escritório (P3) só depois das luzes, e nunca a Suíte nem banheiros', async () => {
@@ -458,14 +462,15 @@ describe('Marco 2: exame da árvore em cada estado (GDD 15.4; BUG-M2-04)', () =>
       // O estado 0 é o texto do Marco 1 (GDD 14.9.3, já aprovado no PT1): o limite de 2 linhas é o do Marco 2.
       if (estado > 0) for (const pagina of t.paginas(chave)) expect(linhasDe(pagina, 28), `${chave}: "${pagina}"`).toBeLessThanOrEqual(2);
     }
-    expect(t.paginas(chaveDoEstadoDaArvore(3))).toEqual(['A árvore está montada! Que linda!']);
+    // Estado 3 com duas páginas no Marco 4 (GDD 17.5; ADR-006 seção 3.4).
+    expect(t.paginas(chaveDoEstadoDaArvore(3))).toEqual(['A árvore está montada!', 'Falta a caixa de enfeites.']);
   });
 });
 
 describe('Marco 2: versão e perfil (backlog 057 e 054)', () => {
-  it('package.json está em 0.6.0', () => {
+  it('package.json está em 0.8.1 (ajuste do PT4a: texto da chegada da parte 3, 2026-11-09)', () => {
     const pkg = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf-8')) as { version: string };
-    expect(pkg.version).toBe('0.6.0');
+    expect(pkg.version).toBe('0.8.1');
   });
 
   it('o perfil HD tem a posição da tela de conquista da peça (telas.conquista.peca e personagemDaPeca)', () => {

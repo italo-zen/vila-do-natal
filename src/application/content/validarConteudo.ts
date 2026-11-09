@@ -2,18 +2,61 @@ import type { Manifest } from './Manifest';
 import type { MapaDoJogo, ObjetoDoMapa } from './Mapa';
 import type { Textos } from './Textos';
 import type { PerfilDeArte } from '../arte/PerfilDeArte';
-import { ehFase, type Fase } from '../../domain/progresso/Fase';
+import { ehFase, proximaFase, type Fase } from '../../domain/progresso/Fase';
 import { deslocamentoDaSubarea, ladoDaPorta, ladoDoVetor, vaoDaPorta, vetorDaSaida } from '../mundo/subarea';
 import { calcularRotaDeConducao } from '../mundo/conducao';
 import { FASE_DA_PECA, ordemDaFase, situacaoDaFase } from '../mundo/pecas';
+import { FASE_DO_ENFEITE } from '../mundo/enfeite';
 import type { MissaoCarregada } from '../mundo/missoes';
+import { pontosDaCaixa } from './pontosDePartida';
+import { validarNick } from './validarNick';
 
 const VIZINHOS: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 const DIRECOES = ['cima', 'baixo', 'esquerda', 'direita'];
 const LADOS_DA_PORTA = ['cima', 'baixo', 'esquerda', 'direita'];
-const TIPOS_CONHECIDOS = ['porta', 'portaFechada', 'spawn', 'interruptor', 'bilhete', 'arvore', 'examinavel', 'movel', 'peca'];
+const TIPOS_CONHECIDOS = ['porta', 'portaFechada', 'spawn', 'interruptor', 'bilhete', 'arvore', 'examinavel', 'movel', 'peca', 'enfeite'];
 /** Chaves de aviso que o Marco 2 exige, com duas páginas cada (GDD 15.8; ADR-004 seção 8, item 19). */
 const AVISOS_OBRIGATORIOS = ['aviso.peca2.antes1', 'aviso.peca3.antes1', 'aviso.peca3.antes2'];
+
+/** Largura de uma linha de texto em caracteres (GDD 17.8: até 28 por linha). */
+const LARGURA_DA_LINHA = 28;
+/**
+ * Textos do Marco 4 (ADR-006 seção 8.5; T009): chave, número de páginas e o teto de linhas de cada página. Diálogo e
+ * créditos: 2 linhas; conquista e dica: 3 linhas (GDD 17.8). O texto exato é conferido nos testes (tests/application).
+ */
+export const TEXTOS_DO_MARCO4: readonly { chave: string; paginas: number; linhas: number }[] = [
+  { chave: 'conquista.enfeites', paginas: 1, linhas: 3 },
+  { chave: 'aviso.enfeite.antes3', paginas: 2, linhas: 2 },
+  { chave: 'arvore.estado.3', paginas: 2, linhas: 2 },
+  { chave: 'arvore.chegada.3', paginas: 3, linhas: 2 },
+  { chave: 'arvore.chegada.4', paginas: 2, linhas: 2 },
+  { chave: 'dica.enfeites.dormindo', paginas: 2, linhas: 1 },
+  { chave: 'dica.enfeites.acordado', paginas: 2, linhas: 1 },
+  { chave: 'creditos.titulo', paginas: 1, linhas: 1 },
+  { chave: 'creditos.jogo', paginas: 1, linhas: 2 },
+  { chave: 'creditos.sobrinho', paginas: 1, linhas: 2 },
+  { chave: 'creditos.nick', paginas: 1, linhas: 2 },
+  { chave: 'creditos.agradecimento', paginas: 1, linhas: 2 },
+  { chave: 'creditos.versao', paginas: 1, linhas: 1 },
+  { chave: 'creditos.voltar', paginas: 1, linhas: 1 },
+  { chave: 'barra.creditos', paginas: 1, linhas: 1 },
+];
+
+/** Linhas que um texto ocupa com quebra por palavras, de até `largura` caracteres por linha (aproximação de N013). */
+export function linhasDe(texto: string, largura: number): number {
+  let linhas = 1;
+  let atual = 0;
+  for (const palavra of texto.split(/\s+/).filter((p) => p.length > 0)) {
+    const tamanho = palavra.length;
+    if (atual === 0) atual = tamanho;
+    else if (atual + 1 + tamanho <= largura) atual += 1 + tamanho;
+    else {
+      linhas++;
+      atual = tamanho;
+    }
+  }
+  return linhas;
+}
 
 /**
  * Spawns de entrada no escuro (ADR-004 seção 8, item 11): lista explícita. Só eles têm a regra de 3 tiles do
@@ -96,8 +139,8 @@ export function validarConteudo(e: EntradaDeConteudo): string[] {
 }
 
 /**
- * Avisos do conteúdo (não bloqueiam teste nem build). Hoje: W027, gatilho de par de fórmula com mais de um vizinho
- * livre (ADR-004 seção 13.19; P7 e P8 da Sala). Um lado com chegada declarada não é aviso: é erro (E027).
+ * Avisos do conteúdo (não bloqueiam teste nem build). W027: gatilho de par de fórmula com mais de um vizinho livre
+ * (ADR-004 seção 13.19; P7 e P8 da Sala). (A guarda de 2 linhas é erro desde a pergunta 31, ADR-005 seção 6.)
  */
 export function avisosDeConteudo(e: EntradaDeConteudo): string[] {
   return analisarConteudo(e).avisos;
@@ -136,6 +179,20 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       }
       for (const o of mapa.objetos) {
         if (o.tipo !== 'movel' && o.y === yBarra) erros.push(`subárea '${id}': ${o.tipo} em (${o.x}, ${yBarra}) na linha da barra (tela y ${tela.linhas - 1})`);
+      }
+    }
+    // Segunda linha da barra (ADR-005 seção 6, GDD 16.9): a linha de tela `linhas − 2`. Erro, desde a resposta do Diretor à
+    // pergunta 31 (2026-11-08): a Sala tem (0, 9) e (1, 9) bloqueados na cópia de trabalho. Chão andável, objeto, gatilho e
+    // spawn nela são erro.
+    const yBarra2 = tela.linhas - 2 - desl.y;
+    if (yBarra2 >= 0 && yBarra2 < mapa.altura) {
+      for (let x = 0; x < mapa.largura; x++) {
+        if (mapa.colisao[yBarra2][x] === false && mapa.chao[yBarra2][x] !== 0) {
+          erros.push(`subárea '${id}': chão andável em (${x}, ${yBarra2}) na linha da barra (tela y ${tela.linhas - 2}; guarda de 2 linhas, ADR-005 seção 6)`);
+        }
+      }
+      for (const o of mapa.objetos) {
+        if (o.tipo !== 'movel' && o.y === yBarra2) erros.push(`subárea '${id}': ${o.tipo} em (${o.x}, ${yBarra2}) na linha da barra (tela y ${tela.linhas - 2})`);
       }
     }
     const nomesDeSpawn = new Set<string>();
@@ -329,6 +386,49 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
     if (missaoDaPeca && !missaoDaPeca.maps.includes(mapa.id)) erros.push(`Subárea "${mapa.id}": peça ${ordem} fora das subáreas abertas de parte${ordem} (ADR-004 seção 8, item 18).`);
   }
 
+  // Caixa de enfeite (ADR-006 seções 2 e 9): T006 (uma caixa, ordem 4, escondida), T007 (tile), T008 (subárea do farejar).
+  const caixas = [...todos.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'enfeite').map((o) => ({ mapa: m, o })));
+  if (caixas.length !== 1) erros.push(`T006 Deve haver exatamente uma caixa de enfeite (tipo enfeite); há ${caixas.length} (ADR-006 seção 2.2).`);
+  const missaoDosEnfeites = missoes.find((m) => FASE_DO_ENFEITE in m.missao.conquistas);
+  for (const { mapa, o } of caixas) {
+    const rotulo = `Subárea "${mapa.id}": enfeite em (${o.x}, ${o.y})`;
+    if (Number(o.dados.ordem) !== 4) erros.push(`T006 ${rotulo}: ordem ${String(o.dados.ordem)}, deveria ser 4 (ADR-006 seção 2.2).`);
+    if (o.dados.estadoInicial !== 'escondida') erros.push(`T006 ${rotulo}: estadoInicial "${String(o.dados.estadoInicial)}", deveria ser "escondida".`);
+    // T007: piso livre, pelo menos 2 vizinhos livres, e nenhum vizinho livre é peça, enfeite, gatilho, vão, spawn, chegada,
+    // interruptor, porta fechada ou examinável (ADR-004 seção 8, item 6; GDD 17.3).
+    if (!livreNoMapa(mapa, o.x, o.y)) erros.push(`T007 ${rotulo} precisa estar em piso livre (colisão 0; ADR-006 seção 9).`);
+    const reservadosDaCaixa = new Set<string>([
+      ...mapa.objetos.filter((x) => ['porta', 'portaFechada', 'spawn', 'interruptor', 'examinavel', 'arvore', 'bilhete', 'peca', 'enfeite'].includes(x.tipo)).map((x) => `${x.x},${x.y}`),
+      ...vaosDaSubarea(mapa).map((v) => `${v.x},${v.y}`),
+    ]);
+    const vizinhosLivres = VIZINHOS.filter(([dx, dy]) => livreNoMapa(mapa, o.x + dx, o.y + dy));
+    if (vizinhosLivres.length < 2) erros.push(`T007 ${rotulo} com ${vizinhosLivres.length} vizinho(s) livre(s); precisa de pelo menos 2 (ADR-006 seção 9).`);
+    for (const [dx, dy] of vizinhosLivres) {
+      if (reservadosDaCaixa.has(`${o.x + dx},${o.y + dy}`)) erros.push(`T007 ${rotulo}: o vizinho livre (${o.x + dx}, ${o.y + dy}) é gatilho, vão, chegada, peça, enfeite ou objeto.`);
+    }
+    if (mapa.objetos.some((m) => m.tipo === 'movel' && o.x >= m.x && o.y >= m.y && o.x < m.x + Number(m.dados.w) && o.y < m.y + Number(m.dados.h))) {
+      erros.push(`T007 ${rotulo} dentro de móvel.`);
+    }
+    // T008: a caixa está na subárea que é `nick.alvo` da missão de enfeites, e essa subárea está em `maps` dela.
+    const alvo = missaoDosEnfeites?.missao.nick?.alvo;
+    if (!missaoDosEnfeites || alvo !== mapa.id || !missaoDosEnfeites.maps.includes(mapa.id)) {
+      erros.push(`T008 ${rotulo}: a caixa precisa estar na subárea alvo de "${missaoDosEnfeites?.id ?? 'enfeites'}" (alvo "${String(alvo)}") e nas subáreas da missão.`);
+    }
+  }
+
+  // T009: textos do Marco 4 (ADR-006 seção 8.5): existem, com o número de páginas e o teto de linhas de cada página.
+  for (const { chave, paginas, linhas } of TEXTOS_DO_MARCO4) {
+    if (!textos.tem(chave)) {
+      erros.push(`T009 Texto "${chave}" não existe (ADR-006 seção 8.5).`);
+      continue;
+    }
+    if (textos.quantasPaginas(chave) !== paginas) erros.push(`T009 Texto "${chave}" precisa ter ${paginas} página(s); tem ${textos.quantasPaginas(chave)}.`);
+    textos.paginas(chave).forEach((pagina, i) => {
+      const n = linhasDe(pagina, LARGURA_DA_LINHA);
+      if (n > linhas) erros.push(`T009 Texto "${chave}", página ${i + 1}: ${n} linhas de ${LARGURA_DA_LINHA}; o teto é ${linhas} (GDD 17.8).`);
+    });
+  }
+
   // Regra 19: avisos "ainda não" com duas páginas cada (GDD 15.8).
   for (const chave of AVISOS_OBRIGATORIOS) {
     if (!textos.tem(chave)) erros.push(`Texto "${chave}" (aviso "ainda não") não existe (ADR-004 seção 8, item 19).`);
@@ -350,6 +450,13 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       for (const chave of inicio.paginas) {
         if (!textos.tem(chave)) erros.push(`Missão "${inicial.id}": página de introdução "${chave}" não existe nos textos.`);
       }
+    }
+  }
+
+  // T005 (ADR-006 seção 9): as fases da missão final são as últimas de FASES (sem próxima fase).
+  for (const m of missoes.filter((x) => x.final)) {
+    for (const fase of Object.keys(m.missao.conquistas)) {
+      if (ehFase(fase) && proximaFase(fase) !== null) erros.push(`T005 Missão final "${m.id}": a fase "${fase}" não é a última de FASES (ADR-006 seção 1.2).`);
     }
   }
 
@@ -407,6 +514,9 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       let partidas: { mapa: string; x: number; y: number }[] = [];
       if (fase === 'luzes') {
         if (inicioNo) partidas = [inicioNo];
+      } else if (fase === FASE_DO_ENFEITE) {
+        // Caixa de enfeite: parte dos vizinhos livres dela (ADR-006 seção 2.5).
+        partidas = pontosDaCaixa(todos);
       } else if (ordem !== undefined && FASE_DA_PECA[ordem] === fase) {
         const peca = pecas.find((p) => Number(p.o.dados.ordem) === ordem);
         if (peca) {
@@ -420,11 +530,19 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       }
       const ok = partidas.some((p) => calcularRotaDeConducao(todos, p, { mapa: d.mapa, x: d.x, y: d.y }, concluida, ctx));
       if (!ok) {
-        const origem = fase === 'luzes' && inicial?.missao.inicio ? `do início (${inicial.missao.inicio.mapa}, ${inicial.missao.inicio.spawn})` : `da peça ${ordem}`;
+        const origem =
+          fase === 'luzes' && inicial?.missao.inicio
+            ? `do início (${inicial.missao.inicio.mapa}, ${inicial.missao.inicio.spawn})`
+            : fase === FASE_DO_ENFEITE
+              ? 'da caixa de enfeite'
+              : `da peça ${ordem}`;
         erros.push(`${rotulo}: destino ${d.mapa} (${d.x}, ${d.y}) sem rota a partir ${origem}.`);
       }
     }
   }
+
+  // Nick e dicas (ADR-005 seção 2.6, N001 a N014). Todos erros.
+  erros.push(...validarNick({ todos, missoes, textos, perfil }));
 
   return { erros, avisos };
 }

@@ -20,7 +20,20 @@ Saída: assets/hd-480x352/
   spr_indicador_seta_esquerda.png  32×32   a mesma seta espelhada (porta lateral, passagem para a esquerda)
   spr_indicador_seta_baixo.png     32×32   a mesma seta girada (porta de baixo, saída para baixo; sem uso no Marco 1)
   spr_indicador_tapete.png         32×32   tapete vermelho com borda clara (porta de baixo; saída para baixo)
-  sprites.json               lista de imagens do perfil (ADR-003 seção 4)
+  spr_seta_farejar_direita.png     32×32   seta de farejar dourada #f4d35e (GDD 16.5.3; ADR-005 7.1)
+  spr_seta_farejar_esquerda.png    32×32   a mesma seta espelhada
+  spr_seta_farejar_cima.png        32×32   a mesma seta girada para cima (P8 saindo do Hall)
+  spr_icone_dica.png               32×32   "?" dourado em caixa #1b2452, borda 1 px #9aa3c7 (GDD 16.8.1)
+  spr_balao_au.png                 48×32   bolha do balão, sem texto (o "Au!" é desenhado pelo jogo, nick.latido)
+  spr_balao_zzz.png                48×32   balão com o zzz desenhado (GDD 16.5.5)
+  spr_balao_exclamacao.png         16×24   "!" amarelo de acordar (ADR-005 7.1)
+  spr_fumaca_dormir.png            96×32   fumacinha de dormir, 3 quadros de 32×32 (GDD 16.6)
+  spr_enfeite_caixa.png            64×32   caixa de enfeite, 2 quadros de 32×32: 0 fechada, 1 aberta (GDD 17.3; backlog 088)
+  spr_enfeite_flutuante.png        32×32   enfeite que sobe até a árvore no encaixe (GDD 17.4)
+  spr_arvore_enfeitada.png         32×32   árvore com enfeites, estado 4 (GDD 17.5), mesma âncora de spr_arvore_completa
+  spr_conquista_enfeites.png       96×96   ilustração da conquista da caixa (GDD 17.4, item 1), escala 3
+  sprites.json               lista de imagens do perfil (ADR-003 seção 4), com as do Nick (spr_nick_*, de
+                             tools-arte/gerar_nick.py; as entradas são escritas aqui, para o JSON sair de um só gerador)
 
 Os sobrinhos (spr_<nome>_*.png) não saem daqui: vêm de tools-arte/gerar_sobrinhos.py --perfil hd-480x352.
 
@@ -47,6 +60,7 @@ de baixo tem tapete (ou seta). Os sprites não são tiles: entram em sprites.jso
 Python: /Library/Developer/CommandLineTools/usr/bin/python3 (com Pillow). Sem aleatoriedade.
 """
 import json
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
@@ -349,6 +363,213 @@ def tapete():
     return im
 
 
+COR_FAREJO = (244, 211, 94, 255)     # #f4d35e: dourado da seta de farejar (GDD 16.5.3)
+COR_CAIXA = (27, 36, 82, 255)        # #1b2452: caixa da HUD (GDD 16.8.1)
+COR_BORDA_HUD = (154, 163, 199, 255) # #9aa3c7: borda da HUD (GDD 16.8.1)
+COR_BALAO = (244, 233, 200, 255)     # #f4e9c8: miolo do balão (texto claro do perfil)
+COR_TINTA = (27, 36, 82, 255)        # #1b2452: contorno e traços do balão
+
+
+def seta_colorida(cor_miolo):
+    """Seta para a direita com a geometria da seta branca (seta_direita) e outra cor de miolo."""
+    mascara = Image.new("L", (TILE, TILE), 0)
+    ImageDraw.Draw(mascara).polygon([(6, 12), (18, 12), (18, 6), (27, 15), (18, 24), (18, 19), (6, 19)], fill=255)
+    contorno = mascara.filter(ImageFilter.MaxFilter(3))
+    im = canvas(TILE, TILE)
+    im.paste(COR_CONTORNO, (0, 0, TILE, TILE), contorno)
+    im.paste(cor_miolo, (0, 0, TILE, TILE), mascara)
+    return im
+
+
+def seta_farejo(direcao):
+    """Seta dourada de farejar (GDD 16.5.3): direita, esquerda ou cima."""
+    base = seta_colorida(COR_FAREJO)
+    if direcao == "direita":
+        return base
+    if direcao == "esquerda":
+        return base.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    return base.transpose(Image.Transpose.ROTATE_90)
+
+
+# Fonte de pixel 5×7 para os poucos glifos dos balões e do ícone (1 = pixel).
+GLIFOS = {
+    "z": [".....", ".....", "#####", "...#.", "..#..", ".#...", "#####"],
+    "?": [".###.", "#...#", "...#.", "..#..", "..#..", ".....", "..#.."],
+}
+
+
+def desenhar_texto(d, texto, x, y, escala, cor):
+    """Escreve `texto` (só glifos de GLIFOS, espaço de 1 pixel entre letras) em pixels grandes `escala`."""
+    for letra in texto:
+        for j, linha in enumerate(GLIFOS[letra]):
+            for i, c in enumerate(linha):
+                if c == "#":
+                    d.rectangle([x + i * escala, y + j * escala, x + (i + 1) * escala - 1, y + (j + 1) * escala - 1], fill=cor)
+        x += (5 + 1) * escala
+    return x
+
+
+def balao(desenho=None):
+    """Bolha de balão (ADR-005 7.1, sem texto do jogo): miolo claro, contorno escuro, rabinho para baixo.
+    `desenho` é um texto de GLIFOS desenhado dentro da bolha (o zzz); None = só a bolha (o "Au!" vem do jogo)."""
+    im = canvas(48, 32)
+    d = ImageDraw.Draw(im)
+    d.polygon([(19, 21), (29, 21), (22, 29)], fill=COR_BALAO, outline=COR_TINTA)
+    d.rounded_rectangle([1, 1, 46, 22], radius=4, fill=COR_BALAO, outline=COR_TINTA, width=2)
+    if desenho:
+        largura_texto = len(desenho) * 6 * 2 - 2
+        desenhar_texto(d, desenho, (48 - largura_texto) // 2, 5, 2, COR_TINTA)
+    return im
+
+
+def exclamacao():
+    """"!" amarelo de acordar (ADR-005 7.1): barra e ponto dourados #f4d35e com contorno escuro, 16×24."""
+    im = canvas(16, 24)
+    d = ImageDraw.Draw(im)
+    d.rectangle([4, 0, 11, 15], fill=COR_TINTA)
+    d.rectangle([5, 1, 10, 14], fill=(244, 211, 94, 255))
+    d.rectangle([4, 17, 11, 23], fill=COR_TINTA)
+    d.rectangle([5, 18, 10, 22], fill=(244, 211, 94, 255))
+    return im
+
+
+def icone_ajuda():
+    """"?" da dica (GDD 16.8.1): caixa #1b2452, borda 1 px #9aa3c7 (como os botões de 14.9.4, mas 1 px)."""
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 31, 31], fill=COR_BORDA_HUD)
+    d.rectangle([1, 1, 30, 30], fill=COR_CAIXA)
+    desenhar_texto(d, "?", 11, 9, 2, (244, 211, 94, 255))
+    return im
+
+
+def fumaca():
+    """Fumacinha de dormir, 3 quadros (GDD 16.6; ADR-005 7.1): nuvem se desfazendo. 96×32 (tira de 32×32)."""
+    cor_fill = (232, 236, 247, 255)
+    cor_linha = (90, 106, 149, 255)
+    im = canvas(96, 32)
+
+    def nuvem(d, pontos):
+        for cx, cy, r in pontos:
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=cor_fill, outline=cor_linha)
+
+    quadros = [
+        [(16, 20, 8), (9, 23, 6), (23, 23, 6)],     # quadro 1: nuvem cheia
+        [(15, 16, 6), (8, 21, 5), (23, 19, 5)],     # quadro 2: abrindo, subindo
+        [(16, 11, 4), (10, 15, 3), (22, 14, 3)],    # quadro 3: quase sumida
+    ]
+    for n, pontos in enumerate(quadros):
+        quadro = canvas(32, 32)
+        nuvem(ImageDraw.Draw(quadro), pontos)
+        im.paste(quadro, (n * 32, 0), quadro)
+    return im
+
+
+# Marco 4 (GDD 17.3, 17.4 e 17.5; backlog 088). Placeholders da pergunta 36, com o padrão aplicado: caixa vermelha
+# com laço dourado, tampa para cima; árvore com bolas vermelhas e douradas, fita verde e estrela dourada no topo.
+# O brilho dourado da caixa é o contorno #f4d35e, como o da peça (sem texto dentro do sprite).
+COR_VERMELHO = (192, 57, 43, 255)            # #c0392b
+COR_VERMELHO_CLARO = (224, 83, 63, 255)
+COR_VERMELHO_ESCURO = (110, 29, 21, 255)
+COR_DOURADO = (244, 211, 94, 255)            # #f4d35e
+COR_DOURADO_ESCURO = (138, 106, 16, 255)
+COR_FITA = (139, 226, 143, 255)              # fita verde, mais clara que a folhagem
+COR_INTERIOR = (59, 20, 16, 255)
+
+
+def _r(d, caixa, s, fill=None, outline=None, w=1, ox=0, oy=0):
+    """Retângulo com coordenadas de tile (32) na escala s; a caixa inclui o último pixel de cada célula."""
+    x0, y0, x1, y1 = caixa
+    d.rectangle([x0 * s + ox, y0 * s + oy, x1 * s + s - 1 + ox, y1 * s + s - 1 + oy], fill=fill, outline=outline, width=w * s)
+
+
+def _e(d, caixa, s, fill=None, outline=None, w=1, ox=0, oy=0):
+    """Elipse com coordenadas de tile (32) na escala s."""
+    x0, y0, x1, y1 = caixa
+    d.ellipse([x0 * s + ox, y0 * s + oy, x1 * s + s - 1 + ox, y1 * s + s - 1 + oy], fill=fill, outline=outline, width=w * s)
+
+
+def _caixa(d, estado, s=1, ox=0, oy=0):
+    """Caixa de enfeite (GDD 17.3). `fechada`: tampa sobre o corpo. `aberta`: tampa levantada para cima, interior escuro."""
+    corpo = (4, 14, 27, 28)
+    _r(d, corpo, s, fill=COR_VERMELHO, outline=COR_DOURADO, ox=ox, oy=oy)
+    if estado == "fechada":
+        _r(d, (2, 9, 29, 14), s, fill=COR_VERMELHO_CLARO, outline=COR_DOURADO, ox=ox, oy=oy)
+        _r(d, (14, 9, 17, 28), s, fill=COR_DOURADO, ox=ox, oy=oy)                      # laço, fita vertical
+        _e(d, (5, 2, 14, 9), s, fill=COR_DOURADO, outline=COR_DOURADO_ESCURO, ox=ox, oy=oy)   # alça esquerda
+        _e(d, (18, 2, 27, 9), s, fill=COR_DOURADO, outline=COR_DOURADO_ESCURO, ox=ox, oy=oy)  # alça direita
+        _r(d, (14, 6, 17, 11), s, fill=COR_DOURADO_ESCURO, ox=ox, oy=oy)                 # nó do laço
+    elif estado == "aberta":
+        _r(d, (5, 15, 26, 18), s, fill=COR_INTERIOR, ox=ox, oy=oy)                     # interior, visto de cima
+        _r(d, (14, 14, 17, 28), s, fill=COR_DOURADO, ox=ox, oy=oy)                     # fita no corpo
+        _r(d, (3, 1, 28, 7), s, fill=COR_VERMELHO_CLARO, outline=COR_DOURADO, ox=ox, oy=oy)  # tampa para cima
+        _r(d, (14, 1, 17, 7), s, fill=COR_DOURADO, ox=ox, oy=oy)                       # fita na tampa
+    else:
+        raise ValueError(estado)
+
+
+def _enfeite(d, s=1, ox=0, oy=0):
+    """Enfeite que sobe da caixa (GDD 17.4, item 3): bola vermelha com pinta dourada, gancho dourado, brilho claro."""
+    _e(d, (7, 8, 24, 25), s, fill=COR_VERMELHO, outline=COR_VERMELHO_ESCURO, ox=ox, oy=oy)
+    _r(d, (13, 4, 18, 8), s, fill=COR_DOURADO, outline=COR_DOURADO_ESCURO, ox=ox, oy=oy)   # tampinha
+    _r(d, (15, 2, 16, 3), s, fill=COR_DOURADO_ESCURO, ox=ox, oy=oy)                        # gancho
+    _e(d, (10, 12, 14, 16), s, fill=(255, 243, 176, 255), ox=ox, oy=oy)                    # brilho claro
+    _e(d, (18, 19, 22, 23), s, fill=COR_DOURADO, ox=ox, oy=oy)                             # pinta dourada
+
+
+def caixa_folhas():
+    """Caixa de enfeite, 2 quadros de 32×32 (fechada, aberta), 64×32 (ADR-006 seção 2; backlog 088, item 1)."""
+    im = canvas(64, 32)
+    for n, estado in enumerate(("fechada", "aberta")):
+        quadro = canvas(32, 32)
+        _caixa(ImageDraw.Draw(quadro), estado)
+        im.paste(quadro, (n * 32, 0), quadro)
+    return im
+
+
+def enfeite_flutuante():
+    """Enfeite que sobe e encaixa na árvore (GDD 17.4, item 3), 32×32."""
+    im = canvas(32, 32)
+    _enfeite(ImageDraw.Draw(im))
+    return im
+
+
+def _estrela(d, cx, cy, r_ext, r_int):
+    pontos = []
+    for i in range(10):
+        ang = -math.pi / 2 + i * math.pi / 5
+        r = r_ext if i % 2 == 0 else r_int
+        pontos.append((cx + r * math.cos(ang), cy + r * math.sin(ang)))
+    d.polygon(pontos, fill=COR_DOURADO, outline=COR_DOURADO_ESCURO)
+
+
+def arvore_enfeitada():
+    """Árvore completa com enfeites (estado 4, GDD 17.5): as 3 camadas de spr_arvore_completa (mesma âncora e
+    escala), com fita verde, bolas vermelhas e douradas e estrela dourada no topo. 32×32."""
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    for nome in ("base", "meio", "topo"):
+        _desenhar_camada(d, nome, 1)
+    d.line([(7, 19), (11, 21), (16, 19), (21, 21), (25, 19)], fill=COR_FITA, width=2, joint="curve")
+    bolas = (((12, 11), COR_VERMELHO), ((20, 11), COR_DOURADO), ((13, 15), COR_DOURADO), ((19, 15), COR_VERMELHO),
+             ((9, 23), COR_VERMELHO), ((24, 23), COR_DOURADO))
+    for (cx, cy), cor in bolas:
+        escuro = COR_VERMELHO_ESCURO if cor == COR_VERMELHO else COR_DOURADO_ESCURO
+        d.ellipse([cx - 2, cy - 2, cx + 2, cy + 2], fill=cor, outline=escuro)
+    _estrela(d, 16, 4.5, 4.2, 1.8)
+    return im
+
+
+def conquista_enfeites():
+    """Ilustração da conquista da caixa (GDD 17.4, item 1; backlog 088, item 1): caixa aberta, 96×96 como as do
+    Marco 2 (escala 3), com o enfeite saindo por cima."""
+    im = canvas(96, 96)
+    d = ImageDraw.Draw(im)
+    _caixa(d, "aberta", s=3)
+    _enfeite(d, s=2, ox=17, oy=6)
+    return im
+
+
 def sprites_json(imagens_sobrinho_quadro=(32, 48)):
     w, h = imagens_sobrinho_quadro
     imagens = [{"arquivo": "tiles_casa.png", "tipo": "tileset", "quadro": {"w": TILE, "h": TILE}}]
@@ -361,8 +582,19 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
     for nome in ("porta", "porta_vertical", "interruptor", "lampada", "bilhete", "arvore_desmontada", "arvore_1parte",
                  "arvore_2partes", "arvore_completa", "pia", "fogao", "geladeira", "indicador_seta_direita",
                  "indicador_seta_esquerda", "indicador_seta_baixo", "indicador_tapete",
-                 "peca_1", "peca_2", "peca_3", "conquista_parte1", "conquista_parte2", "conquista_parte3"):
+                 "peca_1", "peca_2", "peca_3", "conquista_parte1", "conquista_parte2", "conquista_parte3",
+                 "seta_farejar_direita", "seta_farejar_esquerda", "seta_farejar_cima", "icone_dica",
+                 "balao_au", "balao_zzz", "balao_exclamacao",
+                 "arvore_enfeitada", "enfeite_flutuante", "conquista_enfeites"):
         imagens.append({"arquivo": f"spr_{nome}.png", "tipo": "imagem"})
+    imagens.append({"arquivo": "spr_fumaca_dormir.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 3})
+    imagens.append({"arquivo": "spr_enfeite_caixa.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 2})
+    # Nick (tools-arte/gerar_nick.py, a partir de assets/referencia/ref_nick_folha.webp). Quadro 32×32 (corpos.nick).
+    for direcao in ("down", "up", "left", "right"):
+        imagens.append({"arquivo": f"spr_nick_idle_{direcao}.png", "tipo": "imagem"})
+        imagens.append({"arquivo": f"spr_nick_walk_{direcao}.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 4})
+    for nome, quadros in (("sleep", 4), ("wake", 4), ("sniff", 4), ("happy", 4)):
+        imagens.append({"arquivo": f"spr_nick_{nome}.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": quadros})
     imagens.sort(key=lambda i: i["arquivo"])
     return {"schemaVersion": 1, "perfil": "hd-480x352", "imagens": imagens}
 
@@ -394,6 +626,18 @@ def main():
         "spr_conquista_parte1.png": peca(1, 3),    # ilustração da conquista (GDD 15.5), 96×96
         "spr_conquista_parte2.png": peca(2, 3),
         "spr_conquista_parte3.png": peca(3, 3),
+        "spr_seta_farejar_direita.png": seta_farejo("direita"),     # Marco 3 (070): seta dourada de farejar
+        "spr_seta_farejar_esquerda.png": seta_farejo("esquerda"),
+        "spr_seta_farejar_cima.png": seta_farejo("cima"),
+        "spr_icone_dica.png": icone_ajuda(),                        # "?" da dica (071)
+        "spr_balao_au.png": balao(None),                            # bolha do latido; o "Au!" é texto do jogo
+        "spr_balao_zzz.png": balao("zzz"),                            # balão do zzz (desenhado, sem chave de texto)
+        "spr_balao_exclamacao.png": exclamacao(),                   # "!" amarelo de acordar
+        "spr_fumaca_dormir.png": fumaca(),                          # fumacinha de dormir (3 quadros)
+        "spr_arvore_enfeitada.png": arvore_enfeitada(),             # Marco 4 (GDD 17.5): estado 4 da árvore
+        "spr_enfeite_caixa.png": caixa_folhas(),                    # caixa de enfeite: quadro 0 fechada, 1 aberta
+        "spr_enfeite_flutuante.png": enfeite_flutuante(),           # enfeite que sobe até a árvore
+        "spr_conquista_enfeites.png": conquista_enfeites(),         # conquista da caixa, 96×96 (GDD 17.4)
     }
     for nome, im in desenhos.items():
         im.save(PASTA / nome, optimize=True)

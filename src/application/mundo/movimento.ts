@@ -1,7 +1,9 @@
 import type { PerfilDeArte, Dimensao } from '../arte/PerfilDeArte';
 import type { ObjetoDoMapa } from '../content/Mapa';
 
-export type Direcao = 'cima' | 'baixo' | 'esquerda' | 'direita';
+// Direção vive no domínio (ADR-005 seção 1.2); reexportada aqui para os imports existentes.
+export type { Direcao } from '../../domain/shared/Direcao';
+import type { Direcao } from '../../domain/shared/Direcao';
 /** Canto superior esquerdo do sprite do Sobrinho, em px da tela (câmera do cômodo). */
 export interface Posicao {
   x: number;

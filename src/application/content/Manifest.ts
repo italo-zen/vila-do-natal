@@ -4,12 +4,16 @@ export interface ManifestoMapa {
   file: string;
   tileset: string;
 }
-/** Missão: `maps` são as subáreas abertas nela (ADR-004 seção 9). Só essas são carregadas. */
+/**
+ * Missão: `maps` são as subáreas abertas nela (ADR-004 seção 9). Só essas são carregadas. `final` marca a missão de fim
+ * do jogo (ADR-006 seção 1.3): concluí-la leva aos créditos. Aditivo no schema 2 (ADR-002 seção 2).
+ */
 export interface ManifestoMissao {
   id: string;
   file: string;
   maps: string[];
   requires: string[];
+  final?: boolean;
 }
 export interface ManifestoTexto {
   locale: string;

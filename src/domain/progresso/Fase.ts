@@ -1,14 +1,8 @@
-/** Fases do GDD seção 3, em ordem. Os valores são ids estáveis (usados no save). */
-export const FASES = [
-  'introducao',
-  'porta',
-  'luzes',
-  'parte1',
-  'parte2',
-  'parte3',
-  'enfeites',
-  'creditos',
-] as const;
+/**
+ * Fases do GDD seção 3, em ordem. `creditos` não é fase (ADR-006 seção 1.1): os créditos não têm conquista, condução
+ * nem chegada, e ficam fora de `Progresso`. Os valores são ids do domínio; não há save (ADR-002 seção 3).
+ */
+export const FASES = ['introducao', 'porta', 'luzes', 'parte1', 'parte2', 'parte3', 'enfeites'] as const;
 export type Fase = (typeof FASES)[number];
 
 export const indiceDaFase = (f: Fase): number => FASES.indexOf(f);

@@ -3,8 +3,8 @@
  * Teclado: setas ou WASD movem; Z/Enter = A; X/Esc = B (GDD 5 e 14.8). Toque entra no Marco 5.
  */
 
-/** Ações do jogo. */
-export type Acao = 'cima' | 'baixo' | 'esquerda' | 'direita' | 'a' | 'b';
+/** Ações do jogo. `dica` é H (ADR-005 seção 5.2); B é farejar na exploração (ADR-005 seção 4.1). */
+export type Acao = 'cima' | 'baixo' | 'esquerda' | 'direita' | 'a' | 'b' | 'dica';
 
 /** Teclas de cada ação, pelo nome do Phaser (`Phaser.Input.Keyboard.KeyCodes`, nomes em maiúsculas). */
 export const TECLAS: Record<Acao, string[]> = {
@@ -14,6 +14,7 @@ export const TECLAS: Record<Acao, string[]> = {
   direita: ['RIGHT', 'D'],
   a: ['Z', 'ENTER'],
   b: ['X', 'ESC'],
+  dica: ['H'],
 };
 
 /** Teclas com nome diferente no navegador (KeyboardEvent.key) e no Phaser. Letras e dígitos são iguais. */

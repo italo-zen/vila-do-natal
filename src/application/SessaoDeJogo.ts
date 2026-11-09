@@ -1,12 +1,15 @@
 import type { Fase } from '../domain/progresso/Fase';
 import { indiceDaFase } from '../domain/progresso/Fase';
 import type { Progresso } from '../domain/progresso/Progresso';
+import { Farejo } from '../domain/nick/Farejo';
 
 /** Estado da partida em memória. Só os casos de uso o alteram. Não é gravado (ADR-002 seção 3). */
 export class SessaoDeJogo {
   private _progresso: Progresso | null = null;
   private erros = 0;
   private readonly vistos = new Set<string>();
+  /** Seta de farejar da partida (ADR-005 seção 4.5). Vive na sessão, não no Nick: é só o que a seta mostra agora. */
+  readonly farejo = new Farejo();
 
   get progresso(): Progresso {
     if (!this._progresso) throw new Error('Não há partida em andamento.');
@@ -19,6 +22,7 @@ export class SessaoDeJogo {
     this._progresso = p;
     this.erros = 0;
     this.vistos.clear();
+    this.farejo.cancelar();
   }
   definir(p: Progresso): void {
     this._progresso = p;
@@ -26,9 +30,12 @@ export class SessaoDeJogo {
   get fase(): Fase {
     return this.progresso.faseAtual;
   }
-  /** Fase concluída na partida: a atual já passou dela (portas trancadas, ADR-004 seção 3). */
+  /**
+   * Fase concluída na partida (portas trancadas, ADR-004 seção 3). Vem da lista de concluídas: a última fase
+   * (`enfeites`) fica como atual depois de concluída (ADR-006 seção 1.2), e o índice não basta.
+   */
   faseConcluida(fase: Fase): boolean {
-    return indiceDaFase(this.fase) > indiceDaFase(fase);
+    return this.progresso.concluidaFase(fase);
   }
   portaAberta(): boolean {
     return indiceDaFase(this.fase) > indiceDaFase('porta');

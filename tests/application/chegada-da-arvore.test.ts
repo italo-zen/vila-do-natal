@@ -10,6 +10,7 @@ import { ConcluirFase } from '../../src/application/usecases/ConcluirFase';
 import { SessaoDeJogo } from '../../src/application/SessaoDeJogo';
 import { TentarCodigoDaPorta } from '../../src/application/usecases/TentarCodigoDaPorta';
 import { CHAVE_EXAMINADA, CHAVES_DA_CHEGADA, deveAbrirChegada, haloDaArvoreVisivel } from '../../src/application/mundo/chegadaDaArvore';
+import { missoesReais } from '../helpers/missoesReais';
 
 /**
  * Chegada da condução à árvore (GDD 14.9.3, 14.11.1 e casos D11 a D14 de 14.11.6). Decisão do Diretor no PT2b
@@ -35,7 +36,7 @@ const carregar = () => new CarregarConteudo(new ContentSourceDeArquivos(lerConte
 /** Partida até as luzes acesas (fase "luzes"), como o jogador chega à condução. */
 function partidaComLuzes(): SessaoDeJogo {
   const sessao = new SessaoDeJogo();
-  new IniciarNovoJogo(sessao).executar('lolo');
+  new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
   new ConcluirFase(sessao).executar('introducao');
   new TentarCodigoDaPorta(sessao).executar('017');
   expect(new AcenderLuzes(sessao).executar()).toBe(true);
@@ -75,7 +76,7 @@ describe('chegada à árvore: uma vez por partida (D14)', () => {
   it('nova partida ("Começar") abre o diálogo automático de novo (D9)', () => {
     const sessao = partidaComLuzes();
     deveAbrirChegada(sessao);
-    new IniciarNovoJogo(sessao).executar('lolo');
+    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     new TentarCodigoDaPorta(sessao).executar('017');
     new AcenderLuzes(sessao).executar();
@@ -87,7 +88,7 @@ describe('chegada à árvore: uma vez por partida (D14)', () => {
 describe('chegada à árvore: halo (GDD 14.9.3, "Para"; D13)', () => {
   it('não pisca antes das luzes', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao).executar('lolo');
+    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     new TentarCodigoDaPorta(sessao).executar('017');
     expect(haloDaArvoreVisivel(sessao)).toBe(false);

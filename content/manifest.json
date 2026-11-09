@@ -97,6 +97,21 @@
       "requires": [
         "parte2"
       ]
+    },
+    {
+      "id": "enfeites",
+      "file": "missions/enfeites.json",
+      "maps": [
+        "hall",
+        "sala",
+        "cozinha",
+        "quarto",
+        "escritorio"
+      ],
+      "requires": [
+        "parte3"
+      ],
+      "final": true
     }
   ],
   "texts": [

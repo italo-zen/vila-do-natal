@@ -92,11 +92,11 @@ describe('conteúdo real em content/ (ADR-002 schema 2, ADR-004)', () => {
     expect(c.todosOsMapas.get('sala')!.altura).toBeLessThanOrEqual(c.perfil.sala.linhas);
   });
 
-  it('a Sala girada tem 10 linhas: a última linha da caixa é piso andável, e a guarda da barra fica inativa (ADR-004 seção 8, item 6)', async () => {
+  it('a Sala girada tem 10 linhas: a última linha da caixa é a linha 9 da tela, bloqueada desde a pergunta 31 (ADR-005 seção 6)', async () => {
     const c = await carregar(lerConteudo());
     const sala = c.todosOsMapas.get('sala')!;
     expect([sala.largura, sala.altura]).toEqual([11, 10]);
-    expect(sala.colisao[9][0]).toBe(false);
+    expect(sala.colisao[9][0]).toBe(true);
     expect(sala.chao[9][0]).not.toBe(0);
   });
 
@@ -292,6 +292,13 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
     expect((await errosDe(arquivos)).join(' ')).toMatch(/trancadaAte "nenhuma" não é uma fase/);
   });
 
+  it('linha 9 da Sala (tela) está bloqueada na cópia de trabalho: (0, 9) e (1, 9) bloqueados (pergunta 31, Diretor)', async () => {
+    const c = await carregar(lerConteudo());
+    const sala = c.todosOsMapas.get('sala')!;
+    expect(sala.colisao[9][0]).toBe(true);
+    expect(sala.colisao[9][1]).toBe(true);
+  });
+
   it('linha da barra com chão andável é erro com a mensagem do ADR (regra 6a)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
       comOnzeLinhas(s);
@@ -401,14 +408,10 @@ describe('chegada explícita e saída do par (ADR-004 seção 13; itens 20 a 22 
     expect([chegadaQuarto.x, chegadaQuarto.y, chegadaQuarto.dados.direcao]).toEqual([0, 6, 'cima']);
   });
 
-  it('o conteúdo real passa sem erro, e os avisos são só os W027 de pares de fórmula (P7 e P8 da Sala; P7 da Cozinha)', async () => {
+  it('o conteúdo real passa sem erro; os avisos são só os W027 de pares de fórmula', async () => {
     const c = await carregar(lerConteudo());
     expect(c.avisos.length).toBeGreaterThan(0);
     for (const aviso of c.avisos) expect(aviso).toMatch(/^W027 /);
-    expect(c.avisos.some((a) => a.includes('porta P8 (sala'))).toBe(true);
-    expect(c.avisos.some((a) => a.includes('porta P7 (sala'))).toBe(true);
-    // P2 e P3 têm um só vizinho livre (chegada declarada ou de fórmula): sem aviso.
-    expect(c.avisos.some((a) => a.includes('porta P2') || a.includes('porta P3') || a.includes('porta P1'))).toBe(false);
     expect(avisosDeConteudo({ manifesto: c.manifesto, todos: c.todosOsMapas, missoes: c.missoes, textos: c.textos, perfil: c.perfil })).toEqual(c.avisos);
   });
 

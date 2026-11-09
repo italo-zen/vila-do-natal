@@ -13,6 +13,7 @@ import { ConcluirFase } from '../../src/application/usecases/ConcluirFase';
 import { bloqueiosDaSubarea, deslocamentoDaSubarea, ladoDaPorta, objetosNaTela, vaoDaPorta } from '../../src/application/mundo/subarea';
 import { ColisaoDoMapa, alvoDaInteracao, geometriaDoSobrinho, mover, posicaoDoTile, centroDosPes, type Direcao } from '../../src/application/mundo/movimento';
 import { objetosDoTipo, type MapaDoJogo, type ObjetoDoMapa } from '../../src/application/content/Mapa';
+import { missoesReais } from '../helpers/missoesReais';
 
 /**
  * Percurso da casa real no Marco 1 (ADR-004 seções 3, 9 e 10; GDD 14.10.5): o personagem anda em px com
@@ -36,7 +37,7 @@ function lerConteudo(): Record<string, unknown> {
 async function cenario(fase: 'porta' | 'introducao') {
   const c = await new CarregarConteudo(new ContentSourceDeArquivos(lerConteudo())).executar();
   const sessao = new SessaoDeJogo();
-  new IniciarNovoJogo(sessao).executar('lolo');
+  new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
   if (fase === 'porta') new ConcluirFase(sessao).executar('introducao');
   const g = geometriaDoSobrinho(c.perfil);
   return { c, sessao, g, tile: c.perfil.tile };

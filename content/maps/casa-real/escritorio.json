@@ -129,6 +129,14 @@
       "y": 5
     },
     {
+      "estadoInicial": "escondida",
+      "id": "enfeite",
+      "ordem": 4,
+      "tipo": "enfeite",
+      "x": 5,
+      "y": 2
+    },
+    {
       "h": 2,
       "id": "cama",
       "nome": "Cama",
