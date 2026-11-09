@@ -1,0 +1,33 @@
+{
+  "name": "natal-na-casa-do-tio-italo",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "description": "Natal na Casa do Tio Ítalo e da Tia Nath",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:playtest": "tsc --noEmit && vite build --config vite.playtest.config.ts && node tools/verificar-sem-gancho.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "gen:assets": "node tools/gerar-assets.mjs",
+    "gen:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar",
+    "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas",
+    "validar:perfil": "node tools/validar-perfil.mjs",
+    "comparar:capturas": "node tools/comparar-capturas.mjs",
+    "verificar:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar --verificar",
+    "build:qa": "tsc --noEmit && vite build --config vite.qa.config.ts"
+  },
+  "dependencies": {
+    "@fontsource/press-start-2p": "^5.2.5",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "playwright-core": "^1.65.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.6",
+    "vite-plugin-singlefile": "^2.3.4",
+    "vitest": "^5.1.0"
+  }
+}

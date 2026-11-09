@@ -1,0 +1,40 @@
+{
+  "altura": 3,
+  "chao": [
+    1,
+    1,
+    34,
+    310,
+    310,
+    310,
+    37,
+    37,
+    310
+  ],
+  "colisao": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0
+  ],
+  "escuro": false,
+  "id": "banheiro_casal",
+  "largura": 3,
+  "objetos": [
+    {
+      "h": 1,
+      "id": "pia",
+      "nome": "Pia",
+      "tipo": "movel",
+      "w": 2,
+      "x": 0,
+      "y": 2
+    }
+  ],
+  "tile": 32
+}

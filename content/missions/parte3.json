@@ -1,0 +1,14 @@
+{
+  "id": "parte3",
+  "conducao": {
+    "parte3": {
+      "mapa": "sala",
+      "x": 3,
+      "y": 7,
+      "direcao": "baixo"
+    }
+  },
+  "conquistas": {
+    "parte3": "conquista.parte3"
+  }
+}
