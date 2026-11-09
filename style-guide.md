@@ -10,13 +10,13 @@
 - Paleta: limites do perfil (16 a 32 cores no v1): vermelho, verde e dourado de Natal + neutros para a casa
 - Câmera fixa por subárea (ADR-004), numa tela do perfil (HD: 15×11 tiles; v1: 15×10). Subárea menor que a tela é centralizada. Sem rolagem na v1
 - **Planta girada (ADR-004 seção 12, 2026-11-08):** todas as subáreas, inclusive as fechadas, giram 90° para a direita (sentido horário), aplicado pelo conversor na saída. Fórmula: tile (x, y) de uma subárea de `largura × altura` vai para (`altura − 1 − y`, `x`). A tela não gira: 15×11, barra, textos, botões, setas, sobrinhos, Nick e árvore ficam como estão. Móveis, paredes e portas giram como imagem
-- **Linha da barra (guarda):** a última linha da tela (`sala.linhas − 1`) não tem chão andável, objeto, gatilho nem spawn, em subárea de altura igual a `sala.linhas` (11). Hoje nenhuma: a Sala gira para 11×10 e fica acima da barra (ADR-004 seção 8, item 6 e seção 12.6). A guarda continua valendo para subáreas futuras de 11 linhas
+- **Linhas da barra (guarda):** a partir do Marco 3, as duas últimas linhas da tela (`sala.linhas − 2` e `sala.linhas − 1`, contadas na tela) não têm chão andável, objeto, gatilho nem spawn. A linha `sala.linhas − 1` é erro. A linha `sala.linhas − 2` (9 no HD) é aviso enquanto a pergunta 31 estiver aberta: a Sala tem (0, 9) e (1, 9) andáveis, sob a barra. Se a 31 for A, os dois tiles são bloqueados na Arte e a linha vira erro. Se for B (barra de uma linha), a linha sai da guarda (ADR-004 seção 8, item 6; ADR-005 seção 6)
 - **Portas e passagens (GDD 14.10.9):** P1 a P8 em vista superior, retângulo comprido alinhado à parede. Uma porta é uma abertura e uma folha, desenhada sobre a aresta entre o tile de chão e o vão (ou a passagem), e não no centro do tile (decisão do Diretor, 2026-11-08; ADR-004 seção 3, regra de arestas). A passagem aberta (P7, e P8 quando aberta) tem desenho de vão, distinto da parede e do piso. O vão de 1 tile não é andável. Paredes horizontais e verticais usam o mesmo desenho, girado. Par com destino fechado e chegada lateral: a faixa fica na aresta do gatilho voltada para a chegada (P2 fechada, chegada abaixo: aresta de baixo; P3 fechada, chegada à esquerda: aresta da esquerda); ao abrir, passa para a aresta entre o gatilho e o vão (ADR-004 seção 3) Marco 2: P2 e P3 também são passagens com desenho de vão. Indicador por saída: lateral = seta sobre o gatilho; para baixo = tapete no vão; para cima = nada (GDD 14.10.10). A caixa da subárea inclui o vão do tapete
 - **Cômodo com porta de entrada (ADR-004 seção 13, a confirmar pela prévia):** o tile de chão encostado no gatilho de entrada, do lado de dentro, é chão como os outros. Ele é a chegada do sobrinho; não recebe marca nem brilho. A Suíte e o Quarto ganham esse tile. Par com chegada declarada nos dois lados pode ter vão de qualquer tamanho: o vão é vazio (`tema.fundo`), desenhado só dentro da caixa da subárea do gatilho; seta e tapete seguem `porta.saida` do conteúdo (ADR-004 seções 13.13 a 13.18)
 - **Bilhete de parede:** tile bloqueado com vizinho livre, como o objeto examinável (ADR-004 seção 6)
 - Sem copiar personagens, sprites ou elementos da Nintendo/Game Freak
 - Os 4 Sobrinhos: mesmo tamanho (quadro do perfil) e mesma estrutura de animação (andar ×4 direções, parado, interagindo, comemorando)
-- Nick: dormindo, acordado, farejando, feliz
+- Nick (Marco 3): `spr_nick_sleep`, `spr_nick_wake`, `spr_nick_walk_<dir>`, `spr_nick_idle_<dir>`, `spr_nick_sniff`, `spr_nick_happy`; quadro 32×32 (perfil `corpos.nick`). Balões, fumaça, seta de farejar (`spr_seta_farejar_<dir>`) e ícone de dica são sprites sem texto: o texto vem de `content/` (ADR-005 seção 7). Seta de farejar amarela `#f4d35e`, distinta da branca das portas; ao aparecer, 2 tremidas de 0,4 s (±2 px) e depois parada, sem sobe e desce (ADR-005 4.5; GDD 16.17)
 - Árvore: 4 estados (desmontada, 1 parte, 2 partes, completa)
 - Peça da árvore (Marco 2): miniatura da camada (base, meio, topo) de 32×32 px no chão, com halo dourado `#f4d35e` (GDD 15.2.4). Só aparece quando visível; some do chão quando encaixada
 - Nomes de arquivo: `tipo_nome_variacao.png` (ex.: `spr_lolo_walk_down.png`, `spr_nick_sleep.png`)
@@ -28,7 +28,7 @@
 - Fonte grande e legível, bom contraste
 - Diálogos avançam com A, sem tempo automático
 - Barra de controles fixa em toda tela (GDD 14.8), com uma exceção: na condução automática depois da conquista 1 (GDD 14.11), a barra fica vazia, sem tecla nem texto
-- Barra de exploração em uma linha, ancorada na base e ocupando a última linha de tiles da tela (ADR-003 seção 6; a regra de mapa está em Arte)
+- Barra de exploração em duas linhas a partir do Marco 3 (GDD 16.9): "Setas: andar  Z: examinar" e "X: farejar  H: dica". Ocupa as duas últimas linhas da tela (9 e 10 no perfil HD), ancorada na base. Até o Marco 2 era uma linha (ADR-003 seção 6; a regra de mapa está em Arte)
 - Alvo de toque mínimo: 44×44 px
 - Só modo paisagem no celular; retrato mostra aviso de rotação
 
@@ -42,7 +42,9 @@
 - Validação de porta fechada (ADR-004 seção 8, item 14): cada `portaFechada` aparece uma só vez, sem gatilho de mesmo `id`. P1 é um só objeto `portaFechada`, na Sala. Par cujo destino está fora das áreas abertas age como porta fechada, sem transição (ADR-004 seções 3 e 9.1)
 - Sem persistência na v1.x: o jogo começa do zero a cada carregamento, sem `localStorage` (ver `docs/ADR-002.md`, seção 3)
 - Conteúdo em `content/` (mapas, missões, textos) + `content/manifest.json`; o motor lê o manifesto, não conhece mapas pelo nome
-- Chaves de fase são minúsculas e valores do enum `Fase` (`luzes`). O nome de exibição vem do GDD ("Luzes"). Chaves de texto do Marco 2: `conquista.<fase>`, `arvore.estado.<n>`, `arvore.chegada.<n>`, `aviso.peca<N>.antes<M>` (ADR-002 seção 2.2)
+- Chaves de fase são minúsculas e valores do enum `Fase` (`luzes`). O nome de exibição vem do GDD ("Luzes"). Chaves de texto do Marco 2: `conquista.<fase>`, `arvore.estado.<n>`, `arvore.chegada.<n>`, `aviso.peca<N>.antes<M>` (ADR-002 seção 2.2). Chaves do Marco 3: `dica.<fase>.<dormindo|acordado>` (ou `dica.<fase>` quando o texto serve aos dois estados), `dica.livre`, `nick.acordou`, `nick.latido`, `barra.casa2`, `barra.dica` (ADR-005 seção 2)
+- Nick e farejar: o estado do Nick e a fila ficam no domínio (`domain/nick/`); a regra de alvo e de rota fica em `application/mundo/nick/`; a apresentação só guarda tempos de animação (`presentation/nick/temporizacao.ts`). Nick dorme em `nick.dorme` da missão, nunca no TMX (ADR-005 seções 1 e 2)
+- Colisão do Nick: dormindo bloqueia o tile de dormir (regra única, `bloqueia(tile)`); acordado não bloqueia nem entra em rota. A rota de `conducao` nunca passa pelo tile de dormir: N009 garante isso no conteúdo (ADR-005 seções 2.6 e 3.4; ADR-004 seção 11.2)
 - Destino da condução (`conducao`) fica na missão. A condução segue a rota de colisão do sobrinho e nunca encurta o trajeto (ADR-004 seção 11)
 - Colisão de peça decidida pelo estado (escondida livre, visível bloqueada, encaixada livre); o conteúdo grava o tile livre (ADR-004 seção 6)
 - Versão do jogo vem do `package.json` e aparece na tela de título

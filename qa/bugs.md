@@ -293,3 +293,64 @@ Build: `npm run build:qa` (dist-qa). Roteiros: `qa/scripts/marco2-v060-r3-quarto
 - Exame da árvore no estado 3: o script leu vazio, mas a captura `qa/evidencias/marco2/r2-arvore-estado3.png` mostra "A árvore está montada! Que linda!" com a árvore de pé, na Sala. BUG-M2-04 segue a confirmar (ver se o exame por A, e não só o diálogo do encaixe, mostra esse texto).
 - `r2b` "botões na condução: sem efeito": a leitura "Mesa Rack TV" é o rótulo de móvel, não caixa de diálogo. Falso positivo do script.
 - Sobrinhos BiBi, DanDan e TuTu: título, senha (020, 023, 024), luzes, conquista 1 e encaixe 1 com o diálogo "Agora a árvore tem 1 parte. Faltam 2 partes!": OK nos três, sem erro de página.
+
+## Rodada 2 do Marco 3 (v0.7.0, 2026-11-09), roteiro `qa/scripts/marco3-r2.mjs`
+Sem bug confirmado. Observações para o Dev:
+- Após `__teleportar`, `travado=true` até uma tecla (diálogo do hall). Os roteiros fecham com X antes de agir. Dev confirma se é o gancho ou a cena.
+- Leitura do mapa depois do código 017 veio "hall" (5 s), mas as luzes e a condução seguiram na Sala. A confirmar com a captura antes de virar bug.
+
+## Rodada 3 do Marco 3 (v0.7.0, 2026-11-09)
+- Observação 2 da rodada 2 ("hall" por 5 s depois do código 017): NÃO é bug. Captura `qa/evidencias/marco3-r3/01-porta-aberta.png`: a porta abriu e o diálogo "Clique! A porta abriu." aparece com o sobrinho ainda no Hall. O roteiro antigo esperava a entrada automática. Dev: sem ação.
+- Regressão do Marco 2 (`qa/scripts/marco2-r2-completo.mjs`, rodada de hoje, build com Marco 3): reproduzidos BUG-M2-03 (peça 2 com 11 passos a 2×; esperado 12 a 13) e BUG-M2-04 (exame da árvore estado 3, leitura vazia). Continuam abertos; sem novo bug.
+- Observação (Dev): `__teleportar` continua deixando `travado=true` no aviso da Sala escura (confirmado pelo Dev, não é bug).
+
+## BUG-M3-R4-01: Nick não faz a reação "feliz" + "Au!" ao chegar com conquista (N8, backlog 069)
+- Severidade: Média (é o momento de alegria da criança; o item 069 pede e o GDD 16.7 descreve)
+- Estado: fechado no reteste da rodada 5 (2026-11-09): LoLô com Nick acordado: "Au!" aparece com o diálogo da árvore na chegada das luzes (`qa/evidencias/marco3-r5/LoLô-acordado/chegada-0.png` e `chegada-3.png`). Com Nick dormindo: nenhum "Au!" (script `IDX=0 WAKE=0`). Pose "feliz" não confirmada quadro a quadro (o sprite muda de pose entre os quadros, mas não foi isolado).
+- Ambiente: build de QA (`dist-qa`, rodada 4, 2026-11-09), Chromium headless, 480x352, LoLô e BiBi (mesmo resultado). Teclado.
+- Passos para reproduzir: `qa/scripts/marco3-r4-final.mjs`. Com o Nick acordado (Cozinha, acordado com A), trocar para a Sala (F9), conduzir a peça 1 com A, A (Continuar), e observar a chegada à árvore.
+- Esperado: ao chegar com a conquista, o Nick faz "feliz" de 1,6 s com "Au!" uma vez, e o diálogo começa sem esperar a animação (GDD 16.7, N8; backlog 069 item 2).
+- Obtido: nenhum "Au!" durante a condução nem na chegada (o buffer de texto não recebe o balão). No código, `CasaScene.ts` só chama `nick.feliz()` em `abanar()` (linha ~1001) e no caso `semAlvo` (linha ~1030). Não há reação na chegada de conquista.
+- Evidência: `qa/evidencias/marco3-r4/03-depois-chegada.png` (Nick dormindo no Quarto depois; a chegada não tem o balão). Log do roteiro: "N8 FALHA".
+- Observação: o "Au!" de acordar e o de abanar funcionam (F6 OK).
+
+## Notas da rodada 4 (não são bugs)
+- BUG-M2-03 (passos 11/16 a 2×): falso positivo. A contagem não inclui os 3 passos da passagem (confirmado pelo Diretor/Orquestrador). Não reabrir.
+- BUG-M2-04 (exame da árvore no estado 3): falso positivo. A captura `qa/evidencias/marco2/r2-arvore-estado3.png` mostra "A árvore está montada! Que linda!". Não reabrir.
+
+## BUG-M3-R5-01 (candidato): fumacinha ao dormir (N9) não aparece nas capturas
+- Severidade: Baixa (efeito visual de 0,5 s; o estado do Nick está certo)
+- Estado: FECHADO (não é bug, Dev, 2026-11-09: a captura foi tardia; a fumaça dura ~0,5 s no tile de origem, ver dist-playtest/capturas/montagem-feliz-e-fumaca.png). Não reconferido em captura na rodada 6.
+- Ambiente: `dist-qa`, LoLô, Nick acordado na Sala, luzes, chegada e fim do diálogo (`IDX=0 WAKE=1 node qa/scripts/marco3-r5-reacao.mjs`)
+- Passos: depois do fim do diálogo de chegada, o Nick sai da Sala e dorme na Cozinha (estado correto).
+- Esperado: fumacinha de 0,5 s onde o Nick estava (GDD 16.6, ADR-005 seção 3.5 "CasaScene.devolverControle").
+- Obtido: capturas `qa/evidencias/marco3-r5/LoLô-acordado/fumaca-0.png`, `fumaca-1.png` e `fumaca-2.png` (iniciadas logo após o controle voltar) não mostram fumacinha no tile onde o Nick estava.
+- Observação: pode ser a captura começar depois da fumaça, ou o `anterior` não estar na Sala. Dev confirma.
+
+## Rodada 6 do Marco 3 (2026-11-09), build com a correção de reagirAConquista (Dev)
+- BUG-M3-R4-01 (reação "feliz" + "Au!"): reteste OK em LoLô e DanDan (luzes, Nick acordado): `animacaoDoNick` = `nick-feliz` por ~1,1 s+ com `animandoNick`, "Au!" e diálogo na chegada (`qa/evidencias/marco3-r6/`). Fechado.
+- Achado na hook de QA (`src/presentation/qa/ganchoQa.ts`, função `__estado`): às vezes lança `Cannot read properties of undefined (reading 'currentAnim')` (`c.nick.sprite.anims` indefinido, ao trocar de área). Dev confirma se a animação do sprite pode ser destruída nessa hora. O roteiro ganhou tolerância (retry).
+- BiBi: com o caminho do código (`irAtePainel` + "020") a entrada na Sala falhou nesta rodada (ficou no Hall). O atalho `__irParaFase('luzes')` funcionou. Não é reprodução do código; o código funciona no Marco 2 (`marco2-r2-completo.mjs`).
+
+## Rodada 7 do Marco 3 (2026-11-09, build corrigido, Chromium, teclado; `qa/scripts/marco3-r7.mjs`, `MODO=acordado` e `MODO=dormindo`)
+- (1) Peça 1 com Nick acordado: OK. "Au!" na chegada (3 ms), `animacaoDoNick` = `nick-feliz` por ~1 s+ com `animandoNick`, diálogo em ~1,0 s (antes do fim da animação de 1,6 s). Capturas `qa/evidencias/marco3-r7/acordado/peca1-acordado-*.png`.
+- (2) Peça 1 com Nick dormindo: OK. Nenhum "Au!" e `animacaoDoNick` null (sem animação feliz). Capturas `qa/evidencias/marco3-r7/dormindo/`.
+- (3) F7 ao vivo: OK. Com a peça 1 pendente, B na Cozinha aponta para a P7 (saída esquerda), nunca para a peça 2 escondida (captura `qa/evidencias/marco3-r7/acordado/f7-seta-P7.png`).
+- (4) Fumacinha: OK. Quadro 0 ao fechar o diálogo de chegada mostra a fumacinha no tile onde o Nick estava na Sala (`qa/evidencias/marco3-r7/acordado/fumaca/f-00.png`). BUG-M3-R5-01 fechado como não é bug (ver acima).
+- Sem bug novo.
+
+## Rodada 8 (v0.7.1, 2026-11-09)
+- Relato do PT3 "farejar não repetiu": NÃO reproduzido. B repetido funciona com alvo em outro cômodo (refaz farejando e reinicia os 5 s) e no mesmo cômodo (refaz "Au!"). Sem bug. Ver `qa/checklist-marco3.md`, rodada 8.
+- Observação (não é bug): o estado `farejo.ativo` fica verdadeiro desde o B, com `restanteMs` parado em 5000 até o fim do farejando. Pela leitura do código o relógio de 5 s começa no fim do farejando, como pede o GDD 16.5.3. Não confirmado pela captura das tremidas.
+- Candidatos não testados nesta rodada: P8 (Sala-Hall) e Nick com dois sobrinhos a mais.
+
+## Rodada 9 (v0.7.1, veredito final)
+- Nenhum bug confirmado no jogo.
+- OBSERVAÇÃO (tremidas, a confirmar pelo Dev e pelo QA): medição por pixel do ouro (`#f4d35e`, quadros a cada 100 ms) mostra oscilação do centroide de ~1,5 px durante mais de 1,4 s, quando o GDD 16.5.3 pede 2 tremidas de 0,4 s (0,8 s no total) e depois parada. Pode ser o efeito do sprite (centroide) e não a animação. Captura `qa/evidencias/marco3-r9/LoLô/seta-P7.png`. Não aberto como bug.
+- OBSERVAÇÃO (penumbra, a confirmar): na captura da barra (`qa/evidencias/marco3-r9/DanDan/barra-2-linhas-sala.png`) a Sala aparece quase toda escura depois de `__irParaFase('parte1')`, com luz só ao redor do sobrinho. Pode ser o estado de luzes que o gancho conclui sem o diálogo. Conferir se é o gancho ou o jogo com as luzes acesas em jogo normal.
+- O relato anterior de "Nick em cima do sobrinho" (um teste que entrou de novo pela porta) foi causado pelo roteiro: o roteiro deu passo para o gatilho. Corrigido no roteiro. Não é bug.
+
+## Rodada 4 do Marco 4b (v0.8.1, 2026-11-09, `qa/scripts/marco4-r4.mjs`)
+- BUG-M4-01 (a confirmar): Nick com estado "dormindo" no Escritório (6,1) durante as 3 páginas da chegada da parte 3 (LoLô). Esperado: Nick só vai dormir na Sala (8,5) depois do diálogo (caso 2). Obtido: leitura `escritorio:6,1` durante o diálogo, `dormindo`, e `sala:8,5` depois. Severidade: Média. Ambiente: dist-qa, LoLô, partida real (`__irParaFase('parte2')`, peças 2 e 3 jogadas). Passos: chegar à peça 3, A, condução até (3,7) da Sala, observar `__estado().nick` durante as páginas. Status: aberto, Dev confirma se é a posição de origem do Nick ou um estado que não deveria existir. Captura não feita.
+- BUG-M4-02 (a confirmar): no diálogo final "Agora a árvore está toda enfeitada!", o Z na página 1 não mostrou a página 2 "Feliz Natal para a família!" nesta rodada (leitura de textos vazia logo depois do Z, nos dois sobrinhos). Esperado: Z avança à página 2 (GDD 17.7). Obtido: sem texto visível depois do Z. Severidade: Alta se for real (diálogo fecha sozinho). Status: aberto, reteste com captura `qa/evidencias/marco4-r4/<sobrinho>/CASO4-final-p1.png` e quadros seguintes antes de classificar. Também: Z na tela de créditos não levou ao título na leitura (texto vazio depois do Z); conferir junto.
+- Rodada 5 (2026-11-09): BUG-M4-01 FECHADO como não-bug (GDD 16.2.2: Nick dorme no tile da fase, Escritório, durante a parte 3). BUG-M4-02 FECHADO como não reproduzido com espera de 1,5 s (página 2 e título OK nos dois sobrinhos); ver checklist-marco4b.md, rodada 5.

@@ -312,3 +312,97 @@
 
 ## 2026-11-08 — Publicação do PT2 (Marco 2)
 - Diretor aprovou as capturas (Sala, Quarto, Escritório, conquista, árvore montada). Publicada a v0.6.0 (Version 7) no mesmo artifact. Itens 048–060 entregues; Suíte fechada (pergunta 30 = A). Decidiu: Diretor.
+
+## 2026-11-08 — Marco 2 aprovado e Marco 3 liberado pelo Diretor
+- "Está bom até aqui. Pode seguir." (PT2, v0.6.0). Marco 2 aprovado; Marco 3 (Nick e dicas: despertar, farejar e tela de dica com imagem) liberado. Produto escreve o escopo primeiro (GDD seção 16 e backlog). Decidiu: Diretor.
+
+## 2026-11-08 — PR do Marco 2 mergeada
+- O Diretor abriu e mergeou a PR nº 3 (`claude/marco-1-orchestration-c3b37a` → `setup/estrutura-de-agentes`). A branch local foi avançada (fast-forward) até o merge; o Marco 3 segue nessa branch e abre outra PR depois do PT3. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: escopo do Marco 3 (Nick e dicas, v0.7.0)
+- GDD seção 16 e backlog 064–078. Padrões do Produto (o Diretor pode trocar no PT3): Nick dorme na Sala (porta e luzes), Cozinha/Lavanderia (parte 1), Quarto (parte 2), Escritório (parte 3), Sala depois da parte 3; nunca no Hall; acordado não bloqueia nem entra em rota; dormindo bloqueia o tile; acompanha a condução 2 passos atrás. Farejar (B ou Esc): seta só para a PORTA a seguir (direita, esquerda ou cima), 5 s, sem cooldown; mesmo cômodo: balão "Au!"; Nick dormindo: "zzz"; peça escondida nunca é alvo; Nick não reage ao entrar no cômodo do item. Dica: tecla H e ícone "?". Barra de exploração com 2 linhas ("Setas: andar  Z: examinar" / "X: farejar  H: dica"). Fumacinha ao dormir de novo.
+- Perguntas ao Diretor: 31 (barra de 2 linhas cobre as linhas 9 e 10 da Sala; chão em (0,9) e (1,9): bloquear só esses 2 tiles? sugestão sim; alternativa: barra de 1 linha), 32 (onde Nick dorme), 33 (fumacinha), 34 (textos novos). Padrões aplicados; o item 073 espera a 31.
+- Em andamento: Especialista (ADR-005) e Arte (sprites do Nick, setas, ícone e tiles de dormir).
+
+## 2026-11-08 — Especialista: ADR-005 (Nick, farejar e dicas) aceito
+- Aceito pelo Orquestrador. Domínio: Nick (dormindo/acordado, tile, direção, fila de 2 passos), Farejo (5 s, sem cooldown), dica sem estado. Conteúdo: campos `nick` e `dica` em content/missions (schema 2, aditivo; obrigatórios nas 4 missões de fase, validações N001–N014). Nick chega JUNTO ao atravessar a porta (semente) e acompanha a condução 2 passos atrás; acordado não bloqueia nem entra em rota; dormindo bloqueia o tile (N009 garante que a rota não passa por ele). Farejar: BFS sobre pares de porta abertos; a seta é a primeira porta do caminho (`porta.saida`); alvo = subárea (Cozinha e Lavanderia = `cozinha`); mesma subárea: "Au!"; dormindo: "zzz"; sem alvo (porta, depois da parte 3): abana com "Au!" se acordado. Dica: H ou "?", só em exploração; fecha com Z, X, Esc, Enter ou Voltar; o mundo congela. Barra de 2 linhas: guarda para `sala.linhas − 2` e `− 1` (pergunta 31 aberta: só a Sala alcança a linha 9). Nick 32×32 como ponto de partida.
+- Pendências do ADR: tiles de dormir de Cozinha, Quarto e Escritório (Arte, item 074); ADR-002 seção 2 e ADR-004 seção 8 item 6 e 11.2 (Especialista, depois); GDD 16.4.4/16.5.2/16.5.6 (Produto). Dev implementa a guarda da barra de 2 linhas como AVISO até a resposta da 31.
+
+## 2026-11-08 — Produto: GDD 16 conciliado com o ADR-005
+- 16.4.2/16.4.4: tile do Nick dormindo é bloqueado (regra única; N009 garante a rota); na troca de área o Nick aparece junto, numa semente vizinha da chegada (lado ou atrás, nunca na frente). 16.5: na fase da porta farejar não se aplica (B mostra "zzz"); alvo = subárea (Cozinha e Lavanderia, um só alvo); seta = primeira porta de uma BFS; depois da parte 3, Nick acordado abana com "Au!", dormindo mostra "zzz", e A acorda sem diálogo. 16.6: Nick dorme em `nick.dorme` da próxima fase (Sala depois da parte 3) com fumacinha de 0,5 s, sem andar. 16.8.5: dica sem estado, só Z, X, Esc, Enter ou Voltar fecham. Nick 32×32 como ponto de partida. Backlog 079 (Especialista): ADR-002 seção 2, ADR-004 item 6 (depende da 31) e 11.2. Decidiu: Produto (padrões), Orquestrador (aceite).
+
+## 2026-11-08 — Especialista: ADR-002 e ADR-004 para o Nick (079)
+- `nick` e `dica` ficam em missions/<id>.json (manifesto sem mudança; schemaVersion 2). ADR-004 item 6: guarda das 2 últimas linhas da tela; L1 (`sala.linhas − 1`) é erro, L2 (`sala.linhas − 2`) é AVISO enquanto a pergunta 31 estiver aberta (conversor E018/E019 só em L1); destino de condução em L1 ou L2 é erro; Nick dormindo bloqueia a rota (N009), acordado não. A direção dos tiles de dormir (parte1–3) fica com a Arte. Suíte: decisão do Diretor já vigente (pergunta 30 = A; Suíte fechada no Marco 2); seções 3 e 9 do ADR-004 em correção.
+
+## 2026-11-08 — Arte: Nick e adereços entregues (067, 068, 074)
+- Nick feito por script a partir da folha do Diretor (`tools-arte/gerar_nick.py`, sem retoque manual): parado 4 direções, andar 4 direções com 4 quadros, dormir, acordar, farejar e feliz (4 quadros); 32×32, escala única; paleta de 28 cores (24 deixava o idle de costas com 15 cores, abaixo do mínimo de 16). Setas de farejar (direita, esquerda, cima), ícone "?", balões (au, zzz, exclamação) e fumaça. `spr_arvore_completa` já mostra as 3 camadas sem enfeite. Tiles de dormir (direção baixo): sala (8,5), cozinha (5,3), quarto (4,3), escritório (6,1); a Cozinha é um corredor e (5,3) é o único tile que passa em todos os critérios. Pergunta: o Nick em 32×32 ao lado da LoLô (32×48) tem o tamanho certo? (padrão: sim).
+- Linhas 9 e 10 da Sala (pergunta 31): não tocadas.
+
+## 2026-11-08 — Diretor: pergunta 31 (Sala sob a barra de 2 linhas)
+- Resposta do Diretor: "Pode mudar a sala". Bloquear os tiles (0,9) e (1,9) da Sala; guarda L2 passa de aviso a erro. Mantida a barra de 2 linhas. Repassado ao Dev (ab877d8885f016a4f). Decidido por: Diretor.
+
+## 2026-11-08 — Dev: Marco 3 entregue (pronto para QA, com bloqueio)
+- Pergunta 31 executada: (0,9) e (1,9) da Sala bloqueados (retangulo id 113 no TMX de jogo), golden atualizado, guarda L2 virou erro. npm test 407 ok, verificar:conteudo, validar:perfil, build:playtest, smoke:playtest ok (conferido pelo Orquestrador). Backlog 066, 069-073, 075 prontos para QA; 077 bloqueado: Como jogar nao cabe em 480x352 (captura confirmada). Abertas: encurtar Como jogar (Diretor); conflito GDD 16.11 x D8 ("Procure a parte de cima", Produto/Diretor); borda 2 px do icone "?" (Arte).
+
+## 2026-11-09 — Diretor: Como jogar e dica da parte 3
+- Resposta "Sim, as duas": (1) encurtar Botao A/B para uma linha e tirar "No celular, em breve" ate o Marco 5; (2) dica da parte 3 sem direcao ("Procure em outro comodo."). Repassado ao Dev; Arte ajusta a borda do icone "?" (1 px, GDD 16.8.1). Proximo: QA 15 min, capturas ao Diretor.
+
+## 2026-11-09 — QA: Marco 3 aprovado (Chromium desktop, teclado)
+- Rodadas 1 a 7; BUG-M3-R4-01 (feliz+Au na chegada) corrigido; BUG-M3-R5-01 fumacinha nao e bug; animacao feliz tinha bug real (tween cortava), corrigido. Nao coberto: celular/toque, Firefox, Safari, TuTu; entrada por codigo da BiBi a conferir no PT3. Aguardando aprovacao das capturas pelo Diretor para publicar v0.7.0.
+
+## 2026-11-09 — Diretor: ajustes do PT3 (Nick e seta)
+- Seta de farejar: 2 animacoes tremulas e fica amarela; Nick mais colado ao sobrinho; na troca de comodo o Nick nasce na posicao do sobrinho, oculto, e so aparece e segue quando o sobrinho atinge o offset (substitui a semente vizinha do ADR-005/GDD 16.4.4, que podia por o Nick a frente). Decidido por: Diretor. Rodada de ajustes v0.7.1 aberta.
+
+## 2026-11-09 — Diretor: pergunta 35 (farejar de novo e seta)
+- Resposta: "siga com a sugestao". (a) B de novo com a seta visivel refaz o farejando (1,2 s), as 2 tremidas e reinicia os 5 s; (b) depois das tremidas a seta fica parada ate sumir, sem sobe e desce. Padrao do Produto confirmado.
+
+## 2026-11-09 — Especialista: ADR-005 revisado para a v0.7.1 (backlog 083)
+- Semente sai da troca de área (GDD 16.17 c). Entra o estado oculto: o Nick fica no tile de chegada, oculto, até o primeiro passo do sobrinho (ADR-005 3.2). Passo de troca de área = primeiro passo para tile andável da área nova que não é gatilho de porta; a chegada não conta como passo. Fila de 1 passo: 2 entradas, `CASAS_ATRAS_DO_NICK = 1` (3.1).
+- Seta de farejar amarela `#f4d35e`, 2 tremidas de 0,4 s (±2 px), sem sobe e desce. B com a seta visível refaz farejando, tremidas e 5 s; o relógio dos 5 s para durante o farejando (4.5). Nick oculto não bloqueia, não é alvo do A e não tem farejando; o balão "Au!" sai sobre o sobrinho (proposta do Especialista, o Produto confirma).
+- Recomendação ao Dev: tirar `semente` de `FilaDoSobrinho` e do `acordar` (sem mudança de comportamento; `alvo()` nunca é lido com menos de 2 entradas). A aparição da troca de área sai hoje como `saltou`; um tipo próprio (`apareceu`) é recomendado.
+- ADR-002: sem mudança pela v0.7.1. ADR-004, seção 11.2: trocar "fila de 2 passos" (linha 349) por "1 tile atrás".
+- Produto: GDD 12 e 16.16 ainda mostram as perguntas 31 e 35 como abertas; sincronizar com este registro.
+- Decidiu: Especialista (definições e revisão). Aceite do Orquestrador pendente (backlog 083, critério 4).
+
+## 2026-11-09 — Diretor: capturas da v0.7.1 aprovadas
+- "Aprovado". Publicacao (Version 9) aguarda o amigo do Diretor terminar o playtest da v0.7.0; fragmento pronto em scratchpad/pt1/playtest-v071.html.
+
+## 2026-11-09 — Marco 4 (v0.8.0): escopo do Produto
+- **Decisão:** caixa de enfeite no Escritório (pergunta 2, padrão do Produto; o Diretor confirma na captura EN2). Caixa aparece depois do diálogo de chegada da parte 3, junto com o Nick indo dormir (GDD 17.2/17.3; antes, aviso "Ainda não!"). Corrigido em 2026-11-09 após o ADR-006. Encaixe de 1,7 s. Nick dorme na Sala (8,5). Exame do estado 3 diz o que falta. `dica.livre` sai de uso. Versão 0.8.0.
+- **Abertas, com padrão aplicado:** 36 (aparência da caixa e dos enfeites) e 37 (créditos abrem sozinhos, opção A).
+- **Quem decidiu:** Produto (padrões); Diretor decide 36 e 37.
+
+## 2026-11-09 — Especialista: ADR-006 (Marco 4, backlog 087; aguarda aceite do Orquestrador)
+- **Decisão:** fase `enfeites` depois de `parte3`. `creditos` sai do enum `Fase` (é tela, fora de `Progresso`). A missão de fim tem `final: true` no **manifesto** (não em `missions/enfeites.json`, como pede o GDD 17.12). A caixa é o objeto `enfeite` (ordem 4, escondida, aviso `aviso.enfeite.antes3`). Estado 4 da árvore = caixa encaixada (`spr_arvore_enfeitada`); a dica nunca mostra o 4. Créditos = tela sem estado. `parte3.depois` e `dica.livre` **saem**; N008 e N014 são reescritos.
+- **Ponto em aberto (conflito interno):** este registro diz "a caixa só aparece depois do encaixe da parte 3"; o GDD 17.2, 17.3 e 17.6 dizem "depois do diálogo de chegada da parte 3", junto com o Nick indo dormir. O ADR segue o GDD. Pergunta ao Diretor levada pelo orquestrador: A (diálogo, GDD) ou B (encaixe). Sugestão do Especialista: A.
+- **Notas de revisão:** ADR-002 (seção 2.4 nova), ADR-004 (seções 6, 8, 9.1, 11.1; item 12 lido como o código: peça da própria fase livre na condução) e ADR-005 (seções 1.4, 2.2, 2.3, 2.4, 2.6, 3.5, 5.1).
+- **Quem decidiu:** Especialista (contrato). Produto ajusta o GDD 17.12 (`final`) e confirma a saída de `depois` e `dica.livre`. Diretor: momento da caixa (pendente).
+
+## 2026-11-09 — ADR-006 aceito (Orquestrador)
+- **Decisão:** ADR-006 aceito. `final: true` fica no manifesto (Produto ajusta GDD 17.12 e backlog 090); `parte3.depois` e `dica.livre` saem; fase `enfeites`; créditos são tela fora de `Progresso`. Caixa aparece depois do diálogo de chegada da parte 3 (opção A, padrão; o Diretor troca na captura EN2).
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite).
+
+## 2026-11-09 — Perguntas 36 e 37 respondidas (Diretor)
+- **36:** siga a sugestão: caixa vermelha com laço dourado, tampa para cima; árvore com bolas vermelhas e douradas, fita verde e estrela dourada no topo.
+- **37:** siga a sugestão: opção A, créditos abrem sozinhos com fade depois do diálogo final.
+- **Quem decidiu:** Diretor. "Captura aprovada": ainda não existe captura do jogo do Marco 4; confirmar a qual imagem ele se refere (ver relatório).
+
+## 2026-11-09 — Marco 4: desvios do Dev aceitos (Orquestrador, padrão)
+- T005 em validarConteudo (T001 a T004 no manifesto); versão "Versão 0.8.0" no canto superior direito dos créditos (não cabe no rodapé; o Diretor pode trocar); "Voltar ao título" em 16 px; `telas.creditos` só no perfil HD; encaixe: a caixa abre por cima do tile do sobrinho (placeholder, confirmar na captura 095). Bug do smoke (troca de cômodo) corrigido pelo Dev.
+- **Quem decidiu:** Orquestrador, seguindo a ordem do Diretor de aplicar as sugestões.
+
+## 2026-11-09 — v0.8.0 publicada (Diretor aprovou as capturas)
+- Artifact Version 10; playtest curto do final registrado como PT4a (não altera a numeração do PT4 do Marco 5).
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — Plot twist na parte 3 (Diretor, retorno do PT4a)
+- **Decisão:** `arvore.chegada.3` ganha 2ª página: a árvore está montada, mas tem algo estranho, falta algo, perdido pela casa. A caixa e o Nick dormindo continuam só depois do fim do diálogo. Versão 0.8.1 (patch).
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Plot twist: X fecha o diálogo (padrão aplicado)
+- **Decisão:** X fecha o diálogo de chegada da parte 3 inteiro, como os demais diálogos; os efeitos (controle, Nick, caixa) valem ao fechar. Entrada bloqueada de 200 ms só ao abrir. O Diretor pode trocar (tornar o plot twist obrigatório).
+- **Quem decidiu:** Produto e QA sugeriram; Orquestrador aplicou.
+
+## 2026-11-09 — Marco 4 aprovado (Diretor, PT4b)
+- **Decisão:** Marco 4 (enfeite, créditos e plot twist, v0.8.1) aprovado ("Está ótimo."). Marco 5 aguarda liberação explícita.
+- **Quem decidiu:** Diretor.
