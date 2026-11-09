@@ -33,7 +33,7 @@ Playtest = o Diretor joga algo concreto e dá retorno. Só convoque quando: (1) 
 
 | # | Quando | O que o Diretor joga | Perguntas-chave |
 |---|--------|----------------------|-----------------|
-| PT1 | Fim do Marco 1 | Título → seleção → introdução → porta → luzes → checkpoint (teclado) | O enigma da porta é claro? O tom está certo? Os controles são confortáveis? Reabrir retoma o save? |
+| PT1 | Fim do Marco 1 | Título → Como jogar → seleção → introdução → porta → luzes → exploração livre ao lado da árvore (teclado e mouse nos botões) | O enigma da porta é claro? O tom está certo? Os controles são confortáveis? A tela Como jogar explica bem os botões? |
 | PT2 | Fim do Marco 2 | As 3 peças e a árvore se montando | Procurar é divertido ou cansativo? As peças brilham o suficiente? As conquistas emocionam? |
 | PT3 | Fim do Marco 3 | Nick (acordar, seguir, farejar) e a tela de dica | Nick é carismático? A seta ajuda sem estragar o jogo? A dica orienta sem frustrar? |
 | PT4 | Fim do Marco 5 | Jogo completo no celular, em paisagem, em aparelho real | Os botões A/B e o direcional são confortáveis? O aviso de rotação funciona? |
@@ -50,34 +50,34 @@ Extra (revisão, não playtest): quando o Diretor entregar a arte dos Sobrinhos,
 ### Build de playtest (no Claude, não no GitHub Pages)
 - O Dev gera a build de playtest como **um único arquivo HTML** (`npm run build:playtest` → `dist-playtest/index.html`, com JS, mapas, sprites e áudio embutidos).
 - O orquestrador publica esse arquivo como artifact no Claude e entrega ao Diretor. Cada playtest = nova versão do artifact, com a versão do jogo visível na tela de título.
-- Limite conhecido: o `localStorage` num artifact pode vir vazio ou falhar. O jogo precisa funcionar sem save (try/catch). O teste "reabrir retoma o save" do PT1 é feito pelo QA em build normal; no playtest, o Diretor testa só o fluxo.
+- O jogo não tem save (decisão do Diretor, 2026-11-07): ao carregar, sempre começa do título. Não usa `localStorage`.
 - GitHub Pages fica **só para as releases finais** (ver abaixo).
 
 ## Releases e versões futuras
 O jogo final precisa receber novas versões (novos mapas, por exemplo) sem quebrar o que existe.
-- **Versionamento:** SemVer. Novo mapa/missão = versão menor (1.1.0). Correção = patch (1.0.1). Mudança que quebra save = maior (2.0.0), evitar.
+- **Versionamento:** SemVer. Novo mapa/missão = versão menor (1.1.0). Correção = patch (1.0.1). Mudança grande e incompatível = maior (2.0.0), evitar.
 - **Release:** tag `vX.Y.Z` na `main` → GitHub Actions roda testes, gera o build e publica no GitHub Pages e como GitHub Release, com `CHANGELOG.md` atualizado.
 - **Conteúdo como dados:** mapas, missões e textos ficam em `content/` com um `manifest.json`; novo mapa = novos arquivos + uma linha no manifesto, sem mexer no motor. Detalhes no ADR-002.
-- **Saves versionados:** o checkpoint guarda `saveVersion`; toda mudança de formato traz uma migração. Save de uma versão antiga continua abrindo.
+- **Sem save na v1.x:** se um dia houver, exige novo ADR com `saveVersion` e migração (ver ADR-002).
 - **Versão visível** na tela de título e nos créditos.
 - Dono do pipeline: Generalista (scripts e workflows), com o Dev nas partes de código e o Especialista no ADR-002.
 
 ## Métricas (log de interações)
-Objetivo: medir de forma simples quanto tempo, dinheiro e interação o jogo custou até ficar pronto. Você mantém `metrics/interacoes.md`.
+Objetivo: medir de forma simples quanto tempo e quantos tokens o jogo custou até ficar pronto, e quantas interações foram necessárias. **Não controlamos custo em dinheiro** (decisão do Diretor, 2026-11-08: no plano Pro o `/cost` mostra sempre 0). Você mantém `metrics/interacoes.md`.
 
 **Uma linha por interação**, em dois casos:
 1. **Delegação:** você chama um agente. De = Orquestrador, Para = agente. A resposta do agente fecha a mesma linha.
 2. **Conversa com o Diretor:** cada mensagem do Diretor e a sua resposta. De = Diretor, Para = Orquestrador.
 
-**Colunas:** id (sequencial, I-001, I-002...), data/hora, marco, modelo, de, para, tokens, tempo em segundos, custo estimado, nota (uma frase).
+**Colunas:** id (sequencial, I-001, I-002...), data/hora, marco, modelo, de, para, tokens (total), tempo em segundos, detalhe dos tokens, nota (uma frase).
 
 **Como preencher:**
 - **Tokens e tempo de agente:** copie do resumo de uso que a chamada ao agente devolve (total de tokens e duração). Se o resumo não vier, escreva `~` e uma estimativa, ou deixe vazio. Nunca invente.
+- **Detalhe dos tokens (a partir de 2026-11-08):** só quando a fonte separar os tipos (entrada, saída, cache de leitura/escrita, contexto), escreva assim: `ent 1200 / saída 300 / cache 5000`. Hoje o resumo de agente devolve só o total; então deixe vazio e não estime a divisão. O que `get_usage` informar (contexto da sessão, limites) vai na linha de reconciliação.
 - **Modelo:** o que está no briefing do agente (`model:`), ou o modelo da sua própria sessão quando for `inherit`/omitido.
 - **Tempo nas conversas com o Diretor:** meça o seu tempo de resposta com `date +%s` no começo e no fim do turno. O tempo que o Diretor leva para responder NÃO conta.
 - **Tokens nas conversas com o Diretor:** você não enxerga o próprio consumo por mensagem. Deixe vazio e cubra na reconciliação.
-- **Custo estimado:** tokens × preço de `metrics/precos.md`. Sem preço preenchido, deixe em branco.
 
-**Reconciliação (fim de cada marco, e antes de cada playtest):** peça ao Diretor para rodar `/cost` (ou `/usage`) no Claude Code e colar o resultado. Registre uma linha de total do marco ao fim da tabela: tokens e custo reais, número de interações com o Diretor, tempo corrido do marco. O total real manda sobre a soma das linhas.
+**Reconciliação (fim de cada marco, e antes de cada playtest):** você mesmo consulta `get_usage` e registra uma linha de total ao fim da tabela: soma dos tokens das delegações do marco, uso da sessão (contexto, limites de 5 h e semanal, por tipo de token se vier), número de interações com o Diretor, tempo corrido do marco. Não peça `/cost` ao Diretor.
 
-**Resumo final do projeto** (em `metrics/resumo.md`, ao fim da Release 1.0): tempo corrido total, custo total, número de interações com o Diretor, número de delegações por agente, e custo por marco.
+**Resumo final do projeto** (em `metrics/resumo.md`, ao fim da Release 1.0): tempo corrido total, tokens totais (por tipo, quando houver), número de interações com o Diretor, número de delegações por agente, e tokens por marco.
