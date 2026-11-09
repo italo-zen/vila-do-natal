@@ -20,6 +20,17 @@
     "recuoMarca": 28
   },
   "corpos": {
+    "nick": {
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "pes": {
+        "w": 20,
+        "h": 8
+      },
+      "quadrosDeAndar": 4
+    },
     "sobrinho": {
       "fpsAndar": 6,
       "pes": {
@@ -151,6 +162,24 @@
         "x": 280,
         "y": 40
       }
+    },
+    "creditos": {
+      "tituloX": 16,
+      "tituloY": 6,
+      "versaoTopo": 6,
+      "nomeY": 46,
+      "larguraTexto": 448,
+      "sobrinhoX": 72,
+      "sobrinhoY": 104,
+      "sobrinhoTextoX": 128,
+      "sobrinhoTextoLargura": 328,
+      "arvoreX": 72,
+      "arvoreY": 164,
+      "nickX": 376,
+      "nickY": 164,
+      "nickTextoLargura": 240,
+      "agradecimentoY": 212,
+      "voltarY": 268
     }
   },
   "painel": {
@@ -175,6 +204,9 @@
     }
   },
   "sprites": {
+    "nick": {
+      "coresMin": 16
+    },
     "sobrinho": {
       "coresMin": 16
     }

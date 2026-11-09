@@ -4,6 +4,21 @@ import { Barra } from '../ui/Barra';
 import { PERSONAGEM_IDS } from '../../domain/personagem/PersonagemId';
 import { Controles } from '../input/Controles';
 import { Dialogo } from '../ui/Dialogo';
+import { NickSprite } from '../nick/NickSprite';
+import { BalaoDoNick } from '../nick/BalaoDoNick';
+import { SetaDeFarejar } from '../nick/SetaDeFarejar';
+import { fumacaDeDormir } from '../nick/FumacaDeDormir';
+import { ACORDAR_MS, ABANAR_MS, BALAO_MS, FAREJAR_MS } from '../nick/temporizacao';
+import { DicaOverlay } from '../ui/DicaOverlay';
+import { IconeDeDica } from '../ui/IconeDeDica';
+import { alvoDoA } from '../../application/mundo/nick/alvoDoA';
+import { reacaoDoNickNaConquista } from '../../application/mundo/nick/reacaoConquista';
+import { FELIZ_MS } from '../nick/temporizacao';
+import { podeAbrirDica, podeFarejar, type ModoDaTela } from '../../application/mundo/nick/modoDaTela';
+import { ANIM_NICK, CHAVE_BALAO } from '../assets/registro';
+import type { MovimentoDoNick } from '../../domain/nick/Nick';
+import type { Tile } from '../../domain/shared/Tile';
+import type { Direcao as DirecaoDoDominio } from '../../domain/shared/Direcao';
 import type { PosicaoDaCaixa } from '../ui/posicaoDoDialogo';
 import { PainelDeCodigo } from '../ui/PainelDeCodigo';
 import { criarIluminacao, type Iluminacao } from '../ui/iluminacao/Iluminacao';
@@ -11,10 +26,17 @@ import {
   CHAVE,
   CHAVE_DA_ARVORE,
   CHAVE_DA_CONQUISTA_DA_PECA,
+  CHAVE_DA_CONQUISTA_DO_ENFEITE,
   CHAVE_DA_PECA,
+  CHAVE_DO_ENFEITE,
   CHAVE_DO_TILESET,
   sprites,
 } from '../assets/registro';
+import {
+  CHAVE_DA_CHEGADA_FINAL,
+  CHAVE_DO_AVISO_DO_ENFEITE,
+  FASE_DO_ENFEITE,
+} from '../../application/mundo/enfeite';
 import { indicadoresDaSubarea, portaEhVertical, type LadoDaPorta, type TipoDeIndicador } from '../../application/mundo/indicadores';
 import { calcularRotaDeConducao, type NoDaRota } from '../../application/mundo/conducao';
 import { CHAVE_EXAMINADA, CHAVES_DA_CHEGADA, deveAbrirChegada, haloDaArvoreVisivel } from '../../application/mundo/chegadaDaArvore';
@@ -29,11 +51,10 @@ import {
   pecaRetiradaNaConducao,
   situacaoDaFase,
 } from '../../application/mundo/pecas';
-import { conducaoDaFase, missaoDaFase } from '../../application/mundo/missoes';
+import { conducaoDaFase, jogoTerminou, missaoDaFase } from '../../application/mundo/missoes';
 import { fatorDaConducao } from '../../domain/progresso/Conducao';
 import {
   ColisaoDoMapa,
-  alvoDaInteracao,
   centroDoQuadro,
   centroDosPes,
   geometriaDoSobrinho,
@@ -73,7 +94,7 @@ type Estado = 'livre' | 'dialogo' | 'painel' | 'cena' | 'conducao';
 type Lado = LadoDaPorta;
 
 /** Objetos que respondem à ação A (GDD 14.9.2 e ADR-004 seção 6). */
-const TIPOS_INTERATIVOS = new Set(['bilhete', 'porta', 'portaFechada', 'examinavel', 'interruptor', 'arvore', 'peca']);
+const TIPOS_INTERATIVOS = new Set(['bilhete', 'porta', 'portaFechada', 'examinavel', 'interruptor', 'arvore', 'peca', 'enfeite']);
 
 /** Pausa depois de fechar um diálogo ou painel, antes de o personagem voltar a andar. Tempo de jogo. */
 const PAUSA_DE_ENTRADA_MS = 200;
@@ -82,6 +103,14 @@ const METADE_DO_FADE_MS = 250;
 /** Encaixe da peça (GDD 15.6.4): a peça desce em 0,6 s; o flash dourado dura 0,3 s. */
 const DURACAO_DA_DESCIDA_MS = 600;
 const DURACAO_DO_FLASH_MS = 300;
+/**
+ * Encaixe da caixa de enfeite (GDD 17.4 item 3; ADR-006 seção 4, passo 5): a caixa abre em 0,6 s, o enfeite sobe em 0,8 s
+ * e o flash dura 0,3 s. Total de 1,7 s, com a árvore mudando só no fim.
+ */
+const ABERTURA_DA_CAIXA_MS = 600;
+const SUBIDA_DO_ENFEITE_MS = 800;
+/** Fade para os créditos depois do diálogo final (GDD 17.4 item 6; cor de fundo da casa). */
+const DURACAO_DO_FADE_FINAL_MS = 500;
 /** Halo da peça no chão (GDD 15.2.4): 4 px de margem; opacidade de 40% a 70% em pulso de 2 s. */
 const MARGEM_DO_BRILHO_DA_PECA = 4;
 const BRILHO_DA_PECA_MIN = 0.4;
@@ -152,6 +181,26 @@ export class CasaScene extends Phaser.Scene {
   /** Intensidade do escuro (1 = escuro, 0 = luzes acesas). Animada por tween no fade. */
   private escuro = { alpha: 1 };
 
+  /** Nick (ADR-005 seção 7.2): sprite, balão, seta de farejar e ícone de dica. A cena só orquestra. */
+  private nick!: NickSprite;
+  private balao!: BalaoDoNick;
+  private seta!: SetaDeFarejar;
+  private icone!: IconeDeDica;
+  /** Tela da dica aberta: enquanto existe, o mundo está parado (GDD 16.8.5). */
+  private dica: DicaOverlay | null = null;
+  /** Ações temporizadas do Nick e dos balões, em tempo de jogo (param com a dica). */
+  private tarefas: { restante: number; fn: () => void }[] = [];
+  /** Tile local do sobrinho no último quadro em que foi registrado (passo novo = tile diferente). */
+  private ultimoTile: { x: number; y: number } | null = null;
+  /** Nick ocupado (acordar, farejar, abanar): B e A não reiniciam a animação. */
+  private nickOcupado = false;
+  /** Farejando (animação de 1,2 s antes da seta): a seta ainda não aparece e os 5 s não correm (ADR-005 seção 4.5). */
+  private sniffando = false;
+  private emIntro = false;
+  private balaoId = 0;
+  /** Indicador estático de cada porta (para trocar pela seta de farejar, GDD 14.10.10). */
+  private indicadoresDePorta = new Map<string, Phaser.GameObjects.Image>();
+
   constructor() {
     super('Casa');
   }
@@ -178,11 +227,22 @@ export class CasaScene extends Phaser.Scene {
     this.interagindoAte = 0;
     this.copaDaArvore = null;
     this.escuro = { alpha: this.sv.sessao.luzesAcesas() ? 0 : 1 };
+    this.dica = null;
+    this.tarefas = [];
+    this.ultimoTile = null;
+    this.nickOcupado = false;
+    this.sniffando = false;
+    this.emIntro = false;
+    this.indicadoresDePorta = new Map();
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(this.perfil.tema.fundo)).setOrigin(0).setScrollFactor(0).setDepth(0);
     this.luz = criarIluminacao(this, this.perfil);
     this.dialogo = new Dialogo(this);
     this.barra = new Barra(this, 900);
+    this.nick = new NickSprite(this, this.perfil);
+    this.balao = new BalaoDoNick(this);
+    this.seta = new SetaDeFarejar(this);
+    this.icone = new IconeDeDica(this, () => this.abrirDica());
     this.fade = this.add
       .rectangle(0, 0, largura, altura, numeroDaCor(this.perfil.tema.fundo), 1)
       .setOrigin(0)
@@ -210,10 +270,13 @@ export class CasaScene extends Phaser.Scene {
   /** Situação atual da partida: fases concluídas e subáreas abertas pela missão ativa (ADR-004 seção 9.1). */
   private concluida = (fase: Fase): boolean => this.sv.sessao.faseConcluida(fase);
 
-  /** Contexto de agora. Durante a condução de uma parte, a peça dela sai do chão (chão livre, sem desenho). */
+  /**
+   * Contexto de agora. Durante a condução de uma parte (ou da caixa), a peça (ou a caixa) dela sai do chão: chão livre,
+   * sem desenho. A caixa de enfeite só fica visível depois que a parte 3 libera a fase (ADR-006 seção 2.4).
+   */
   private contexto(): ContextoDeArea {
     const retirada = this.estado === 'conducao' ? pecaRetiradaNaConducao(this.faseDaConducao) : undefined;
-    return contextoDaPartida(this.sv.conteudo.missoes, this.concluida, retirada);
+    return contextoDaPartida(this.sv.conteudo.missoes, this.concluida, { retirada, caixaLiberada: this.sv.sessao.progresso.caixaLiberada });
   }
 
   private areaAberta(id: string): boolean {
@@ -235,6 +298,8 @@ export class CasaScene extends Phaser.Scene {
     this.faseDaConducao = f;
     this.estado = 'conducao';
     this.barra.setVisible(false);
+    // A seta de farejar não atravessa a condução (B não age nela, GDD 16.5.1).
+    this.sv.sessao.farejo.cancelar();
   }
 
   /** Avança o trajeto: anda tile a tile na velocidade decidida; cada porta é um fade (GDD 14.11.3). */
@@ -272,10 +337,27 @@ export class CasaScene extends Phaser.Scene {
    * (GDD 14.9.3, 14.11.1; D11). Peças (Marco 2): a peça desce sobre a árvore, a árvore muda, e então o diálogo de
    * chegada abre sozinho (GDD 15.6).
    */
+  /** Reação à conquista (GDD 16.7): Nick acordado faz "feliz" 1,6 s e "Au!" uma vez. Sem esperar: o diálogo começa junto. */
+  private reagirAConquista(): void {
+    const n = this.sv.sessao.progresso.nick;
+    if (reacaoDoNickNaConquista(n) !== 'feliz-e-au' || !this.nickNaArea()) return;
+    // O último passo de caminhada do Nick ainda pode estar em tween: o fim dele chamaria parado() e cortaria o "feliz".
+    // Cancela o tween e põe o Nick na posição final antes da animação.
+    this.tweens.killTweensOf(this.nick.sprite);
+    this.nick.posicionar(n.tile.x + this.desl.x, n.tile.y + this.desl.y, true);
+    this.nick.feliz();
+    this.mostrarBalao(CHAVE_BALAO.au, true);
+    this.aguardar(FELIZ_MS, () => this.nick.parado(this.sv.sessao.progresso.nick.direcao));
+  }
+
   private chegou(): void {
     this.pararAnimacao();
     const destino = conducaoDaFase(this.sv.conteudo.missoes, this.faseDaConducao)!;
     this.dir = destino.direcao;
+    if (this.faseDaConducao === FASE_DO_ENFEITE) {
+      this.encaixarEnfeite();
+      return;
+    }
     const ordem = ordemDaFase(this.faseDaConducao);
     if (this.faseDaConducao !== 'luzes' && ordem !== undefined) {
       this.encaixar(ordem);
@@ -283,10 +365,15 @@ export class CasaScene extends Phaser.Scene {
     }
     this.estado = 'livre';
     this.criarHaloDaArvore();
-    if (!deveAbrirChegada(this.sv.sessao)) return;
+    this.reagirAConquista();
+    if (!deveAbrirChegada(this.sv.sessao)) {
+      this.devolverControle();
+      return;
+    }
     this.bloqueadoAte = this.time.now + PAUSA_DE_ENTRADA_MS;
     // BUG-R15-01 (opção b): a caixa sobe para o topo, sem cobrir a árvore, o sobrinho nem o halo.
-    this.abrirDialogo(this.paginasDe([...CHAVES_DA_CHEGADA], {}), { posicao: 'topo' });
+    // Depois do diálogo, o controle volta ao sobrinho e o Nick vai dormir no tile da próxima fase (ADR-005 seção 3.5).
+    this.abrirDialogo(this.paginasDe([...CHAVES_DA_CHEGADA], {}), { posicao: 'topo', aoFim: () => this.devolverControle() });
   }
 
   /**
@@ -295,6 +382,7 @@ export class CasaScene extends Phaser.Scene {
    */
   private encaixar(ordem: number): void {
     this.estado = 'cena';
+    this.reagirAConquista();
     this.barra.setVisible(false);
     const copa = this.copaDaArvore;
     if (!copa) throw new Error('Encaixe sem árvore na subárea atual.');
@@ -327,6 +415,7 @@ export class CasaScene extends Phaser.Scene {
               pausaAoFechar: false,
               aoFim: () => {
                 this.estado = 'livre';
+                this.devolverControle();
               },
             });
           },
@@ -335,7 +424,78 @@ export class CasaScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * Encaixe da caixa de enfeite (GDD 17.4 itens 3 e 4; ADR-006 seção 4, passo 5). Na Sala, ao chegar (3, 7): a caixa abre
+   * (0,6 s), o enfeite sobe à árvore (0,8 s) e o flash (0,3 s) acaba o encaixe, 1,7 s no total. Só então a fase é
+   * concluída e a árvore vai ao estado 4. Nick acordado reage junto. Depois, o diálogo final (ADR-006 seção 4, passo 6).
+   */
+  private encaixarEnfeite(): void {
+    this.estado = 'cena';
+    this.reagirAConquista();
+    this.barra.setVisible(false);
+    const copa = this.copaDaArvore;
+    if (!copa) throw new Error('Encaixe do enfeite sem árvore na subárea atual.');
+    const tile = this.perfil.tile;
+    // A caixa surge no tile do sobrinho, por cima dele, e o enfeite sai dela para a copa da árvore.
+    const c = centroDosPes(this.pos, this.geo);
+    const x = Math.floor(c.x / tile) * tile;
+    const y = Math.floor(c.y / tile) * tile;
+    const cx = copa.x + copa.w / 2;
+    const cy = copa.y + copa.h / 2;
+    const caixa = this.add.image(x, y, CHAVE_DO_ENFEITE.caixa, 0).setOrigin(0, 0).setDepth(PROFUNDIDADE_BRILHO);
+    let enfeite: Phaser.GameObjects.Image | null = null;
+    this.aguardar(ABERTURA_DA_CAIXA_MS, () => {
+      caixa.setFrame(1);
+      enfeite = this.add.image(x + tile / 2, y + tile / 2, CHAVE_DO_ENFEITE.flutuante).setOrigin(0.5).setDepth(PROFUNDIDADE_BRILHO);
+      this.tweens.add({ targets: enfeite, x: cx, y: cy, duration: SUBIDA_DO_ENFEITE_MS, ease: 'Quad.easeOut' });
+    });
+    this.aguardar(ABERTURA_DA_CAIXA_MS + SUBIDA_DO_ENFEITE_MS, () => {
+      caixa.destroy();
+      enfeite?.destroy();
+      const flash = this.add.rectangle(copa.x, copa.y, copa.w, copa.h, numeroDaCor(this.perfil.tema.destaque), 0.9).setOrigin(0).setDepth(PROFUNDIDADE_BRILHO);
+      this.tweens.add({ targets: flash, alpha: 0, duration: DURACAO_DO_FLASH_MS, onComplete: () => flash.destroy() });
+    });
+    this.aguardar(ABERTURA_DA_CAIXA_MS + SUBIDA_DO_ENFEITE_MS + DURACAO_DO_FLASH_MS, () => {
+      // Nada muda antes do fim do encaixe (GDD 17.4 item 3): a fase e a árvore mudam só agora.
+      this.sv.concluirFase.executar(FASE_DO_ENFEITE);
+      copa.img.setTexture(CHAVE_DA_ARVORE[estadoDaArvore(this.concluida)]);
+      this.bloqueadoAte = this.time.now + PAUSA_DE_ENTRADA_MS;
+      this.abrirDialogo(this.paginasDe([CHAVE_DA_CHEGADA_FINAL], {}), {
+        posicao: 'topo',
+        pausaAoFechar: false,
+        aoFim: () => this.fimDoJogo(),
+      });
+    });
+  }
+
+  /**
+   * Fim do jogo (GDD 17.4 item 6; ADR-006 seção 7.2): depois do diálogo final, fade de 0,5 s na cor do fundo e a tela de
+   * créditos. Não há `DevolverControle`: não há destino de Nick depois da missão final (ADR-006 seção 1.4).
+   */
+  private fimDoJogo(): void {
+    if (!jogoTerminou(this.sv.conteudo.missoes, this.concluida)) {
+      this.devolverControle();
+      return;
+    }
+    this.estado = 'cena';
+    this.transitando = true;
+    this.tweens.add({
+      targets: this.fade,
+      alpha: 1,
+      duration: DURACAO_DO_FADE_FINAL_MS,
+      onComplete: () => this.scene.start('Creditos'),
+    });
+  }
+
   update(time: number, delta: number): void {
+    // Tela da dica aberta: o mundo está parado (GDD 16.8.5). Só as teclas da dica agem.
+    if (this.dica) {
+      this.controles.atualizar();
+      this.dica.atualizar(this.controles);
+      this.icone.setVisible(false);
+      return;
+    }
+    this.rodarTarefas(delta);
     if (this.estado === 'conducao') {
       // Durante a condução nenhuma tecla age (GDD 14.11.2): só o trajeto e a barra vazia.
       // A leitura descarta o que foi apertado no trajeto; sem isso, uma tecla segurada até a chegada
@@ -344,13 +504,17 @@ export class CasaScene extends Phaser.Scene {
       this.conduzir(delta);
       this.atualizarSprite(time);
       this.atualizarLuz();
+      this.registrarPassoDoSobrinho();
+      this.atualizarNickEFarejo(delta);
       this.barra.setVisible(false);
+      this.icone.setVisible(false);
       return;
     }
     this.controles.atualizar();
     const entradaLiberada = time >= this.bloqueadoAte && !this.transitando;
     const a = entradaLiberada && this.controles.apertada('a');
     const b = entradaLiberada && this.controles.apertada('b');
+    const h = entradaLiberada && this.controles.apertada('dica');
 
     if (this.estado === 'dialogo') {
       if (a) this.dialogo.avancar();
@@ -359,13 +523,50 @@ export class CasaScene extends Phaser.Scene {
       this.mover(delta, time);
       if (this.pisouNumaPorta()) return;
       if (a) this.interagir(time);
+      else if (b && podeFarejar(this.modo())) this.farejar();
+      else if (h) this.abrirDica();
     }
 
     this.atualizarSprite(time);
     this.atualizarLuz();
     this.atualizarHalo();
-    if (this.estado === 'livre') this.barra.definir(['barra.casa']);
+    this.registrarPassoDoSobrinho();
+    this.atualizarNickEFarejo(delta);
+    const modo = this.modo();
+    if (this.estado === 'livre') this.barra.definir(['barra.casa', 'barra.casa2']);
     this.barra.setVisible(this.estado === 'livre');
+    this.icone.setVisible(podeAbrirDica(modo));
+  }
+
+  /** Modo da tela (ADR-005 seção 1.4): a fonte dos bloqueios de B e H. */
+  private modo(): ModoDaTela {
+    if (this.dica) return 'dica';
+    if (this.transitando) return 'fade';
+    switch (this.estado) {
+      case 'livre':
+        return 'exploracao';
+      case 'dialogo':
+        return this.emIntro ? 'introducao' : 'dialogo';
+      case 'painel':
+        return 'painel';
+      case 'cena':
+        return 'conquista';
+      case 'conducao':
+        return 'conducao';
+    }
+  }
+
+  /** Ações temporizadas (Nick, balões). Não correm com a dica aberta, porque update retorna antes. */
+  private aguardar(ms: number, fn: () => void): void {
+    this.tarefas.push({ restante: ms, fn });
+  }
+
+  private rodarTarefas(delta: number): void {
+    if (this.tarefas.length === 0) return;
+    for (const t of this.tarefas) t.restante -= delta;
+    const prontas = this.tarefas.filter((t) => t.restante <= 0);
+    this.tarefas = this.tarefas.filter((t) => t.restante > 0);
+    for (const t of prontas) t.fn();
   }
 
   // ---------- Subárea ----------
@@ -376,12 +577,17 @@ export class CasaScene extends Phaser.Scene {
     this.desenhos = [];
     this.halo = null;
     this.copaDaArvore = null;
+    // Trocar de subárea apaga a seta e o balão (GDD 16.5.3: "trocar de cômodo: a seta some").
+    this.seta.apagar();
+    this.balao.apagar();
+    this.sv.sessao.farejo.cancelar();
+    this.indicadoresDePorta.clear();
     const mapa = this.sv.conteudo.todosOsMapas.get(id);
     if (!mapa || !this.areaAberta(id)) throw new Error(`Subárea "${id}" não está aberta nesta missão.`);
     const tela = this.perfil.sala;
     this.mapa = mapa;
     this.desl = deslocamentoDaSubarea(mapa, tela);
-    this.colisao = new ColisaoDoMapa(bloqueiosDaSubarea(mapa, this.concluida, this.contexto()));
+    this.colisao = new ColisaoDoMapa(this.bloqueiosComNick());
     this.objetosTela = objetosNaTela(mapa, this.desl);
 
     this.desenharPiso();
@@ -399,6 +605,8 @@ export class CasaScene extends Phaser.Scene {
     }
     this.pararAnimacao();
     this.atualizarSprite(this.time.now);
+    this.ultimoTile = this.tileDoSobrinho();
+    this.atualizarVisualDoNick();
     // O pisca da árvore começa ao chegar, não ao carregar a subárea (GDD 14.11.1, item 5).
     this.criarHaloDaArvore();
     // Cômodo escuro: aviso da primeira entrada, se a subárea tem o texto (GDD 14.1, 14.10.4).
@@ -436,6 +644,7 @@ export class CasaScene extends Phaser.Scene {
         this.copaDaArvore = { img: copa, x: p.x, y: p.y, w: copa.width, h: copa.height };
       }
       if (o.tipo === 'peca') this.desenharPeca(o);
+      if (o.tipo === 'enfeite') this.desenharEnfeite(o);
       if (o.tipo === 'bilhete') {
         const bilhete = this.registrar(this.add.image(x, y, CHAVE.bilhete).setOrigin(0, 0).setDepth(y + tile));
         // Pisca suave para chamar atenção (GDD 14.4).
@@ -508,6 +717,26 @@ export class CasaScene extends Phaser.Scene {
     const tile = this.perfil.tile;
     const x = o.x * tile;
     const y = o.y * tile;
+    this.brilhoDoTile(x, y);
+    this.registrar(this.add.image(x, y, CHAVE_DA_PECA[ordem]).setOrigin(0, 0).setDepth(y + tile));
+  }
+
+  /**
+   * Caixa de enfeite (GDD 17.3; ADR-006 seção 2.4): só aparece `visivel`, com o brilho dourado. Escondida não tem desenho
+   * (o tile só tem aviso); encaixada sai do chão (a caixa vai para a árvore).
+   */
+  private desenharEnfeite(o: ObjetoDoMapa): void {
+    if (this.contexto().estadoDoEnfeite() !== 'visivel') return;
+    const tile = this.perfil.tile;
+    const x = o.x * tile;
+    const y = o.y * tile;
+    this.brilhoDoTile(x, y);
+    this.registrar(this.add.image(x, y, CHAVE_DO_ENFEITE.caixa, 0).setOrigin(0, 0).setDepth(y + tile));
+  }
+
+  /** Brilho dourado pulsante atrás de um objeto de tile (GDD 15.2.4; a peça e a caixa usam o mesmo, ADR-006 seção 2.4). */
+  private brilhoDoTile(x: number, y: number): void {
+    const tile = this.perfil.tile;
     const m = MARGEM_DO_BRILHO_DA_PECA;
     const brilho = this.registrar(
       this.add
@@ -523,7 +752,6 @@ export class CasaScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
-    this.registrar(this.add.image(x, y, CHAVE_DA_PECA[ordem]).setOrigin(0, 0).setDepth(y + tile));
   }
 
   /**
@@ -540,7 +768,7 @@ export class CasaScene extends Phaser.Scene {
       const x = (this.desl.x + i.x) * tile;
       const y = (this.desl.y + i.y) * tile;
       const profundidade = i.tipo === 'tapete' ? PROFUNDIDADE_INDICADOR : y + tile + 0.5;
-      this.registrar(this.add.image(x, y, chave).setOrigin(0, 0).setDepth(profundidade));
+      this.indicadoresDePorta.set(i.porta, this.registrar(this.add.image(x, y, chave).setOrigin(0, 0).setDepth(profundidade)));
     }
   }
 
@@ -644,6 +872,11 @@ export class CasaScene extends Phaser.Scene {
       duration: METADE_DO_FADE_MS,
       onComplete: () => {
         this.carregarSubarea(mapa, spawn);
+        // O Nick acordado vai para a chegada, oculto, e aparece no primeiro passo (PT3, 2026-11-09). Dormindo, não muda.
+        const sp = this.mapa.objetos.find((o) => o.tipo === 'spawn' && o.dados.nome === spawn)!;
+        this.sv.entrarNaArea.executar(this.mapa.id, { x: sp.x, y: sp.y }, sp.dados.direcao as DirecaoDoDominio);
+        this.ultimoTile = { x: sp.x, y: sp.y };
+        this.atualizarVisualDoNick();
         this.atualizarLuz();
         this.tweens.add({
           targets: this.fade,
@@ -661,16 +894,24 @@ export class CasaScene extends Phaser.Scene {
   // ---------- Interação (A) ----------
 
   private interagir(time: number): void {
-    const alvo = alvoDaInteracao(
+    // Ordem do A (ADR-005 seção 3.6): objeto na frente ou encostado; o Nick dormindo entra nessa lista, no fim; o Nick
+    // acordado só se nada acima achou.
+    const achado = alvoDoA(
       this.objetosTela.filter((o) => TIPOS_INTERATIVOS.has(o.tipo)),
+      this.objetoDoNickNaTela() ? { acordado: this.sv.sessao.progresso.nick.acordado, objeto: this.objetoDoNickNaTela()! } : undefined,
       this.pos,
       this.dir,
       this.geo,
     );
-    if (!alvo) return;
+    if (!achado) return;
     this.pararAnimacao();
     this.jogador.setTexture(sprites.interagir(this.sobrinho().id));
     this.interagindoAte = time + 300;
+    if (achado.tipo === 'nick') {
+      this.interagirComNick();
+      return;
+    }
+    const alvo = achado.objeto;
 
     switch (alvo.tipo) {
       case 'bilhete':
@@ -700,6 +941,9 @@ export class CasaScene extends Phaser.Scene {
       case 'peca':
         this.interagirComPeca(alvo);
         break;
+      case 'enfeite':
+        this.interagirComEnfeite();
+        break;
       default:
         break;
     }
@@ -723,21 +967,48 @@ export class CasaScene extends Phaser.Scene {
 
   /** Pega a peça: a conquista abre com a ilustração da peça; a condução segue depois de "Continuar" (GDD 15.5 e 15.6). */
   private pegarPeca(ordem: number): void {
-    const c = centroDosPes(this.pos, this.geo);
-    const origem = {
-      mapa: this.mapa.id,
-      x: Math.floor(c.x / this.perfil.tile) - this.desl.x,
-      y: Math.floor(c.y / this.perfil.tile) - this.desl.y,
-    };
     const fase = FASE_DA_PECA[ordem];
     const missao = missaoDaFase(this.sv.conteudo.missoes, fase)!;
     this.estado = 'cena';
     this.scene.start('Conquista', {
       chave: missao.missao.conquistas[fase],
-      origem,
+      origem: this.origemDoSobrinho(),
       fase,
       ilustracao: CHAVE_DA_CONQUISTA_DA_PECA[ordem],
     });
+  }
+
+  /**
+   * A (ou o encostado) na caixa de enfeite (GDD 17.3 e 17.4; ADR-006 seção 4). Escondida: o aviso "ainda não" (não pega
+   * nada). Visível: pega. Encaixada: nada. Antes das luzes, nada responde.
+   */
+  private interagirComEnfeite(): void {
+    if (!this.sv.sessao.luzesAcesas()) return;
+    const estado = this.contexto().estadoDoEnfeite();
+    if (estado === 'visivel') this.pegarEnfeite();
+    else if (estado === 'escondida') this.falar([CHAVE_DO_AVISO_DO_ENFEITE]);
+  }
+
+  /** Pega a caixa: a conquista abre com a caixa aberta; a condução leva à Sala depois de "Continuar" (GDD 17.4 itens 1 e 2). */
+  private pegarEnfeite(): void {
+    const missao = missaoDaFase(this.sv.conteudo.missoes, FASE_DO_ENFEITE)!;
+    this.estado = 'cena';
+    this.scene.start('Conquista', {
+      chave: missao.missao.conquistas[FASE_DO_ENFEITE],
+      origem: this.origemDoSobrinho(),
+      fase: FASE_DO_ENFEITE,
+      ilustracao: CHAVE_DA_CONQUISTA_DO_ENFEITE,
+    });
+  }
+
+  /** Tile local, na subárea, de onde o A foi dado (ponto de partida da condução, ADR-004 seção 11.1). */
+  private origemDoSobrinho(): { mapa: string; x: number; y: number } {
+    const c = centroDosPes(this.pos, this.geo);
+    return {
+      mapa: this.mapa.id,
+      x: Math.floor(c.x / this.perfil.tile) - this.desl.x,
+      y: Math.floor(c.y / this.perfil.tile) - this.desl.y,
+    };
   }
 
   private acenderLuzes(): void {
@@ -760,6 +1031,269 @@ export class CasaScene extends Phaser.Scene {
         },
       });
     });
+  }
+
+
+  // ---------- Nick e farejar (ADR-005 seções 3, 4 e 5) ----------
+
+  /** Tile local do sobrinho, no quadro atual (centro dos pés). */
+  private tileDoSobrinho(): { x: number; y: number } {
+    const c = centroDosPes(this.pos, this.geo);
+    return { x: Math.floor(c.x / this.perfil.tile) - this.desl.x, y: Math.floor(c.y / this.perfil.tile) - this.desl.y };
+  }
+
+  private tileDoSobrinhoNoMapa(): Tile {
+    const t = this.tileDoSobrinho();
+    return { mapa: this.mapa.id, x: t.x, y: t.y };
+  }
+
+  /** O Nick está nesta subárea e não está oculto. */
+  private nickNaArea(): boolean {
+    const n = this.sv.sessao.progresso.nick;
+    return n.tile.mapa === this.mapa.id && !n.oculto;
+  }
+
+  /** O Nick como objeto da lista do A (coordenadas da tela). Só existe se está nesta subárea. */
+  private objetoDoNickNaTela(): ObjetoDoMapa | undefined {
+    if (!this.nickNaArea()) return undefined;
+    const n = this.sv.sessao.progresso.nick;
+    return { tipo: 'nick', x: n.tile.x + this.desl.x, y: n.tile.y + this.desl.y, dados: {} };
+  }
+
+  /** Bloqueios da subárea mais o tile de dormir do Nick (ADR-005 seção 3.4). Acordado não bloqueia. */
+  private bloqueiosComNick(): boolean[][] {
+    const grade = bloqueiosDaSubarea(this.mapa, this.concluida, this.contexto());
+    const n = this.sv.sessao.progresso.nick;
+    if (n.dormindo && n.tile.mapa === this.mapa.id && grade[n.tile.y]?.[n.tile.x] !== undefined) grade[n.tile.y][n.tile.x] = true;
+    return grade;
+  }
+
+  private atualizarBloqueioDoNick(): void {
+    this.colisao = new ColisaoDoMapa(this.bloqueiosComNick());
+  }
+
+  /** Posição e pose do Nick a partir do estado. Não mexe no Nick enquanto ele anda (tween) nem nas animações de ação. */
+  private atualizarVisualDoNick(): void {
+    const n = this.sv.sessao.progresso.nick;
+    if (!this.nickNaArea()) {
+      this.nick.visivel(false);
+      return;
+    }
+    const sp = this.nick.sprite;
+    if (!this.tweens.isTweening(sp)) this.nick.posicionar(n.tile.x + this.desl.x, n.tile.y + this.desl.y, true);
+    this.nick.visivel(true);
+    const anim = sp.anims.currentAnim?.key;
+    if (n.dormindo && anim !== ANIM_NICK.dormir) this.nick.dormir();
+    else if (n.acordado && anim === ANIM_NICK.dormir) this.nick.parado(n.direcao);
+  }
+
+  /** Cada tile novo do sobrinho vai à fila do Nick (ADR-005 seção 3.1), também na condução. */
+  private registrarPassoDoSobrinho(): void {
+    if (this.transitando) return;
+    const t = this.tileDoSobrinho();
+    if (this.ultimoTile && this.ultimoTile.x === t.x && this.ultimoTile.y === t.y) return;
+    this.ultimoTile = t;
+    const mov = this.sv.registrarPasso.executar({ mapa: this.mapa.id, x: t.x, y: t.y }, this.dir);
+    this.aoMoverNick(mov);
+  }
+
+  /** O Nick andou um tile (tween na velocidade do sobrinho, 2× na condução) ou saltou (fila descontínua). */
+  private aoMoverNick(mov: MovimentoDoNick): void {
+    if (mov.tipo === 'parou' || !this.nickNaArea()) {
+      this.atualizarVisualDoNick();
+      return;
+    }
+    const sp = this.nick.sprite;
+    const destino = posicaoDoTile(mov.para.x + this.desl.x, mov.para.y + this.desl.y, this.nick.geo);
+    this.tweens.killTweensOf(sp);
+    this.nick.visivel(true);
+    if (mov.tipo === 'saltou') {
+      this.nick.moverPx(destino.x, destino.y);
+      this.nick.parado(mov.direcao);
+      return;
+    }
+    const velocidade = this.sv.sessao.progresso.sobrinho.habilidades.velocidadeTilesPorSegundo;
+    const fator = this.estado === 'conducao' ? this.fatorConducao : 1;
+    this.nick.andar(mov.direcao);
+    this.tweens.add({
+      targets: sp,
+      x: destino.x,
+      y: destino.y,
+      duration: 1000 / (velocidade * fator),
+      onUpdate: () => this.nick.moverPx(sp.x, sp.y),
+      onComplete: () => this.nick.parado(mov.direcao),
+    });
+  }
+
+  /** A no Nick (ADR-005 seção 3.6): dormindo acorda (1,2 s, controle travado); acordado abana. */
+  private interagirComNick(): void {
+    const r = this.sv.acordarNick.executar(this.tileDoSobrinhoNoMapa());
+    if (r.tipo === 'abanou') {
+      this.abanar();
+      return;
+    }
+    const primeiraVez = r.primeiraVez;
+    this.estado = 'cena';
+    this.nickOcupado = true;
+    this.nick.acordar();
+    // "Au!" no segundo quadro (GDD 16.3). O "!" amarelo já está no quadro 2 do sprite de acordar.
+    this.aguardar(ACORDAR_MS / 4, () => this.mostrarBalao(CHAVE_BALAO.au, true));
+    this.aguardar(ACORDAR_MS, () => {
+      this.nickOcupado = false;
+      this.nick.parado(this.sv.sessao.progresso.nick.direcao);
+      this.atualizarBloqueioDoNick();
+      if (primeiraVez) this.abrirDialogo(this.paginasDe(['nick.acordou'], {}), {});
+      else this.estado = 'livre';
+    });
+  }
+
+  private abanar(): void {
+    this.estado = 'cena';
+    this.nickOcupado = true;
+    this.nick.feliz();
+    this.aguardar(ABANAR_MS, () => {
+      this.nickOcupado = false;
+      this.estado = 'livre';
+      this.nick.parado(this.sv.sessao.progresso.nick.direcao);
+    });
+  }
+
+  /**
+   * B na exploração (ADR-005 seção 4.1; GDD 16.5.3, 16.17 (a) e pergunta 35). Cada B refaz o farejando (1,2 s), depois as
+   * tremidas da seta e os 5 s. B só é ignorado enquanto o farejando está em curso (nickOcupado). Com o Nick oculto (troca
+   * de área, GDD 16.17 (c)), não há animação de farejar: a seta aparece na hora e o "Au!" sai no tile dele.
+   */
+  private farejar(): void {
+    if (this.nickOcupado) return;
+    const oculto = this.sv.sessao.progresso.nick.oculto;
+    const r = this.sv.farejarComNick.executar(this.mapa.id);
+    switch (r.tipo) {
+      case 'dormindo':
+        this.mostrarBalao(CHAVE_BALAO.zzz, false);
+        return;
+      case 'mesmoComodo':
+        if (oculto) this.mostrarBalao(CHAVE_BALAO.au, true);
+        else this.farejarEDepois(() => this.mostrarBalao(CHAVE_BALAO.au, true));
+        return;
+      case 'porta':
+        // Farejo.mostrar já reiniciou os 5 s. A seta some enquanto o farejando roda (atualizarSeta) e volta tremendo.
+        if (oculto) return;
+        this.sniffando = true;
+        this.farejarEDepois(() => {
+          this.sniffando = false;
+        });
+        return;
+      case 'semAlvo':
+        this.nickOcupado = true;
+        this.nick.feliz();
+        this.mostrarBalao(CHAVE_BALAO.au, true);
+        this.aguardar(ABANAR_MS, () => {
+          this.nickOcupado = false;
+          this.nick.parado(this.sv.sessao.progresso.nick.direcao);
+        });
+        return;
+    }
+  }
+
+  private farejarEDepois(depois: () => void): void {
+    this.nickOcupado = true;
+    this.nick.farejar();
+    this.aguardar(FAREJAR_MS, () => {
+      this.nickOcupado = false;
+      this.nick.parado(this.sv.sessao.progresso.nick.direcao);
+      depois();
+    });
+  }
+
+  /**
+   * Balão sobre o Nick por 1,5 s. Um balão novo substitui o anterior. Com o Nick oculto, o balão sai sobre o tile dele
+   * (GDD 16.17 (c)), mesmo sem o sprite desenhado.
+   */
+  private mostrarBalao(chave: string, comTexto: boolean): void {
+    const n = this.sv.sessao.progresso.nick;
+    if (n.tile.mapa !== this.mapa.id) return;
+    const p = this.nickNaArea()
+      ? { x: this.nick.sprite.x, y: this.nick.sprite.y }
+      : posicaoDoTile(n.tile.x + this.desl.x, n.tile.y + this.desl.y, this.nick.geo);
+    const id = ++this.balaoId;
+    this.balao.mostrar(chave, p.x, p.y, this.nick.geo.quadro.w, comTexto ? this.sv.conteudo.textos.t('nick.latido') : undefined);
+    this.aguardar(BALAO_MS, () => {
+      if (this.balaoId === id) this.balao.apagar();
+    });
+  }
+
+  /** Seta dourada na porta a seguir enquanto o Farejo tem a porta e o Nick não está farejando (GDD 16.5.3). */
+  private atualizarSeta(): void {
+    const f = this.sv.sessao.farejo;
+    const porta = f.porta;
+    if (f.ativo && porta && porta.mapa === this.mapa.id && !this.sniffando) {
+      this.seta.mostrar(porta, this.desl, this.perfil.tile);
+      this.indicadoresDePorta.get(porta.id)?.setVisible(false);
+      return;
+    }
+    if (this.seta.visivel) this.seta.apagar(!f.ativo);
+    // A seta branca estática só volta quando a seta de farejar acabou (não durante o farejando refeito).
+    if (!f.ativo) this.indicadoresDePorta.forEach((i) => i.setVisible(true));
+  }
+
+  private atualizarNickEFarejo(delta: number): void {
+    const f = this.sv.sessao.farejo;
+    // Os 5 s não correm durante a animação de farejar nem com a dica aberta (ADR-005 seção 4.5).
+    if (!this.sniffando && f.ativo) f.avancar(delta);
+    this.atualizarSeta();
+    this.atualizarVisualDoNick();
+  }
+
+  /** Dica (H ou o ícone): só na exploração (ADR-005 seção 5.2). Congela o mundo. */
+  private abrirDica(): void {
+    if (!podeAbrirDica(this.modo())) return;
+    const d = this.sv.montarDica.executar();
+    if (!d) return;
+    const t = this.sv.conteudo.textos;
+    const linhas = d.chavesDoTexto.flatMap((k) => t.paginas(k));
+    this.pausarMundo(true);
+    this.dica = new DicaOverlay(
+      this,
+      { titulo: t.t(d.tituloChave), linhas, estadoDaArvore: d.estadoDaArvore, voltar: t.t('dica.voltar'), barra: t.t('barra.dica') },
+      () => this.fecharDica(),
+    );
+  }
+
+  private fecharDica(): void {
+    this.dica = null;
+    this.pausarMundo(false);
+  }
+
+  /** Pausa do mundo com a dica: tweens, animações do sobrinho e do Nick. Os tempos (tarefas) param porque update retorna. */
+  private pausarMundo(pausado: boolean): void {
+    if (pausado) {
+      this.tweens.pauseAll();
+      this.jogador.anims.pause();
+      this.nick.pausar();
+    } else {
+      this.tweens.resumeAll();
+      this.jogador.anims.resume();
+      this.nick.retomar();
+    }
+  }
+
+  /**
+   * Fim do diálogo de chegada, com o controle de volta (ADR-005 seção 3.5). O Nick sai da fila e dorme no tile da próxima
+   * fase, com fumacinha de 0,5 s onde estava e onde vai dormir (se a subárea atual é uma delas).
+   */
+  private devolverControle(): void {
+    const r = this.sv.devolverControle.executar();
+    if (!r) return;
+    if (r.anterior.mapa === this.mapa.id) {
+      const p = posicaoDoTile(r.anterior.x + this.desl.x, r.anterior.y + this.desl.y, this.nick.geo);
+      fumacaDeDormir(this, p.x, p.y);
+    }
+    this.atualizarBloqueioDoNick();
+    this.atualizarVisualDoNick();
+    if (r.destino.mapa === this.mapa.id) {
+      const p = posicaoDoTile(r.destino.x + this.desl.x, r.destino.y + this.desl.y, this.nick.geo);
+      fumacaDeDormir(this, p.x, p.y);
+    }
   }
 
   // ---------- Diálogo ----------
@@ -799,6 +1333,7 @@ export class CasaScene extends Phaser.Scene {
     const inicio = this.sv.conteudo.inicio;
     const t = this.sv.conteudo.textos;
     this.estado = 'dialogo';
+    this.emIntro = true;
     this.dialogo.abrir(
       inicio.paginas.map((k) => t.t(k, { nome: sobrinho.nome })),
       {
@@ -808,6 +1343,7 @@ export class CasaScene extends Phaser.Scene {
         paginaAnterior: { aoVoltarDaPrimeira: () => this.voltarASelecao() },
         aoFim: () => {
           this.estado = 'livre';
+          this.emIntro = false;
           this.sv.concluirFase.executar('introducao');
           // Orientação ao ganhar o controle, uma vez por partida (GDD 14.9.1).
           if (this.sv.sessao.primeiraVez('orientacao')) this.falar(['orientacao.1', 'orientacao.2'], { nome: sobrinho.nome });

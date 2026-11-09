@@ -23,6 +23,14 @@ export interface CorpoDePersonagem {
   fpsAndar: number;
 }
 
+/** Corpo do Nick (ADR-005 seção 7.1; ADR-003 "corpos"). O quadro e a caixa dos pés vêm do perfil. */
+export interface CorpoDoNick {
+  quadro: Dimensao;
+  /** Caixa dos pés, quando a Arte declara (ADR-003). Sem ela, o Nick se alinha à base do tile. */
+  pes?: Dimensao;
+  quadrosDeAndar: number;
+}
+
 export interface PerfilDeArte {
   schemaVersion: number;
   id: string;
@@ -34,7 +42,7 @@ export interface PerfilDeArte {
   escala: { minima: number; modo: 'inteira' | 'hibrida'; inteiraAPartirDe?: number };
   paleta: { minimoDeCores: number; maximoDeCores: number };
   /** Cores mínimas por sprite de sobrinho (spr_<id>_*). Sprite com menos cores é erro no validar:perfil. */
-  sprites: { sobrinho: { coresMin: number } };
+  sprites: { sobrinho: { coresMin: number }; nick?: { coresMin: number } };
   fonte: { familia: string; grade: number; corpo: number; titulo: number; entrelinhas: number; entrelinhasFina: number };
   espaco: { pequeno: number; medio: number; grande: number };
   tema: { fundo: string; texto: string; destaque: string; fraco: string; caixa: string; alfaCaixa: number; alfaBarra: number };
@@ -55,7 +63,7 @@ export interface PerfilDeArte {
   luz: { tipo: TipoDeLuz; raioEmTiles: number; passoDegrau: number; alfa: number; tons?: number };
   objetos: { brilhoInterruptor: { raioEmTiles: number; alfa: number }; halo: { margem: number } };
   escalaDeExibicao: { cartao: number; conquista: number };
-  corpos: { sobrinho: CorpoDePersonagem };
+  corpos: { sobrinho: CorpoDePersonagem; nick?: CorpoDoNick };
   telas: {
     titulo: { nomeY: number; versaoTopo: number; menuY: [number, number] };
     comoJogar: { tituloY: number; listaX: number; listaY: number; listaLargura: number; espacoEntreItens: number; voltarY: number };
@@ -78,6 +86,28 @@ export interface PerfilDeArte {
       textoY: number;
       textoLargura: number;
       continuarY: number;
+    };
+    /**
+     * Tela de créditos (GDD 17.7; ADR-006 seção 7): posições em px. Sem rolagem: cabe em 480×352 com a barra de 1 linha.
+     * O HD tem o bloco; perfis antigos (gba) não usam a tela.
+     */
+    creditos: {
+      tituloX: number;
+      tituloY: number;
+      versaoTopo: number;
+      nomeY: number;
+      larguraTexto: number;
+      sobrinhoX: number;
+      sobrinhoY: number;
+      sobrinhoTextoX: number;
+      sobrinhoTextoLargura: number;
+      arvoreX: number;
+      arvoreY: number;
+      nickX: number;
+      nickY: number;
+      nickTextoLargura: number;
+      agradecimentoY: number;
+      voltarY: number;
     };
   };
   painel: {

@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 /** O gancho de QA (window.__estado, window.__teleportar) só existe no build de QA (tools/build-qa.md). */
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ler = (c: string) => readFileSync(join(RAIZ, c), 'utf-8');
-const PROIBIDOS = ['__estado', '__teleportar', 'ganchoQa', 'Gancho de QA'];
+const PROIBIDOS = ['__estado', '__teleportar', '__irParaFase', 'ganchoQa', 'Gancho de QA'];
 
 describe('gancho de QA fora dos builds que não são de QA', () => {
   it('playtest, build normal e release definem __QA__ como false', () => {

@@ -10,6 +10,8 @@ export interface MissaoCarregada {
   requires: string[];
   maps: string[];
   missao: Missao;
+  /** Missão final do jogo (ADR-006 seção 1.3): concluí-la leva aos créditos. Só uma no conteúdo (T001 e T002). */
+  final: boolean;
 }
 
 /** Fases que a missão conclui: as chaves de `conquistas` (marco1: luzes; parteN: parteN). */
@@ -38,6 +40,15 @@ export function missaoAtiva(missoes: readonly MissaoCarregada[], concluida: (f: 
     if (prontas) return m;
   }
   return missoes[missoes.length - 1];
+}
+
+/**
+ * Fim do jogo (ADR-006 seção 1.4): verdadeiro quando a missão com `final` está concluída. Depois dela, não há condução
+ * nem destino do Nick; o diálogo final leva aos créditos.
+ */
+export function jogoTerminou(missoes: readonly MissaoCarregada[], concluida: (f: Fase) => boolean): boolean {
+  const final = missoes.find((m) => m.final);
+  return final !== undefined && missaoConcluida(final, concluida);
 }
 
 /** Missão que contém a fase (como conquista ou como destino de condução). */

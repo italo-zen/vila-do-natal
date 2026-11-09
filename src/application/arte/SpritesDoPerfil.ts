@@ -36,6 +36,20 @@ export function validarCoresDosSobrinhos(contagens: Record<string, number>, perf
     .map(([arquivo, cores]) => `${arquivo}: ${cores} cores; o mínimo por sprite de sobrinho é ${min} (sprites.sobrinho.coresMin).`);
 }
 
+/** Sprite do Nick (spr_nick_*): mesmo critério de cor mínima (ADR-005 seção 7.1; `sprites.nick.coresMin`). */
+export const EHSPRITE_DO_NICK = /^spr_nick_/;
+
+/** Cores de cada sprite do Sobrinho e do Nick, contra os mínimos do perfil (regra de 2026-11-08). */
+export function validarCoresDosPersonagens(contagens: Record<string, number>, perfil: PerfilDeArte): string[] {
+  const erros = validarCoresDosSobrinhos(contagens, perfil);
+  const min = perfil.sprites.nick?.coresMin;
+  if (min === undefined) return [...erros, 'sprites.nick.coresMin ausente no perfil (ADR-005 seção 7.1).'];
+  for (const [arquivo, cores] of Object.entries(contagens)) {
+    if (EHSPRITE_DO_NICK.test(arquivo) && cores < min) erros.push(`${arquivo}: ${cores} cores; o mínimo por sprite do Nick é ${min} (sprites.nick.coresMin).`);
+  }
+  return erros;
+}
+
 export type ResultadoSprites = { ok: true; sprites: SpritesDoPerfil } | { ok: false; erros: string[] };
 
 const ehInteiroPositivo = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v > 0;

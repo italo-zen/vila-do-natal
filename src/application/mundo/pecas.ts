@@ -1,18 +1,20 @@
 import type { Fase } from '../../domain/progresso/Fase';
 import { indiceDaFase } from '../../domain/progresso/Fase';
+import { FASE_DA_PECA, FASE_DO_ENFEITE, estadoDaArvore } from '../../domain/progresso/arvore';
+import { estadoDoEnfeite } from '../../domain/progresso/enfeite';
 import { missaoAtiva, missaoDaFase, type MissaoCarregada } from './missoes';
 import type { ContextoDeArea, EstadoDaPeca } from './subarea';
 
+// Estado da árvore e fase de cada peça são regra de domínio (ADR-005 seção 1.3); reexportados aqui para os imports atuais.
+export { FASE_DA_PECA, FASE_DO_ENFEITE, estadoDaArvore };
+
 /**
- * Peças e árvore do Marco 2 (GDD 15; ADR-004 seção 6; ADR-002 seção 2.2). Regras puras: a cena só consulta.
- * A peça de ordem N liga-se à fase `parteN` (a camada da árvore, GDD 15.2.1). A peça 1 aparece quando a casa
- * acende (fase `luzes` concluída).
+ * Peças e árvore do Marco 2 (GDD 15; ADR-004 seção 6; ADR-002 seção 2.2), e a caixa de enfeite do Marco 4 (ADR-006).
+ * Regras puras: a cena só consulta. A peça de ordem N liga-se à fase `parteN` (a camada da árvore, GDD 15.2.1). A peça 1
+ * aparece quando a casa acende (fase `luzes` concluída).
  */
 
 export type Concluida = (fase: Fase) => boolean;
-
-/** Fase de cada peça (ordem 1 a 3). */
-export const FASE_DA_PECA: Readonly<Record<number, Fase>> = { 1: 'parte1', 2: 'parte2', 3: 'parte3' };
 
 /** Ordem da peça que a fase encaixa: `parteN` → N; `luzes` → 1 (a peça 1 é visível depois das luzes). */
 export function ordemDaFase(fase: Fase): number | undefined {
@@ -29,11 +31,6 @@ export function estadoDaPeca(ordem: number, concluida: Concluida): EstadoDaPeca 
   if (concluida(FASE_DA_PECA[ordem])) return 'encaixada';
   const anterior: Fase = ordem === 1 ? 'luzes' : FASE_DA_PECA[ordem - 1];
   return concluida(anterior) ? 'visivel' : 'escondida';
-}
-
-/** Quantas peças estão encaixadas: é o estado da árvore, de 0 (desmontada) a 3 (montada, GDD 15.4). */
-export function estadoDaArvore(concluida: Concluida): number {
-  return [1, 2, 3].filter((n) => concluida(FASE_DA_PECA[n])).length;
 }
 
 /** Chave do texto de exame da árvore (GDD 15.4): estado 0 é o texto de 14.9.3. */
@@ -59,30 +56,45 @@ export function chaveDoAviso(ordem: number, concluida: Concluida): string | unde
 }
 
 /**
- * Peça que sai do chão ao ser pega (backlog 052, critério 5): a da fase `parteN` que está sendo conduzida. Enquanto a
- * condução roda, ela é chão livre e não é desenhada; o encaixe a põe na árvore. Luzes não tira a peça 1 (ela continua
- * no chão, GDD 15.6.2): só as partes.
+ * O que a condução atual tira do chão (backlog 052, critério 5; ADR-006 seção 2.6): a peça da fase `parteN` ou a caixa
+ * de enfeite da fase `enfeites`. Enquanto a condução roda, ela é chão livre e não é desenhada; o encaixe a põe na árvore.
+ * Luzes não tira a peça 1 (ela continua no chão, GDD 15.6.2).
  */
-export function pecaRetiradaNaConducao(fase: Fase): number | undefined {
-  return fase.startsWith('parte') ? ordemDaFase(fase) : undefined;
+export type Retirada = { tipo: 'peca'; ordem: number } | { tipo: 'enfeite' };
+
+export function pecaRetiradaNaConducao(fase: Fase): Retirada | undefined {
+  if (fase === FASE_DO_ENFEITE) return { tipo: 'enfeite' };
+  if (fase === 'luzes') return undefined;
+  const ordem = ordemDaFase(fase);
+  return ordem === undefined ? undefined : { tipo: 'peca', ordem };
+}
+
+/** Opções do contexto da partida: o que a condução tira do chão e se a caixa de enfeite já foi liberada. */
+export interface OpcoesDoContexto {
+  retirada?: Retirada;
+  caixaLiberada?: boolean;
 }
 
 /**
- * Contexto da partida como ela está agora: missão ativa (subáreas abertas) e estado das peças. `retirada` é a peça
- * que a condução atual tira do chão (ver `pecaRetiradaNaConducao`); ela conta como chão livre.
+ * Contexto da partida como ela está agora: missão ativa (subáreas abertas), estado das peças e da caixa de enfeite.
+ * A peça ou a caixa que a condução retira conta como chão livre.
  */
-export function contextoDaPartida(missoes: readonly MissaoCarregada[], concluida: Concluida, retirada?: number): ContextoDeArea {
+export function contextoDaPartida(missoes: readonly MissaoCarregada[], concluida: Concluida, opcoes: OpcoesDoContexto = {}): ContextoDeArea {
   const abertas = new Set(missaoAtiva(missoes, concluida).maps);
+  const { retirada, caixaLiberada = false } = opcoes;
+  const pecaRetirada = retirada?.tipo === 'peca' ? retirada.ordem : undefined;
   return {
     areaAberta: (id) => abertas.has(id),
-    estadoDaPeca: (ordem) => (ordem === retirada ? 'encaixada' : estadoDaPeca(ordem, concluida)),
+    estadoDaPeca: (ordem) => (ordem === pecaRetirada ? 'encaixada' : estadoDaPeca(ordem, concluida)),
+    estadoDoEnfeite: () => (retirada?.tipo === 'enfeite' ? 'encaixada' : estadoDoEnfeite(concluida, caixaLiberada)),
   };
 }
 
 /**
  * Situação para uma fase (condução e validação, ADR-004 seções 8 e 11): fases antes da fase dada estão concluídas;
  * as subáreas são as da missão que contém a fase; a peça da própria fase conta como visível (pior caso, ADR-004
- * seção 8, item 12). Devolve também `concluida` no mesmo critério.
+ * seção 8, item 12). A caixa de enfeite conta como escondida (chão livre) em qualquer fase, exceto quando a própria
+ * condução a retira. Devolve também `concluida` no mesmo critério.
  */
 export function situacaoDaFase(
   missoes: readonly MissaoCarregada[],
@@ -93,12 +105,14 @@ export function situacaoDaFase(
   const abertas = new Set(missao?.maps ?? []);
   const propria = ordemDaFase(fase);
   const retirada = pecaRetiradaNaConducao(fase);
+  const pecaRetirada = retirada?.tipo === 'peca' ? retirada.ordem : undefined;
   return {
     concluida,
     ctx: {
       areaAberta: (id) => abertas.has(id),
       // Luzes: a peça 1 segue no chão, visível (pior caso). Partes: a peça da fase sai do chão (ver acima).
-      estadoDaPeca: (ordem) => (ordem === retirada ? 'encaixada' : ordem === propria ? 'visivel' : estadoDaPeca(ordem, concluida)),
+      estadoDaPeca: (ordem) => (ordem === pecaRetirada ? 'encaixada' : ordem === propria ? 'visivel' : estadoDaPeca(ordem, concluida)),
+      estadoDoEnfeite: () => (retirada?.tipo === 'enfeite' ? 'encaixada' : estadoDoEnfeite(concluida, false)),
     },
   };
 }

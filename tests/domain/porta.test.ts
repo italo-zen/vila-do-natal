@@ -3,12 +3,13 @@ import { CodigoDaPorta } from '../../src/domain/porta/CodigoDaPorta';
 import { PERSONAGEM_IDS } from '../../src/domain/personagem/PersonagemId';
 import { SOBRINHOS, sobrinhoPorId } from '../../src/domain/personagem/sobrinhos';
 import { Progresso } from '../../src/domain/progresso/Progresso';
+import { nickInicial } from '../helpers/missoesReais';
 
 const ESPERADOS = { lolo: '017', bibi: '020', dandan: '023', tutu: '024' } as const;
 
 describe('código da porta por sobrinho (GDD 4.2)', () => {
   it.each(Object.entries(ESPERADOS))('%s abre com o próprio código %s', (id, codigo) => {
-    const p = Progresso.novo(sobrinhoPorId(id as keyof typeof ESPERADOS));
+    const p = Progresso.novo(sobrinhoPorId(id as keyof typeof ESPERADOS), nickInicial());
     const avancada = p.concluir('introducao');
     expect(avancada.ok).toBe(true);
     if (!avancada.ok) return;
@@ -42,7 +43,7 @@ describe('código da porta por sobrinho (GDD 4.2)', () => {
   });
 
   it('não tem limite de tentativas: 20 erros seguidos não mudam o estado', () => {
-    const p0 = Progresso.novo(sobrinhoPorId('bibi')).concluir('introducao');
+    const p0 = Progresso.novo(sobrinhoPorId('bibi'), nickInicial()).concluir('introducao');
     if (!p0.ok) throw new Error('setup');
     let p = p0.valor.progresso;
     for (let i = 0; i < 20; i++) {

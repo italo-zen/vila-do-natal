@@ -73,5 +73,47 @@ export function validarManifesto(bruto: unknown): ResultadoValidacao {
     }
   });
 
+  validarMissaoFinal(missions, erros);
+
   return erros.length > 0 ? { ok: false, erros } : { ok: true, manifesto: bruto as Manifest };
+}
+
+/**
+ * Missão final do jogo (ADR-006 seção 9, T001 a T004). T005 (fases da final) fica em `validarConteudo`, porque precisa
+ * ler o arquivo da missão. Só o manifesto é lido aqui.
+ * T001: `final`, quando existe, é booleano; no máximo uma missão é final. T002: exatamente uma missão é final.
+ * T003: a final não é `requires` de nenhuma outra. T004: toda missão é a final ou ancestral dela pela cadeia de `requires`.
+ */
+function validarMissaoFinal(missions: Array<Record<string, unknown>>, erros: string[]): void {
+  for (const x of missions) {
+    if (x.final !== undefined && typeof x.final !== 'boolean') erros.push(`T001 A missão "${String(x.id)}": final, quando existe, precisa ser booleano.`);
+  }
+  const finais = missions.filter((x) => x.final === true);
+  if (finais.length > 1) {
+    erros.push(`T001 Mais de uma missão com final: true (${finais.map((x) => String(x.id)).join(', ')}). Só uma é a missão final.`);
+  }
+  if (finais.length === 0) erros.push('T002 Nenhuma missão tem final: true. O jogo precisa de exatamente uma missão final (ADR-006 seção 1.3).');
+  if (finais.length !== 1) return;
+
+  const final = String(finais[0].id);
+  for (const x of missions) {
+    if ((x.requires as unknown[]).includes(final)) erros.push(`T003 A missão final "${final}" é exigida por "${String(x.id)}": a final não pode ser requisito.`);
+  }
+  const ancestrais = new Set<string>();
+  const pilha = [final];
+  while (pilha.length > 0) {
+    const id = pilha.pop();
+    const atual = missions.find((x) => x.id === id);
+    for (const r of (atual?.requires as unknown[] | undefined) ?? []) {
+      if (typeof r === 'string' && !ancestrais.has(r)) {
+        ancestrais.add(r);
+        pilha.push(r);
+      }
+    }
+  }
+  for (const x of missions) {
+    if (x.id !== final && !ancestrais.has(String(x.id))) {
+      erros.push(`T004 A missão "${String(x.id)}" não é ancestral da final "${final}" pela cadeia de requires.`);
+    }
+  }
 }

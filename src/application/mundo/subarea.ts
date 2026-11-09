@@ -1,5 +1,6 @@
 import type { MapaDoJogo, ObjetoDoMapa } from '../content/Mapa';
 import type { Fase } from '../../domain/progresso/Fase';
+import type { EstadoDoEnfeite } from '../../domain/progresso/enfeite';
 
 /**
  * Deslocamento da subárea dentro da tela (ADR-004 seção 2): centralizada, em tiles, sem rolagem.
@@ -30,11 +31,14 @@ export type EstadoDaPeca = 'escondida' | 'visivel' | 'encaixada';
 export interface ContextoDeArea {
   areaAberta(subarea: string): boolean;
   estadoDaPeca(ordem: number): EstadoDaPeca;
+  /** Estado da caixa de enfeite (ADR-006 seção 2.4). Só `visivel` bloqueia o tile. */
+  estadoDoEnfeite(): EstadoDoEnfeite;
 }
 
 export const CONTEXTO_PADRAO: ContextoDeArea = {
   areaAberta: () => true,
   estadoDaPeca: () => 'escondida',
+  estadoDoEnfeite: () => 'escondida',
 };
 
 /**
@@ -53,6 +57,8 @@ export function bloqueiosDaSubarea(mapa: MapaDoJogo, concluida: Concluida, ctx: 
       if (trancada || fechadaPeloDestino) grade[o.y][o.x] = true;
     }
     if (o.tipo === 'peca' && ctx.estadoDaPeca(Number(o.dados.ordem)) === 'visivel') grade[o.y][o.x] = true;
+    // Caixa de enfeite: bloqueia como a peça visível (ADR-006 seção 2.4; ADR-004 seção 6).
+    if (o.tipo === 'enfeite' && ctx.estadoDoEnfeite() === 'visivel') grade[o.y][o.x] = true;
   }
   return grade;
 }

@@ -21,6 +21,7 @@ export class Controles {
       direita: [],
       a: [],
       b: [],
+      dica: [],
     };
     for (const acao of Object.keys(TECLAS) as Acao[]) {
       this.teclas[acao] = TECLAS[acao].map((nome) => teclado.addKey(nome, true));

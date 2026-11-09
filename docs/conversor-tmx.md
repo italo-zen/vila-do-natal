@@ -2,6 +2,7 @@
 
 - **Status:** Aceito em 2026-11-07, junto com ADR-004 (decisão 74 em `decisions.md`). Revisado em 2026-11-08 (móveis para o conteúdo, decisão do Diretor): tipo de saída `movel` (seção 4.2) e erro E020 (seção 6). Revisado em 2026-11-08 (BUG-M12-02): passo 11 (linha da barra), erros E018 e E019, item 7 da Arte e critérios de aceite. Revisado em 2026-11-08 (rotação da planta, item 045; bilhete de parede, item 040): seção 3.1 (nova), tipo `bilhete` (regra 9), `rotacao` no golden (seção 5), checklist (seção 7) e critérios de aceite (seção 8). Revisado em 2026-11-08 (Especialista, ADR-004 seção 8 item 11 e seção 3, arestas): regra 9 (interruptor e distância à entrada no escuro), seção 3.1 (opção `--girar`; [TBD] resolvidos), seção 4.2 (desenho de porta) e checklist da Arte (itens 6 e 7; [TBD] resolvidos). Revisado em 2026-11-08 (chegada explícita, ADR-004 seção 13; **a confirmar pela prévia**): spawn com `chegada` (seção 2.3), regra 9 (tipo de tile), regra 10 (chegada declarada), regra 10b (uma entrada), seção 3.1 (rotação), seção 4.2 (saída sem mudança de formato), erros E024 a E027 (seção 6), checklist da Arte (item 5) e critérios (seção 8).
 - **Extensão (ADR-004 seção 13.13 a 13.24; PROPOSTA, 2026-11-08):** vão livre com chegada declarada nos dois lados (regras 5, 6, 10 e 10b); `porta.saida` em todo `porta` (seção 4.2); erro E028 novo; item 21 do ADR vira W027 para par de fórmula (seção 6). Nada disso está implementado até a Arte e o Dev entregarem.
+- **Revisão do Marco 4 (item 089, 2026-11-09):** caixa de enfeite, classe `enfeite` (seções 2.3, 3 passo 8, regra 9, 4.2 e 5), erro E029 (seção 6) e critério (seção 8). Contrato em ADR-006 seção 2.
 - **Revisão do Marco 2 (item 061, 2026-11-08; aguarda aceite):** peça `peca` (seções 2.3, 4.2 e regra 9; erros E014, E021 a E023), caixa com o vão de saída para baixo (regra 6), pares P2 e P3 e alcova (seção 7, item 5), áreas abertas por missão fora do TMX (seção 4.3), golden com dígitos 1 a 3 (seção 5) e critérios (seção 8).
 - **Dono da implementação:** Arte (`tools-arte/tmx_para_conteudo.py`). Comando `npm run gen:conteudo` e teste de golden no CI: Generalista (backlog 025). Consumidor: Dev (motor e `validarConteudo`, backlog 026 e 027).
 - **Referências:** ADR-004 (seções 2 a 8), ADR-003 (perfil e tile), ADR-002 (manifesto), `docs/mapa-casa-real.md` (inventário e riscos).
@@ -47,11 +48,13 @@ Nomes diferentes de estes são erro (E000). Textos de rótulo, marca e objeto de
 | `Rótulos das subáreas` | grupo de objetos | Um texto por subárea. Propriedade `id` (obrigatória) e `escuro` (booleana, padrão falso). Antigo nome no original: "Nome das subareas" (a Arte renomeia na cópia) |
 | `Portas` | grupo de objetos | Textos `P1` a `P8`. Pares: dois com o mesmo nome. Porta fechada: uma marca com `fechada = true`. Retângulo sem texto é batente (visual, ignorado) |
 | `Objetos da casa bloqueantes` | grupo de objetos | Retângulos de colisão |
-| `Objetos de jogo` | grupo de objetos (novo) | Spawns, interruptor, bilhete, árvore, examináveis e peças (`peca`). Classe = atributo `class` do objeto (Tiled 1.9 ou superior) |
+| `Objetos de jogo` | grupo de objetos (novo) | Spawns, interruptor, bilhete, árvore, examináveis, peças (`peca`) e a caixa de enfeite (`enfeite`). Classe = atributo `class` do objeto (Tiled 1.9 ou superior) |
 
 Propriedades são as propriedades customizadas do Tiled. Tipos `bool`, `int` e `string` são respeitados.
 
 **Peça (`peca`, Marco 2).** Objeto `<text>` no grupo `Objetos de jogo`, com class `peca`. O conteúdo do texto é a ordem (`1`, `2` ou `3`), lido do texto do elemento (regra 2.3 deste contrato). A propriedade `estadoInicial` (string: `visivel` ou `escondida`) é obrigatória. O objeto ocupa 1 tile (32×32 no HD), centrado no tile (regra 8). A Arte vê a ordem no mapa. O conversor não lê o atributo `name`.
+
+**Caixa de enfeite (`enfeite`, Marco 4, ADR-006 seção 2).** Objeto no grupo `Objetos de jogo`, com class `enfeite`, sem texto e sem propriedades: `ordem` (4) e `estadoInicial` (`escondida`) são fixos no conversor, não se lêem do TMX. Exatamente um objeto no mapa inteiro (E029). O objeto ocupa 1 tile, centrado no tile (regra 8). O conversor não sabe qual é a missão: a regra de tile da missão (tile de dormir do Nick, 4-vizinhos) é de `validarConteudo` (ADR-006 T007 e T008).
 
 **Chegada declarada (`spawn` com `chegada`, ADR-004 seção 13).** Objeto `<object>` no grupo `Objetos de jogo`, com class `spawn`, no tile em que o sobrinho aparece ao atravessar a porta. Propriedades: `chegada` (string, id da porta, ex.: `P1`; obrigatória para este tipo) e `direcao` (obrigatória). Não tem `nome`: o conversor grava `nome` = valor de `chegada` na saída. Ter `nome` e `chegada` juntos, ou nenhum dos dois com class `spawn` sem `chegada`, é E014. O objeto fica na subárea cujo piso contém o tile; ele vale para o gatilho de mesmo id que leva a essa subárea (E024).
 
@@ -92,6 +95,7 @@ Coordenadas do Tiled: objetos vêm em pixel. O tile de um ponto ou retângulo é
    - Classe desconhecida, `direcao` fora de `cima`, `baixo`, `esquerda`, `direita`, ou propriedade obrigatória ausente (E014).
    - Dois objetos no mesmo tile, ou dois spawns com o mesmo nome na subárea (E015).
    - Tipo de tile exigido (regra 9): erro E010.
+   - Caixa de enfeite (`enfeite`): número de objetos diferente de 1 no mapa inteiro: E029. Tile sem piso livre ou com menos de 2 vizinhos livres (sem gatilho, porta, spawn, interruptor, peça ou árvore): E010.
    - Peça (`peca`): ordem fora de 1 a 3, texto que não é inteiro, ou `estadoInicial` ausente ou fora de `visivel`/`escondida`: E014. Ordem repetida ou conjunto de peças diferente de {1, 2, 3}: E021. `estadoInicial` que não bate com a ordem: E022. Peça sobre o interruptor ou 4-vizinha dele: E023 (ADR-004 seção 8, itens 15 a 17).
 9. **Tipos de tile exigidos.** Fonte única da regra; cada tipo de objeto só cai onde está listado.
 
@@ -107,6 +111,7 @@ Coordenadas do Tiled: objetos vêm em pixel. O tile de um ponto ou retângulo é
    | `porta` (gatilho de par) | piso livre | livre |
    | spawn de chegada (gerado) | piso livre | livre |
 | `peca` | piso livre, sem bloqueante, móvel ou parede, com vizinho (4) de piso livre que não seja gatilho, vão, spawn, chegada, interruptor nem porta fechada; não sobre o interruptor nem 4-vizinha dele (E023) | livre (colisão 0 no conteúdo; o bloqueio do estado é do motor, ADR-004 seção 6) |
+| `enfeite` | piso livre, sem bloqueante, móvel ou parede, com pelo menos 2 vizinhos (4) de piso livre que não sejam gatilho, vão, spawn, chegada, interruptor, porta fechada, peça nem árvore (E010) | livre (colisão 0 no conteúdo; o bloqueio do estado é do motor, ADR-006 seção 2.4) |
 
    Gatilho e spawn nunca caem em gatilho nem em bloqueio (E009 para gatilho e spawn de chegada; E010 para os demais).
 10. **Portas: spawn de chegada.** Para o par com gatilho `G_B` no lado B e vão `V`: spawn de chegada em B = `G_B + (G_B − V)`, nome = id da porta (ex.: `P8`), direção = sentido de `G_B − V` (para dentro de B). Deve ser piso livre (E009). Por construção, esse tile é o que fica do outro lado do gatilho `G_B`, um tile para dentro. Vale só para par sem chegada declarada nos dois lados (vão de 1 tile).
@@ -184,6 +189,7 @@ Exemplo fictício de 3 × 2 (não é a planta real):
 | `examinavel` | `x`, `y`, `texto` (chave em `texts/`, ex.: `cozinha.pia`) |
 | `movel` | `id` (slug do `nome`, único na subárea), `nome` (texto do TMX, ex.: `Rack TV`), `x`, `y`, `w`, `h` (em tiles, na tela girada). Um por retângulo com texto em `Objetos da casa bloqueantes` (mesmo retângulo da colisão). Só para desenho: não muda a colisão. Parede, pilar e batente não geram móvel. |
 | `peca` | `id` (`peca<ordem>`), `ordem` (1, 2 ou 3), `estadoInicial` (`visivel` ou `escondida`), `x`, `y`. Sem colisão no conteúdo: o bloqueio é do estado no motor (ADR-004 seção 6). Ordenado por `id` |
+| `enfeite` | `id` (`enfeite`), `ordem` (4), `estadoInicial` (`escondida`), `x`, `y`. Sem colisão no conteúdo (ADR-006 seção 2.2). Exatamente um, no mapa inteiro (E029). Sai depois de `peca` e antes de `movel` |
 
 **Formato:** JSON com `indent=2`, `sort_keys=True`, `ensure_ascii=False`, UTF-8 sem BOM, terminado em `\n`.
 
@@ -225,6 +231,7 @@ Pasta: `tools-arte/golden/casa-real/`. Duas partes:
 | `B` | Bilhete |
 | `A` | Árvore |
 | `E` | Examinável |
+| `C` | Caixa de enfeite (`enfeite`), escondida ou não: a grade só mostra a posição |
 | `1`, `2`, `3` | Peça, pela ordem (o estado inicial não aparece na grade) |
 
 **Uso:**
@@ -272,6 +279,7 @@ ERRO E004 maps/casa-real/our-home-jogo.tmx: componente 37 (piso): 2 rótulos (ha
 | E025 | Chegada declarada fora de piso livre: sobre bloqueio, objeto, gatilho, vão ou fora do piso da subárea (seção 3, regra 10) | "chegada 'P1' em 'suite_casal' (x, y) sem piso livre" |
 | E026 | Chegada (declarada ou da fórmula) não 4-adjacente ao gatilho de entrada da subárea, ou dentro do vão (ADR-004 seção 13) | "chegada 'P2' em (7, −3) não encosta no gatilho (7, −1) de 'quarto'" |
 | E027 | Gatilho de par sem exatamente um vizinho de piso livre na própria subárea (seção 3, regra 10b; ADR-004 seção 8, item 21) | "gatilho P1 em 'sala' (6, 2): 2 vizinhos livres (esperado 1)" |
+| E029 | Caixa de enfeite (`enfeite`): número de objetos no mapa inteiro diferente de 1 (ADR-006 seção 2.2) | "caixa de enfeite: esperada 1 (classe 'enfeite'), há 2" |
 | E028 | Chegada declarada (`spawn` com `chegada`) cuja `direcao` não é o sentido do gatilho para ela, isto é, não aponta para dentro da subárea (ADR-004 seção 13.14, d) | "chegada 'P2' em 'quarto' (8, −1): direção 'esquerda', esperado 'direita'" |
 
 **Aviso (não bloqueia):** W001 (tile de piso de outra subárea dentro da caixa). Aparece na saída padrão.
@@ -326,6 +334,7 @@ Antes da primeira execução, a cópia `maps/casa-real/our-home-jogo.tmx` precis
 - Diff do golden (`.txt` e `resumo.json`) revisado pelo Diretor, em imagem ou texto.
 - Teste de CI do Generalista passa.
 - `validarConteudo` (Dev) passa sobre o `content/` real. Isso cobre as regras de referência e de missão do ADR-004 seção 8.
+- **Marco 4 (item 089):** exatamente uma `enfeite` no mapa (sem E029); tile da caixa com 2 vizinhos livres (sem E010). Golden com diff só no tile da caixa (`C`, Escritório (5, 2) na planta girada) e na contagem `enfeite` de `resumo.json`; as demais subáreas ficam byte a byte iguais. A caixa é posta à mão no TMX de trabalho (objeto `enfeite` de id 114, em tile (−11, −10) da cópia atual; o conversor gira).
 - **Marco 2 (item 061):** sem E004 (nenhuma fusão de subáreas); E008 nos pares P2 e P3 (vão de 1 tile sem piso); W001 só nos tiles do piso do Escritório que caem na caixa da Sala; três peças presentes e únicas (sem E014, E021, E022 nem E023); golden com diff só de peças, passagens P2 e P3, alcova e a caixa do Quarto (inclui o vão). As áreas já existem no golden (8 subáreas): o Marco 2 não cria área, só muda a abertura (ADR-002 seção 2.2). Grade `.txt` com 1, 2 e 3 nos tiles da tabela 15.2.2 do GDD, na planta girada.
 - **Chegada e uma entrada (ADR-004 seção 13):** sem E024 a E027 no golden; cada gatilho de par tem um vizinho livre; cada chegada (declarada ou da fórmula) encosta no gatilho de entrada. O Quarto e a Suíte entram com o tile novo na caixa; a Sala mantém 11×10. Diff do golden revisado pelo Diretor (regra de publicação).
 - **Vão livre (ADR-004 seção 13.13):** par com chegada declarada nos dois lados passa com vão de 2 ou mais tiles; vão com piso ou marcas desalinhadas dá E008; `saida` gravado em todo `porta`; golden com a coluna `saida` e sem W027 novo além de P7 e P8.

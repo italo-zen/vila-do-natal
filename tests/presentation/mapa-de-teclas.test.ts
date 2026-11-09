@@ -25,6 +25,8 @@ describe('mapa de teclas do jogo', () => {
     ['x', 'b'],
     ['X', 'b'],
     ['Escape', 'b'],
+    ['h', 'dica'],
+    ['H', 'dica'],
   ] as [string, Acao][])('%s é a ação %s', (tecla, acao) => {
     expect(acaoDaTecla(tecla)).toBe(acao);
   });

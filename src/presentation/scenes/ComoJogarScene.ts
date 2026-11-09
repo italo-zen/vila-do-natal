@@ -28,7 +28,8 @@ export class ComoJogarScene extends Phaser.Scene {
     this.add.text(largura / 2, tela.tituloY, t.t('comojogar.titulo'), estilo(p, p.fonte.titulo, p.tema.destaque)).setOrigin(0.5, 0);
 
     let y = tela.listaY;
-    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.celular']) {
+    // Marco 3 (GDD 16.10): as duas linhas novas vêm depois de "Botão B", nesta ordem. Sem "No celular" até o Marco 5 (decisão do Diretor).
+    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.farejar', 'comojogar.dica']) {
       const linha = this.add.text(
         tela.listaX,
         y,

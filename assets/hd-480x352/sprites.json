@@ -19,6 +19,22 @@
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_arvore_enfeitada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_au.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_exclamacao.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_zzz.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_bibi_celebrate.png",
       "tipo": "imagem"
     },
@@ -68,6 +84,10 @@
     },
     {
       "arquivo": "spr_bilhete.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_conquista_enfeites.png",
       "tipo": "imagem"
     },
     {
@@ -131,11 +151,37 @@
       "quadros": 2
     },
     {
+      "arquivo": "spr_enfeite_caixa.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_enfeite_flutuante.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_fogao.png",
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_fumaca_dormir.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 3
+    },
+    {
       "arquivo": "spr_geladeira.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_icone_dica.png",
       "tipo": "imagem"
     },
     {
@@ -211,6 +257,94 @@
       "quadros": 2
     },
     {
+      "arquivo": "spr_nick_happy.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_idle_down.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_left.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_right.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_up.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_sleep.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_sniff.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_wake.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
       "arquivo": "spr_peca_1.png",
       "tipo": "imagem"
     },
@@ -232,6 +366,18 @@
     },
     {
       "arquivo": "spr_porta_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_cima.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_esquerda.png",
       "tipo": "imagem"
     },
     {

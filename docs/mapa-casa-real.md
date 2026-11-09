@@ -527,3 +527,87 @@ Regra (GDD 14.10.9, regra de arestas): a faixa fica **na aresta entre o tile da 
 - P2 e o Quarto: aberto (seção 8.4). Pendências: gid final do piso novo (5 tiles), `missions[].maps` com `quarto` (Produto/Dev), motor ler `porta.saida` e aceitar chegadas coincidentes (PARA O DEV no relatório).
 - Textos e `missions[].maps`: Produto e Dev (`escritorio` e `quarto` entram quando a Suíte e a P2 forem decididas).
 - Regra 11 (interruptor a mais de 3 tiles de todo spawn) e a validação de par com destino fechado: são do motor (`validarConteudo`); ver relatório.
+
+## 9. Marco 3: tiles de dormir do Nick (item 074; 2026-11-08)
+
+- **Fonte:** GDD 16.2.1 e 16.2.2; ADR-005 seções 2.2, 2.3, 2.6 (N004 a N009) e 7.1 (contrato da Arte).
+- **Autor:** Arte e Level Design. **Status:** tiles escolhidos e conferidos. O bloco de conteúdo abaixo é para o PR do conteúdo (Dev); a Arte não o aplicou em `content/missions/`.
+- **Reprodução:** `python3 -I tools-arte/checar_tiles_nick.py --escolhido sala:8,5 cozinha:5,3 quarto:4,3 escritorio:6,1` (código 0 = passa; mapa ASCII e candidatos de cada cômodo).
+
+### 9.1 TMX: nada muda
+
+Pelo ADR-005 (seções 2.1 e 2.7), o `nick` não vai no TMX: ele é regra de fase, e o TMX descreve subárea sem fase. Por isso `maps/casa-real/our-home-jogo.tmx` e `our-home.tmx` não foram alterados, e o conversor também não.
+
+### 9.2 Tile de dormir por fase
+
+| Fase (missão) | Cômodo (subárea) | Tile (x, y) | Direção | Tela (linha) | Vizinhos livres | Lado do Nick |
+|---|---|---|---|---|---|---|
+| Porta e luzes (`marco1`) | `sala` | (8, 5) | baixo | 5 | 3: (7,5), (8,4), (9,5) chegada da P7 | Sugestão do Produto, confirmada |
+| Parte 1 (`parte1`) | `cozinha` (Cozinha e Lavanderia) | (5, 3) | baixo | 5 | 2: (4,3), (5,4) | Único tile que passa em tudo (9.4) |
+| Parte 2 (`parte2`) | `quarto` | (4, 3) | baixo | 4 | 2: (3,3), (4,4) | Canto do corredor em L, longe da chegada (0,6) |
+| Parte 3 (`parte3`) | `escritorio` | (6, 1) | baixo | 3 | 2: (5,1), (7,1) | Nicho ao lado da mesa, sem passagem |
+| Depois da parte 3 (`parte3.depois`) | `sala` | (8, 5) | baixo | 5 | 3 | Volta para casa |
+
+- A tela é a da subárea centralizada (ADR-005 seção 6.1): deslocamento Y de 0 na Sala, 2 na Cozinha, 1 no Quarto e 2 no Escritório. A linha de tela do Nick (última coluna da tabela) fica entre 3 e 5, sempre acima das linhas 9 e 10 da barra.
+- **Lavanderia:** é a mesma subárea `cozinha` (ADR-004 seção 2; pergunta 27). Um tile só cobre Cozinha e Lavanderia, e a peça 3 (3, 5) fica a dois passos do Nick.
+- **Direção:** `baixo` em todos, como no exemplo do ADR-005 (2.2). A pose de frente é a mais legível quando o Nick acorda; depois de acordado ele segue o sobrinho e vira para onde anda. O quadro de dormir é o de perfil da folha (cabeça à esquerda), igual em todos os tiles.
+
+### 9.3 Critérios conferidos
+
+| Critério (ADR-005) | Como foi conferido |
+|---|---|
+| N004: piso livre (chão ≠ 0, colisão 0) | Confere em todos os tiles |
+| N005: sem objeto, chegada, gatilho, vão, interruptor, árvore, peça, bilhete, móvel, `portaFechada` e destino da condução | Confere pela ferramenta (objetos, gatilhos, chegadas e destino (3, 7)). Nenhum tile escolhido é gatilho, chegada nem o tile entre gatilho e chegada das portas do cômodo |
+| N006: fora das linhas da barra (`y + deslocamentoY ≥ sala.linhas − 2`) | Linhas de tela 3 a 5 |
+| N007: 2 vizinhos livres e nenhum vizinho peça | Vizinhos na tabela da 9.2 |
+| N009: com o tile bloqueado, a rota de condução chega ao destino | Sala: BFS de todos os pontos essenciais até (3, 7), com o tile bloqueado, sem aumentar o caminho. Cozinha, Quarto e Escritório: o tile não está em nenhum caminho mais curto (é beco sem objeto ou tem caminho alternativo de mesmo tamanho). Verificado com a ferramenta |
+| GDD 16.2.2: visível com a luz da entrada, na Sala | (8, 5) está a 2,2 tiles da chegada da P8 (6, 6), dentro do círculo de luz de 3 tiles (perfil, `luz.raioEmTiles`) |
+
+### 9.4 Cozinha: um tile só
+
+A Cozinha e Lavanderia é um corredor: a chegada da P7 (1, 0) entra por (1,1)–(3,1), passa pela peça 2 (4, 1), desce por (4,2)–(4,3) e segue até a peça 3 (3, 5). Por isso, só (5, 3) passa em todos os critérios. Os demais candidatos cortam a passagem (1,1), (2,1), (3,3) e (4,3), ou ficam com um vizinho só. (5, 3) é um beco: bloqueá-lo isola (5, 4), que não tem objeto. Se o Diretor quiser outro tile nesse cômodo, a solução é mudar a planta (um móvel), e não o tile.
+
+### 9.5 Mapas ASCII (saída da ferramenta)
+
+```
+sala (11×10)                 cozinha (6×7)           quarto (5×8)           escritorio (8×6)
+     01234567890                  012345                  01234                  01234567
+   0 **                         0 PSmm#m                 0    x                   0      mmm
+   1 **#mm# P                   1 #**.pm                 1   #*.                  1      *N.
+   2 ******xSP                  2 mmmm.#                 2   #*#                  2      *m#
+   3 *.*m#I *                   3 ###**N                 3   **N                  3      *m#
+   4 .p.m#******                4 ##..#.                 4 *****                  4  *****x
+   5 *.******NSP                5    p.#                 5 *                      5 PS
+   6 ******Smm*m                6    ###                 6 S
+   7 ******P***m                                         7 P
+   8 ***A.
+   9 ..
+```
+
+(`N` = tile escolhido; `*` = candidato; `#` = bloqueado; `P` = gatilho; `S` = chegada; `p` = peça; `m` = móvel; `x` = porta fechada; `I` = interruptor; `A` = árvore.)
+
+### 9.6 Bloco de conteúdo para o PR (ADR-005 2.2 e 2.3)
+
+Para colar em `content/missions/` (os `null` do ADR já fechados). A validação N001 a N014 é do Dev.
+
+```json
+// missions/parte1.json
+"nick": { "dorme": { "mapa": "cozinha", "x": 5, "y": 3, "direcao": "baixo" }, "alvo": "sala" }
+
+// missions/parte2.json
+"nick": { "dorme": { "mapa": "quarto", "x": 4, "y": 3, "direcao": "baixo" }, "alvo": "cozinha" }
+
+// missions/parte3.json
+"nick": {
+  "dorme": { "mapa": "escritorio", "x": 6, "y": 1, "direcao": "baixo" },
+  "alvo": "cozinha",
+  "depois": { "mapa": "sala", "x": 8, "y": 5, "direcao": "baixo" }
+}
+
+// missions/marco1.json (exemplo do ADR-005 2.2, já com o tile da Sala)
+"nick": { "dorme": { "mapa": "sala", "x": 8, "y": 5, "direcao": "baixo" }, "alvo": "sala" }
+```
+
+### 9.7 Linha 9 da Sala (item 073)
+
+O tile de dormir da Sala está na linha de tela 5, então não depende da resposta à pergunta 31. A opção A (bloquear (0, 9) e (1, 9)) segue pendente, e o item 073 continua fora deste trabalho, como pedido.

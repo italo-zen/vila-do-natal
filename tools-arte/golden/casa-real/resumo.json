@@ -103,6 +103,7 @@
         "bloqueadosComPiso": 7,
         "livres": 12,
         "objetos": {
+          "enfeite": 1,
           "movel": 2,
           "porta": 1,
           "portaFechada": 1,
@@ -122,7 +123,7 @@
       "escuro": false,
       "id": "escritorio",
       "largura": 8,
-      "sha256": "3bc837770bc970fe0cd19b7b6f4a13ce902b901c05baa50afdd19c3ca7ee8e14"
+      "sha256": "bb89aab4ffde42f8623a1947ea9d286304f457b8c1d6190d83b1d889a0148cf9"
     },
     {
       "altura": 3,
@@ -179,8 +180,8 @@
     {
       "altura": 10,
       "contagens": {
-        "bloqueadosComPiso": 13,
-        "livres": 62,
+        "bloqueadosComPiso": 15,
+        "livres": 60,
         "objetos": {
           "arvore": 1,
           "interruptor": 1,
@@ -204,7 +205,7 @@
       "escuro": true,
       "id": "sala",
       "largura": 11,
-      "sha256": "fc6d6d2a8297d10f0d23e408ed880dc3f4c288a0051515db572872b51989924c"
+      "sha256": "7dc7e393293f238d1100f4c9f8f66e4dad405e54d1645e49d92bdd29ef98adf8"
     },
     {
       "altura": 5,

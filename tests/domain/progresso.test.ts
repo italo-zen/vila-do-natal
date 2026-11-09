@@ -5,14 +5,17 @@ import { sobrinhoPorId } from '../../src/domain/personagem/sobrinhos';
 import { PERSONAGEM_IDS } from '../../src/domain/personagem/PersonagemId';
 import { HABILIDADES_DOS_SOBRINHOS, Sobrinho } from '../../src/domain/personagem/Sobrinho';
 import { parsePersonagemId } from '../../src/domain/personagem/PersonagemId';
+import { nickInicial } from '../helpers/missoesReais';
 
-const novo = () => Progresso.novo(sobrinhoPorId('lolo'));
+const novo = () => Progresso.novo(sobrinhoPorId('lolo'), nickInicial());
 
 describe('ordem das fases (GDD 3)', () => {
-  it('segue a ordem da tabela do GDD', () => {
-    expect(FASES).toEqual(['introducao', 'porta', 'luzes', 'parte1', 'parte2', 'parte3', 'enfeites', 'creditos']);
+  it('segue a ordem da tabela do GDD, com sete fases e sem créditos (ADR-006 seção 1.1)', () => {
+    expect(FASES).toEqual(['introducao', 'porta', 'luzes', 'parte1', 'parte2', 'parte3', 'enfeites']);
     expect(proximaFase('introducao')).toBe('porta');
-    expect(proximaFase('creditos')).toBeNull();
+    expect(proximaFase('parte3')).toBe('enfeites');
+    expect(proximaFase('enfeites')).toBeNull();
+    expect((FASES as readonly string[]).includes('creditos')).toBe(false);
   });
 
   it('começa em introdução, sem fases concluídas', () => {

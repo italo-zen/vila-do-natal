@@ -10,5 +10,20 @@
   },
   "conquistas": {
     "parte3": "conquista.parte3"
+  },
+  "nick": {
+    "dorme": {
+      "mapa": "escritorio",
+      "x": 6,
+      "y": 1,
+      "direcao": "baixo"
+    },
+    "alvo": "cozinha"
+  },
+  "dica": {
+    "parte3": {
+      "dormindo": "dica.parte3.dormindo",
+      "acordado": "dica.parte3.acordado"
+    }
   }
 }

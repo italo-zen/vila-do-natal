@@ -9,6 +9,7 @@ import { ComoJogarScene } from './scenes/ComoJogarScene';
 import { SelecaoScene } from './scenes/SelecaoScene';
 import { CasaScene } from './scenes/CasaScene';
 import { ConquistaScene } from './scenes/ConquistaScene';
+import { CreditosScene } from './scenes/CreditosScene';
 
 /**
  * Cria o jogo na resolução do perfil de arte (sala × tile, ADR-003 seção 9). A escala é sempre um número
@@ -30,7 +31,7 @@ export function criarJogo(servicos: Servicos, arte: ArteDoPerfil, pai: HTMLEleme
     scale: { mode: Phaser.Scale.NONE },
     input: { mouse: true, touch: false, gamepad: false },
     audio: { noAudio: true },
-    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene],
+    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene, CreditosScene],
   });
   jogo.registry.set('servicos', servicos);
   jogo.registry.set('perfil', perfil);

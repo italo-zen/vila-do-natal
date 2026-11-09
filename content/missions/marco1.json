@@ -20,5 +20,21 @@
   },
   "conquistas": {
     "luzes": "conquista.luzes"
+  },
+  "nick": {
+    "dorme": {
+      "mapa": "sala",
+      "x": 8,
+      "y": 5,
+      "direcao": "baixo"
+    },
+    "alvo": "sala"
+  },
+  "dica": {
+    "porta": "dica.porta",
+    "luzes": {
+      "dormindo": "dica.luzes.dormindo",
+      "acordado": "dica.luzes.acordado"
+    }
   }
 }

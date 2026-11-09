@@ -53,8 +53,10 @@ G_BLOQ = "Objetos da casa bloqueantes"
 G_JOGO = "Objetos de jogo"
 GRUPOS_CONHECIDOS = {G_ROTULOS, G_PORTAS, G_BLOQ, G_JOGO}
 GRUPOS_OBRIGATORIOS = [G_ROTULOS, G_PORTAS, G_BLOQ]
-CLASSES_JOGO = {"spawn", "interruptor", "bilhete", "arvore", "examinavel", "peca"}
+CLASSES_JOGO = {"spawn", "interruptor", "bilhete", "arvore", "examinavel", "peca", "enfeite"}
 ESTADOS_PECA = {"visivel", "escondida"}                # ADR-004 seção 6; estado inicial da peça
+ORDEM_DO_ENFEITE = 4                                   # ADR-006 seção 2.2 (fixo: a caixa não é lida do TMX)
+ESTADO_DO_ENFEITE = "escondida"                        # ADR-006 seção 2.4 (fixo: aparece depois da parte 3)
 DIRECOES = {"cima": (0, -1), "baixo": (0, 1), "esquerda": (-1, 0), "direita": (1, 0)}
 NOME_DIRECAO = {v: k for k, v in DIRECOES.items()}
 # Giro de 90° no sentido horário (GDD 14.12.1): o que estava em cima vai para a direita, etc.
@@ -551,6 +553,7 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
     arvores = set()
     reservados = set()
     pecas_lidas = []                                   # (ordem, subarea, tile, estadoInicial)
+    enfeites_lidos = []                                # (subarea, tile); a caixa de enfeite (ADR-006 seção 2)
     for o in jogo:
         if o.classe not in CLASSES_JOGO:
             col.erro("E014", f"objeto {o.id} ({o.nome or o.texto}): classe '{o.classe}' desconhecida")
@@ -634,6 +637,9 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
                 col.erro("E010", f"peça {ordem} em {t}: exige piso livre, não bloqueio")
                 continue
             pecas_lidas.append((ordem, sub, t, estado))
+        elif o.classe == "enfeite":
+            # Caixa de enfeite (GDD 17.3; ADR-006 seção 2). Sem propriedades: ordem e estado são fixos (ver topo).
+            enfeites_lidos.append((sub, t))
         elif o.classe == "examinavel":
             if not o.props.get("texto"):
                 col.erro("E014", f"examinável em {t} sem 'texto'")
@@ -687,6 +693,20 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
             continue
         objetos_por_sub[sub].append({"tipo": "peca", "id": f"peca{ordem}", "ordem": ordem,
                                      "estadoInicial": estado, "x": t[0], "y": t[1]})
+    # caixa de enfeite (ADR-006 seção 2; GDD 17.3; backlog 089): exatamente uma. Tile de piso livre com ao menos
+    # 2 vizinhos livres, nenhum deles gatilho, porta, spawn, interruptor, peça ou árvore. A regra de tile da
+    # missão (tile de dormir, vizinho da porta do Nick) é de validarConteudo (T007 e T008), não do conversor.
+    pecas_t = {(sub, t) for _, sub, t, _ in pecas_lidas}
+    if len(enfeites_lidos) != 1:
+        col.erro("E029", f"caixa de enfeite: esperada 1 (classe 'enfeite'), há {len(enfeites_lidos)}")
+    for sub, t in enfeites_lidos:
+        vizl = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub
+                and (sub, n) not in proibidos_vizinho and (sub, n) not in pecas_t and n not in arvores]
+        if len(vizl) < 2:
+            col.erro("E010", f"enfeite em {t}: exige piso livre com 2 vizinhos livres (sem gatilho, porta, spawn, interruptor, peça ou árvore); há {len(vizl)}")
+            continue
+        objetos_por_sub[sub].append({"tipo": "enfeite", "id": "enfeite", "ordem": ORDEM_DO_ENFEITE,
+                                     "estadoInicial": ESTADO_DO_ENFEITE, "x": t[0], "y": t[1]})
     if col.erros:
         return None
     moveis = moveis_por_subarea(grupos, T, dono, col)
@@ -795,7 +815,7 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
             objs.append({"tipo": "movel", "id": ident, "nome": nome,
                          "x": mx - bx, "y": my - by, "w": mw, "h": mh})
         ordem = {"porta": 0, "portaFechada": 1, "spawn": 2, "interruptor": 3, "bilhete": 4, "arvore": 5,
-                 "examinavel": 6, "peca": 7, "movel": 8}
+                 "examinavel": 6, "peca": 7, "enfeite": 8, "movel": 9}
         objs.sort(key=lambda o: (ordem[o["tipo"]], str(o.get("id") or o.get("nome") or ""), o["y"], o["x"]))
         contagem["objetos"] = {}
         for o in objs:
@@ -833,7 +853,7 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
 
 def desenhar(mapa_linhas, piso, bloqueado, objs, bx, by):
     simbolo = {"porta": "G", "portaFechada": "F", "spawn": "S", "interruptor": "I",
-               "bilhete": "B", "arvore": "A", "examinavel": "E"}
+               "bilhete": "B", "arvore": "A", "examinavel": "E", "enfeite": "C"}
     marcas = {}
     for o in objs:
         if o["tipo"] == "movel":

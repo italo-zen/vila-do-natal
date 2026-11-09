@@ -96,7 +96,7 @@ else {
         erros.push(`${img.arquivo}: ${cores.size} cores; o máximo do perfil é ${perfil.paleta.maximoDeCores}.`);
       }
     }
-    erros.push(...motor.sprites.validarCoresDosSobrinhos(contagens, perfil));
+    erros.push(...motor.sprites.validarCoresDosPersonagens(contagens, perfil));
     if (todos.size < perfil.paleta.minimoDeCores) {
       erros.push(`o conjunto de PNG do perfil tem ${todos.size} cores; o mínimo do perfil é ${perfil.paleta.minimoDeCores}.`);
     }

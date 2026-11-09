@@ -92,3 +92,55 @@
 - Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 7). QA: aprovado com ressalvas (rodadas 1 a 3 do Marco 2). Capturas aprovadas pelo Diretor antes de publicar.
 - Inclui: as 3 partes da árvore (peça 1 na Sala, 2 na Cozinha, 3 na Lavanderia), conquistas, encaixe e diálogo por parte, aviso "ainda não" com a peça fora de ordem, condução com 2× e fade na P7, árvore em 1, 2 e 3 partes (sem enfeite), Quarto aberto pela P2, Escritório pela P3, portas com seta e tapete, Suíte fechada.
 - Retorno do Diretor: pendente.
+
+### PT2 — retorno do Diretor (2026-11-08, build 0.6.0)
+- **Observações (literais):** "Está bom até aqui. Pode seguir."
+- **Classificação:** bugs → nenhum; ajustes → nenhum; ideias futuras → nenhuma nova.
+- **Marco 2 aprovado pelo Diretor e Marco 3 liberado** ("Pode seguir").
+
+
+## PT3 (build 0.7.0, Marco 3) — enviado ao Diretor em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 8). QA: aprovado para Chromium desktop com teclado (rodadas 1 a 7; sem bug aberto no jogo). Capturas aprovadas pelo Diretor antes de publicar.
+- Inclui: Nick (dorme, acorda com A, segue, abana), farejar com X ou B (seta da primeira porta do caminho, 5 s), dica por H ou pelo ícone "?", barra de 2 linhas, Como jogar com 7 linhas, reação feliz + "Au!" na chegada, Sala com (0,9) e (1,9) bloqueados.
+- Não coberto pelo QA: celular/toque, Firefox, Safari, TuTu; entrada pelo código da BiBi (conferir).
+- Perguntas-chave: o Nick é carismático? A seta ajuda sem estragar o jogo? A dica orienta sem frustrar?
+- Retorno do Diretor: pendente.
+
+### PT3 — retorno do Diretor (2026-11-09, build 0.7.0)
+- **Observações (literais):** "Ficou legal! Nick está legal, as mecânicas funcionaram no geral. (1) em um momento na sala, ele não fez a açao de farejar, parecia que o botão não funcionava. Mas acho que foi porque eu já tinha feito o botão de farejar e depois acho que ele não repetiu. No começo não tinha ficado claro que no farejar, ele deixava a seta amarela. Vamos fazer um ajuste, quando o nick farejar, faça 2 animacoes tremulas da seta e a deixe amarela. (2) o Nick está muito longe do outro personagem, deixe ele mais colado. (3) quando muda de fase o nick as vezes aparece a frente do personagem, isso é um comportamento ruim. Deixe assim: quando mudar de comodo, deixe o nick na mesma posição do sobrinho, depois, assim que o sobrinho atinge o 'offset' do nick, ele começa a seguir. Nesse padrão, o nick ficará escondido quando carrega o novo comodo, mas assim que inicia o caminhar, o nick aparece completamente."
+- **Classificação:** bugs → nenhum confirmado (investigar se "farejar não repetiu" é bug ou só o Au! no mesmo cômodo, sem seta); ajustes → (a) seta de farejar: 2 tremidas e fica amarela, (b) Nick mais colado (fila menor), (c) troca de cômodo: Nick na mesma posição do sobrinho, oculto até o sobrinho andar o offset, depois aparece e segue; ideias futuras → nenhuma nova.
+- **Nick aprovado no geral.** Marco 4 ainda não liberado.
+
+## PT3b (build 0.7.1, ajustes do PT3) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 9, compartilhado com quem tem o link). QA: aprovado para Chromium desktop com teclado (rodadas 8 e 9). Capturas aprovadas pelo Diretor antes de publicar.
+- Inclui: seta de farejar com 2 tremidas de 0,4 s e depois amarela parada; Nick 1 tile atrás, encostado; na troca de cômodo o Nick entra oculto no tile do sobrinho e aparece no primeiro passo; B repetido refaz o farejando.
+- Não coberto pelo QA: celular/toque, Firefox, Safari, TuTu.
+- Retorno do Diretor e do amigo: pendente.
+
+### PT3b — retorno do Diretor (2026-11-09, build 0.7.1)
+- **Observações (literais):** "Deu tudo certo, pode continuar."
+- **Classificação:** bugs → nenhum; ajustes → nenhum; ideias futuras → nenhuma nova. Retorno do amigo: não informado (registrar se chegar).
+- **Marco 3 aprovado pelo Diretor; "pode continuar" tomado como liberação do Marco 4.**
+
+
+## PT4a (build 0.8.0, Marco 4: enfeite e créditos) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 10, "Anyone with the link"). QA: aprovado com ressalvas para Chromium desktop com teclado (3 rodadas). Capturas aprovadas pelo Diretor antes de publicar.
+- Roteiro: (1) jogar até a parte 3 e a árvore montada; (2) ir ao Escritório e achar a caixa (aviso "Ainda não!" antes); (3) pegar a caixa e ver o encaixe e o diálogo final; (4) ler os créditos e voltar ao título; (5) tentar a dica (H) e o farejar (X) na fase final.
+- Perguntas-chave: achar a caixa é divertido ou cansativo? A caixa cobrindo o sobrinho no encaixe incomoda? Os créditos emocionam? O texto "Feito com carinho para a família" serve?
+- Não coberto pelo QA: celular/toque, Firefox, Safari; medida da condução sem fade; fumaça de dormir no Escritório.
+- Retorno do Diretor: pendente.
+
+### PT4a — retorno do Diretor (2026-11-09, build 0.8.0)
+- **Observações (literais):** "Está ótimo. Os créditos ficaram legais. Precisamos de alguns ajustes só: quando acha a parte de cima da árvore apenas monta a árvore e não fala mais nada. Neste ponto adicione um 'plot twist': coloque a mensagem que 'terminamos a árvore mas tem algo estranho: tem algo faltando ainda que deve estar perdido pela casa.'"
+- **Classificação:** bugs → nenhum; ajustes → (a) diálogo de chegada da parte 3 ganha uma 2ª página com o plot twist; ideias futuras → nenhuma. Créditos aprovados.
+
+## PT4b (build 0.8.1, plot twist da parte 3) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 11, "Anyone with the link"). QA: aprovado com ressalvas para Chromium desktop com teclado (rodadas 4 e 5). Capturas das 3 páginas aprovadas pelo Diretor antes de publicar.
+- Muda: ao montar o topo da árvore, o diálogo tem 3 páginas ("A árvore está montada! Que linda!" / "Mas tem algo estranho... Ainda falta alguma coisa." / "Deve estar perdida pela casa."); depois disso a caixa aparece no Escritório.
+- Perguntas-chave: o plot twist anima a procurar a caixa? X na página 1 pula o aviso: incomoda?
+- Não coberto pelo QA: seta de farejar na cozinha e no quarto, X na página 1, celular/toque, Firefox, Safari.
+- Retorno do Diretor: pendente.
+
+### PT4b — retorno do Diretor (2026-11-09, build 0.8.1)
+- **Observações (literais):** "Está ótimo."
+- **Classificação:** bugs → nenhum; ajustes → nenhum; ideias futuras → nenhuma. **Marco 4 aprovado pelo Diretor.** Marco 5 ainda não liberado.
