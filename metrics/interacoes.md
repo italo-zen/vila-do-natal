@@ -219,3 +219,4 @@
 | I-159 | 2026-11-08 20:43 | M2 | haiku 5.5 | Orquestrador | Produto | | | | (fecha I-159) GDD/backlog na P2 horizontal, Quarto 5×8, rotas, Suíte fechada; 3 padrões para o Diretor confirmar na captura |
 | I-160 | 2026-11-08 20:43 | M2 | haiku 5.5 | Orquestrador | Especialista | | | | (fecha I-160) item 22 só para porta; campo origemChegada no conteúdo; aresta do par fechado; sem fallback G − S |
 | I-161 | 2026-11-08 21:08 | M2 | Sonnet 5.5 | Diretor | Orquestrador | | | | Aprovou as capturas; v0.6.0 (Version 7) publicada para o PT2 |
+| I-162 | 2026-11-08 21:09 | M2 | Sonnet 5.5 | Orquestrador | Diretor | | | | 2 commits e push da branch; gh indisponível: PR pelo link de comparação |
