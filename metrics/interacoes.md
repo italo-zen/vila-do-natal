@@ -287,3 +287,70 @@
 | I-223 | 2026-11-09 | M4 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas do plot twist aprovadas; v0.8.1 publicada (Version 11, build sem gancho); PT4b registrado |
 | I-224 | 2026-11-09 | M4 | sonnet 5.5 | Diretor | Orquestrador | | | | PT4b: "Esta otimo"; Marco 4 aprovado; Marco 5 nao liberado |
 | I-225 | 2026-11-09 | M4 | sonnet 5.5 | Orquestrador | (reconciliacao Marco 4) | | | | Delegacoes do M4 (tokens informados): Produto 416.977, Especialista 319.480, Arte 222.042, Dev 731.590 (532.428 + 199.162), QA ultimo acumulado informado 116.330 (rodadas 1 a 5; valores de retomada, parcialmente por diferenca). get_usage: contexto 20% (196.275 de 1.000.000), 5 h 4%, semanal 55%, plano Pro; por tipo de token nao informado. Interacoes com o Diretor no M4: 8 (I-208, 215, 218, 219, 223, 224 e respostas). Marco 4 aprovado no PT4b |
+| I-226 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Marcos 3 e 4 commitados (6ab0907, 0edf562), sem push; Marco 5 liberado |
+| I-227 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 248325 | 415 | | Escopo do Marco 5 entregue: GDD secao 18, backlog 097 a 109, pergunta 38 aberta com padrao (layout B) |
+
+| I-228 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 328711 | 651 | | ADR-007 entregue e aceito por mim; divergencias V1 a V7; perguntas 39 e 40 |
+
+| I-229 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 134831 | 173 | | GDD 18 e backlog 097 a 109 alinhados ao ADR-007; perguntas 39 e 40 (P13 e P14) |
+| I-230 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | 99659 | 171 | | Bloco toque no perfil e sprites ctl_* (cruz, A, B, rotacao) placeholder; validar:perfil, conteudo e 485 testes ok; previa conferida por mim |
+
+| I-231 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 409206 | 1422 | | Marco 5 pronto para QA: 617 testes, build e smoke de teclado e toque ok (conferi testes, conteudo, perfil, build sem gancho e 3 capturas) |
+
+| I-232 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 131565 | 581 | | Rodada 1 do Marco 5 (9 de 15 min, emulado): sem bug, reprovado por cobertura (cerca de metade de TQ, RM nao feito); rodada 2 pedida; tokens acumulam no QA |
+| I-233 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 51092 | 450 | | Rodadas 2 e 3 do Marco 5 (7,5 e 8 min de 15, emulado): sem bug confirmado; suspeitos: H sem dica com toque ligado e encaixe por toque; repassei ao Dev; tokens acumulam no QA |
+| I-234 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 85746 | | | H com toque e encaixe por toque: falsos positivos do roteiro do QA (keyboard.press perde o quadro; prova com tecla segurada 90 ms); unica mudanca: gancho de QA nao le a Casa encerrada; 617 testes; Dev acumulado 494953, retomada por diferenca |
+
+| I-235 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 37400 | 582 | | Rodadas 4 e 5 do Marco 5 (9,7 e 9,7 min): 106 aprovado com ressalvas; 107 reprovado por candidato BUG-M5-02 (X nao fareja na fase luzes); repassado ao Dev; tokens acumulam no QA |
+
+
+| I-236 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 23988 | | | BUG-M5-02 e falso positivo (leitura aos 400-600 ms; animacao de 1,2 s); build do commit 0edf562 igual, sem regressao; nenhum codigo mudou; Dev acumulado 518941, retomada por diferenca |
+
+| I-237 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 29000 | 510 | | Rodada 6 do Marco 5 (8,8 min): BUG-M5-02 fechado; F1 e F4 no Hall ok; F3, F5, N9, N10 indeterminados; 107 pendente; eu encontrei nas capturas que o layout B cobre texto dos menus: devolvi ao Dev; QA acumulado 317791 por diferenca |
+
+| I-238 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 38000 | 556 | | Layout B: controles fora do texto nos menus; 633 testes; checagem automatica de sobreposicao sem falhas; conferi capturas (titulo, Como jogar, introducao); barra dos menus ainda cita botoes ausentes: pedi chaves .toque.menu; Dev acumulado 557306, retomada por diferenca |
+| I-239 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Pedido da PR dos Marcos 3 e 4: push feito (0edf562), link de comparacao entregue; PR aberta e mergeada pelo Diretor |
+| I-240 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Perguntas 38 a 41 respondidas: sim nas quatro (padroes confirmados) |
+
+| I-241 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | | | | Barra .toque.menu nos menus sem botoes (layout B); 664 testes; sem sobreposicao; capturas em entrega-layout-b-r2; tokens acumulam no Dev |
+| I-242 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 122809 | 232 | | GDD 18.4 (colunas do layout B), 18.12 (9 chaves .toque.menu), TQ22, pergunta 42, backlog P12 a P16 e item 110; tokens nao informados |
+
+| I-243 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 40371 | 558 | | Rodada 7 do Marco 5 (9,3 min): 106 aprovado com ressalva; 107 quase (F3, F5, N9 p2, N10, RM2-b/c ok); BUG-M5-03 e comportamento esperado do layout A; rodada 8 pedida; QA acumulado 358138, retomada por diferenca |
+
+| I-244 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 38378 | | | Botao Voltar ao titulo na selecao (layout B, toque) e as 9 chaves .toque.menu do GDD; 685 testes; sem sobreposicao; Dev acumulado 614058, retomada por diferenca |
+| I-245 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 161267 | 249 | | Item 110 entregue: ADR-007 com regra do layout B, desvios D1 a D4 e respostas 38 a 41; confirmou que o botao Voltar ao titulo da selecao nao existe (ja com o Dev); ADR-003 e ADR-001 com valores antigos (44 px, TouchInput), pendentes; tokens nao informados |
+
+
+
+
+| I-246 | 2026-11-09 | M5 | haiku 5.5 | QA | Orquestrador | 22630 | 513 | | Rodadas 7 e 8 do Marco 5 (9,3 e 8,7 min, emulado): 106 aprovado; 107 passou quase tudo, faltam RM2-d/e (avisos de peca jogados), F9, F8; sem bug; QA acumulado 380768, rodada 8 por diferenca |
+| I-247 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas do Marco 5 aprovadas; v0.9.0 publicada (Version 12, build sem gancho, 685 testes); PT4 registrado |
+
+| I-248 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | PT4 no aparelho real: bug (cruz nao navega nos menus de titulo e selecao) e pedido de joystick analogico no lugar da cruz |
+| I-249 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 99035 | 474 | | Novo agente (BUG-M5-04): causa (cruz so alimentava segurada, menus leem apertada), prova antes e depois, 7 testes novos, smoke:toque-menus, 693 testes, v0.9.1; conferi testes parcialmente |
+| I-250 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 177105 | 266 | | GDD 18.19 (joystick), pergunta 43, backlog 111 a 119, versao 0.10.0; tokens ainda nao informados |
+| I-251 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Complemento: "Modelo analogico" (joystick virtual no lugar da cruz); repassado ao Produto |
+
+| I-252 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 261873 | 545 | | Revisao 2 do ADR-007 (joystick) entregue e aceita; achados para Dev, Arte, QA e Produto |
+| I-253 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | 88860 | 151 | | Sprites do joystick (base 360, bolinha 144, 4 setores amarelos) e bloco toque; validar:perfil e conteudo ok, 693 testes; previa conferida por mim; bolinha pressionada creme (padrao) |
+
+| I-254 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 29665 | 488 | | Reteste da v0.9.1 (8 min): BUG-M5-04 fechado; candidato BUG-M5-05 (creditos por toque em 844x390 nao chegam); 107 ainda pendente; QA acumulado 410433, retomada por diferenca |
+
+| I-255 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | | | | Joystick sem cursoCss e com setor em anel de 52 a 60 CSS px (ADR rev. 2); captura T7 e previa; 693 testes; Arte acumulada em tokens, valor da retomada nao informado |
+| I-256 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 100923 | 147 | | GDD 18.19 e backlog 111 a 118 alinhados ao ADR rev. 2; ponto: troca de layout solta o dedo (decidido); tokens nao informados |
+
+| I-257 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 43400 | 828 | | BUG-M5-05 nao e regressao: roteiro do QA procurava "Versao 0.9.0"; Dev endureceu a cruz (borda so nos 3 menus, temBordaDaCruz); 696 testes, tsc, smokes ok; Dev retomada por diferenca (142435 acumulado nesta tarefa) |
+
+
+| I-258 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 19141 | 555 | | Rodada final da v0.9.1 (9,3 min): 106 aprovado; 107 quase (F9, F6-AU e F8 em dialogo e painel sem teste); BUG-M5-05 fechado como falha do roteiro; QA acumulado 429574 |
+| I-259 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas da v0.9.1 aprovadas; v0.9.1 publicada (Version 13, 696 testes, build sem gancho); PT4b registrado |
+| I-260 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 61000 | 1266 | | Joystick 0.10.0 implementado: direcaoDoAnalogico, FonteDeToque com dono, layouts, validarToque, textos, 726 testes, tsc, smokes ok; conferi testes, perfil e uma captura; Dev acumulado 335724 por diferenca |
+| I-261 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Sem commit agora; commit, push e link da PR ao finalizar o Marco 5 |
+| I-262 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Aprovacao antecipada do joystick: se o QA passar, publico a 0.10.0 e sigo (PR do M5 e Marco 6 com o Produto) |
+
+| I-263 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 43000 | 509 | | Joystick 0.10.0 (8,5 min, emulado): TQ23 a TQ32 ok, 118 aprovado com pendencias (TQ33, ausencia do joystick em telas, anel por tela, velocidade); sem bug; rodada final pedida; QA acumulado 473160, retomada por diferenca |
+
+| I-264 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 30143 | 324 | | Rodada final do joystick (5,4 min): 118 e 106 aprovados, 107 com pendencias pequenas, sem bug aberto; QA acumulado 503303 |
+
+| I-265 | 2026-11-09 | M5 | sonnet 5.5 | Orquestrador | (publicacao) | | | | v0.10.0 publicada (Version 14, build sem gancho, 726 testes) por autorizacao do Diretor |
+| I-266 | 2026-11-09 | M5 | sonnet 5.5 | Orquestrador | (reconciliacao Marco 5) | | | | Delegacoes do M5 (tokens informados): Produto 248.325 + 134.831 + 122.809 + 177.105 + 100.923 + ~76.709 = ver linhas I-227, I-229, I-242, I-250, I-256; Especialista 328.711 + 161.267 + 261.873; Arte 99.659 + 88.860 + 99.537(retomada por diferenca); Dev acumulado ~614.058 (a tarefa do bug 99.035 e o joystick 335.724); QA acumulado 503.303 (rodadas 1 a 14 do M5, valores de retomada). get_usage nao consultado nesta linha. Marco 5 aprovado pelo QA (v0.10.0), PT4/PT4b/PT4c no aparelho do Diretor |

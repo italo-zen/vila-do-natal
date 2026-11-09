@@ -406,3 +406,109 @@
 ## 2026-11-09 — Marco 4 aprovado (Diretor, PT4b)
 - **Decisão:** Marco 4 (enfeite, créditos e plot twist, v0.8.1) aprovado ("Está ótimo."). Marco 5 aguarda liberação explícita.
 - **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Marcos 3 e 4 commitados; Marco 5 liberado (Diretor)
+- **Decisão:** commits 6ab0907 (documentos) e 0edf562 (código) na branch `claude/marco-1-orchestration-c3b37a`, sem push. Fora do Git: referências, arquivos de teste de sprite, dist-qa, evidências do QA e a planta original. Marco 5 (celular, v0.9.0) liberado ("depois libere o marco 5").
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Produto: escopo do Marco 5 (toque e rotação, v0.9.0)
+- **Decisão:** GDD seção 18 e backlog 097 a 109. Padrões do Produto: cruz digital de 4 teclas, sem analógico; A à direita, B à esquerda do A, cruz à esquerda (layout A quando as faixas livres têm 144 CSS px ou mais); layout B (botões sobre a casa, 60% de opacidade) em celular estreito; alvo mínimo de 48 CSS px; ação ao pressionar; toque fora dos botões não age; botões somem onde não têm ação, na condução e no fade; painel no toque ganha "Fechar"; aviso de rotação só em aparelho com toque, congela o mundo, sem tela cheia nem trava de orientação; tocar para começar sem tela extra (áudio no Marco 6); `comojogar.celular` sai de uso.
+- **Pergunta 38 aberta:** botões por cima da casa em celular estreito (sugestão do Produto: sim). Padrão aplicado: layout B.
+- **Quem decidiu:** Produto (padrões); Diretor (pergunta 38, pendente).
+
+## 2026-11-09 — Especialista: ADR-007 (toque e rotação) proposto
+- **Decisão:** entrada de toque como segunda fonte de `Controles` (mesma API, sem tocar domínio nem aplicação); controles em DOM, alvos dentro do canvas em Phaser; perfil `toque` em CSS px, com os mínimos (48 CSS px e 8 CSS px) impostos pelo validador; detecção de toque por três sinais no boot e de retrato pela área visível; `resolution` = DPR; aviso de rotação congela com `loop.sleep`; textos de toque com sufixo `.toque`; `comojogar.celular` sai do teclado também. Alvo mínimo passa de 44 para 48 CSS px no `style-guide.md`.
+- **Divergências do GDD 18 (seção própria no ADR-007):** V1 cruz de 144 px (braços encostados); V2 ação ao pressionar não é desfeita ao arrastar; V3 barra de 29 caracteres (não 32); V4 "Farejar" quebra em duas linhas se couber; V5 painel de toque em 5 colunas; V6 alvo abaixo de 375 px de altura; V7 letra de A e B é desenho.
+- **Pendente do Diretor:** V1 (cruz) e V5 (painel em 5 colunas), com sugestão sim para as duas. Aceite do ADR-007 pelo Orquestrador.
+- **Quem decidiu:** Especialista (proposta técnica); aceite pendente do Orquestrador.
+
+## 2026-11-09 — ADR-007 aceito (Orquestrador)
+- **Decisão:** ADR-007 aceito (entrada compartilhada por Dev, Arte, QA). Divergências V1 a V7 resolvidas com os padrões do Especialista. Perguntas ao Diretor: 38 (layout B em celular estreito), 39 (cruz com braços encostados, 144 px) e 40 (painel de 5 colunas no toque); padrões aplicados até a resposta.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite); Diretor decide 38 a 40.
+
+## 2026-11-09 — Marco 5: desvios do Dev aceitos (Orquestrador, padrão)
+- (a) `margemCss: 8` entra no bloco `toque` (ADR-007 5.1 e 4.2). (b) Phaser 3.90 não tem `resolution` no Canvas: o canvas fica 1x com `image-rendering: pixelated`; em DPR 2 e 3 os pixels podem ficar de tamanhos desiguais (aceito pelo ADR 3.3); o PT4 em aparelho real mede. (c) Painel de toque 5 × 3: Apagar e Fechar ocupam 2 colunas, OK 1 (pergunta 41 ao Diretor). (d) Defeito de 0.8.1 corrigido: a barra da dica mostrava "[Z ou X: voltar]" por texto no lugar de chave; as capturas de dica mudam em relação à linha de base. (e) Testes de versão atualizados para 0.9.0. (f) `smoke:playtest` roda também `tools/smoke-toque.mjs`.
+- **Quem decidiu:** Orquestrador (padrão), Diretor decide 38 a 41.
+
+## 2026-11-09 — Marco 5: layout B não pode cobrir texto dos menus (Orquestrador)
+- **Decisão:** nas capturas do layout B (667×375) a cruz e os botões A/B cobrem texto e botões do título e do Como jogar. Em layout B, nas telas de menu e de texto, os controles não aparecem ou ficam fora do texto; o toque direto nos itens já funciona. Dev ajusta; a pergunta 38 (layout B sobre a casa a 60%) continua valendo só para a exploração.
+- **Quem decidiu:** Orquestrador, a partir da revisão das capturas; o Diretor vê as capturas antes de publicar.
+
+## 2026-11-09 — PR dos Marcos 3 e 4 mergeada (Diretor)
+- **Decisão:** a PR dos commits 6ab0907 e 0edf562 foi aberta e mergeada pelo Diretor em `setup/estrutura-de-agentes`. O trabalho do Marco 5 segue sem commit na mesma branch local; sincronizar com a base (`sync_with_base_branch`) só depois de commitar o Marco 5, porque a ferramenta recusa mexer com alterações não commitadas.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Perguntas 38 a 41 respondidas (Diretor)
+- **38:** sim, layout B (cruz e A/B sobre a casa a 60%) em celular estreito, só na exploração (menus ficam limpos, decisão do Orquestrador acima). **39:** sim, cruz de braços encostados, 144 px. **40:** sim, painel 5 × 3 só no toque. **41:** sim, Apagar e Fechar em 2 colunas, OK em 1.
+- **Quem decidiu:** Diretor. Os padrões aplicados passam a decisão.
+
+## 2026-11-09 — Marco 5: layout B por tela; textos `.toque.menu`; TQ22 (Produto, regra do Orquestrador)
+- **Decisão:** no layout B (667×375), título, Como jogar, seleção, conquista, dica, créditos e painel não têm cruz nem A/B (o toque vai direto no item). Diálogo e introdução têm A e B, sem cruz, no maior trecho livre das linhas 2 a 8, fora da caixa de texto. Exploração: cruz, A e B a 60%, como antes. Layout A não muda. Nas telas sem botão no layout B, a barra usa `.toque.menu` (até 29 caracteres; chaves em GDD 18.12). Caso TQ22 (sobreposição) incluído.
+- **Perguntas 38 a 41:** sim às quatro (Diretor, 2026-11-09). P12 a P15 decididas.
+- **Pergunta 42 (nova, aberta):** a seleção do layout B não tem botão B, então não há saída por toque para o título. Padrão aplicado: botão "Voltar ao título" de menu, só no layout B. Sugestão do Produto: sim.
+- **Quem decidiu:** Orquestrador (regra por tela, a partir das capturas); Diretor (38 a 41 e a regra confirmada); Produto (textos, TQ22 e padrão da 42).
+
+## 2026-11-09 — BUG-M5-03 não é bug (Orquestrador)
+- **Decisão:** no layout A (844×390) os menus mostram cruz e A/B nas faixas laterais, sem cobrir nada; vale o GDD 18.4. O layout B (667×375) é que esconde os controles nos menus. QA fecha BUG-M5-03 como comportamento esperado.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.0 publicada (Diretor aprovou as capturas)
+- Artifact Version 12. Pergunta 42 (botão "Voltar ao título" na seleção em layout B, opção A) mantida como padrão: o Diretor aprovou a captura da seleção. Marco 5 fechado pelo QA com ressalvas (RM2-d/e jogados de verdade, F8 e F9 sem teste; cobertos pelos Marcos 2 e 3 e por testes). PT4 aguarda o retorno em aparelho real.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — PT4: joystick virtual no lugar da cruz (ajuste 0.10.0, Produto)
+- **Pedido do Diretor (PT4, v0.9.0):** trocar as setas direcionais do celular por controle analógico; depois, "modelo analógico" (base redonda com bolinha que acompanha o polegar). Movimento segue em grade de 4 direções, sem diagonal.
+- **Escopo escrito:** GDD 18.19 (base 120 CSS px, bolinha 48, curso 36, zona morta 12, limiar 20, histerese, eixo dominante, um empurrão = um passo nos menus do layout A, dica sem joystick). Textos: "Setas" sai do toque; "Mover:" entra. Backlog 111 a 119.
+- **Versão:** 0.10.0 (troca de controle é recurso, não correção).
+- **Pergunta 43 aberta:** fixo ou flutuante. Padrão aplicado: fixo, no lugar da cruz (layout B reserva a área; flutuante exigiria a tela inteira como zona de toque, contra a regra 5).
+- **Quem decidiu:** Diretor (pediu o joystick e o modelo analógico); Produto (escopo, padrões e versão 0.10.0, aguardando aceite do Orquestrador).
+
+## 2026-11-09 — Joystick virtual: versão e padrões aceitos (Orquestrador)
+- **Decisão:** versão 0.10.0 (ajuste de recurso); padrões da GDD 18.19 aceitos (grade de 4 direções, base 120 CSS px, zona morta 12 e limiar 20, menus com um empurrão = um passo no layout A; dica e layout B sem joystick, conforme pergunta 38). Pergunta 43 (fixo ou flutuante) ao Diretor, padrão fixo.
+- **Quem decidiu:** Orquestrador (padrões); Diretor decide a 43.
+
+## 2026-11-09 — BUG-M5-04 e comportamento da cruz nos menus (Orquestrador)
+- **Decisão:** bug registrado como BUG-M5-04 (PT4); correção v0.9.1. Regra: num menu, um toque no braço da cruz = um passo; segurar não repete. Repetição ao segurar seria mudança de regra (decide o Diretor). O ADR-007 seção 1.1 ("`apertada` vem só de A e B") fica desatualizado e o Especialista corrige na revisão do joystick.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Revisão 2 do ADR-007 para o joystick (Especialista, proposta; aguarda aceite do Orquestrador)
+- **Decisão:** `docs/ADR-007.md` revisado (backlog 112). (1) `direcaoDoAnalogico` (pura, em `presentation/input/direcaoDoAnalogico.ts`) substitui `pilhaDaCruz`: zona morta ≤ 12, limiar ≥ 20, distância euclidiana, empate mantém a direção anterior. (2) Borda de menu só no engajamento (repouso para direção); trocar de direção sem zona morta não dá passo (contrato de menu, ADR seção 7.1). (3) Base do joystick a 8 CSS px da borda no layout A e no B (x = `margemCss`); A e B não mudam. (4) `cruzCss` e `cursoCss` fora do bloco `toque` (curso derivado = 36). Validação: base de 96 a 120, bolinha ≥ 40, curso ≥ 20, layout A cabe (base + 2 × margem e par de botões ≤ faixa). (5) Setor do joystick em anel na borda (52 a 60 CSS px), só nas direções que a tela aceita, acima da bolinha; corrige o disco do gerador da Arte. (6) Redimensionar não solta o dedo (correção de `soltarTudo` em `ControlesDeToque`). (7) V1 e pergunta 39 viram histórico. Pergunta 43 segue com padrão fixo e não bloqueia 111 a 119. (8) `style-guide.md` atualizado nos pontos de controle e de texto.
+- **Pedidos ao Produto (GDD 18.19):** 18.19.4 (distância euclidiana; `≤ 12` solta, `≥ 20` engaja; empate mantém a anterior), 18.19.7 (setor em anel na borda, só nas direções da tela), 18.19.8 (passo só da zona morta), TQ25 e TQ28 (setor ao engajar e sumir ao voltar à zona morta).
+- **Motivo:** a cruz sai com o PT4 (GDD 18.19); o contrato de menu não estava escrito (BUG-M5-04); o código atual solta o dedo a cada resize; o setor da Arte desenha disco, não borda.
+- **Quem decidiu:** Especialista (proposta). Orquestrador aceita ou ajusta; o Diretor decide só a pergunta 43.
+
+## 2026-11-09 — ADR-007 revisão 2 aceito (Orquestrador)
+- **Decisão:** ADR-007 revisão 2 aceito (joystick: função pura `direcaoDoAnalogico`, contrato de menu M1 a M7, captura do ponteiro, bloco `analogico` sem `cruzCss` nem `cursoCss`, setor em anel nas direções da tela, resize não solta o dedo). Pergunta 43 segue com padrão fixo. Ordem: v0.9.1 (correção) primeiro; Dev implementa a 0.10.0 depois do reteste do QA.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite).
+
+## 2026-11-09 — GDD 18.19 ajustado à revisão 2 do ADR-007 (Produto; backlog 111 a 113)
+- **Decisão:** GDD 18.19.3, 18.19.4, 18.19.6, 18.19.7, 18.19.8, 18.19.13 (TQ25 e TQ28), 18.19.14 e 18.19.16 atualizados conforme P13 a P17 e P19 a P22 do ADR-007. (1) Distância euclidiana. (2) `≤ 12` solta; `≥ 20` engaja só a partir do repouso; histerese até 12. (3) Empate exato mantém a direção anterior, ou nenhuma. (4) Setor em anel de 52 a 60 CSS px, único, ao engajar, só nas direções que a tela aceita. (5) Passo de menu só ao engajar: trocar de direção sem passar por `≤ 12` não dá passo. (6) `cruzCss` e `cursoCss` fora do perfil (`toque.analogico`: base 120, bolinha 48). (7) Redimensionar e `visualViewport` não soltam o dedo. (8) Regra de menu do BUG-M5-04: um empurrão (toque) = um passo; segurar não repete. (9) v0.9.1 (correção) sai antes da 0.10.0, com reteste do QA.
+- **Correção no TQ28:** o texto antigo dizia que a 30 CSS px a bolinha fica presa na borda. Com curso de 36, só a 40 fica presa; a 30 segue o dedo dentro do curso.
+- **Ponto para o Especialista (ADR-007 10.5):** o ADR diz que `soltarTudo` roda na troca de layout. Como o layout é recalculado em cada resize, um resize que cruze a faixa de 144 solta o dedo. O GDD segue o ADR (18.19.6). Se o Orquestrador preferir que resize nunca solte, o ADR muda.
+- **Consequência aceita (ADR P15):** o empate exato (|dx| = |dy|) sem direção anterior não engaja. Com dedos reais, o empate exato é raro.
+- **Status (backlog):** 111 pronto (ajustado); 112 aprovado; 113 em andamento (Arte: falta `cruzCss` fora do perfil, conferir PNGs e captura T7).
+- **Quem decidiu:** Produto (texto, seguindo a revisão 2 do ADR-007 aceita pelo Orquestrador em 2026-11-09).
+
+## 2026-11-09 — Joystick: resize e troca de layout (Orquestrador)
+- **Decisão:** resize ou rolagem do `visualViewport` que NÃO troca de layout não solta o dedo; troca de layout (A ↔ B, ao cruzar a faixa de 144 CSS px, ou giro do aparelho) solta o joystick (ADR-007 10.5 vale). O Especialista ajusta a frase do ADR e o status "aceito" no cabeçalho.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.1 publicada (Diretor aprovou as capturas)
+- Artifact Version 13. Próximo: Dev implementa o joystick 0.10.0 (ADR-007 rev. 2). Pergunta 43 segue com padrão fixo.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — Commit e PR do Marco 5 só no fim do marco (Diretor)
+- **Decisão:** não commitar agora. Ao finalizar o Marco 5 (joystick 0.10.0 aprovado pelo QA e pelo Diretor): dois commits (documentos e código), push da branch e entrega do link de comparação para a PR (o `gh` não está instalado; o Diretor abre a PR). Depois, sincronizar a branch com a base.
+- **Quem decidiu:** Diretor ("abra a PR quando finalizar o marco 5").
+
+## 2026-11-09 — Aprovação antecipada do joystick e liberação da próxima etapa (Diretor)
+- **Decisão:** o Diretor viu a captura do joystick (prévia da Arte) na conversa do agente. Quando o joystick (0.10.0) passar no QA, o Orquestrador aprova as capturas e publica a v0.10.0 sem nova rodada de aprovação, e segue para a próxima etapa: commit, push e link da PR do Marco 5, e abrir o Marco 6 (áudio, polimento) com o Produto. Se o QA reprovar ou aparecer decisão de visão, volto ao Diretor.
+- **Quem decidiu:** Diretor ("quando passar pelo QA, pode aprovar e seguir para a próxima etapa").
+
+## 2026-11-09 — Joystick 0.10.0: desvios do Dev aceitos (Orquestrador)
+- (1) Engajamento a partir de 12 < distância < 20 em repouso: vale o ADR (a função pura não guarda a última distância); parar em 15 e ir a 25 na mesma direção gera o passo. (2) `gestos.ts`: `preventDefault` do `touchmove` só se `e.cancelable` (sem efeito em aparelho real). (3) Bolinha a 100% de opacidade quando há dono. (4) Sem versão pressionada da base. (6) Multitoque base + A coberto por teste de unidade; o QA cobre emulado. (7) Os 8 `ctl_cruz_*.png` (não rastreados, sem registro) foram removidos. `comparar:capturas` (434 diferenças com `qa/baseline-014`): a linha de base 014 é anterior aos Marcos 3 e 4; não refazer agora, vai ao backlog do Marco 6.
+- **Quem decidiu:** Orquestrador (padrões), com aprovação antecipada do Diretor para o fluxo do joystick.
+
+## 2026-11-09 — v0.10.0 publicada; Marco 5 fechado pelo QA (Orquestrador, por autorização do Diretor)
+- Artifact Version 14. QA: joystick (118) e toque (106) aprovados; teclado (107) aprovado com pendências (F9, "Au!" do F6, F8 em diálogo), levadas ao PT4c e ao Marco 6. Observação de baixa severidade: o gancho `__alvosDeToque` ainda listou a base durante o fade (ferramenta de QA).
+- **Quem decidiu:** Orquestrador, seguindo a autorização do Diretor ("quando passar pelo QA, pode aprovar e seguir").
