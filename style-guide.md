@@ -38,11 +38,14 @@
 - Layout B só na exploração leva joystick, A e B. Diálogo e introdução levam A e B, sem joystick, fora da caixa de texto. Título, Como jogar, seleção, conquista, dica, créditos e painel não têm botão de toque (o toque vai direto no item); a seleção tem o botão "Voltar ao título" (pergunta 42, padrão aplicado) (GDD 18.4; ADR-007 seção 4.6)
 - Textos de toque: chave com sufixo `.toque` (ex.: `barra.casa.toque`). Nos menus do layout B, a barra usa `.toque.menu` (ex.: `barra.titulo.toque.menu`). Nenhum texto de toque cita Z, X, H, Esc, Enter ou Backspace (GDD 18.12; ADR-007 seções 9 e 4.6). Nenhum texto de toque cita "setas" nem "cruz": o verbo do toque é "Mover:" (GDD 18.19.10)
 - Só modo paisagem no celular; retrato mostra aviso de rotação, e só em aparelho com toque (ADR-007 seção 10)
+- **Pausa e ícones (Marco 6; GDD 19.3; ADR-008 seção 6):** P ou ícone II (canto superior esquerdo, só onde o "?" abre). Itens: "Continuar", "Som: ligado/desligado", "Como jogar" e "Voltar ao título" (com confirmação, "Não" em foco). Ícones II e som: caixa `#1b2452`, borda `#9aa3c7`, 32 px de jogo, sem texto (o estado do som aparece no desenho e, na pausa, no texto). Chaves `pausa.*` (19.8)
+- **Ícone de som fora do controle de jogo:** aparece no título e na exploração, em qualquer layout. A regra "menus sem controle" (18.4) vale para direções, A, B e "?" (ADR-008 seção 7.4)
 
 ## Código
 - Phaser 3 + TypeScript, Vite, Vitest (testes na camada de domínio)
 - Clean Architecture + DDD (ver `docs/ADR-001.md`; conteúdo e SemVer em `docs/ADR-002.md`)
 - Domínio sem dependência de Phaser; cenas só orquestram
+- Áudio e pausa são apresentação (`presentation/audio/`, `presentation/ui/pausa/`). Domínio e aplicação não conhecem som nem pausa; a única exceção é `validarAudio`, função pura (ADR-008 seção 1.7)
 - Personagem escolhido = identificador; sprite por id, sem duplicar lógica
 - Mapas: autoria no Tiled (TMX em `maps/`). O motor lê JSON de subárea gerado pelo conversor em `content/maps/` (ADR-004). Uma subárea = um mapa. Portas são pares de gatilhos; a troca de subárea tem fade de 0,5 s (ADR-004 seções 3 e 11). Chegada de porta = spawn com nome = id da porta, na subárea de destino: gerada pelo conversor ou declarada no TMX com `chegada` (ADR-004 seção 13). Encosta sempre no gatilho de entrada, do lado de dentro; a passagem custa 3 passos (`CUSTO_DA_PORTA`), qualquer que seja o vão (ADR-004 seção 13.17). Gatilho de par tem uma entrada só (um vizinho livre): erro para par com chegada declarada, aviso para par de fórmula (ADR-004 seção 13.19)
 - Tipos de objeto de jogo (ADR-004 seção 6): `spawn` e `interruptor` em piso livre; `bilhete`, `examinavel` e `portaFechada` em tile bloqueado com vizinho livre; `arvore` no próprio piso (o tile vira bloqueio); `peca` em piso livre com vizinho livre (colisão 0 no conteúdo; o bloqueio vem do estado, ADR-004 seção 6)
@@ -62,5 +65,9 @@
 `src/` · `assets/` · `maps/` · `content/` · `qa/` · `docs/`
 
 ## Áudio
-- Só faixas de domínio público ou licença gratuita; registrar origem em `docs/audio-licencas.md`
-- Tudo silenciável no menu
+- **Origem (Marco 6; GDD 19.2.5; ADR-008):** todo áudio é gerado por síntese original do projeto, por script em `tools-arte/gerar_audio.py`. Sem sample, faixa, trecho ou fonte de terceiros, nem de domínio público, nem de licença gratuita. Vale para a faixa de fundo e para os efeitos. Cada arquivo tem linha em `docs/audio-licencas.md` ("gerado pelo projeto, síntese original", com data). Nenhum arquivo de áudio é editado à mão.
+- **Formato:** MP3 mono, 22.050 Hz, 32 kbps CBR, em `assets/audio/` (fora de `assets/<perfil>/`: áudio não é arte). Metadados em `assets/audio/audio-meta.json`. Prefixos: `mus_` (trilha), `sfx_` (efeitos) e `jin_` (jingles de conquista e de créditos). Eventos S01 a S13, conquistas e créditos em `content/audio.json` (ADR-008 seções 5, 5.1 e 8).
+- **Jingles (0.12.0; GDD 19.2.7):** cada conquista tem um jingle próprio (J01 a J05). Os créditos tocam uma vez um jingle de Natal (JC), por cima da trilha. A trilha baixa (ducking) e volta do mesmo ponto; nunca para nem reinicia (ADR-008 5.2).
+- **Orçamento (19.2.6 e 19.2.7):** música ≤ 160 KB; cada efeito ≤ 12 KB; cada jingle de conquista ≤ 16 KB, somados ≤ 64 KB; JC ≤ 64 KB; áudio total ≤ 320 KB; HTML ≤ 2,5 MB. KB = 1000 bytes.
+- **Mudo:** M (teclado) e ícone de som (toque e mouse). Fica só na memória; recarregar a página volta a ligado (sem save). O jogo respeita a chave de silencioso do iPhone e não a contorna (ADR-008 2.7, decisão "respeite o silencioso", 2026-11-10).
+- **Som não é a única informação:** cada evento tem sinal visual (19.5, item 4).

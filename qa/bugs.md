@@ -405,3 +405,44 @@ Sem bug confirmado. Observações para o Dev:
 ## Última rodada do Marco 5 (joystick): observação do gancho (não é bug do jogo)
 - `__alvosDeToque` lista o `analogico` durante o fade e o diálogo da Sala (nos dois layouts), mas a captura do mesmo instante mostra a base ausente (`qa/evidencias/marco5-final2/844x390-TQ27-fade.png`, `667x375-TQ27-fade.png`). O jogo esconde a base; a lista do gancho pode estar com um frame de atraso ou incluir a base escondida. Baixa severidade (ferramenta de QA). Dev confirma.
 - Anel amarelo em título (esquerda) e seleção (cima): sem setor pela captura (`844x390-ANEL-T-titulo-esquerda.png`); o campo `direcao` do gancho reflete a direção, não o desenho.
+
+## Marco 6, rodada 1 (v0.10.0 + polimento; QA)
+- **P3 — divergência de spec: mudo "silencia" (19.2.3) × "a música para" (AU4).** Código: mudo põe o ganho mestre em 0; música segue "tocando" silenciosa (`__estado().audio.musica` = tocando, `mudo` = true). Evidência: `qa/evidencias/marco6-r1` (`marco6-r5-mudo.mjs`). Ação: Produto escolhe o texto certo; o código bate com 19.2.3.
+- **P3 — observação de ícone durante fade de porta (667×375), 1 de 2 tentativas.** Em uma passagem pela P7 (Cozinha → Hall), a lista de alvos trouxe um `icone-*` durante o fade; não reproduzido na 2ª. Possível quadro de transição. Reproduzir com captura quadro a quadro (19.3.2; PS5). Não reprovado.
+- Não é bug: PS9 em 844×390 mostra o joystick na pausa (19.3, layout A tem joystick na pausa).
+- Não é bug (roteiro): F3 e F4 de `marco5-r5.mjs` usam a leitura antiga de `farejo.ativo` logo após o X (leitura cedo); o reteste com polling (r6, r7) mostra F3 e F4 corretos.
+
+- **P3 (mudo) — RESOLVIDO por decisão do Orquestrador (rodada 2 do Marco 6).** Vale o código e o GDD 19.2.3: o mudo silencia (a música continua rodando em silêncio e volta do mesmo ponto ao desmutar). O texto de AU4 no checklist foi corrigido para "a música silencia".
+
+## Marco 6, rodada 2
+- **P3 — RESOLVIDO (decisão do Orquestrador): mudo silencia.** Ver a entrada acima; o texto de AU4 no checklist segue "a música silencia".
+- **P3 — R134 (ícone listado durante o fade 667×375): NÃO REPRODUZIDO VISUALMENTE.** 5 tentativas (`marco6-r3.mjs`): o gancho listou ícones no 1º quadro do fade em 1 de 5; a captura desse quadro não mostra ícone; nas demais 4 tentativas, nenhum ícone nem base durante o fade. Registro: não reproduzido. Evidência: `qa/evidencias/marco6-r2/fade-667-t1-q1.png`.
+- **P3 — DS2 (medida fraca):** o tempo medido (142 ms) é até `window.__estado` existir, não até o título estar desenhado. Não confirma o limite de 4 s. Re-medir (pendência do QA, não do jogo).
+
+## Marco 6, rodada 3
+- **P1 (19.4.1, item 6; backlog 138) — PO3 CONFIRMADO: "Voltar ao título" da seleção em 667×375 invade 1 px o cartão.** Zona do canvas de 392×49 em y=280; o cartão 4 termina em y=281. Medido por `__alvosDeToque` (`qa/scripts/marco6-r3.mjs`, PO3). Toque no botão leva ao título (OK). Ação: Dev reduz 1 px ou afasta a zona (correção no backlog 138; QA não corrige).
+- **P3 — observação de ordem de toques: o primeiro X (B) logo após fechar o diálogo de entrada na Hall foi ignorado em 1 de 3 tentativas** (seta só apareceu no 2º B; `qa/scripts/marco6-r4.mjs`, F9). Não reproduzido de forma firme; registrar. Dev confirma se o B tem janela de bloqueio após o diálogo.
+- **P2 — DS2 depende de compressão:** sem gzip, o HTML de 1,6 MB leva ~9,4 s no título com Fast 4G emulado (qa/scripts/marco6-r3b.mjs); com gzip (727 KB), o título desenhado sai em ~3,9 s (marco6-r3c.mjs), no limite de 4 s. GitHub Pages comprime; o HTML do build de release precisa ser servido com gzip para passar. Se o Pages não comprimir, reprova DS2. Ação: confirmar na release (RL5) e medir de novo no Pages.
+- **Não é bug (roteiro):** RM2-d e RM2-e falharam em `marco5-r8.mjs` por rota após as luzes; com a rota certa (`marco5-final-pecas.mjs`), os avisos "Agora a árvore tem 1 parte. Faltam 2 partes!" e "Agora a árvore tem 2 partes. Falta 1 parte!" aparecem nos dois sobrinhos.
+- **Não reproduzido (R134/P3):** o ícone listado no fade 667×375 segue sem aparecer em captura (rodada 2).
+- **BUG-M2-05 — NÃO REPRODUZIDO (rodada 3 do Marco 6).** Com Nick acordado no Quarto (chegada (0,6) pela P2), B mostra a seta sobre P2 "esquerda" (`porta.id=P2`); na captura `qa/evidencias/marco6-r3/BUG-M2-05-quarto-seta.png` a seta está no tile (0,7), o gatilho, logo abaixo da chegada (conta pelo tile de 58 px: sobrinho em (4,4), seta em (0,7)). Fechar como não reproduzido; a captura antiga (marco2-r3) pode ter sido de outra escala.
+- **BUG-M2-02 (P2 e P1 sem texto lido): ainda "a confirmar".** Não foi tratado nesta rodada; fica aberto para PO4 (19.4.1 item 3).
+- **P2 — DS2 sem gzip (repetido 3×): 9,4 s; com gzip: 3,9 s.** Ver a entrada acima (Pages comprime; conferir na RL5).
+- **BUG-M2-02 — NÃO REPRODUZIDO (Marco 6, rodada 4).** P1 e P2 mostram "Essa porta está fechada. Hoje não dá para entrar." ao Z, quando o sobrinho está de frente (`qa/scripts/marco6-r4-m2-02.mjs`). A leitura antiga falhava por posição.
+- **PO3 — FECHADO (corrigido pelo Dev).** "Voltar ao título" da seleção em 667×375 começa na base dos cartões (y 281,3), sem invadir, 392×49, toque leva ao título (rodada 4).
+- **P3 do primeiro B após diálogo (Hall) — NÃO REPRODUZIDO**: 0 de 10 (rodada 4).
+
+## Marco 6, rodada 5
+- **P2 (candidato, AC4 pisca) — área animada no Hall a ~20 mudanças de quadro por segundo.** Entre quadros de 50 ms, só muda a caixa x 230..249, y 132..155 (canvas 480 px) no Hall (`qa/scripts/marco6-r5-pisca.mjs` e `-diag.mjs`). Pode ser um sprite de pisca (AC4 limita a 3 ciclos/s). Confirmar com o Dev/Arte o que é e a frequência; se for o brilho do bilhete ou da porta, é P2 pelo AC4.
+- **P3 (gancho, R134) — ícones listados no 1º quadro do fade em 10 de 10 tentativas (667×375); a captura do mesmo quadro não mostra ícones.** `qa/scripts/marco6-r5-fade.mjs`, capturas `qa/evidencias/marco6-r5/t*-fade-q1.png`. Não é defeito visível; o gancho lista antes da remoção. Dev confirma.
+- **P3 (roteiro) — o fluxo combinado (`marco6-r4-fluxo.mjs`) falhou em pausa no Escritório e em créditos porque o próprio roteiro pressionou Z demais.** Com o roteiro corrigido (`marco6-r5-pausa-escritorio.mjs`), a pausa abre no Escritório. Não é bug do jogo.
+- **BUG-M2-03 (passos da condução E7/E20) — medido agora:** E7 (peça 2, Cozinha → Sala) = 10 passos (4 sobrinhos); E20 (peça 3, Cozinha → Sala) = 14 passos (4 sobrinhos). Pelo GDD 15.10 atual: E7 "cerca de 12 a 13", E20 "cerca de 17 a 18". Divergência: 2 e 3 passos. Medida: `qa/scripts/marco6-r5-rota.mjs`, saída `qa/evidencias/marco6-r5-rota.txt`. Produto ajusta o GDD à rota medida (19.11 l) ou o Dev revisa a rota (ADR-004 11.2).
+
+## Marco 6, rodada 6
+- **P3 (candidato) — P não abre a pausa na Sala logo depois das luzes (condução concluída), em 2 de 2 execuções do fluxo combinado (`qa/scripts/marco6-r6-fluxo.mjs`).** Após teleporte para a Sala, P abre (PS1). A causa não foi isolada (estado de transição após o diálogo das luzes?). Confirmar com captura do estado antes e depois do P; se for real, é P2 pela PS1.
+- **PO5 / item 133 — número ao vivo:** da peça 2 (pegar em (3,1) da Cozinha) à árvore: 11 trocas de tile amostradas a 60 ms; o trecho até a porta é o único que o gancho não amostra bem (mapa nulo durante a passagem). Declarado pelo Produto: 13 (E7) e 17 (E20). A medida de 10 e 14 cobria só a condução depois da porta. Resultado: bate dentro da resolução do gancho para o trecho amostrado; não bate exato sem contagem por evento. Pendência menor (QA/Dev).
+
+## Marco 6 — fechamento do item 137 (v0.11.0)
+- **P na Sala logo depois das luzes (candidato P3 da rodada 6): FECHADO como comportamento por projeto (decisão do Orquestrador; GDD 19.3.1).** A pausa só abre quando o controle é do jogador; durante a transição das luzes a P fica sem efeito por projeto. Não é bug.
+- **E7 e E20 (PO5, item 133): medidos ao vivo 10 e 14 trocas de tile após a porta, 11 da peça 2 até a árvore; o Produto declarou 13 e 17 (GDD 15.3.5, 15.10, incluindo a passagem).** Reconfirmar em PT5 ou depois, com contagem por evento se for preciso. Não bloqueia o 137.
+- **Versão 0.11.0:** `comparar:capturas` apontou 5 diferenças, todas na caixa do texto da versão (x 812..841, y 11..35); baseline atualizada (ver `qa/baseline-0100/ORIGEM.txt`). Título "v0.11.0" e créditos "Versão 0.11.0" confirmados por captura (`dist-playtest/capturas/titulo.png`, `lolo-CR1-creditos-entrada.png`).
