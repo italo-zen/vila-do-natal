@@ -23,6 +23,8 @@ Saída: assets/hd-480x352/
   spr_seta_farejar_direita.png     32×32   seta de farejar dourada #f4d35e (GDD 16.5.3; ADR-005 7.1)
   spr_seta_farejar_esquerda.png    32×32   a mesma seta espelhada
   spr_seta_farejar_cima.png        32×32   a mesma seta girada para cima (P8 saindo do Hall)
+  ctl_pausa.png, ctl_som_ligado.png, ctl_som_desligado.png (e _pressionado)  32×32 de jogo: ícones II e som,
+                                   sem texto, caixa #1b2452 e borda #9aa3c7 (GDD 19.3.2; item 124)
   spr_icone_dica.png               32×32   "?" dourado em caixa #1b2452, borda 1 px #9aa3c7 (GDD 16.8.1)
   spr_balao_au.png                 48×32   bolha do balão, sem texto (o "Au!" é desenhado pelo jogo, nick.latido)
   spr_balao_zzz.png                48×32   balão com o zzz desenhado (GDD 16.5.5)
@@ -489,6 +491,46 @@ COR_FITA = (139, 226, 143, 255)              # fita verde, mais clara que a folh
 COR_INTERIOR = (59, 20, 16, 255)
 
 
+def _icone_controle_base(pressionado):
+    """Caixa de 32 px de jogo do GDD 19.3.2 (14.9.4): borda 1 px, caixa escura. Pressionado: caixa e borda em dourado."""
+    fundo = COR_CTL_DESTAQUE if pressionado else COR_CAIXA
+    borda = COR_CTL_DESTAQUE if pressionado else COR_BORDA_HUD
+    desenho = COR_CTL_FUNDO if pressionado else COR_CTL_TEXTO
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 31, 31], fill=borda)
+    d.rectangle([1, 1, 30, 30], fill=fundo)
+    return im, d, fundo, desenho
+
+
+def icone_pausa(pressionado=False):
+    """II da pausa (GDD 19.3.2): duas barras de 4 px, sem texto."""
+    im, d, _, c = _icone_controle_base(pressionado)
+    d.rectangle([10, 8, 13, 23], fill=c)
+    d.rectangle([18, 8, 21, 23], fill=c)
+    return im
+
+
+def _alto_falante(d, c):
+    """Corpo e cone do alto-falante, centrado na caixa (x de 5 a 15)."""
+    d.rectangle([5, 12, 8, 19], fill=c)
+    d.polygon([(8, 12), (15, 6), (15, 25), (8, 19)], fill=c)
+
+
+def icone_som(ligado, pressionado=False):
+    """Som ligado: alto-falante com duas ondas. Desligado: o mesmo alto-falante cortado por um risco
+    diagonal (com um vão na cor da caixa, para o risco ler-se mesmo sem cor). Distingue-se pelo desenho (AC5)."""
+    im, d, fundo, c = _icone_controle_base(pressionado)
+    _alto_falante(d, c)
+    if ligado:
+        d.arc([15, 9, 23, 22], -60, 60, fill=c, width=2)
+        d.arc([17, 5, 27, 26], -60, 60, fill=c, width=2)
+    else:
+        d.line([(5, 5), (26, 26)], fill=fundo, width=5)
+        d.line([(6, 6), (25, 25)], fill=c, width=2)
+    return im
+
+
 def _r(d, caixa, s, fill=None, outline=None, w=1, ox=0, oy=0):
     """Retângulo com coordenadas de tile (32) na escala s; a caixa inclui o último pixel de cada célula."""
     x0, y0, x1, y1 = caixa
@@ -722,6 +764,10 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
     imagens.append({"arquivo": "ctl_analogico_bolinha_pressionada.png", "tipo": "imagem"})
     for direcao in ("cima", "baixo", "esquerda", "direita"):
         imagens.append({"arquivo": f"ctl_analogico_brilho_{direcao}.png", "tipo": "imagem"})
+    # Ícones de pausa e de som (GDD 19.3.2; item 124): 32 px de jogo, sem texto, com versão pressionada.
+    for nome in ("ctl_pausa", "ctl_som_ligado", "ctl_som_desligado"):
+        imagens.append({"arquivo": f"{nome}.png", "tipo": "imagem"})
+        imagens.append({"arquivo": f"{nome}_pressionado.png", "tipo": "imagem"})
     # Nick (tools-arte/gerar_nick.py, a partir de assets/referencia/ref_nick_folha.webp). Quadro 32×32 (corpos.nick).
     for direcao in ("down", "up", "left", "right"):
         imagens.append({"arquivo": f"spr_nick_idle_{direcao}.png", "tipo": "imagem"})
@@ -783,6 +829,12 @@ def main():
         "ctl_analogico_brilho_baixo.png": ctl_analogico_brilho("baixo"),
         "ctl_analogico_brilho_esquerda.png": ctl_analogico_brilho("esquerda"),
         "ctl_analogico_brilho_direita.png": ctl_analogico_brilho("direita"),
+        "ctl_pausa.png": icone_pausa(),                              # ícones de pausa e de som (GDD 19.3.2)
+        "ctl_pausa_pressionado.png": icone_pausa(True),
+        "ctl_som_ligado.png": icone_som(True),
+        "ctl_som_ligado_pressionado.png": icone_som(True, True),
+        "ctl_som_desligado.png": icone_som(False),
+        "ctl_som_desligado_pressionado.png": icone_som(False, True),
     }
     for nome, im in desenhos.items():
         im.save(PASTA / nome, optimize=True)

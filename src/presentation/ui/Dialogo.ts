@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { estilo, numeroDaCor, perfilDe, telaDe } from './tema';
 import { Barra } from './Barra';
 import { caixaYDoDialogo, type PosicaoDaCaixa } from './posicaoDoDialogo';
+import { PERIODOS_DE_PULSO_MS } from './pisca';
+import { tocarSom } from '../audio/somDaCena';
 
 export interface OpcoesDoDialogo {
   /** Chaves das linhas da barra de controles (ex.: "barra.dialogo"). */
@@ -30,7 +32,10 @@ export class Dialogo {
   private readonly largura: number;
   private readonly alturaTela: number;
 
+  private readonly cena: Phaser.Scene;
+
   constructor(cena: Phaser.Scene) {
+    this.cena = cena;
     const p = perfilDe(cena);
     const { largura, altura } = telaDe(p);
     this.perfil = p;
@@ -44,7 +49,7 @@ export class Dialogo {
       .setDepth(1001);
     // Seta de "próxima página": triângulo no canto inferior direito da caixa.
     this.seta = cena.add.graphics().setScrollFactor(0).setDepth(1001);
-    this.tween = cena.tweens.add({ targets: this.seta, alpha: 0.2, duration: 450, yoyo: true, repeat: -1, paused: true });
+    this.tween = cena.tweens.add({ targets: this.seta, alpha: 0.2, duration: PERIODOS_DE_PULSO_MS.setaDeDialogo / 2, yoyo: true, repeat: -1, paused: true });
     this.barra = new Barra(cena, 1002);
     this.posicionar('base');
     this.esconder();
@@ -119,6 +124,8 @@ export class Dialogo {
   }
 
   private mostrar(): void {
+    // S10: cada página que abre (não por letra; ADR-008 R1).
+    tocarSom(this.cena, 'S10');
     const o = this.opcoes!;
     this.texto.setText(this.paginas[this.indice]);
     this.barra.setVisible(true);

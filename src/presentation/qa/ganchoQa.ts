@@ -51,9 +51,22 @@ export function instalarGancho(jogo: Phaser.Game): void {
     return cena && cena.mapa ? cena : null;
   };
   const janela = window as unknown as Record<string, unknown>;
+  // Áudio e pausa (ADR-008 2.6 e 9.3). Fora da casa (título, pausa), __estado devolve só esses campos e mapa null.
+  const audio = () => {
+    const s = jogo.registry.get('som') as { estado(): Record<string, unknown> } | undefined;
+    if (!s) return null;
+    // `sessao`: só o valor lido de navigator.audioSession (o jogo não o altera; respeita a chave de silencioso).
+    const sessao = (navigator as unknown as { audioSession?: { type?: string } }).audioSession?.type ?? null;
+    return { ...s.estado(), sessao };
+  };
+  const pausa = () => {
+    if (!jogo.scene.isActive('Pausa')) return { aberta: false, visao: null, foco: null };
+    const cena = jogo.scene.getScene('Pausa') as unknown as { estado?: { visao: string; foco: number } };
+    return { aberta: true, visao: cena.estado?.visao ?? null, foco: cena.estado?.foco ?? null };
+  };
   janela.__estado = () => {
     const c = casa();
-    if (!c) return null;
+    if (!c) return { mapa: null, audio: audio(), pausa: pausa() };
     const centro = centroDosPes(c.pos, c.geo);
     const t = c.geo.tile;
     return {
@@ -88,6 +101,10 @@ export function instalarGancho(jogo: Phaser.Game): void {
       sniffando: c.sniffando,
       /** Dica aberta (H ou ícone): o mundo está parado. */
       dicaAberta: c.dica !== null,
+      /** Áudio (ADR-008 2.6): liberado, contexto, decodificação, música, vozes e últimos eventos. */
+      audio: audio(),
+      /** Pausa (ADR-008 6): aberta, visão e foco. */
+      pausa: pausa(),
     };
   };
   janela.__teleportar = (mapa: string, spawn: string) => {
@@ -149,7 +166,8 @@ export function instalarGancho(jogo: Phaser.Game): void {
   janela.__alvosDeToque = () => {
     const alvos: { origem: string; nome: string; x: number; y: number; largura: number; altura: number }[] = [];
     for (const el of Array.from(document.querySelectorAll<HTMLElement>('#controles-de-toque [data-alvo]'))) {
-      if (el.offsetParent === null && getComputedStyle(el).display === 'none') continue;
+      // Escondido (display none, de qualquer ancestral): não é alvo. Vale para a base do joystick no fade e na condução (backlog 134).
+      if (getComputedStyle(el).display === 'none') continue;
       const r = el.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) continue;
       alvos.push({ origem: 'dom', nome: el.dataset.alvo ?? '', x: r.left, y: r.top, largura: r.width, altura: r.height });
@@ -169,7 +187,9 @@ export function instalarGancho(jogo: Phaser.Game): void {
         }
         if (!zona.input || !zona.input.enabled || !zona.getBounds) continue;
         const b = zona.getBounds();
-        alvos.push({ origem: 'canvas', nome: `${cena.scene.key}:${zona.type}`, x: rc.left + b.x * sx, y: rc.top + b.y * sy, largura: b.width * sx, altura: b.height * sy });
+        // Ícones de pausa e de som (GDD 19.3.2; ADR-008 7.2): nomeados pelo ícone, não pela cena.
+        const icone = objeto.getData?.('icone') as string | undefined;
+        alvos.push({ origem: 'canvas', nome: icone ? `icone-${icone}` : `${cena.scene.key}:${zona.type}`, x: rc.left + b.x * sx, y: rc.top + b.y * sy, largura: b.width * sx, altura: b.height * sy });
       }
     }
     return alvos;

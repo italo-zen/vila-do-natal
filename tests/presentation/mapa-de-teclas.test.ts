@@ -126,3 +126,22 @@ describe('textos do painel da porta (sem dica)', () => {
     expect(textos['bilhete.pista']).toBe('Dica: os 3 últimos dígitos do ano em que {nome} nasceu.');
   });
 });
+
+import { limpaMensagemDoPainel } from '../../src/presentation/input/mapaDeTeclas';
+
+/** GDD 14.1 e 19.11 (j) e backlog 129: a mensagem de erro do painel some na primeira tecla certa, não antes. */
+describe('limpaMensagemDoPainel (item 129)', () => {
+  it('teclado: dígito, X (apagar) e Backspace limpam; Z, Enter e mover o foco não', () => {
+    expect(limpaMensagemDoPainel('teclado', 'digito')).toBe(true);
+    expect(limpaMensagemDoPainel('teclado', 'apagar')).toBe(true);
+    expect(limpaMensagemDoPainel('teclado', 'apertar')).toBe(false);
+    expect(limpaMensagemDoPainel('teclado', 'mover')).toBe(false);
+    expect(limpaMensagemDoPainel('teclado', 'fechar')).toBe(false);
+  });
+
+  it('toque: qualquer tecla da grade limpa (dígito, Apagar, OK, Fechar); mover não existe no toque', () => {
+    for (const tipo of ['digito', 'apagar', 'ok', 'fechar'] as const) {
+      expect(limpaMensagemDoPainel('toque', tipo), tipo).toBe(true);
+    }
+  });
+});

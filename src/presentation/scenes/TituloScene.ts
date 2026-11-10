@@ -4,6 +4,9 @@ import { barraDaTela } from '../ui/Barra';
 import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
 import { toqueDaCena } from '../ui/toque/toqueDaCena';
+import { definirTelaDoSom, somDaCena } from '../audio/somDaCena';
+import { IconeDeTela, CHAVES_DO_SOM } from '../ui/icones/IconeDeTela';
+import { iconesDaTela, xDoIcone } from '../ui/icones/iconesDaTela';
 
 /**
  * Título (GDD 14.1): nome, "Começar" (foco inicial) e "Como jogar", versão no canto.
@@ -12,6 +15,7 @@ import { toqueDaCena } from '../ui/toque/toqueDaCena';
  */
 export class TituloScene extends Phaser.Scene {
   private controles!: Controles;
+  private iconeSom!: IconeDeTela;
   private menu!: Menu;
 
   constructor() {
@@ -25,6 +29,11 @@ export class TituloScene extends Phaser.Scene {
     const { largura, altura } = telaDe(p);
     const tela = p.telas.titulo;
     this.controles = new Controles(this);
+    definirTelaDoSom(this, 'titulo');
+    // Ícone de som no canto superior esquerdo do título (GDD 19.3.2): liga ou desliga, como M.
+    // Y 2 (não 8): o nome do jogo começa em y 36 (telas.titulo.nomeY); o ícone de 32 px tem de terminar antes dele.
+    const margem = p.espaco.pequeno;
+    this.iconeSom = new IconeDeTela(this, 'som', xDoIcone('som', 'titulo', margem, p.tile), 2, CHAVES_DO_SOM.ligado, () => somDaCena(this)?.alternarMudo('titulo'));
     toqueDaCena(this)?.mostrarPara('titulo');
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);
@@ -53,6 +62,9 @@ export class TituloScene extends Phaser.Scene {
 
   update(): void {
     this.controles.atualizar();
+    const mudo = somDaCena(this)?.estaMudo ?? false;
+    this.iconeSom.trocarChaves(mudo ? CHAVES_DO_SOM.desligado : CHAVES_DO_SOM.ligado);
+    this.iconeSom.setVisivel(iconesDaTela('titulo').som);
     this.menu.atualizarTeclado(this.controles);
   }
 }

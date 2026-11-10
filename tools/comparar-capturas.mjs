@@ -1,5 +1,5 @@
-// Compara as capturas do smoke com a linha de base do item 014 (critério 2 do ADR-003), pixel a pixel.
-// Uso: npm run comparar:capturas                       (dist-playtest/capturas x qa/baseline-014/capturas)
+// Compara as capturas do smoke com a linha de base 0.10.0 (item 121, commit 9ad5b9c), pixel a pixel. A 014 é histórica.
+// Uso: npm run comparar:capturas                       (dist-playtest/capturas x qa/baseline-0100/capturas)
 //      node tools/comparar-capturas.mjs <atual> <base>
 // Saída: código 0 se os conjuntos de arquivos, as dimensões e todos os pixels (RGBA) são iguais; 1 caso contrário.
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -9,7 +9,7 @@ import { decodificarPng } from './png.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const atual = resolve(process.argv[2] ?? join(RAIZ, 'dist-playtest', 'capturas'));
-const base = resolve(process.argv[3] ?? join(RAIZ, 'qa', 'baseline-014', 'capturas'));
+const base = resolve(process.argv[3] ?? join(RAIZ, 'qa', 'baseline-0100', 'capturas'));
 
 function sair(msg) {
   console.error(msg);

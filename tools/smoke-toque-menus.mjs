@@ -180,7 +180,36 @@ async function avancarAteExploracao(page) {
   }
 }
 
+/** Confirma o cartão da seleção (A, ou o cartão do canvas no layout B) e para na introdução. */
+async function avancarAteIntroducao(page) {
+  const cena = (await page.evaluate(() => window.__focoDoMenu()))?.cena;
+  if (cena === 'Titulo') {
+    // Layout B no título não tem A: toca "Começar" no canvas, e a seleção vem depois.
+    const z = await page.evaluate(() => {
+      const t = window.__alvosDeToque().find((a) => a.origem === 'canvas' && a.nome === 'Titulo:Zone');
+      return t ? { x: t.x + t.largura / 2, y: t.y + t.altura / 2 } : null;
+    });
+    if (z) await page.touchscreen.tap(z.x, z.y);
+    await real(900);
+  }
+  const ha = await page.evaluate(() => window.__alvosDeToque().some((a) => a.origem === 'dom' && a.nome === 'a'));
+  if (ha) return tocarDom(page, 'a');
+  const zona = await page.evaluate(() => {
+    const z = window.__alvosDeToque().find((a) => a.origem === 'canvas' && a.nome === 'Selecao:Zone');
+    return z ? { x: z.x + z.largura / 2, y: z.y + z.altura / 2 } : null;
+  });
+  if (zona) await page.touchscreen.tap(zona.x, zona.y);
+  await real(700);
+}
+
 async function roteiroDaExploracao(page, cdp, largura) {
+  // Backlog 134: na introdução (diálogo, sem joystick), __alvosDeToque não lista a base, e a lista bate com a tela.
+  await avancarAteIntroducao(page);
+  const e0 = await estado(page);
+  const naIntro = await page.evaluate(() => window.__alvosDeToque().some((a) => a.nome === 'analogico'));
+  if (e0 && e0.travado) conferir(`exploração ${largura}: na introdução a base não é alvo (backlog 134)`, naIntro, false);
+  medidas[`introducao-${largura}`] = { travado: e0?.travado ?? null, baseListada: naIntro };
+  if (!e0?.travado) falhas.push(`exploração ${largura}: a introdução não estava travada (o teste de alvo não rodou).`);
   await avancarAteExploracao(page);
   await real(800);
   const antes = await estado(page);
@@ -263,6 +292,30 @@ async function layoutBExploracao(page, cdp) {
   await page.screenshot({ path: join(saida, '667-exploracao-repouso.png') });
 }
 
+/**
+ * Backlog 138 (PO3): na seleção em layout B, a zona do "Voltar ao título" não toca nem sobrepõe nenhum cartão. Mede as
+ * zonas do canvas pelo gancho (cartões: largura de um cartão; voltar: a largura do botão).
+ */
+async function conferirZonaDoVoltar(page, largura) {
+  const zonas = await page.evaluate(() => window.__alvosDeToque().filter((a) => a.origem === 'canvas' && a.nome === 'Selecao:Zone'));
+  const cartoes = zonas.filter((z) => z.largura < 200);
+  const voltar = zonas.filter((z) => z.largura >= 200);
+  conferir(`seleção ${largura} (B): há um cartão de 4 e uma zona de voltar`, [cartoes.length, voltar.length], [4, 1]);
+  if (voltar.length !== 1) return;
+  const fundoDosCartoes = Math.max(...cartoes.map((c) => c.y + c.altura));
+  conferir(`seleção ${largura} (B): a zona do voltar começa abaixo dos cartões (PO3)`, voltar[0].y >= fundoDosCartoes - 0.5, true);
+  conferir(`seleção ${largura} (B): a zona do voltar tem pelo menos 48 CSS px (ADR-007 4.5)`, voltar[0].altura >= 48 - 0.5, true);
+  medidas[`zona-voltar-${largura}`] = { y: Math.round(voltar[0].y * 10) / 10, altura: Math.round(voltar[0].altura * 10) / 10, fundoDosCartoes: Math.round(fundoDosCartoes * 10) / 10 };
+}
+
+async function tocarZonaDoCanvas(page, nome) {
+  const z = await page.evaluate((n) => {
+    const t = window.__alvosDeToque().find((a) => a.origem === 'canvas' && a.nome === n);
+    return t ? { x: t.x + t.largura / 2, y: t.y + t.altura / 2 } : null;
+  }, nome);
+  if (z) await page.touchscreen.tap(z.x, z.y);
+}
+
 async function roteiroDoTituloB(page) {
   await page.setViewportSize({ width: 667, height: 375 });
   await real(800);
@@ -282,6 +335,10 @@ try {
 
   const b = await abrir(667, 375);
   await roteiroDoTituloB(b.page);
+  // Vai à seleção (Começar pelo canvas) e confere a zona do Voltar (PO3).
+  await tocarZonaDoCanvas(b.page, 'Titulo:Zone');
+  await real(900);
+  await conferirZonaDoVoltar(b.page, 667);
   await roteiroDaExploracao(b.page, b.cdp, 667).catch((e) => falhas.push(`exploração 667: ${e.message}`));
   await layoutBExploracao(b.page, b.cdp);
   await b.contexto.close();

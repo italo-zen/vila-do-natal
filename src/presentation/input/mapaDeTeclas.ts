@@ -63,3 +63,13 @@ export function teclaDoPainel(tecla: string, repetida: boolean): TeclaDoPainel |
   if (acao === 'a') return { tipo: 'apertar' };
   return null;
 }
+
+/**
+ * Quando a mensagem de erro do painel (GDD 14.1 e 19.11, j) some. No teclado, só com dígito, X ou Backspace (`apagar`).
+ * No toque, com qualquer tecla da grade (dígito, Apagar, OK ou Fechar). Mover o foco e apertar Z ou Enter não somem com
+ * a mensagem. Função pura.
+ */
+export function limpaMensagemDoPainel(origem: 'teclado' | 'toque', tipo: 'digito' | 'apagar' | 'ok' | 'fechar' | 'apertar' | 'mover'): boolean {
+  if (origem === 'teclado') return tipo === 'digito' || tipo === 'apagar';
+  return tipo === 'digito' || tipo === 'apagar' || tipo === 'ok' || tipo === 'fechar';
+}

@@ -1,6 +1,9 @@
 import { SCHEMA_PERFIL_SUPORTADO, TIPOS_DE_LUZ, type PerfilDeArte } from './PerfilDeArte';
 import { validarToque } from './validarToque';
 
+/** Piso de texto em px de jogo (GDD 19.4.1, item 8; backlog 131). A apresentação usa o mesmo valor (teste de igualdade). */
+export const PISO_DE_TEXTO_JOGO = 12;
+
 export type ResultadoPerfil = { ok: true; perfil: PerfilDeArte } | { ok: false; erros: string[] };
 
 const COR = /^#[0-9a-fA-F]{6}$/;
@@ -67,6 +70,10 @@ export function validarPerfilDeArte(bruto: unknown, idEsperado?: string, opcoes:
       if (!ehInteiro(valor) || valor <= 0) erros.push(`fonte.${campo} precisa ser um inteiro positivo.`);
       else if (ehInteiro(grade) && grade > 0 && valor % grade !== 0) {
         erros.push(`fonte.${campo} (${valor}) precisa ser múltiplo de fonte.grade (${grade}).`);
+      }
+      // Piso de texto (GDD 19.4.1, item 8; backlog 131): nenhum texto do jogo abaixo de 12 px de jogo.
+      else if (opcoes.ativo && ehInteiro(valor) && valor < PISO_DE_TEXTO_JOGO) {
+        erros.push(`fonte.${campo} (${valor}) abaixo do piso de texto de ${PISO_DE_TEXTO_JOGO} px de jogo (GDD 19.4.1, item 8).`);
       }
     }
     if (typeof p.fonte.familia !== 'string' || p.fonte.familia.length === 0) erros.push('fonte.familia ausente.');

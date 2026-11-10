@@ -3,7 +3,8 @@ import { estilo, numeroDaCor, perfilDe, telaDe } from './tema';
 import { Barra } from './Barra';
 import { Botao, PRESSIONADO_MS } from './Botao';
 import { inicioCentrado } from './layout';
-import { teclaDoPainel } from '../input/mapaDeTeclas';
+import { limpaMensagemDoPainel, teclaDoPainel } from '../input/mapaDeTeclas';
+import { tocarSom } from '../audio/somDaCena';
 import { areaDeToqueEmJogo, ALVO_DE_TOQUE_CSS } from './escala';
 import { comToqueDaCena, fatorDaCena } from './toque/toqueDaCena';
 
@@ -76,7 +77,8 @@ export class PainelDeCodigo {
     this.teclado = cena.input.keyboard!;
 
     const fundo = cena.add.graphics().setScrollFactor(0).setDepth(PROFUNDIDADE_FUNDO);
-    fundo.fillStyle(numeroDaCor(p.tema.fundo), p.tema.alfaCaixa).fillRect(0, 0, largura, altura);
+    // Fundo sólido (BUG-R13-03; GDD 14.1, "o painel cobre a cena"): cor cheia, sem a transparência da caixa de diálogo.
+    fundo.fillStyle(numeroDaCor(p.tema.fundo), 1).fillRect(0, 0, largura, altura);
     this.guardar(fundo);
 
     this.guardar(
@@ -187,6 +189,11 @@ export class PainelDeCodigo {
     this.mensagem.setText(texto);
   }
 
+  /** Some com a mensagem de erro (GDD 19.11, j). A sequência segue: o próximo erro mostra a mensagem seguinte. */
+  limparMensagem(): void {
+    this.mensagem.setText('');
+  }
+
   limpar(): void {
     this.digitos = '';
     this.atualizarCampos();
@@ -207,6 +214,10 @@ export class PainelDeCodigo {
   private aoTeclar = (ev: KeyboardEvent): void => {
     const t = teclaDoPainel(ev.key, ev.repeat);
     if (!t) return;
+    if (t.tipo === 'digito' || t.tipo === 'apagar') {
+      if (limpaMensagemDoPainel('teclado', t.tipo)) this.limparMensagem();
+    }
+    if (t.tipo === 'digito' || t.tipo === 'apagar') tocarSom(this.cena, 'S11');
     switch (t.tipo) {
       case 'fechar':
         return this.opcoes.aoFechar();
@@ -232,6 +243,8 @@ export class PainelDeCodigo {
     const tecla = this.teclas[i];
     if (!tecla) return;
     tecla.botao.pressionar();
+    if (limpaMensagemDoPainel('toque', tecla.tipo)) this.limparMensagem();
+    tocarSom(this.cena, tecla.tipo === 'ok' || tecla.tipo === 'fechar' ? 'S12' : 'S11');
     switch (tecla.tipo) {
       case 'digito':
         return this.digitar(tecla.valor);
@@ -259,6 +272,7 @@ export class PainelDeCodigo {
     if (novo < 0 || novo > this.teclas.length - 1) return;
     this.foco = novo;
     this.desenharFoco();
+    tocarSom(this.cena, 'S11');
   }
 
   private digitar(d: string): void {

@@ -5,6 +5,7 @@ import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
 import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { CHAVE, sprites } from '../assets/registro';
+import { definirTelaDoSom, tocarSom } from '../audio/somDaCena';
 
 export interface DadosDaConquista {
   /** Chave do texto da conquista (ex.: "conquista.luzes"). */
@@ -31,6 +32,8 @@ export class ConquistaScene extends Phaser.Scene {
     const { largura, altura } = telaDe(p);
     const tela = p.telas.conquista;
     this.controles = new Controles(this);
+    definirTelaDoSom(this, 'conquista');
+    tocarSom(this, 'S09');
     toqueDaCena(this)?.mostrarPara('conquista');
     this.dados = dados;
 
@@ -69,6 +72,7 @@ export class ConquistaScene extends Phaser.Scene {
   }
 
   private continuar(): void {
+    tocarSom(this, 'S12');
     this.scene.start('Casa', { modo: 'conducao', origem: this.dados.origem, fase: this.dados.fase });
   }
 }

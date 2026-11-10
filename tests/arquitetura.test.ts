@@ -80,3 +80,53 @@ describe('joystick (ADR-007 1.3 e 12.1)', () => {
     expect(() => statSync(join(SRC, 'presentation', 'input', 'pilhaDaCruz.ts'))).toThrow();
   });
 });
+
+/** Backlog 130, 131 e 129 e BUG-R13-03 (0.11.0, polimento): regras que o código não pode quebrar sem teste. */
+describe('polimento do Marco 6 (backlog 129 a 131; BUG-R13-03)', () => {
+  it('nenhum texto da apresentação usa fonte.grade (8 px, abaixo do piso de 12); o grade é só grade nativa', () => {
+    const achados = arquivos(join(SRC, 'presentation'))
+      .filter((f) => /fonte\.grade/.test(readFileSync(f, 'utf-8')))
+      .map((f) => f.slice(SRC.length));
+    expect(achados).toEqual([]);
+  });
+
+  it('o painel da senha tem fundo sólido (não usa alfaCaixa)', () => {
+    const codigo = readFileSync(join(SRC, 'presentation', 'ui', 'PainelDeCodigo.ts'), 'utf-8');
+    expect(codigo).not.toMatch(/alfaCaixa/);
+  });
+
+  it('as mensagens do painel saem só pela regra de limpaMensagemDoPainel (não por outro caminho)', () => {
+    const codigo = readFileSync(join(SRC, 'presentation', 'ui', 'PainelDeCodigo.ts'), 'utf-8');
+    expect(codigo.match(/limparMensagem\(\)/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+/** ADR-008 9.1 (Marco 6): a API de som fica na apresentação; só o motor usa Web Audio; o domínio e a aplicação não sabem de som. */
+describe('áudio e pausa (ADR-008 1.7 e 9.1)', () => {
+  const emAudio = arquivos(join(SRC, 'presentation', 'audio'));
+
+  it('só motorWebAudio.ts e o motor tocam a API Web Audio (AudioContext, OfflineAudioContext)', () => {
+    const achados = emAudio
+      .filter((f) => !f.endsWith('motorWebAudio.ts'))
+      .filter((f) => /\bAudioContext\b|\bOfflineAudioContext\b|webkitAudioContext/.test(readFileSync(f, 'utf-8')))
+      .map((f) => f.slice(SRC.length));
+    expect(achados).toEqual([]);
+  });
+
+  it('o domínio e a aplicação não usam AudioContext, Audio nem window', () => {
+    for (const pasta of ['domain', 'application']) {
+      for (const f of arquivos(join(SRC, pasta))) {
+        expect(readFileSync(f, 'utf-8'), f).not.toMatch(/\bAudioContext\b|new Audio\(|\bwindow\b/);
+      }
+    }
+  });
+
+  it('presentation/audio não importa infrastructure', () => {
+    for (const f of emAudio) expect(readFileSync(f, 'utf-8'), f).not.toMatch(/from\s+['"][^'"]*infrastructure/);
+  });
+
+  it('a pausa (estado puro) não depende de Phaser nem de som', () => {
+    const codigo = readFileSync(join(SRC, 'presentation', 'ui', 'pausa', 'estadoDaPausa.ts'), 'utf-8');
+    expect(codigo).not.toMatch(/from\s+['"]phaser['"]|tocarSom|somDaCena/);
+  });
+});

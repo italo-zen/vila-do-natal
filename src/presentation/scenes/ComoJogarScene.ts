@@ -5,6 +5,7 @@ import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
 import { textoDeEntrada } from '../ui/textoDeEntrada';
 import { toqueDaCena } from '../ui/toque/toqueDaCena';
+import { definirTelaDoSom } from '../audio/somDaCena';
 
 /**
  * Como jogar (GDD 14.1): título, uma linha por controle, botão "Voltar" com foco inicial.
@@ -25,6 +26,7 @@ export class ComoJogarScene extends Phaser.Scene {
     const { largura, altura } = telaDe(p);
     const tela = p.telas.comoJogar;
     this.controles = new Controles(this);
+    definirTelaDoSom(this, 'comoJogar');
     toqueDaCena(this)?.mostrarPara('comoJogar');
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);
@@ -32,14 +34,15 @@ export class ComoJogarScene extends Phaser.Scene {
 
     let y = tela.listaY;
     // Marco 3 (GDD 16.10): as duas linhas novas vêm depois de "Botão B", nesta ordem. Marco 5 (GDD 18.7): no toque, as mesmas linhas com a chave `.toque`.
-    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.farejar', 'comojogar.dica']) {
+    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.farejar', 'comojogar.dica', 'comojogar.pausa']) {
       const linha = this.add.text(
         tela.listaX,
         y,
         t.t(chave),
         estilo(p, p.fonte.corpo, p.tema.texto, { wordWrap: { width: tela.listaLargura }, lineSpacing: p.fonte.entrelinhasFina }),
       );
-      y += linha.height + tela.espacoEntreItens;
+      // Seis linhas com a da pausa (GDD 19.8): o espaço entre itens cai para a entrelinha fina, para caber antes de "Voltar".
+      y += linha.height + p.fonte.entrelinhasFina;
     }
 
     this.menu = new Menu(

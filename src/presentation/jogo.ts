@@ -10,11 +10,36 @@ import { SelecaoScene } from './scenes/SelecaoScene';
 import { CasaScene } from './scenes/CasaScene';
 import { ConquistaScene } from './scenes/ConquistaScene';
 import { CreditosScene } from './scenes/CreditosScene';
+import { PausaScene } from './scenes/PausaScene';
+import { Som } from './audio/Som';
+import { MotorWebAudio } from './audio/motorWebAudio';
+import { entradaDeAudio } from './audio/conteudoDeAudio';
+import { GESTOS_QUE_LIBERAM } from './audio/liberacao';
+import type { TelaDoSom } from './audio/politicaDeSom';
 import { aparelhoComToque, ehRetrato, sinaisDoNavegador } from './input/aparelho';
 import { instalarGestosDoNavegador } from './input/gestos';
 import { ControlesDeToque, type AreaDeToque } from './ui/toque/ControlesDeToque';
 import { AvisoDeRotacao } from './ui/toque/AvisoDeRotacao';
 import { telaNaArea } from './ui/toque/layout';
+
+/** Aviso de rotação ativo: nada de som nem de M (ADR-008 5 R8; AU7). */
+function avisoDeRotacaoAtivo(doc: Document = document): boolean {
+  return doc.getElementById('aviso-de-rotacao')?.style.display === 'flex';
+}
+
+/**
+ * Liga a janela ao som (ADR-008 2.1 e 3.3). Os gestos liberam o áudio na fase de captura, antes de qualquer overlay.
+ * M alterna o mudo em qualquer tela, exceto no aviso de rotação. Sem tecla de jogo: M não passa por `Controles`.
+ */
+export function instalarSomDaJanela(som: Som, jogo: Phaser.Game, janela: Window = window): void {
+  for (const tipo of GESTOS_QUE_LIBERAM) {
+    janela.addEventListener(tipo, (e) => som.gesto(tipo, (e as KeyboardEvent).key), { capture: true, passive: true });
+  }
+  janela.addEventListener('keydown', (e) => {
+    if ((e.key !== 'm' && e.key !== 'M') || e.repeat || avisoDeRotacaoAtivo()) return;
+    som.alternarMudo((jogo.registry.get('telaDoSom') as TelaDoSom | undefined) ?? 'exploracao');
+  });
+}
 
 /** Área visível em px da janela: o `visualViewport` (sem a barra do navegador) ou a janela inteira (GDD 18.9). */
 export function areaVisivel(janela: Window = window): AreaDeToque {
@@ -48,13 +73,19 @@ export function criarJogo(servicos: Servicos, arte: ArteDoPerfil, pai: HTMLEleme
     // Toque sempre ligado: num computador comum não chega nenhum evento de toque, e o mouse segue igual (ADR-007 1.7).
     input: { mouse: true, touch: true, activePointers: 3, gamepad: false },
     audio: { noAudio: true },
-    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene, CreditosScene],
+    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene, CreditosScene, PausaScene],
   });
   jogo.registry.set('servicos', servicos);
   jogo.registry.set('perfil', perfil);
   jogo.registry.set('arte', arte);
   jogo.registry.set('comToque', comToque);
   jogo.registry.set('fatorEscala', 1);
+  // Som (ADR-008): decodifica no boot, sem gesto; a liberação vem do primeiro gesto (instalarSomDaJanela).
+  const som = new Som(new MotorWebAudio(), entradaDeAudio());
+  jogo.registry.set('som', som);
+  jogo.registry.set('telaDoSom', 'titulo');
+  void som.decodificarTudo().catch((erro: unknown) => console.error(erro));
+  instalarSomDaJanela(som, jogo);
 
   const textos = servicos.conteudo.textos;
   const toque = comToque ? new ControlesDeToque(document, perfil, arte.urls) : null;

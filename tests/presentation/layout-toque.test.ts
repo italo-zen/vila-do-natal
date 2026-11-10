@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { escolherLayout, posicoesDoLayoutA, posicoesDoLayoutB, telaNaArea, caixaDoVoltarDaSelecao, cursoDaBolinha, deslocamentoDaBolinha } from '../../src/presentation/ui/toque/layout';
+import { escolherLayout, posicoesDoLayoutA, posicoesDoLayoutB, telaNaArea, caixaDoVoltarDaSelecao, cursoDaBolinha, deslocamentoDaBolinha, zonaDoVoltarDaSelecao } from '../../src/presentation/ui/toque/layout';
 import { fatorDeEscala } from '../../src/presentation/ui/escala';
 import type { PerfilDeArte } from '../../src/application/arte/PerfilDeArte';
 
@@ -187,5 +187,41 @@ describe('botão Voltar ao título da seleção (layout B)', () => {
     const centro = caixa.y + caixa.altura / 2;
     expect(centro - zona / 2).toBeGreaterThanOrEqual(cartaoFundo - 1);
     expect(centro + zona / 2).toBeLessThanOrEqual(barraTopo + 1);
+  });
+});
+
+/** Backlog 138 (PO3, P1 do GDD 19.4.1 item 6): a zona do "Voltar ao título" da seleção não toca nem sobrepõe um cartão. */
+describe('zona do Voltar ao título da seleção (PO3)', () => {
+  const cartaoFundo = hd.telas.selecao.cartaoTopo + hd.telas.selecao.cartaoAltura; // 264
+  const barraTopo = hd.sala.linhas * hd.tile - hd.barra.margemInferior - hd.barra.entreLinhas - hd.fonte.corpo; // 308
+  const altura = hd.fonte.corpo + hd.espaco.medio; // 32, o desenho não muda
+
+  it.each([
+    ['667×375', 667, 375],
+    ['960×640', 960, 640],
+  ])('%s: começa na linha de baixo dos cartões (não sobrepõe)', (_nome, w, h) => {
+    const f = fatorDeEscala(hd.escala, base, { largura: w, altura: h });
+    const z = zonaDoVoltarDaSelecao(cartaoFundo, altura, f, 48);
+    expect(z.y).toBeGreaterThanOrEqual(cartaoFundo);
+  });
+
+  it.each([
+    ['667×375', 667, 375],
+    ['960×640', 960, 640],
+  ])('%s: tem pelo menos 48 CSS px de altura', (_nome, w, h) => {
+    const f = fatorDeEscala(hd.escala, base, { largura: w, altura: h });
+    const z = zonaDoVoltarDaSelecao(cartaoFundo, altura, f, 48);
+    expect(z.altura * f).toBeGreaterThanOrEqual(48);
+  });
+
+  it('o desenho não muda: a zona nunca é menor que o botão', () => {
+    const z = zonaDoVoltarDaSelecao(cartaoFundo, altura, 1, 48);
+    expect(z.altura).toBeGreaterThanOrEqual(altura);
+  });
+
+  it('a zona fica sobre a barra só na margem de 2 px (o texto da barra começa em 308)', () => {
+    const f = 375 / 352;
+    const z = zonaDoVoltarDaSelecao(cartaoFundo, altura, f, 48);
+    expect(z.y + z.altura - barraTopo).toBeLessThanOrEqual(2);
   });
 });

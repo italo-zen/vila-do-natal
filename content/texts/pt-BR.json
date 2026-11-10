@@ -203,5 +203,28 @@
   "barra.creditos.toque.menu": "Toque em Voltar ao título",
   "barra.painel1.toque.menu": "Toque nas teclas para digitar",
   "barra.painel2.toque.menu": "Toque em Fechar",
-  "selecao.voltar.toque": "Voltar ao título"
+  "selecao.voltar.toque": "Voltar ao título",
+  "pausa.titulo": "Pausa",
+  "pausa.continuar": "Continuar",
+  "pausa.som.ligado": "Som: ligado",
+  "pausa.som.desligado": "Som: desligado",
+  "pausa.comojogar": "Como jogar",
+  "pausa.sair": "Voltar ao título",
+  "pausa.sair.pergunta": [
+    "Sair da partida?",
+    "Ela não fica salva."
+  ],
+  "pausa.sair.sim": "Sim",
+  "pausa.sair.nao": "Não",
+  "barra.pausa1": "Setas: escolher  Z: confirmar",
+  "barra.pausa2": "X ou P: continuar",
+  "barra.pausa1.toque": "Mover: escolher  A: confirmar",
+  "barra.pausa2.toque": "B: continuar",
+  "barra.pausa1.toque.menu": "Toque para escolher",
+  "barra.pausa2.toque.menu": "Toque em Continuar",
+  "barra.sair": "Z: sim  X: não",
+  "barra.sair.toque": "A: sim  B: não",
+  "barra.sair.toque.menu": "Toque em Sim ou em Não",
+  "comojogar.pausa": "P: pausa.  M: mudo.",
+  "comojogar.pausa.toque": "No alto: pausa e mudo."
 }

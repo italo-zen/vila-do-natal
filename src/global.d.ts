@@ -11,3 +11,10 @@ declare module 'virtual:perfil-de-arte' {
   export const sprites: unknown;
   export const urls: Record<string, string>;
 }
+
+/** Áudio embutido pelo plugin `vite.audio.ts` (ADR-008 1.6): config, meta e MP3 em base64, só os que o JSON aponta. */
+declare module 'virtual:audio' {
+  export const config: unknown;
+  export const meta: unknown;
+  export const base64: Record<string, string>;
+}

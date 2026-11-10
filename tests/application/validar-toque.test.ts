@@ -151,3 +151,24 @@ describe('sprites de controle (ADR-007 5.5)', () => {
     expect(validarSpritesDeControle(faltando).join('\n')).toMatch(/ctl_celular\.png/);
   });
 });
+
+/** Backlog 131 (AC2): o validador de perfil reprova texto abaixo de 12 px de jogo; a apresentação usa o mesmo piso. */
+describe('piso de texto no perfil (backlog 131)', () => {
+  it('o perfil de referência (corpo 16, título 32) passa', () => {
+    expect(validarPerfilDeArte(clone(), 'hd-480x352', { ativo: true }).ok).toBe(true);
+  });
+
+  it('corpo de 8 px falha (abaixo de 12)', () => {
+    const p = clone();
+    p.fonte.corpo = 8;
+    const r = validarPerfilDeArte(p, 'hd-480x352', { ativo: true });
+    expect(r.ok).toBe(false);
+    expect(JSON.stringify(r)).toMatch(/fonte\.corpo \(8\) abaixo do piso/);
+  });
+
+  it('o piso da apresentação é o mesmo do validador', async () => {
+    const { PISO_DE_TEXTO_JOGO: pisoDoValidador } = await import('../../src/application/arte/validarPerfilDeArte');
+    const { PISO_DE_TEXTO_JOGO: pisoDaApresentacao } = await import('../../src/presentation/ui/tamanhoDoTexto');
+    expect(pisoDaApresentacao).toBe(pisoDoValidador);
+  });
+});

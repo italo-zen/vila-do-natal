@@ -115,6 +115,17 @@ export function deslocamentoDaBolinha(dx: number, dy: number, curso: number): { 
 }
 
 /**
+ * Zona de toque do "Voltar ao título" da seleção no layout B (backlog 138; GDD 19.4.1, item 6). Começa exatamente na linha
+ * de baixo dos cartões (não toca nem sobrepõe nenhum cartão) e tem pelo menos 48 CSS px de altura (ADR-007 4.5). O desenho
+ * não muda. `faixaTopo`: y da linha de baixo dos cartões; `alturaDoDesenho`: altura do botão em px de jogo; `fator`: CSS px
+ * por px de jogo. Função pura.
+ */
+export function zonaDoVoltarDaSelecao(faixaTopo: number, alturaDoDesenho: number, fator: number, alvoCss: number): { y: number; altura: number } {
+  const minimo = Math.ceil(alvoCss / fator);
+  return { y: faixaTopo, altura: Math.max(alturaDoDesenho, minimo) };
+}
+
+/**
  * Caixa do botão "Voltar ao título" da seleção no layout B (pergunta 42, padrão aplicado). Fica no meio da faixa entre a
  * linha de baixo dos cartões e o topo do texto da barra (primeira linha), centralizado na largura. Função pura.
  * `faixaTopo`/`faixaFundo`: y dos cartões e y do texto da barra; `largura` e `altura`: do botão.

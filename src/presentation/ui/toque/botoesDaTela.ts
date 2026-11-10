@@ -2,7 +2,7 @@ import type { ModoDaTela } from '../../../application/mundo/nick/modoDaTela';
 import type { Direcao } from '../../input/direcaoDoAnalogico';
 
 /** Modos da tela para o toque: os do ModoDaTela da aplicação (ADR-005 seção 1.4) mais o aviso de rotação (só apresentação). */
-export type ModoDoToque = ModoDaTela | 'rotacao';
+export type ModoDoToque = ModoDaTela | 'rotacao' | 'pausa' | 'pausaSair' | 'pausaComoJogar';
 
 /** Controles de uma tela no toque (ADR-007 seção 6; GDD 18.4 e 18.19.9). `direcoes`: as que o joystick aceita na tela. */
 export interface BotoesDaTela {
@@ -27,13 +27,17 @@ const TABELA: Record<ModoDoToque, BotoesDaTela> = {
   fade: { direcoes: [], a: false, b: false },
   creditos: { direcoes: [], a: true, b: true },
   rotacao: { direcoes: [], a: false, b: false },
+  // Pausa (ADR-008 7.3): menu de três visões. A pausa é menu, por isso tem joystick no layout A e borda de direção.
+  pausa: { direcoes: ['cima', 'baixo'], a: true, b: true },
+  pausaSair: { direcoes: ['esquerda', 'direita'], a: true, b: true },
+  pausaComoJogar: { direcoes: [], a: true, b: true },
 };
 
 /**
  * Telas em que a base do joystick aparece no layout B, e nas quais o joystick não aparece (decisão 38; GDD 18.19.9 e
  * ADR-007 4.6). Os menus e o título ficam sem controle no layout B: o toque vai direto no item.
  */
-const SEM_CONTROLE_NO_LAYOUT_B: ModoDoToque[] = ['titulo', 'comoJogar', 'selecao', 'conquista', 'dica', 'creditos', 'painel', 'conducao', 'fade', 'rotacao'];
+const SEM_CONTROLE_NO_LAYOUT_B: ModoDoToque[] = ['titulo', 'comoJogar', 'selecao', 'conquista', 'dica', 'creditos', 'painel', 'conducao', 'fade', 'rotacao', 'pausa', 'pausaSair', 'pausaComoJogar'];
 
 /** Nenhum controle de toque visível (joystick, A e B ocultos). A barra diz então o que tocar (chave `.toque.menu`). */
 export function semBotoes(t: BotoesDaTela): boolean {
@@ -54,7 +58,7 @@ export function botoesDaTela(modo: ModoDoToque, layout: 'A' | 'B' = 'A'): Botoes
  * Telas em que o joystick gera borda de direção (`apertada`), para os menus lerem (ADR-007 7.1). Só menus: título,
  * Como jogar e seleção. Fora deles o joystick só segura direção (exploração e demais telas).
  */
-const MODOS_COM_BORDA: ModoDoToque[] = ['titulo', 'comoJogar', 'selecao'];
+const MODOS_COM_BORDA: ModoDoToque[] = ['titulo', 'comoJogar', 'selecao', 'pausa', 'pausaSair', 'pausaComoJogar'];
 
 export function temBordaDoJoystick(modo: ModoDoToque): boolean {
   return MODOS_COM_BORDA.includes(modo);
