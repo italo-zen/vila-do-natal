@@ -53,9 +53,12 @@ const server = await createServer({ configFile: false, root: RAIZ, logLevel: 'si
 const motor = {
   perfil: await server.ssrLoadModule('/src/application/arte/validarPerfilDeArte.ts'),
   sprites: await server.ssrLoadModule('/src/application/arte/SpritesDoPerfil.ts'),
+  toque: await server.ssrLoadModule('/src/application/arte/validarToque.ts'),
 };
 
-const resultado = motor.perfil.validarPerfilDeArte(brutoPerfil, idEsperado);
+// `ativo`: o perfil é o da build (manifesto), e então o bloco `toque` é obrigatório (ADR-007 seção 5.3).
+const ativo = (manifesto.artProfile ?? 'gba-240x160') === idEsperado;
+const resultado = motor.perfil.validarPerfilDeArte(brutoPerfil, idEsperado, { ativo });
 if (!resultado.ok) {
   await server.close();
   sair(`"${idEsperado}" inválido:\n- ${resultado.erros.join('\n- ')}`);
@@ -66,11 +69,32 @@ const arquivoSprites = join(pasta, 'sprites.json');
 const corpo = perfil.corpos.sobrinho.quadro;
 const ehSobrinhoParado = (nome) => /^spr_(lolo|bibi|dandan|tutu)_(idle|interact|celebrate)\.png$/.test(nome);
 
+// Dimensões dos sprites de controle (ADR-007 seção 5.5; GDD 18.19.3): o PNG tem 3 × o tamanho CSS. Base e setores
+// do joystick = 3 × baseCss; bolinhas = 3 × bolinhaCss; botões = 3 × botaoCss; o celular tem 3 × o tamanho por quadro.
+const dimensoesDeControle = (arquivo) => {
+  const t = perfil.toque;
+  if (!t) return null;
+  if (arquivo === 'ctl_analogico_base.png' || arquivo.startsWith('ctl_analogico_brilho_')) return { w: 3 * t.analogico.baseCss, h: 3 * t.analogico.baseCss };
+  if (arquivo.startsWith('ctl_analogico_bolinha')) return { w: 3 * t.analogico.bolinhaCss, h: 3 * t.analogico.bolinhaCss };
+  if (arquivo.startsWith('ctl_botao_')) return { w: 3 * t.botaoCss, h: 3 * t.botaoCss };
+  if (arquivo === 'ctl_celular.png') return { w: 3 * t.rotacao.tamanhoCss * 4, h: 3 * t.rotacao.tamanhoCss };
+  return null;
+};
+
 if (!existsSync(arquivoSprites)) erros.push(`sprites.json ausente em ${perfil.pasta}.`);
 else {
   const sp = motor.sprites.validarSprites(lerJson(arquivoSprites, 'sprites.json'), perfil);
   if (!sp.ok) erros.push(...sp.erros);
   else {
+    if (perfil.toque) {
+      erros.push(...motor.toque.validarSpritesDeControle(sp.sprites.imagens.map((i) => i.arquivo)));
+      for (const img of sp.sprites.imagens) {
+        const esperado = dimensoesDeControle(img.arquivo);
+        if (!esperado || !existsSync(join(pasta, img.arquivo))) continue;
+        const { w, h } = dimensoesDoPng(readFileSync(join(pasta, img.arquivo)));
+        if (w !== esperado.w || h !== esperado.h) erros.push(`${img.arquivo}: ${w}×${h} px, esperado ${esperado.w}×${esperado.h} (3 × o tamanho CSS do bloco toque).`);
+      }
+    }
     const todos = new Set();
     const contagens = {};
     for (const img of sp.sprites.imagens) {

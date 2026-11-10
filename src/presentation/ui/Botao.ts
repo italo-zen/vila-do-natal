@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { estilo, numeroDaCor, perfilDe } from './tema';
+import { areaDeToqueEmJogo, ALVO_DE_TOQUE_CSS } from './escala';
+import { comToqueDaCena, fatorDaCena } from './toque/toqueDaCena';
 
 /** Tempo do estado pressionado (GDD 14.9.4). Tempo de jogo, não de arte. */
 export const PRESSIONADO_MS = 150;
@@ -18,6 +20,8 @@ export interface OpcoesBotao {
   mouse?: boolean;
   /** Profundidade base; o texto e a marca ficam 1 e 2 acima. Painel da porta usa 2010. */
   profundidade?: number;
+  /** Área da zona de toque em px de jogo. Padrão: o desenho, ou 48 CSS px se for menor (ADR-007 seção 4.5). */
+  areaDeToque?: { w: number; h: number };
 }
 
 /**
@@ -57,8 +61,11 @@ export class Botao {
         .setDepth(base + 2)
         .setVisible(false);
     }
-    if (o.mouse) {
-      this.zona = cena.add.zone(x, y, o.w, o.h).setOrigin(0.5).setScrollFactor(0).setInteractive({ useHandCursor: true });
+    // Zona de clique: com mouse (títulos e Como jogar) ou com toque (ADR-007 seção 1.7). A área de toque segue a seção 4.5.
+    if (o.mouse || comToqueDaCena(cena)) {
+      const f = fatorDaCena(cena);
+      const area = o.areaDeToque ?? { w: areaDeToqueEmJogo(o.w, ALVO_DE_TOQUE_CSS, f), h: areaDeToqueEmJogo(o.h, ALVO_DE_TOQUE_CSS, f) };
+      this.zona = cena.add.zone(x, y, area.w, area.h).setOrigin(0.5).setScrollFactor(0).setInteractive({ useHandCursor: true });
     }
     this.redesenhar();
   }
@@ -72,6 +79,17 @@ export class Botao {
 
   get sobreMouse(): Phaser.GameObjects.Zone | null {
     return this.zona;
+  }
+
+  /** Mostra ou esconde o botão inteiro, inclusive a zona de toque (layout B na seleção, pergunta 42). */
+  setVisivel(v: boolean): void {
+    this.fundo.setVisible(v);
+    this.texto.setVisible(v);
+    this.marca?.setVisible(v && this.focado);
+    if (this.zona) {
+      if (v) this.zona.setInteractive({ useHandCursor: true });
+      else this.zona.disableInteractive();
+    }
   }
 
   setFoco(focado: boolean): void {

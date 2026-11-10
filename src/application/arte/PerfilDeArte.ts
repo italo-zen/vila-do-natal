@@ -116,6 +116,31 @@ export interface PerfilDeArte {
     mensagem: { x: number; y: number; largura: number };
     grade: { colunas: number; passoX: number; passoY: number; topo: number };
   };
+  /**
+   * Controles de toque (ADR-007 seção 5): tamanhos em CSS px do aparelho, não passam pela escala do jogo. Obrigatório no
+   * perfil ativo (validado por `validarToque`); o v1 não tem. O painel está em pixels de jogo.
+   */
+  toque?: ToqueDoPerfil;
   /** Pasta dos PNG do perfil, relativa à raiz do repositório (ADR-003 seção 3). */
   pasta: string;
+}
+
+export interface ToqueDoPerfil {
+  /** Joystick virtual (GDD 18.19): diâmetro da base e da bolinha (CSS px). O curso é derivado (base/2 − bolinha/2). */
+  analogico: { baseCss: number; bolinhaCss: number };
+  /** Diâmetro dos botões A e B (CSS px). */
+  botaoCss: number;
+  /** Espaço entre a base do joystick, A, B e os demais controles (CSS px). */
+  espacoEntreControlesCss: number;
+  /** Distância dos controles à borda da área visível (CSS px). ADR-007 seção 4.2: 8 px da base no layout A. */
+  margemCss: number;
+  /** Faixa livre mínima por lado para o layout A (CSS px). */
+  faixaMinimaCss: number;
+  opacidade: { layoutA: number; layoutB: number; pressionado: number };
+  /** Linhas da tela (0 a 10) em que o layout B fica: de `linhaDe` até `linhaAte`, inclusive. */
+  layoutB: { linhaDe: number; linhaAte: number };
+  /** Tamanho do celular do aviso de rotação (CSS px). Cada quadro da folha tem 3 × este tamanho. */
+  rotacao: { tamanhoCss: number };
+  /** Grade do painel no toque, em pixels de jogo (ADR-007 seção 8.2). */
+  painel: { colunas: number; topo: number; passoX: number; passoY: number; larguraTecla: number; alturaTecla: number };
 }

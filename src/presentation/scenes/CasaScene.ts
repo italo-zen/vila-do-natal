@@ -1,5 +1,11 @@
 import Phaser from 'phaser';
 import { servicosDe, perfilDe, telaDe, numeroDaCor, estilo } from '../ui/tema';
+import { maiorTamanhoQueCabe, tamanhosAteOPiso } from '../ui/tamanhoDoTexto';
+import { definirTelaDoSom, somDaCena, telaDoSomDaCena, tocarSom } from '../audio/somDaCena';
+import { IconeDeTela, CHAVES_DA_PAUSA, CHAVES_DO_SOM } from '../ui/icones/IconeDeTela';
+import { iconesDaTela, xDoIcone } from '../ui/icones/iconesDaTela';
+import type { TelaDoSom } from '../audio/politicaDeSom';
+import { podeAbrirPausa } from '../ui/pausa/podeAbrirPausa';
 import { Barra } from '../ui/Barra';
 import { PERSONAGEM_IDS } from '../../domain/personagem/PersonagemId';
 import { Controles } from '../input/Controles';
@@ -21,6 +27,9 @@ import type { Tile } from '../../domain/shared/Tile';
 import type { Direcao as DirecaoDoDominio } from '../../domain/shared/Direcao';
 import type { PosicaoDaCaixa } from '../ui/posicaoDoDialogo';
 import { PainelDeCodigo } from '../ui/PainelDeCodigo';
+import { textoDeEntrada } from '../ui/textoDeEntrada';
+import { caixaYDoDialogo } from '../ui/posicaoDoDialogo';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { criarIluminacao, type Iluminacao } from '../ui/iluminacao/Iluminacao';
 import {
   CHAVE,
@@ -80,7 +89,7 @@ import type { MapaDoJogo, ObjetoDoMapa } from '../../application/content/Mapa';
 import type { Fase } from '../../domain/progresso/Fase';
 import type { PerfilDeArte } from '../../application/arte/PerfilDeArte';
 import type { Sobrinho } from '../../domain/personagem/Sobrinho';
-import { alfaDoPisca } from '../ui/pisca';
+import { alfaDoPisca, PERIODOS_DE_PULSO_MS } from '../ui/pisca';
 
 export interface DadosDaCasa {
   /** "intro": começa pela introdução no início da missão. "conducao": a conquista acabou; o jogo leva o Sobrinho ao destino da fase (GDD 14.11). */
@@ -115,7 +124,7 @@ const DURACAO_DO_FADE_FINAL_MS = 500;
 const MARGEM_DO_BRILHO_DA_PECA = 4;
 const BRILHO_DA_PECA_MIN = 0.4;
 const BRILHO_DA_PECA_MAX = 0.7;
-const PERIODO_DO_BRILHO_DA_PECA_MS = 2000;
+const PERIODO_DO_BRILHO_DA_PECA_MS = PERIODOS_DE_PULSO_MS.brilhoDaPeca;
 /** Profundidades de desenho (ordem de camadas, não arte). */
 const PROFUNDIDADE_JOGADOR = 10;
 const PROFUNDIDADE_BRILHO = 950;
@@ -186,6 +195,9 @@ export class CasaScene extends Phaser.Scene {
   private balao!: BalaoDoNick;
   private seta!: SetaDeFarejar;
   private icone!: IconeDeDica;
+  /** Ícones do canto superior esquerdo (GDD 19.3.2): pausa (II) e som (ADR-008 7.2). */
+  private iconePausa!: IconeDeTela;
+  private iconeSom!: IconeDeTela;
   /** Tela da dica aberta: enquanto existe, o mundo está parado (GDD 16.8.5). */
   private dica: DicaOverlay | null = null;
   /** Ações temporizadas do Nick e dos balões, em tempo de jogo (param com a dica). */
@@ -197,6 +209,8 @@ export class CasaScene extends Phaser.Scene {
   /** Farejando (animação de 1,2 s antes da seta): a seta ainda não aparece e os 5 s não correm (ADR-005 seção 4.5). */
   private sniffando = false;
   private emIntro = false;
+  /** Posição da caixa do diálogo aberto (base ou topo), para reservar a área no toque. */
+  private posicaoDaCaixa: PosicaoDaCaixa = 'base';
   private balaoId = 0;
   /** Indicador estático de cada porta (para trocar pela seta de farejar, GDD 14.10.10). */
   private indicadoresDePorta = new Map<string, Phaser.GameObjects.Image>();
@@ -218,6 +232,12 @@ export class CasaScene extends Phaser.Scene {
     this.geo = geometriaDoSobrinho(this.perfil);
     const { largura, altura } = telaDe(this.perfil);
     this.controles = new Controles(this);
+    // Ao acordar da pausa, as teclas apertadas com o menu da pausa não podem valer aqui (ADR-008 6.2).
+    this.events.on(Phaser.Scenes.Events.WAKE, () => {
+      this.controles.atualizar();
+      this.controles.descartarEntradas();
+    });
+    this.mostrarToque();
     this.cameras.main.setScroll(0, 0);
     this.estado = 'livre';
     this.bloqueadoAte = 0;
@@ -243,6 +263,10 @@ export class CasaScene extends Phaser.Scene {
     this.balao = new BalaoDoNick(this);
     this.seta = new SetaDeFarejar(this);
     this.icone = new IconeDeDica(this, () => this.abrirDica());
+    const margem = perfilDe(this).espaco.pequeno;
+    const lado = perfilDe(this).tile;
+    this.iconePausa = new IconeDeTela(this, 'pausa', margem, margem, CHAVES_DA_PAUSA, () => this.abrirPausaPeloIcone());
+    this.iconeSom = new IconeDeTela(this, 'som', xDoIcone('som', 'exploracao', margem, lado), margem, CHAVES_DO_SOM.ligado, () => this.alternarSomPeloIcone());
     this.fade = this.add
       .rectangle(0, 0, largura, altura, numeroDaCor(this.perfil.tema.fundo), 1)
       .setOrigin(0)
@@ -381,6 +405,7 @@ export class CasaScene extends Phaser.Scene {
    * fase é concluída no fim do flash; depois a árvore muda de estado e o diálogo de chegada abre sozinho.
    */
   private encaixar(ordem: number): void {
+    tocarSom(this, 'S06');
     this.estado = 'cena';
     this.reagirAConquista();
     this.barra.setVisible(false);
@@ -430,6 +455,7 @@ export class CasaScene extends Phaser.Scene {
    * concluída e a árvore vai ao estado 4. Nick acordado reage junto. Depois, o diálogo final (ADR-006 seção 4, passo 6).
    */
   private encaixarEnfeite(): void {
+    tocarSom(this, 'S06');
     this.estado = 'cena';
     this.reagirAConquista();
     this.barra.setVisible(false);
@@ -488,11 +514,20 @@ export class CasaScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    // Botões do toque conforme a tela (GDD 18.4). Antes e depois do quadro: o fade, a condução e a porta mudam o modo
+    // no meio do quadro, e a base do joystick não pode ficar visível um quadro a mais (backlog 134). Só age quando muda.
+    this.mostrarToque();
+    this.atualizarQuadro(time, delta);
+    this.mostrarToque();
+  }
+
+  private atualizarQuadro(time: number, delta: number): void {
     // Tela da dica aberta: o mundo está parado (GDD 16.8.5). Só as teclas da dica agem.
     if (this.dica) {
       this.controles.atualizar();
       this.dica.atualizar(this.controles);
       this.icone.setVisible(false);
+      this.atualizarIconesDeTela();
       return;
     }
     this.rodarTarefas(delta);
@@ -508,6 +543,7 @@ export class CasaScene extends Phaser.Scene {
       this.atualizarNickEFarejo(delta);
       this.barra.setVisible(false);
       this.icone.setVisible(false);
+      this.atualizarIconesDeTela();
       return;
     }
     this.controles.atualizar();
@@ -515,6 +551,10 @@ export class CasaScene extends Phaser.Scene {
     const a = entradaLiberada && this.controles.apertada('a');
     const b = entradaLiberada && this.controles.apertada('b');
     const h = entradaLiberada && this.controles.apertada('dica');
+    if (this.estado === 'livre' && !this.transitando && this.controles.atalhoApertado('pausa') && podeAbrirPausa(this.modo())) {
+      this.abrirPausa();
+      return;
+    }
 
     if (this.estado === 'dialogo') {
       if (a) this.dialogo.avancar();
@@ -536,6 +576,50 @@ export class CasaScene extends Phaser.Scene {
     if (this.estado === 'livre') this.barra.definir(['barra.casa', 'barra.casa2']);
     this.barra.setVisible(this.estado === 'livre');
     this.icone.setVisible(podeAbrirDica(modo));
+    this.atualizarIconesDeTela();
+  }
+
+  /** Ícones de pausa e de som conforme a tela (GDD 19.3.2; ADR-008 7.4). O som mostra ligado ou desligado. */
+  private atualizarIconesDeTela(): void {
+    const visiveis = iconesDaTela(this.modo());
+    this.iconePausa.setVisivel(visiveis.pausa);
+    this.iconeSom.setVisivel(visiveis.som);
+    this.iconeSom.trocarChaves(somDaCena(this)?.estaMudo ? CHAVES_DO_SOM.desligado : CHAVES_DO_SOM.ligado);
+  }
+
+  /** II: abre a pausa, se a casa estiver livre e a regra de abertura permitir (ADR-008 6.1). */
+  private abrirPausaPeloIcone(): void {
+    if (this.estado === 'livre' && !this.transitando && podeAbrirPausa(this.modo())) this.abrirPausa();
+  }
+
+  /** Som: liga ou desliga (mesmo efeito de M e do item da pausa; ADR-008 3.3). */
+  private alternarSomPeloIcone(): void {
+    somDaCena(this)?.alternarMudo(telaDoSomDaCena(this));
+  }
+
+  /**
+   * Botões do toque para o modo atual (ADR-007 seção 6). Sem toque, não faz nada. Nos diálogos, a caixa de texto é
+   * reservada: no layout B, A e B ficam fora dela (ela cobre a parte de baixo ou de cima da tela).
+   */
+  /**
+   * Pausa (GDD 19.3; ADR-008 6.2): a casa dorme (`sleep`: não atualiza e não desenha, então nada dela aparece por baixo da
+   * pausa; `pause` ainda desenhava a cena congelada) e a PausaScene abre por cima. O `wake` devolve a casa do mesmo ponto.
+   */
+  private abrirPausa(): void {
+    this.scene.sleep();
+    this.scene.launch('Pausa', { origem: 'Casa' });
+  }
+
+  private mostrarToque(): void {
+    const modo = this.modo();
+    definirTelaDoSom(this, modo as TelaDoSom);
+    let reserva: { topo: number; fundo: number } | null = null;
+    if (modo === 'dialogo' || modo === 'introducao') {
+      const altura = this.perfil.dialogo.altura;
+      const topo = caixaYDoDialogo(telaDe(this.perfil).altura, altura, this.posicaoDaCaixa);
+      reserva = { topo, fundo: topo + altura };
+    }
+    toqueDaCena(this)?.mostrarPara(modo, reserva);
   }
 
   /** Modo da tela (ADR-005 seção 1.4): a fonte dos bloqueios de B e H. */
@@ -648,7 +732,7 @@ export class CasaScene extends Phaser.Scene {
       if (o.tipo === 'bilhete') {
         const bilhete = this.registrar(this.add.image(x, y, CHAVE.bilhete).setOrigin(0, 0).setDepth(y + tile));
         // Pisca suave para chamar atenção (GDD 14.4).
-        this.tweens.add({ targets: bilhete, alpha: 0.6, duration: 900, yoyo: true, repeat: -1 });
+        this.tweens.add({ targets: bilhete, alpha: 0.6, duration: PERIODOS_DE_PULSO_MS.bilhete / 2, yoyo: true, repeat: -1 });
       }
       if (o.tipo === 'interruptor') {
         this.registrar(this.add.image(x, y, CHAVE.interruptor).setOrigin(0, 0).setDepth(y + tile));
@@ -790,8 +874,11 @@ export class CasaScene extends Phaser.Scene {
     retangulo.fillStyle(COR_DO_MOVEL).fillRect(x + 1, y + 1, largura - 2, altura - 2);
     this.registrar(retangulo);
     if (tilesDeLargura < 2) return;
+    // Piso de 12 px (backlog 131): o rótulo usa o maior tamanho (do corpo até 12) que cabe no móvel; se nem 12 cabe, não aparece.
+    const rotulo = String(o.dados.nome);
+    const tamanho = maiorTamanhoQueCabe(tamanhosAteOPiso(this.perfil.fonte.corpo), (t) => this.larguraDoRotulo(rotulo, t), largura - 2);
     const nome = this.add
-      .text(x + largura / 2, y + altura / 2, String(o.dados.nome), estilo(this.perfil, this.perfil.fonte.grade, this.perfil.tema.texto))
+      .text(x + largura / 2, y + altura / 2, rotulo, estilo(this.perfil, tamanho, this.perfil.tema.texto))
       .setOrigin(0.5)
       .setDepth(profundidade + 0.5);
     // Só se couber: se o nome for mais largo que o móvel, não aparece (sem corte nem reticências).
@@ -865,6 +952,8 @@ export class CasaScene extends Phaser.Scene {
   /** Fade pela cor de fundo, troca de subárea e nascimento no spawn de chegada. Bloqueia o A durante o fade. */
   private transitar(mapa: string, spawn: string): void {
     this.transitando = true;
+    definirTelaDoSom(this, 'fade');
+    tocarSom(this, 'S02');
     this.pararAnimacao();
     this.tweens.add({
       targets: this.fade,
@@ -967,6 +1056,7 @@ export class CasaScene extends Phaser.Scene {
 
   /** Pega a peça: a conquista abre com a ilustração da peça; a condução segue depois de "Continuar" (GDD 15.5 e 15.6). */
   private pegarPeca(ordem: number): void {
+    tocarSom(this, 'S05');
     const fase = FASE_DA_PECA[ordem];
     const missao = missaoDaFase(this.sv.conteudo.missoes, fase)!;
     this.estado = 'cena';
@@ -1013,6 +1103,7 @@ export class CasaScene extends Phaser.Scene {
 
   private acenderLuzes(): void {
     if (!this.sv.acenderLuzes.executar()) return;
+    tocarSom(this, 'S04');
     this.falar(['luz.clique'], {}, () => {
       this.estado = 'cena';
       this.tweens.add({
@@ -1093,6 +1184,7 @@ export class CasaScene extends Phaser.Scene {
     const t = this.tileDoSobrinho();
     if (this.ultimoTile && this.ultimoTile.x === t.x && this.ultimoTile.y === t.y) return;
     this.ultimoTile = t;
+    tocarSom(this, 'S01');
     const mov = this.sv.registrarPasso.executar({ mapa: this.mapa.id, x: t.x, y: t.y }, this.dir);
     this.aoMoverNick(mov);
   }
@@ -1196,6 +1288,7 @@ export class CasaScene extends Phaser.Scene {
   }
 
   private farejarEDepois(depois: () => void): void {
+    tocarSom(this, 'S08');
     this.nickOcupado = true;
     this.nick.farejar();
     this.aguardar(FAREJAR_MS, () => {
@@ -1210,6 +1303,7 @@ export class CasaScene extends Phaser.Scene {
    * (GDD 16.17 (c)), mesmo sem o sprite desenhado.
    */
   private mostrarBalao(chave: string, comTexto: boolean): void {
+    if (comTexto) tocarSom(this, 'S07');
     const n = this.sv.sessao.progresso.nick;
     if (n.tile.mapa !== this.mapa.id) return;
     const p = this.nickNaArea()
@@ -1250,11 +1344,13 @@ export class CasaScene extends Phaser.Scene {
     const d = this.sv.montarDica.executar();
     if (!d) return;
     const t = this.sv.conteudo.textos;
-    const linhas = d.chavesDoTexto.flatMap((k) => t.paginas(k));
+    const entrada = textoDeEntrada(this);
+    const linhas = d.chavesDoTexto.flatMap((k) => entrada.paginas(k));
     this.pausarMundo(true);
+    // A barra é passada como chave: o Barra resolve o texto (e a versão de toque). Passar o texto virava "[texto]".
     this.dica = new DicaOverlay(
       this,
-      { titulo: t.t(d.tituloChave), linhas, estadoDaArvore: d.estadoDaArvore, voltar: t.t('dica.voltar'), barra: t.t('barra.dica') },
+      { titulo: t.t(d.tituloChave), linhas, estadoDaArvore: d.estadoDaArvore, voltar: t.t('dica.voltar'), barra: 'barra.dica' },
       () => this.fecharDica(),
     );
   }
@@ -1300,7 +1396,7 @@ export class CasaScene extends Phaser.Scene {
 
   /** Páginas de uma lista de chaves: cada chave pode ter uma ou várias páginas (avisos, ADR-002 seção 2.2). */
   private paginasDe(chaves: string[], vars: Record<string, string>): string[] {
-    const t = this.sv.conteudo.textos;
+    const t = textoDeEntrada(this);
     return chaves.flatMap((k) => t.paginas(k, vars));
   }
 
@@ -1317,6 +1413,7 @@ export class CasaScene extends Phaser.Scene {
     op: { posicao?: PosicaoDaCaixa; aoFim?: () => void; pausaAoFechar?: boolean } = {},
   ): void {
     this.estado = 'dialogo';
+    this.posicaoDaCaixa = op.posicao ?? 'base';
     this.dialogo.abrir(paginas, {
       barra: ['barra.dialogo'],
       posicao: op.posicao ?? 'base',
@@ -1392,6 +1489,13 @@ export class CasaScene extends Phaser.Scene {
     this.luz.atualizar({ x: c.x, y: c.y, cenaEscura: this.mapa.escuro, intensidade: this.escuro.alpha });
   }
 
+  private larguraDoRotulo(texto: string, tamanho: number): number {
+    const medida = this.add.text(0, 0, texto, estilo(this.perfil, tamanho));
+    const largura = medida.width;
+    medida.destroy();
+    return largura;
+  }
+
   // ---------- Porta trancada (painel do código) ----------
 
   private abrirPainel(porta: ObjetoDoMapa): void {
@@ -1424,11 +1528,13 @@ export class CasaScene extends Phaser.Scene {
         this.painel?.mostrarMensagem(t.t('porta.faltam'));
         break;
       case 'errado':
+        tocarSom(this, 'S13');
         this.painel?.mostrarMensagem(t.t(`porta.erro.${r.mensagem + 1}`));
         this.painel?.limpar();
         break;
       case 'certo': {
         const porta = this.gatilhoDoPainel!;
+        tocarSom(this, 'S03');
         this.fecharPainel();
         // Ao fechar "Clique! A porta abriu.", o jogador vai para o outro lado (GDD 14.10.2, item 3).
         this.falar(['porta.abriu'], {}, () => this.transitar(String(porta.dados.destino), String(porta.dados.spawnDestino)));

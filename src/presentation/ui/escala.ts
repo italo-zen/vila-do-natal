@@ -15,3 +15,14 @@ export function fatorDeEscala(
   const inteiro = escala.inteiraAPartirDe ?? 2;
   return f >= inteiro ? Math.floor(f) : f;
 }
+
+/** Alvo mínimo de toque, em CSS px (ADR-007 seção 4.5; GDD 18.2). Código, não arte. */
+export const ALVO_DE_TOQUE_CSS = 48;
+
+/**
+ * Área de toque de um alvo do canvas, em pixels de jogo (ADR-007 seção 4.5): o maior entre o desenho e o mínimo de
+ * CSS px convertido pelo fator. Centrada no desenho pela cena. Função pura.
+ */
+export function areaDeToqueEmJogo(desenho: number, minimoCss: number, fator: number): number {
+  return Math.max(desenho, Math.ceil(minimoCss / Math.max(fator, 1e-6)));
+}

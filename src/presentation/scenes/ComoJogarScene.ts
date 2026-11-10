@@ -1,13 +1,16 @@
 import Phaser from 'phaser';
-import { estilo, numeroDaCor, perfilDe, servicosDe, telaDe } from '../ui/tema';
+import { estilo, numeroDaCor, perfilDe, telaDe } from '../ui/tema';
 import { barraDaTela } from '../ui/Barra';
 import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
+import { textoDeEntrada } from '../ui/textoDeEntrada';
+import { toqueDaCena } from '../ui/toque/toqueDaCena';
+import { definirTelaDoSom } from '../audio/somDaCena';
 
 /**
  * Como jogar (GDD 14.1): título, uma linha por controle, botão "Voltar" com foco inicial.
- * A ou B voltam ao título. Mouse: clicar em Voltar. Ao voltar, o título abre com foco em "Começar".
- * Posições e larguras vêm de `telas.comoJogar` do perfil.
+ * A ou B voltam ao título. Mouse e toque: clicar em Voltar. Ao voltar, o título abre com foco em "Começar".
+ * Posições e larguras vêm de `telas.comoJogar` do perfil. Com toque, as linhas são as de GDD 18.7 (chaves `.toque`).
  */
 export class ComoJogarScene extends Phaser.Scene {
   private controles!: Controles;
@@ -19,24 +22,27 @@ export class ComoJogarScene extends Phaser.Scene {
 
   create(): void {
     const p = perfilDe(this);
-    const t = servicosDe(this).conteudo.textos;
+    const t = textoDeEntrada(this);
     const { largura, altura } = telaDe(p);
     const tela = p.telas.comoJogar;
     this.controles = new Controles(this);
+    definirTelaDoSom(this, 'comoJogar');
+    toqueDaCena(this)?.mostrarPara('comoJogar');
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);
     this.add.text(largura / 2, tela.tituloY, t.t('comojogar.titulo'), estilo(p, p.fonte.titulo, p.tema.destaque)).setOrigin(0.5, 0);
 
     let y = tela.listaY;
-    // Marco 3 (GDD 16.10): as duas linhas novas vêm depois de "Botão B", nesta ordem. Sem "No celular" até o Marco 5 (decisão do Diretor).
-    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.farejar', 'comojogar.dica']) {
+    // Marco 3 (GDD 16.10): as duas linhas novas vêm depois de "Botão B", nesta ordem. Marco 5 (GDD 18.7): no toque, as mesmas linhas com a chave `.toque`.
+    for (const chave of ['comojogar.mover', 'comojogar.botaoA', 'comojogar.botaoB', 'comojogar.farejar', 'comojogar.dica', 'comojogar.pausa']) {
       const linha = this.add.text(
         tela.listaX,
         y,
         t.t(chave),
         estilo(p, p.fonte.corpo, p.tema.texto, { wordWrap: { width: tela.listaLargura }, lineSpacing: p.fonte.entrelinhasFina }),
       );
-      y += linha.height + tela.espacoEntreItens;
+      // Seis linhas com a da pausa (GDD 19.8): o espaço entre itens cai para a entrelinha fina, para caber antes de "Voltar".
+      y += linha.height + p.fonte.entrelinhasFina;
     }
 
     this.menu = new Menu(

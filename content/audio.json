@@ -1,0 +1,62 @@
+{
+  "mestre": 0.45,
+  "musica": {
+    "id": "mus_natal",
+    "ganhoDb": -15.0,
+    "loop": true
+  },
+  "eventos": {
+    "S01": {
+      "id": "sfx_s01_passo",
+      "ganhoDb": -12.0
+    },
+    "S02": {
+      "id": "sfx_s02_porta",
+      "ganhoDb": -6.0
+    },
+    "S03": {
+      "id": "sfx_s03_porta_abriu",
+      "ganhoDb": -4.0
+    },
+    "S04": {
+      "id": "sfx_s04_interruptor",
+      "ganhoDb": -7.0
+    },
+    "S05": {
+      "id": "sfx_s05_peca",
+      "ganhoDb": -7.0
+    },
+    "S06": {
+      "id": "sfx_s06_encaixe",
+      "ganhoDb": -6.0
+    },
+    "S07": {
+      "id": "sfx_s07_au",
+      "ganhoDb": 0.0
+    },
+    "S08": {
+      "id": "sfx_s08_fungada",
+      "ganhoDb": 0.0
+    },
+    "S09": {
+      "id": "sfx_s09_conquista",
+      "ganhoDb": 0.0
+    },
+    "S10": {
+      "id": "sfx_s10_dialogo",
+      "ganhoDb": -12.0
+    },
+    "S11": {
+      "id": "sfx_s11_foco",
+      "ganhoDb": 0.0
+    },
+    "S12": {
+      "id": "sfx_s12_confirma",
+      "ganhoDb": -4.0
+    },
+    "S13": {
+      "id": "sfx_s13_erro",
+      "ganhoDb": -15.0
+    }
+  }
+}

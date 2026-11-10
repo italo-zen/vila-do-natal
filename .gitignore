@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dist-playtest/
+dist-release/
 .DS_Store
 *.log
 
@@ -16,3 +17,6 @@ __pycache__/
 tools-arte/previews/
 tools-arte/preview_*.png
 assets/**/preview.png
+
+# Linha de base 0.10.0 (item 121, QA 2026-11-09): capturas geradas localmente, fora do Git
+qa/baseline-0100/

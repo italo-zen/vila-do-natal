@@ -114,6 +114,36 @@
     "texto": "#f4e9c8"
   },
   "tile": 32,
+  "toque": {
+    "analogico": {
+      "baseCss": 120,
+      "bolinhaCss": 48
+    },
+    "botaoCss": 64,
+    "espacoEntreControlesCss": 8,
+    "margemCss": 8,
+    "faixaMinimaCss": 144,
+    "opacidade": {
+      "layoutA": 1,
+      "layoutB": 0.6,
+      "pressionado": 1
+    },
+    "layoutB": {
+      "linhaDe": 2,
+      "linhaAte": 8
+    },
+    "rotacao": {
+      "tamanhoCss": 96
+    },
+    "painel": {
+      "colunas": 5,
+      "topo": 132,
+      "passoX": 64,
+      "passoY": 54,
+      "larguraTecla": 56,
+      "alturaTecla": 46
+    }
+  },
   "telas": {
     "titulo": {
       "nomeY": 36,

@@ -144,3 +144,43 @@
 ### PT4b — retorno do Diretor (2026-11-09, build 0.8.1)
 - **Observações (literais):** "Está ótimo."
 - **Classificação:** bugs → nenhum; ajustes → nenhum; ideias futuras → nenhuma. **Marco 4 aprovado pelo Diretor.** Marco 5 ainda não liberado.
+
+
+## PT4 (build 0.9.0, Marco 5: celular) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 12, "Anyone with the link"). QA: aprovado com ressalvas, só emulado no Chromium (toque, 844×390, 667×375, 390×844, DPR 2 e 3); nada em aparelho real. Capturas aprovadas pelo Diretor antes de publicar.
+- Roteiro (celular, em paisagem, aparelho real; ao menos uma criança e um adulto): (1) abrir o link com o celular em retrato e ver o aviso de rotação; girar para paisagem; (2) título → Como jogar → Voltar → Começar → escolher o sobrinho por toque (e testar "Voltar ao título" na seleção); (3) jogar até as luzes: painel de código por toque, cruz, A e B; (4) acordar o Nick (A), farejar (B), abrir a dica pelo "?"; (5) ir até o fim: peças, caixa, encaixe, plot twist, créditos, voltar ao título.
+- Perguntas-chave: os botões A/B e a cruz são confortáveis (tamanho, posição, dedo cobrindo a tela)? O aviso de rotação funciona? Algum botão cobre algo importante? A barra de endereços atrapalha? A tela fica nítida e o jogo roda leve?
+- Não coberto: aparelho real, Safari iOS, Chrome Android, multitoque real, desempenho. Zona de toque do botão "Voltar ao título" da seleção com 1 px de folga a conferir.
+- Retorno do Diretor: pendente.
+
+### PT4 — retorno do Diretor (2026-11-09, build 0.9.0, aparelho real)
+- **Observações (literais):** "Eu joguei e achei um bug simples. No início: o botão de cima e baixo para navegar entre 'Começar' e 'Como jogar' não funciona. Assim como a tela posterior de seleção de algum sobrinho com a seta de esquerda e direita, também não funciona. Mas faça um ajuste: troque as setas direcionais que aparecem no celular para um controle de direção analógico, que tal?"
+- **Classificação:** bugs → (a) cruz na tela não navega nos menus de título e de seleção (vai ao Dev, v0.9.1); ajustes → (b) trocar a cruz por um controle analógico (joystick virtual) no toque (vai ao Produto); ideias futuras → nenhuma.
+
+## PT4b (build 0.9.1, correção da cruz nos menus) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 13, "Anyone with the link"). QA: toque aprovado, teclado quase fechado (F9, "Au!" do F6 e F8 em diálogo e painel sem teste), emulado no Chromium. Capturas aprovadas pelo Diretor antes de publicar.
+- Muda: a cruz na tela navega o título (cima/baixo) e a seleção (esquerda/direita); um toque = um passo, segurar não repete (BUG-M5-04). A cruz só gera passo de menu nos menus.
+- Roteiro curto: título (cruz cima/baixo, A em Como jogar, B volta), seleção (cruz esquerda/direita), jogar um trecho com a cruz segurada.
+- Retorno do Diretor: pendente. Próximo: joystick analógico (0.10.0).
+
+## PT4c (build 0.10.0, joystick virtual) — publicado em 2026-11-09
+- Artifact: https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP (Version 14, "Anyone with the link"). QA: joystick e toque aprovados, teclado aprovado com pendências (F9, "Au!" do F6 e F8 em diálogo sem teste), emulado no Chromium. Capturas aprovadas antecipadamente pelo Diretor (prévia do agente).
+- Muda: a cruz sai e entra um joystick virtual fixo embaixo à esquerda (base 120 CSS px, bolinha, anel amarelo na direção); movimento em 4 direções, sem diagonal; menus: um empurrão = um passo.
+- Roteiro curto (celular em paisagem, aparelho real): título e seleção só com o joystick; andar pela casa; segurar o joystick e apertar A/B ao mesmo tempo; girar o aparelho com o dedo no joystick.
+- Perguntas-chave: a base de 120 px é confortável para criança e adulto? A zona morta e o limiar parecem certos ao polegar? O anel amarelo aparece com a mão cobrindo? Multitoque (polegar esquerdo no joystick, direito no A) funciona? A barra do navegador atrapalha?
+- Retorno do Diretor: pendente. Pergunta 43 (fixo ou flutuante) com padrão fixo.
+
+## PT5 — v0.11.0 (jogo final), publicado em 2026-11-10 (artifact Version 15)
+- **Status:** retorno parcial recebido em 2026-11-10 (macbook e iPhone 16 Pro); criança e adulto ainda não.
+- **Quem joga:** o Diretor, com pelo menos uma criança e um adulto jogando junto.
+- **Perguntas-chave:** dá para jogar junto? alguém travou? algo confuso ou infantil demais? A música agrada e não cansa, a emenda do laço não se percebe, os efeitos não irritam? Texto e ícones legíveis no celular? Os ícones de pausa e som são fáceis de achar? O jogo carrega rápido?
+- **Retorno literal (2026-11-10):** "Testei no macbook e o som saiu normalmente. Mas testei no meu iphone 16pro e não saiu nada. Sobre os áudios: estão legais; as páginas de conquista pode tocar músicas diferentes?; a página de crédito pode tocar um jingle de natal?"
+- **Classificação:** (1) iPhone 16 Pro sem som = BUG (P1, vai ao Dev/QA; suspeitas: chave de silencioso do iOS, destrave do contexto no iOS, decodificação; diagnóstico em artifact separado); (2) conquistas com músicas diferentes = AJUSTE (Produto/Arte); (3) jingle de Natal nos créditos = AJUSTE (Produto/Arte). Áudio aprovado pelo Diretor ("estão legais"; AU13 ok no macbook).
+- **Respostas do Diretor (2026-11-10):** o botão lateral de silencioso do iPhone estava ligado; jogou no Google Chrome do iPhone 16 Pro (WebKit no iOS). Causa mais provável: o modo silencioso do iOS silencia o Web Audio; o Dev testa o caminho de mídia (<audio> HTML) e entrega diagnóstico.
+- **Retorno do Diretor sobre os jingles (2026-11-10, literal):** "queria que ficasse mais diferente entre uma conquista e outra. O de natal, ainda não parece de natal. Não podemos usar um já conhecido mas adaptado para nossa versão? Por exemplo 'we wish you a marry christmas'". Classificação: AJUSTE (Arte): jingles mais distintos entre si; JC com a melodia tradicional de "We Wish You a Merry Christmas" em arranjo nosso.
+- **Teste de diagnóstico no iPhone (2026-11-10):** app do Claude no iOS 18.7 (UA "Claude/1.261030.19", em iframe), silencioso DESLIGADO: 14/14 MP3 decodificados no boot e no contexto real; destravar leva o contexto a "running"; "Web Audio puro", S05 e S09 tocaram. Passos 1 e 2 são silenciosos por projeto. Diretor aprovou publicar a v0.11.1 (conserto de áudio, sem jingles) para testar o jogo real no iPhone.
+- **v0.11.1 publicada em 2026-11-10 (artifact Version 16):** conserto de áudio do iPhone para testar o jogo real. Retorno pendente.
+- **Retorno sobre a v0.11.1 (2026-11-10, literal):** "Continua sem sair as músicas". O diagnóstico simples toca; o jogo real não. Dev investiga a diferença (taxa 44100 vs 48000 no laço, gesto no canvas do Phaser, resume assíncrono) e prepara build de diagnóstico do jogo com painel de texto.
+- **Detalhe (2026-11-10):** no jogo real no iPhone ficou tudo mudo, música e efeitos. Indica falha de liberação/saída, não só do laço da trilha.
+- **Retorno sobre o diag-jogo (2026-11-10, literal):** "não copiar o texto no celular. Mas agora funcionou o audio. Pode tirar a caixa de texto para eu testar". O build de diagnóstico, com as correções do laço (taxa 44,1/48 kHz), da música refeita ao virar "running" e dos rastros de erro, tocou no iPhone. Publica-se a 0.11.2 sem o painel.
+- **v0.11.2 publicada em 2026-11-10 (artifact Version 17):** sem painel, para o Diretor testar o iPhone real. Retorno pendente.

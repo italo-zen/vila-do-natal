@@ -5,10 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Natal na Casa do Tio Ítalo e da Tia Nath</title>
     <style>
-      html, body { margin: 0; height: 100%; background: #0b1030; overflow: hidden; }
-      #jogo { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-      canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+      /* Gestos do navegador desligados (ADR-007 seção 11). Só propriedades de gesto e de página: sem número de arte. */
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #0b1030;
+        overflow: hidden;
+        touch-action: none;
+        overscroll-behavior: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Área visível: o JS põe a posição e o tamanho em px (visualViewport). Centraliza o canvas. */
+      #jogo {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+      }
+      canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; touch-action: none; }
       #erro { color: #f4e9c8; font: 16px monospace; padding: 24px; }
+
+      /* Controles de toque (ADR-007 seção 4; GDD 18.19). Tamanhos e posições: JS, a partir do perfil. Só a base e os
+         botões recebem toque; bolinha e setor são desenho (pointer-events: none), e a base é o único alvo do joystick. */
+      #controles-de-toque { position: fixed; pointer-events: none; z-index: 50; touch-action: none; }
+      #controles-de-toque .analogico,
+      #controles-de-toque .botao {
+        position: absolute;
+        pointer-events: auto;
+        touch-action: none;
+        opacity: var(--op-repouso, 1);
+        -webkit-touch-callout: none;
+      }
+      #controles-de-toque .bolinha,
+      #controles-de-toque .setor {
+        position: absolute;
+        pointer-events: none;
+        touch-action: none;
+        opacity: var(--op-repouso, 1);
+      }
+      #controles-de-toque .setor { left: 0; top: 0; width: 100%; height: 100%; }
+      #controles-de-toque .analogico.on,
+      #controles-de-toque .bolinha.on,
+      #controles-de-toque .botao.on { opacity: var(--op-pressionado, 1); }
+      #controles-de-toque img { display: block; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; }
+      /* Troca de imagem só onde há versão pressionada: botões e bolinha. A base não troca (tem só o repouso). */
+      #controles-de-toque .pressionado { display: none; }
+      #controles-de-toque .botao.on .pressionado,
+      #controles-de-toque .bolinha.on .pressionado { display: block; }
+      #controles-de-toque .botao.on .repouso,
+      #controles-de-toque .bolinha.on .repouso { display: none; }
+
+      /* Aviso de rotação (ADR-007 seção 10). Tela inteira; engole os toques. */
+      #aviso-de-rotacao {
+        position: fixed;
+        z-index: 100;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        text-align: center;
+      }
+      #aviso-de-rotacao .celular {
+        background-repeat: no-repeat;
+        background-size: calc(var(--quadros) * var(--tamanho)) var(--tamanho);
+        background-position: 0 0;
+        animation: celular-girar var(--volta) steps(var(--quadros)) infinite;
+      }
+      @keyframes celular-girar {
+        from { background-position: 0 0; }
+        to { background-position: calc(var(--quadros) * -1 * var(--tamanho)) 0; }
+      }
     </style>
   </head>
   <body>

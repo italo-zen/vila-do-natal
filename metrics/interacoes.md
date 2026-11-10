@@ -287,3 +287,156 @@
 | I-223 | 2026-11-09 | M4 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas do plot twist aprovadas; v0.8.1 publicada (Version 11, build sem gancho); PT4b registrado |
 | I-224 | 2026-11-09 | M4 | sonnet 5.5 | Diretor | Orquestrador | | | | PT4b: "Esta otimo"; Marco 4 aprovado; Marco 5 nao liberado |
 | I-225 | 2026-11-09 | M4 | sonnet 5.5 | Orquestrador | (reconciliacao Marco 4) | | | | Delegacoes do M4 (tokens informados): Produto 416.977, Especialista 319.480, Arte 222.042, Dev 731.590 (532.428 + 199.162), QA ultimo acumulado informado 116.330 (rodadas 1 a 5; valores de retomada, parcialmente por diferenca). get_usage: contexto 20% (196.275 de 1.000.000), 5 h 4%, semanal 55%, plano Pro; por tipo de token nao informado. Interacoes com o Diretor no M4: 8 (I-208, 215, 218, 219, 223, 224 e respostas). Marco 4 aprovado no PT4b |
+| I-226 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Marcos 3 e 4 commitados (6ab0907, 0edf562), sem push; Marco 5 liberado |
+| I-227 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 248325 | 415 | | Escopo do Marco 5 entregue: GDD secao 18, backlog 097 a 109, pergunta 38 aberta com padrao (layout B) |
+
+| I-228 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 328711 | 651 | | ADR-007 entregue e aceito por mim; divergencias V1 a V7; perguntas 39 e 40 |
+
+| I-229 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 134831 | 173 | | GDD 18 e backlog 097 a 109 alinhados ao ADR-007; perguntas 39 e 40 (P13 e P14) |
+| I-230 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | 99659 | 171 | | Bloco toque no perfil e sprites ctl_* (cruz, A, B, rotacao) placeholder; validar:perfil, conteudo e 485 testes ok; previa conferida por mim |
+
+| I-231 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 409206 | 1422 | | Marco 5 pronto para QA: 617 testes, build e smoke de teclado e toque ok (conferi testes, conteudo, perfil, build sem gancho e 3 capturas) |
+
+| I-232 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 131565 | 581 | | Rodada 1 do Marco 5 (9 de 15 min, emulado): sem bug, reprovado por cobertura (cerca de metade de TQ, RM nao feito); rodada 2 pedida; tokens acumulam no QA |
+| I-233 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 51092 | 450 | | Rodadas 2 e 3 do Marco 5 (7,5 e 8 min de 15, emulado): sem bug confirmado; suspeitos: H sem dica com toque ligado e encaixe por toque; repassei ao Dev; tokens acumulam no QA |
+| I-234 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 85746 | | | H com toque e encaixe por toque: falsos positivos do roteiro do QA (keyboard.press perde o quadro; prova com tecla segurada 90 ms); unica mudanca: gancho de QA nao le a Casa encerrada; 617 testes; Dev acumulado 494953, retomada por diferenca |
+
+| I-235 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 37400 | 582 | | Rodadas 4 e 5 do Marco 5 (9,7 e 9,7 min): 106 aprovado com ressalvas; 107 reprovado por candidato BUG-M5-02 (X nao fareja na fase luzes); repassado ao Dev; tokens acumulam no QA |
+
+
+| I-236 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 23988 | | | BUG-M5-02 e falso positivo (leitura aos 400-600 ms; animacao de 1,2 s); build do commit 0edf562 igual, sem regressao; nenhum codigo mudou; Dev acumulado 518941, retomada por diferenca |
+
+| I-237 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 29000 | 510 | | Rodada 6 do Marco 5 (8,8 min): BUG-M5-02 fechado; F1 e F4 no Hall ok; F3, F5, N9, N10 indeterminados; 107 pendente; eu encontrei nas capturas que o layout B cobre texto dos menus: devolvi ao Dev; QA acumulado 317791 por diferenca |
+
+| I-238 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 38000 | 556 | | Layout B: controles fora do texto nos menus; 633 testes; checagem automatica de sobreposicao sem falhas; conferi capturas (titulo, Como jogar, introducao); barra dos menus ainda cita botoes ausentes: pedi chaves .toque.menu; Dev acumulado 557306, retomada por diferenca |
+| I-239 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Pedido da PR dos Marcos 3 e 4: push feito (0edf562), link de comparacao entregue; PR aberta e mergeada pelo Diretor |
+| I-240 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Perguntas 38 a 41 respondidas: sim nas quatro (padroes confirmados) |
+
+| I-241 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | | | | Barra .toque.menu nos menus sem botoes (layout B); 664 testes; sem sobreposicao; capturas em entrega-layout-b-r2; tokens acumulam no Dev |
+| I-242 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 122809 | 232 | | GDD 18.4 (colunas do layout B), 18.12 (9 chaves .toque.menu), TQ22, pergunta 42, backlog P12 a P16 e item 110; tokens nao informados |
+
+| I-243 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 40371 | 558 | | Rodada 7 do Marco 5 (9,3 min): 106 aprovado com ressalva; 107 quase (F3, F5, N9 p2, N10, RM2-b/c ok); BUG-M5-03 e comportamento esperado do layout A; rodada 8 pedida; QA acumulado 358138, retomada por diferenca |
+
+| I-244 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 38378 | | | Botao Voltar ao titulo na selecao (layout B, toque) e as 9 chaves .toque.menu do GDD; 685 testes; sem sobreposicao; Dev acumulado 614058, retomada por diferenca |
+| I-245 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 161267 | 249 | | Item 110 entregue: ADR-007 com regra do layout B, desvios D1 a D4 e respostas 38 a 41; confirmou que o botao Voltar ao titulo da selecao nao existe (ja com o Dev); ADR-003 e ADR-001 com valores antigos (44 px, TouchInput), pendentes; tokens nao informados |
+
+
+
+
+| I-246 | 2026-11-09 | M5 | haiku 5.5 | QA | Orquestrador | 22630 | 513 | | Rodadas 7 e 8 do Marco 5 (9,3 e 8,7 min, emulado): 106 aprovado; 107 passou quase tudo, faltam RM2-d/e (avisos de peca jogados), F9, F8; sem bug; QA acumulado 380768, rodada 8 por diferenca |
+| I-247 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas do Marco 5 aprovadas; v0.9.0 publicada (Version 12, build sem gancho, 685 testes); PT4 registrado |
+
+| I-248 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | PT4 no aparelho real: bug (cruz nao navega nos menus de titulo e selecao) e pedido de joystick analogico no lugar da cruz |
+| I-249 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 99035 | 474 | | Novo agente (BUG-M5-04): causa (cruz so alimentava segurada, menus leem apertada), prova antes e depois, 7 testes novos, smoke:toque-menus, 693 testes, v0.9.1; conferi testes parcialmente |
+| I-250 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 177105 | 266 | | GDD 18.19 (joystick), pergunta 43, backlog 111 a 119, versao 0.10.0; tokens ainda nao informados |
+| I-251 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Complemento: "Modelo analogico" (joystick virtual no lugar da cruz); repassado ao Produto |
+
+| I-252 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Especialista | 261873 | 545 | | Revisao 2 do ADR-007 (joystick) entregue e aceita; achados para Dev, Arte, QA e Produto |
+| I-253 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | 88860 | 151 | | Sprites do joystick (base 360, bolinha 144, 4 setores amarelos) e bloco toque; validar:perfil e conteudo ok, 693 testes; previa conferida por mim; bolinha pressionada creme (padrao) |
+
+| I-254 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 29665 | 488 | | Reteste da v0.9.1 (8 min): BUG-M5-04 fechado; candidato BUG-M5-05 (creditos por toque em 844x390 nao chegam); 107 ainda pendente; QA acumulado 410433, retomada por diferenca |
+
+| I-255 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Arte | | | | Joystick sem cursoCss e com setor em anel de 52 a 60 CSS px (ADR rev. 2); captura T7 e previa; 693 testes; Arte acumulada em tokens, valor da retomada nao informado |
+| I-256 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Produto | 100923 | 147 | | GDD 18.19 e backlog 111 a 118 alinhados ao ADR rev. 2; ponto: troca de layout solta o dedo (decidido); tokens nao informados |
+
+| I-257 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 43400 | 828 | | BUG-M5-05 nao e regressao: roteiro do QA procurava "Versao 0.9.0"; Dev endureceu a cruz (borda so nos 3 menus, temBordaDaCruz); 696 testes, tsc, smokes ok; Dev retomada por diferenca (142435 acumulado nesta tarefa) |
+
+
+| I-258 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 19141 | 555 | | Rodada final da v0.9.1 (9,3 min): 106 aprovado; 107 quase (F9, F6-AU e F8 em dialogo e painel sem teste); BUG-M5-05 fechado como falha do roteiro; QA acumulado 429574 |
+| I-259 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Capturas da v0.9.1 aprovadas; v0.9.1 publicada (Version 13, 696 testes, build sem gancho); PT4b registrado |
+| I-260 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | Desenvolvedor | 61000 | 1266 | | Joystick 0.10.0 implementado: direcaoDoAnalogico, FonteDeToque com dono, layouts, validarToque, textos, 726 testes, tsc, smokes ok; conferi testes, perfil e uma captura; Dev acumulado 335724 por diferenca |
+| I-261 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Sem commit agora; commit, push e link da PR ao finalizar o Marco 5 |
+| I-262 | 2026-11-09 | M5 | sonnet 5.5 | Diretor | Orquestrador | | | | Aprovacao antecipada do joystick: se o QA passar, publico a 0.10.0 e sigo (PR do M5 e Marco 6 com o Produto) |
+
+| I-263 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 43000 | 509 | | Joystick 0.10.0 (8,5 min, emulado): TQ23 a TQ32 ok, 118 aprovado com pendencias (TQ33, ausencia do joystick em telas, anel por tela, velocidade); sem bug; rodada final pedida; QA acumulado 473160, retomada por diferenca |
+
+| I-264 | 2026-11-09 | M5 | haiku 5.5 | Orquestrador | QA | 30143 | 324 | | Rodada final do joystick (5,4 min): 118 e 106 aprovados, 107 com pendencias pequenas, sem bug aberto; QA acumulado 503303 |
+
+| I-265 | 2026-11-09 | M5 | sonnet 5.5 | Orquestrador | (publicacao) | | | | v0.10.0 publicada (Version 14, build sem gancho, 726 testes) por autorizacao do Diretor |
+| I-266 | 2026-11-09 | M5 | sonnet 5.5 | Orquestrador | (reconciliacao Marco 5) | | | | Delegacoes do M5 (tokens informados): Produto 248.325 + 134.831 + 122.809 + 177.105 + 100.923 + ~76.709 = ver linhas I-227, I-229, I-242, I-250, I-256; Especialista 328.711 + 161.267 + 261.873; Arte 99.659 + 88.860 + 99.537(retomada por diferenca); Dev acumulado ~614.058 (a tarefa do bug 99.035 e o joystick 335.724); QA acumulado 503.303 (rodadas 1 a 14 do M5, valores de retomada). get_usage nao consultado nesta linha. Marco 5 aprovado pelo QA (v0.10.0), PT4/PT4b/PT4c no aparelho do Diretor |
+| I-268 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Pergunta 43: joystick fixo confirmado |
+| I-267 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Produto | 326696 | 700 | | Escopo do Marco 6 entregue: GDD secao 19, backlog 120 a 142, pergunta 44 (musica) com padrao B |
+| I-269 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Especialista | 260533 | 588 | | ADR-008 entregue e aceito (audio offline, 36 s, KB=1000, iframe do artifact, pausa por cena) |
+| I-271 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | QA | 124667 | 528 | | Linha de base 0.10.0 em qa/baseline-0100 (fora do Git, 1.071 hashes), comparar-capturas aponta para ela; triagem de bugs; perguntas M12-02 e R15-01 ja decididas |
+| I-270 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Generalista | 146114 | 436 | | Item 136 entregue: release.yml (so tag vX.Y.Z), CHANGELOG 0.5.0 a 0.10.0, verificar:release, verificar:tamanho, build:release, checklist-release; main remota nao tem o codigo ainda; perguntas 1 a 4 (endereco, repo publico, branch padrao, nomes proibidos); tokens nao informados |
+
+| I-272 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Desenvolvedor | | | | Polimento: itens 129, 130, 131, BUG-R13-03 e gancho do fade; resposta pendente |
+
+| I-273 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Arte | | | | Itens 123 e 124: musica (padrao B) e 13 efeitos, audio.json, licencas; resposta pendente |
+| I-274 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Produto | 108260 | 183 | | GDD 18.4, 18.14, 19.2 a 19.11 e backlog 122 a 136 alinhados ao ADR-008; AU14 = artifact de teste de audio (publicado, aguardando o Diretor) |
+| I-275 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Perguntas 1 a 4 do pipeline respondidas: endereco padrao, repo publico, main como padrao depois de atualizada, sem nomes novos |
+| I-276 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | AU14: o audio funcionou no artifact de teste (celular do Diretor) |
+| I-277 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Pergunta 44: musica B (sinos e celesta) confirmada |
+| I-278 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Note taking: memorias do projeto atualizadas (estado, acordos, como retomar); compactacao do contexto pedida ao Diretor via /compact |
+| I-279 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Arte | 165880 | 560 | | Item 123: trilha estilo B + 13 efeitos MP3 (184,5 KB), content/audio.json, audio-licencas.md; desvios de ganho registrados; 124 (icones) nao era do pedido |
+| I-280 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Volume da musica: manter padrao |
+| I-281 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | 427285 | 869 | | Polimento: itens 129-131, 134 e BUG-R13-03 (742 testes ok); rotulos de moveis 8->16 px afetam 304 capturas da casa; 2 perguntas ao Diretor (DanDan 14 px, rotulos 16 px) |
+| I-282 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Aprovou DanDan 14 px e rotulos 16 px; Dev segue para audio/pausa/icones |
+| I-283 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Arte | | | | Item 124: sprites dos icones (pausa, som on/off) |
+| I-284 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Itens 125, 127, 128: motor de audio, tela de pausa, textos; 126 depende do 124 |
+| I-285 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Arte | 38877 | 120 | | Item 124: 6 sprites de icones (pausa, som on/off, normal e pressionado) em sprites.json; contraste medido; pergunta de cor (creme x dourado); tokens = 204757 - 165880 do I-279 |
+| I-286 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Icones em creme: manter |
+| I-287 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | 644636 | 1468 | | Itens 125/127/128: motor de audio, pausa, textos (822 testes); achei confirmacao translucida com barra vazando; pedido: corrigir, S12 do Som desligado e item 126 (icones). tokens acumulados do agente 644636 |
+| I-288 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | 74174 | 723 | | Confirmacao sem casa (scene.sleep), S12 do Som corrigido, item 126 icones pronto (826 testes, smoke:icones); pergunta: icone de som do titulo em y=2; tokens = 718810 - 644636 |
+| I-289 | 2026-11-09 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Aprovou icone de som do titulo em y=2; segue para QA do M6 |
+| I-290 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | QA | | | | Linha de base 0100 refeita, checklist-marco6 (137) e rodada de 15 min com audio/pausa/icones/polimento |
+| I-291 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | | 425 | | Rodada 1 do M6: so 7 min de 15; sem P0-P2; 2 P3; 351 capturas refeitas; item 137 nao fechado; rodada 2 pedida com o que faltou |
+| I-292 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | | 588 | | Rodada 2 do M6: 9 min 48 s de 15; sem P0-P2; pausa, AU2, regressao parcial OK; icone no fade nao reproduzido (5 tentativas); item 137 aberto; rodada 3 pedida |
+| I-293 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | 29306 | 904 | | Rodada 3 do M6: 15 min 3 s; P1 PO3 (Voltar ao titulo invade 1 px), P2 DS2 (9,4 s sem gzip, 3,9 s com); RM2-d/e eram do roteiro; AU7, F9, F6-AU, F8, DS1 OK; item 137 aberto; tokens = 576329 - 547023 (r1) |
+| I-294 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Corrigir PO3 (138), analisar boot DS2, criar verificar:audio (AU10/AU11) |
+| I-295 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | | | | PO3 corrigido; DS2 = rede (3,9 s com gzip); verificar:audio criado (832 testes); sugerido Phaser enxuto, aplicado como padrao |
+| I-296 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | 41597 | 551 | | PO3 corrigido, DS2 = rede, verificar:audio criado; pedido build enxuto do Phaser (351 capturas identicas); tokens = 760407 - 718810 |
+| I-297 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | | | | Phaser enxuto medido (-26% HTML, -16% titulo) e revertido por ficar abaixo de 20%; DS2 segue 3,86 s com gzip; decisao: manter |
+| I-298 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | | 907 | | Rodada 4 do M6: 15 min 7 s; PO3, BUG-M2-02 e P3 do B fechados; AU10/AU11 OK; DS2 3,86 s com gzip, 9,4 s sem (P2 aberto); sem P0/P1; item 137 aberto; rodada 5 pedida |
+| I-299 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | | 903 | | Rodada 5 do M6: E7=10 e E20=14 passos (GDD diz 12-13 e 17-18, BUG-M2-03); AC4 candidato P2 (caixa no Hall ~20/s); AC1 e AC2 OK; DS3 OK; DS4 N/T; item 137 aberto |
+| I-300 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Produto | | | | Item 133: GDD 15.10 ajustado a rota medida (E7 10, E20 14) |
+| I-301 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Investigar caixa que muda 20x/s no Hall (AC4) |
+| I-302 | 2026-11-09 | M6 | haiku 5.5 | Produto | Orquestrador | | | | Item 133: GDD 15.3.5, 15.10, 19.11 l ajustados: E7=13 e E20=17 passos (10 e 14 trocas de tile + 3 da passagem); QA reconfirma ao vivo (PO5) |
+| I-303 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | | | | AC4: caixa do Hall e o bilhete (0,56 ciclo/s); periodos em pisca.ts, 838 testes, 351 capturas identicas; criterio por ciclos |
+| I-304 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | QA | | | | Rodada 6 final: AC4, PO5 ao vivo, DS4 por criterio alternativo, RG6-6, suite final |
+| I-305 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | 31465 | 677 | | Rodada 6: suite final verde, AC4 e DS4 OK (heap 12,1 MB constante), PO5 bate na resolucao do gancho; P3 candidato: P nao abre na Sala apos as luzes (2/2); parou em 11 min 20 s; item 137 aberto |
+| I-306 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Verificar se P nao abrir a pausa na Sala apos as luzes e projeto ou bug |
+| I-307 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | 23113 | 244 | | P na Sala apos as luzes e por projeto (janela ~4,7 s, abre na 1a tentativa livre); item 137 aceito; sobe versao 0.11.0; tokens = 833523 - 810428 |
+| I-308 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Versao 0.11.0 |
+| I-309 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | Generalista | | | | CHANGELOG 0.11.0 e checklist de release (gzip, escuta, PT5) |
+| I-310 | 2026-11-09 | M6 | haiku 5.5 | Generalista | Orquestrador | | | | CHANGELOG 0.11.0 e checklist de release prontos (portoes do M6); item 136 (release.yml, plugin de audio, verificar:audio) pedido |
+| I-311 | 2026-11-09 | M6 | haiku 5.5 | Generalista | Orquestrador | | | | Item 136: verificar-tamanho reescrito, checagem de HTML final, rascunho no meta, passo de audio no release.yml; build:release e verificar:release OK na 0.11.0 |
+| I-312 | 2026-11-09 | M6 | haiku 5.5 | Dev | Orquestrador | 5121 | 646 | | Versao 0.11.0 (838 testes); 5 capturas mudam so pelo texto da versao; tokens = 859904 - 854783 |
+| I-313 | 2026-11-09 | M6 | haiku 5.5 | Orquestrador | QA | | | | Refazer 5 capturas da baseline (versao), smoke final e fechar item 137 |
+| I-314 | 2026-11-09 | M6 | haiku 5.5 | QA | Orquestrador | | 93 | | Baseline atualizada (5 capturas da versao; 351/351 identicas), smoke e build:release OK na 0.11.0; item 137 fechado no alcance automatizado |
+| I-315 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Aprovou e mandou publicar a v0.11.0; artifact Version 15 publicado; PT5 registrado em playtests.md |
+| I-316 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Retorno do PT5: sem som no iPhone 16 Pro (bug P1), audios aprovados, pede musicas nas conquistas e jingle nos creditos |
+| I-317 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Bug P1 iPhone sem som: causa provavel + conserto + artifact de diagnostico |
+| I-318 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Produto | | | | Escopo: jingles diferentes por conquista e jingle de Natal nos creditos (GDD 19, backlog, orcamento) |
+| I-319 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | iPhone: silencioso ligado, Chrome iOS; causa provavel e o modo silencioso; Dev prioriza caminho de midia e diagnostico |
+| I-320 | 2026-11-10 | M6 | haiku 5.5 | Produto | Orquestrador | 182423 | 161 | | Escopo 0.12.0: J01 a J05 e JC, ducking, orcamento 296 KB; padrao: jingle dos creditos toca uma vez; backlog 143-148 |
+| I-321 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Arte | | | | Item 143: compor J01-J05 e JC |
+| I-322 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Especialista | | | | Item 144: ADR-008 revisao 2 |
+| I-323 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | 41344 | 270 | | Bug P1 iPhone: decodificacao isolada, audioSession, <audio> silencioso, 851 testes; artifact de diagnostico publicado; tokens = 901267 - 859904 |
+| I-324 | 2026-11-10 | M6 | haiku 5.5 | Arte | Orquestrador | | | | Item 143: 6 jingles (J01-J05, JC) gerados, 308,5 KB de 320; cortes de duracao aceitos; pre-escuta em WAV |
+| I-325 | 2026-11-10 | M6 | haiku 5.5 | Especialista | Orquestrador | | | | Item 144: ADR-008 rev. 2 (schema v2, ducking como codigo, contrato do Som, gancho); achado: prefixos e duracoes divergem da Arte; pedido de alinhamento |
+| I-326 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Especialista | | | | Alinhar ADR-008 rev. 2 aos jingles entregues (jin_, duracoes, ganhos, iPhone) |
+| I-327 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Produto | | | | Alinhar GDD 19.2.7/19.9 e backlog 143-148 aos jingles entregues; item AU21 iPhone |
+| I-328 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Jingles pouco distintos e o de Natal nao parece Natal: usar We Wish You a Merry Christmas adaptada |
+| I-329 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Arte | | | | Refazer J01-J05 (identidades distintas) e JC com carol tradicional |
+| I-330 | 2026-11-10 | M6 | haiku 5.5 | Produto | Orquestrador | 19813 | 69 | | GDD 19.2.7 e backlog 143-149 ajustados aos jingles entregues (J04 3 s, J05 3,8 s, JC 15 s, ganhos 0/-2 dB); AU21 iPhone; achado: padrao do Produto (respeitar silencioso) contradiz o caminho de midia do Dev; tokens = 200221 - 182423 |
+| I-331 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Respeitar o silencioso do iPhone; remover truque de midia |
+| I-332 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Remover audioSession playback e <audio> silencioso; manter decodificacao isolada e destrava |
+| I-333 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Especialista | | | | ADR-008 2.7: respeitar o silencioso |
+| I-334 | 2026-11-10 | M6 | haiku 5.5 | Arte | Orquestrador | 27993 | 130 | | Item 143 revisado: 5 jingles com tom, ritmo e timbre proprios; JC com We Wish You a Merry Christmas em sol maior (15,5 s); J05 cita Jingle Bells; audio total 309,6 KB; tokens = 284900 - 256907 |
+| I-335 | 2026-11-10 | M6 | haiku 5.5 | Especialista | Orquestrador | 0 | | | ADR-008 rev. 2 alinhada (jin_, duracoes, ganhos, silencioso); S09 sai do embutimento; 19 arquivos; tokens do Especialista nao informados nesta volta |
+| I-336 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Generalista | | | | Item 147: verificar-tamanho/verificar-release com prefixos mus_/sfx_/jin_ e limites da rev. 2 |
+| I-337 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | | | | Truque de midia removido (847 testes, smokes ok); verificar:tamanho vermelho so por jin_ ainda nao embutidos (coberto pelo item 147 do Generalista) |
+| I-338 | 2026-11-10 | M6 | haiku 5.5 | Generalista | Orquestrador | | | | Item 147: verificar-tamanho/verificar-release com mus_/sfx_/jin_, schema 1 e 2, so conta o que audio.json referencia; testes negativos ok; release 0.11.0 verificada |
+| I-339 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Diagnostico iPhone: silencioso desligado, audio toca no Web Audio puro; aprovou publicar v0.11.1 |
+| I-340 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Versao 0.11.1 (patch iOS) |
+| I-341 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Generalista | | | | CHANGELOG 0.11.1 |
+| I-342 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | 10528 | 272 | | Versao 0.11.1 (847 testes, smokes ok, 5 capturas com versao mudam); v0.11.1 publicada, artifact Version 16; tokens = 919272 - 908744 |
+| I-343 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | v0.11.1: jogo continua sem musica no iPhone |
+| I-344 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Achar por que o jogo real nao toca no iPhone (laco/taxa/gesto) e build de diagnostico do jogo |
+| I-345 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | iPhone: tudo mudo no jogo real (musica e efeitos) |
+| I-346 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | 42235 | 428 | | Bug do laco (taxa 44,1/48 kHz) corrigido, musica refeita ao virar running, rastro de erros; painel de diagnostico do jogo (855 testes); artifact privado publicado; causa do silencio total ainda sem prova; tokens = 961507 - 919272 |
+| I-347 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | Diag-jogo tocou no iPhone; nao consegue copiar texto; pede build sem caixa para testar |
+| I-348 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Versao 0.11.2 sem painel, verificar que builds oficiais nao tem __DIAG__ |
+| I-349 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Generalista | | | | CHANGELOG 0.11.2 |
+| I-350 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | 6374 | 268 | | Versao 0.11.2, painel removido (builds oficiais sem __DIAG__), 855 testes; v0.11.2 publicada, Version 17; tokens = 967881 - 961507 |

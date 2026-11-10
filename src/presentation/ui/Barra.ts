@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { estilo, numeroDaCor, perfilDe, servicosDe, telaDe } from './tema';
+import { chaveDeEntrada } from './textoDeEntrada';
+import { comToqueDaCena, toqueDaCena } from './toque/toqueDaCena';
 
 /**
  * Barra de controles fixa (GDD 14.8): até 2 linhas, alinhadas à esquerda, na base da tela.
@@ -32,10 +34,13 @@ export class Barra {
 
   /** Define as linhas pelas chaves de texto. Chamar à vontade: não redesenha se nada mudou. */
   definir(chaves: string[]): void {
-    if (chaves.join('|') === this.chaves.join('|')) return;
-    this.chaves = chaves;
-    const p = perfilDe(this.cena);
     const textos = servicosDe(this.cena).conteudo.textos;
+    // Chave resolvida pela entrada (teclado, toque, toque sem botões): o cache compara as chaves já resolvidas.
+    const semBotoes = toqueDaCena(this.cena)?.semControles() ?? false;
+    const resolvidas = chaves.map((c) => chaveDeEntrada(c, comToqueDaCena(this.cena), (k) => textos.tem(k), semBotoes));
+    if (resolvidas.join('|') === this.chaves.join('|')) return;
+    this.chaves = resolvidas;
+    const p = perfilDe(this.cena);
     const { largura, altura } = telaDe(p);
     const base = altura - p.barra.margemInferior;
     const topo = altura - p.barra.alturaPorLinhas[chaves.length >= 2 ? '2' : '1'];
@@ -48,7 +53,7 @@ export class Barra {
         return;
       }
       const linhaDaBase = chaves.length - 1 - i;
-      t.setText(textos.t(chaves[i])).setY(base - linhaDaBase * p.barra.entreLinhas);
+      t.setText(textos.t(resolvidas[i])).setY(base - linhaDaBase * p.barra.entreLinhas);
       this.ajustarLargura(t);
       t.setVisible(this.visivel);
     });

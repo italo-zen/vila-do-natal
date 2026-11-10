@@ -1,6 +1,6 @@
 # GDD: Natal na Casa do Tio Ítalo e da Tia Nath
 
-**Versão:** 1.0 (rascunho; revisão de 2026-11-09 (v0.8.1, plot twist: `arvore.chegada.3` com 3 páginas; controle, Nick dormindo e caixa só depois da página 3; 15.6.5, 15.8, 15.10 (E8), 17.2, 17.3, 17.5, 17.6, 17.8, 17.16 e 17.18 novo; backlog 096); revisão de 2026-11-09 (Marco 4: seção 17 nova, enfeite, créditos e fim (versão 0.8.0); pergunta 2 decidida; perguntas 36 e 37 novas; 13, 15.4, 15.6.8, 16.2.2 e 16.11 com nota de superação; backlog 086 a 095); revisão de 2026-11-09 (v0.7.1, ajustes do PT3 do Diretor: 16.4, 16.5.3, 16.5.4, 16.14, 16.15, 16.16 e 16.17 novo; pergunta 35 nova); revisão de 2026-11-08 (Marco 3: seção 16 nova (Nick, farejar, dica, barra de 2 linhas, Como jogar, textos, QA, versão 0.7.0); pendências 31 a 34 abertas com padrão aplicado; pendências 3, 4 e 5 decididas pelo Produto; 12, 13 e 14.8 atualizados); revisão de 2026-11-08 (P2 horizontal Sala ↔ Quarto com chegada declarada nos dois lados, Quarto 5×8 e 5 tiles novos; pergunta 30 = A, Suíte fechada no Marco 2; passos da condução do 15.3.5 medidos; 12, 13, 14.10.1, 14.10.3, 14.10.5, 14.10.10, 14.12.2, 15.1, 15.3 e 15.10 atualizados); revisão de 2026-11-08 (Suíte e Quarto com chegada explícita, decisão do Diretor: 1 tile no início de cada cômodo; 12, 13, 15.1, 15.3, 15.6, 15.8 e 15.10 atualizados; pergunta 26 respondida em parte; pergunta 30 aberta); revisão de 2026-11-08 (pendências 26 a 29): Lavanderia como cômodo próprio para a regra 4.4 (27), aviso com gatilho no tile escondido (28), Cama no Escritório (29), Suíte com abertura pela P1 decidida mas geometria pendente (26, 15.3.4 item 8), regra de arestas das portas (14.10.9); 15.2.2, 15.3.1, 15.3.4, 15.3.5, 15.8, 15.10 atualizados; revisão de 2026-11-07: sem save, tela Como jogar, P6b fechada, barra de controles em toda tela (14.8), painel da porta com X apaga e Esc fecha, personalidade dos sobrinhos em 4.8, barras com 2 espaços entre ações; ajustes do PT1 em 14.9; casa real no Marco 1 em 14.10; perfil HD 15×11, regra do interruptor e vão da P8 decididos em 2026-11-07; revisão de 2026-11-08: ajustes do PT2 em 14.1, 14.3, 14.4, 14.10 e 14.10.9; rotação da planta em 14.12 (sentido horário, só o conversor gira, print do interruptor recebido), com 14.1, 14.3, 14.7, 14.10.8, 14.11.3 e 14.12.5 atualizados para a planta girada; revisão de 2026-11-08 (PT2b): indicadores de porta em 14.10.10 (item 046) e diálogo da árvore automático na condução em 14.9.3, 14.11 e 14.10.8 (item 047); reescrita da planta girada em 14.9.2 (Q7), 14.9.3, 14.10.1, 14.10.2, 14.10.3, 14.10.5, 14.10.8 (C1, C5), 14.10.10 (P1 e P3 com seta; pergunta 17 decidida em 2026-11-08) e 14.12.3 e 14.12.4 conforme o conteúdo atual); revisão de 2026-11-08 (Marco 2): seção 15 nova (peças da árvore, versão 0.6.0), respostas do Diretor às pendências 18 a 25 incorporadas em 12 e 15 (opção B de áreas, aviso "ainda não", textos da conquista 1; pendências 26 a 29 abertas) e item 2 da seção 13 apontando para a 15
+**Versão:** 1.0 (rascunho; revisão de 2026-11-09 (Marco 6: seção 19 nova (áudio, pausa, polimento, acessibilidade, desempenho e release 1.0.0); versão 0.11.0 no PT5 e 1.0.0 na release (19.7); 5, 7.3, 8, 10, 11, 12 (pendências 8 e 9; pergunta 44 nova), 13, 14.1, 14.8 e 17.7 com nota; backlog 120 a 142); revisão de 2026-11-09 (ajuste 0.10.0: joystick virtual no lugar da cruz, 18.19; 5, 18.1, 18.2 e 18.16 com nota; pergunta 43 nova; backlog 111 a 119); revisão de 2026-11-09 (ADR-007 aceito: divergências V1 a V7 aplicadas em 18.2, 18.5, 18.6, 18.7, 18.9, 18.12, 18.13, TQ1, TQ5 e TQ19; perguntas 39 e 40 novas; backlog 097 aprovado e 098 a 109 ajustados); revisão de 2026-11-09 (Marco 5: seção 18 nova (toque, aviso de rotação, versão 0.9.0); pergunta 38 nova; 5, 12, 13, 14.1 e 14.8 com nota; backlog 097 a 109); revisão de 2026-11-09 (v0.8.1, plot twist: `arvore.chegada.3` com 3 páginas; controle, Nick dormindo e caixa só depois da página 3; 15.6.5, 15.8, 15.10 (E8), 17.2, 17.3, 17.5, 17.6, 17.8, 17.16 e 17.18 novo; backlog 096); revisão de 2026-11-09 (Marco 4: seção 17 nova, enfeite, créditos e fim (versão 0.8.0); pergunta 2 decidida; perguntas 36 e 37 novas; 13, 15.4, 15.6.8, 16.2.2 e 16.11 com nota de superação; backlog 086 a 095); revisão de 2026-11-09 (v0.7.1, ajustes do PT3 do Diretor: 16.4, 16.5.3, 16.5.4, 16.14, 16.15, 16.16 e 16.17 novo; pergunta 35 nova); revisão de 2026-11-08 (Marco 3: seção 16 nova (Nick, farejar, dica, barra de 2 linhas, Como jogar, textos, QA, versão 0.7.0); pendências 31 a 34 abertas com padrão aplicado; pendências 3, 4 e 5 decididas pelo Produto; 12, 13 e 14.8 atualizados); revisão de 2026-11-08 (P2 horizontal Sala ↔ Quarto com chegada declarada nos dois lados, Quarto 5×8 e 5 tiles novos; pergunta 30 = A, Suíte fechada no Marco 2; passos da condução do 15.3.5 medidos; 12, 13, 14.10.1, 14.10.3, 14.10.5, 14.10.10, 14.12.2, 15.1, 15.3 e 15.10 atualizados); revisão de 2026-11-08 (Suíte e Quarto com chegada explícita, decisão do Diretor: 1 tile no início de cada cômodo; 12, 13, 15.1, 15.3, 15.6, 15.8 e 15.10 atualizados; pergunta 26 respondida em parte; pergunta 30 aberta); revisão de 2026-11-08 (pendências 26 a 29): Lavanderia como cômodo próprio para a regra 4.4 (27), aviso com gatilho no tile escondido (28), Cama no Escritório (29), Suíte com abertura pela P1 decidida mas geometria pendente (26, 15.3.4 item 8), regra de arestas das portas (14.10.9); 15.2.2, 15.3.1, 15.3.4, 15.3.5, 15.8, 15.10 atualizados; revisão de 2026-11-07: sem save, tela Como jogar, P6b fechada, barra de controles em toda tela (14.8), painel da porta com X apaga e Esc fecha, personalidade dos sobrinhos em 4.8, barras com 2 espaços entre ações; ajustes do PT1 em 14.9; casa real no Marco 1 em 14.10; perfil HD 15×11, regra do interruptor e vão da P8 decididos em 2026-11-07; revisão de 2026-11-08: ajustes do PT2 em 14.1, 14.3, 14.4, 14.10 e 14.10.9; rotação da planta em 14.12 (sentido horário, só o conversor gira, print do interruptor recebido), com 14.1, 14.3, 14.7, 14.10.8, 14.11.3 e 14.12.5 atualizados para a planta girada; revisão de 2026-11-08 (PT2b): indicadores de porta em 14.10.10 (item 046) e diálogo da árvore automático na condução em 14.9.3, 14.11 e 14.10.8 (item 047); reescrita da planta girada em 14.9.2 (Q7), 14.9.3, 14.10.1, 14.10.2, 14.10.3, 14.10.5, 14.10.8 (C1, C5), 14.10.10 (P1 e P3 com seta; pergunta 17 decidida em 2026-11-08) e 14.12.3 e 14.12.4 conforme o conteúdo atual); revisão de 2026-11-08 (Marco 2): seção 15 nova (peças da árvore, versão 0.6.0), respostas do Diretor às pendências 18 a 25 incorporadas em 12 e 15 (opção B de áreas, aviso "ainda não", textos da conquista 1; pendências 26 a 29 abertas) e item 2 da seção 13 apontando para a 15
 **Status:** Aprovado para desenvolvimento da primeira fatia vertical, com pendências marcadas como **[TBD]**
 
 ---
@@ -152,10 +152,12 @@ Antes de começar, o jogador escolhe quem vai jogar entre **4 personagens**, cha
 
 | Ação | Teclado | Toque (celular) |
 |---|---|---|
-| Mover | Setas ou WASD | Direcional virtual (ou analógico) |
+| Mover | Setas ou WASD | Joystick virtual na tela, em grade de 4 direções, sem diagonal (18.19; substitui a cruz da 18.2) |
 | Interagir (A) | Z ou Enter | Botão A |
 | Cancelar (B) / Farejar com Nick (B) | X ou Esc | Botão B |
 | Abrir dica | H | Ícone de ajuda |
+| Pausa (Marco 6, 19.3) | P | Ícone II no canto superior esquerdo, na exploração |
+| Mudo (Marco 6, 19.2.3) | M | Ícone de som no canto superior esquerdo |
 
 **Exceção no painel da porta (Marco 1):** X apaga o último número, e só Esc fecha o painel. O foco começa em OK, e digitar números não move o foco (14.1).
 
@@ -200,7 +202,8 @@ Antes de começar, o jogador escolhe quem vai jogar entre **4 personagens**, cha
 
 - Música de fundo tranquila, com clima de Natal (sem direitos autorais; usar faixas de domínio público ou licenciadas de forma gratuita).
 - Efeitos: interruptor, peça encontrada, porta destravando, latido do Nick, farejar, conquista.
-- Áudio pode ser silenciado no menu.
+- Áudio pode ser silenciado: M e ícone de som (19.2.3).
+- **Marco 6 (seção 19.2):** a música e os efeitos são gerados por síntese, originais do projeto (sem sample, faixa ou fonte de terceiros). Isso vale no lugar do "domínio público ou licença gratuita" acima.
 
 ---
 
@@ -216,7 +219,7 @@ Todas as telas têm barra de controles no rodapé (14.8).
 6. **Painel de código:** teclado numérico para a porta.
 7. **Tela de conquista:** imagem ou ilustração, texto e botão "Continuar".
 8. **Dica:** imagem da árvore, texto e botão "Voltar".
-9. **Pausa:** opções de áudio e voltar ao título.
+9. **Pausa:** continuar, som, Como jogar e voltar ao título (seção 19.3).
 10. **Créditos:** árvore montada, sobrinho escolhido, Nick e agradecimento.
 11. **Aviso de rotação:** exibida no celular em modo retrato.
 
@@ -241,7 +244,7 @@ Todas as telas têm barra de controles no rodapé (14.8).
 ## 10. Conteúdo e acessibilidade
 
 - **Classificação:** livre, sem violência, sem conteúdo assustador ou sombrio. A casa escura é uma atmosfera de brincadeira, não de terror.
-- **Acessibilidade básica:** texto com bom contraste, tamanho de fonte ajustável [TBD], controles de teclado e toque, e áudio com opção de desligar.
+- **Acessibilidade básica:** texto com bom contraste, tamanho de fonte fixo, com piso de 12 px de jogo (19.5; pendência 8 decidida), controles de teclado e toque, e áudio com opção de desligar (19.2.3).
 - **Privacidade:** nenhum dado pessoal é coletado nem gravado no navegador. Nenhum serviço de terceiros de rastreamento. Os códigos da porta revelam os 3 últimos dígitos do ano de nascimento dos sobrinhos, que são pessoas reais; a exposição foi aceita pelo Diretor (ver 12, P6b).
 
 ---
@@ -255,6 +258,7 @@ Todas as telas têm barra de controles no rodapé (14.8).
 - Versão aplicativo nativo (iOS/Android).
 - Conteúdo adicional (novos mapas e missões): fora da v1.0, mas a arquitetura da v1.0 deve estar pronta para recebê-lo.
 - Idiomas além do português.
+- Volume ajustável, trilha por cômodo e som espacial (19.10; o áudio é música e efeitos, sem voz).
 - Salvamento de progresso (checkpoint, "Continuar", `localStorage`, migração de saves): fora da v1.0, por decisão do Diretor (2026-11-07).
 - Combate ou sistema de inventário complexo.
 
@@ -273,8 +277,8 @@ Todas as telas têm barra de controles no rodapé (14.8).
 | 6a | ~~Diálogos com o nome do sobrinho~~ (decidido) | — |
 | ~~6b~~ | ~~Os sobrinhos são pessoas reais da família?~~ **Decidido (Diretor, 2026-11-07):** sim, são pessoas reais, e o Diretor aceita que os códigos da porta revelem os 3 últimos dígitos do ano de nascimento. Regra mantida: sem fotos reais e sem dados além de nome e código (ver 10 e 14.6) | — |
 | 7 | ~~Visual do escuro~~ (decidido: penumbra azul-noite com círculo de luz, 14.5; a Arte pode refinar cores dentro da paleta) | — |
-| 8 | Tamanho de fonte ajustável (fora do Marco 1: a fonte padrão já é grande; revisar no Marco 6) | Desenvolvimento |
-| 9 | Trilha sonora escolhida | Arte e áudio |
+| ~~8~~ | ~~Tamanho de fonte ajustável~~ **Decidido (padrão do Produto, 2026-11-09; GDD 19.5 e 19.11, k):** fonte fixa na 1.0, com piso de 12 px de jogo para qualquer texto. Ajuste de fonte vai para 1.x (19.4.3) | — |
+| 9 | Trilha sonora escolhida (ver pergunta 44) | Diretor; aberta, com padrão aplicado (sinos e celesta, 19.2.1) |
 | 10 | ~~Sala com 11 linhas: como a câmera mostra a Sala (14.10.7, pergunta 1)~~ **Decidido (Diretor, 2026-11-07):** perfil HD com tela de 15×11 tiles, câmera sem rolagem; a Sala cabe inteira (14.10.1) | — |
 | 11 | ~~Distância do interruptor até a entrada (14.10.7, pergunta 2)~~ **Decidido (Diretor, 2026-11-07):** fora do círculo de luz inicial de 3 tiles, ao lado da P1 (14.10.2, item 5) | — |
 | 12 | ~~Textos novos das portas fechadas e da Cozinha; Lavanderia sem objeto (14.10.7, pergunta 3)~~ **Decidido (Diretor, 2026-11-07):** textos aprovados, ajustáveis depois; Pia, Fogão e Geladeira; Lavanderia sem objeto (14.10.3, 14.10.4) | — |
@@ -303,6 +307,13 @@ Todas as telas têm barra de controles no rodapé (14.8).
 | 35 | **Ajustes do PT3 (v0.7.1), 16.17. PERGUNTA AO DIRETOR.** O retorno do PT3 pede que, ao farejar, a seta faça 2 tremidas e fique amarela. Duas interpretações ficaram em aberto: (a) B de novo, com a seta visível, refaz o farejando de Nick (1,2 s) antes das tremidas e dos 5 s? (b) depois das 2 tremidas, a seta fica parada até sumir, sem o sobe e desce? **Sugestão do Produto: sim para (a) e sim para (b).** Alternativa para (a): só as tremidas e os 5 s recomeçam, sem o farejando de novo. Padrão aplicado até a resposta: como 16.17 | Diretor (aberta; padrão aplicado) |
 | 36 | **Aparência da caixa de enfeite e dos enfeites da árvore (Marco 4, 17.3 e 17.5). PERGUNTA AO DIRETOR.** A caixa é vermelha, com laço dourado, e a tampa abre para cima. A árvore enfeitada tem bolas vermelhas e douradas, fita verde e estrela dourada no topo. **Pergunta:** aprova essa descrição? **Sugestão do Produto: sim.** Padrão aplicado até a resposta: a Arte faz placeholders com essa descrição; nenhum item espera a resposta para começar | Diretor (aberta; padrão aplicado) |
 | 37 | **Como os créditos começam (Marco 4, 17.4 e 17.7). PERGUNTA AO DIRETOR.** Opção A: depois do diálogo final, os créditos abrem sozinhos, com fade. Opção B: o jogador fica livre na casa; a árvore enfeitada se examina e um diálogo pergunta "Quer ver os créditos?" (Z: sim; X: não). **Pergunta:** A ou B? **Sugestão do Produto: A** (a seção 3 diz "Automático", e sem save a sessão é curta). Padrão aplicado até a resposta: A | Diretor (aberta; padrão aplicado) |
+| ~~38~~ | **Botões de toque por cima da casa, em celular estreito (Marco 5, 18.2). PERGUNTA AO DIRETOR.** Decidida (Diretor, 2026-11-09): sim. Em celular estreito (faixa livre menor que 144 px de cada lado, como 667×375), a cruz e os botões A e B ficam por cima da tela do jogo, 60% transparentes, com a mesma caixa escura dos menus. Em celular largo (como 844×390), ficam nas laterais e não cobrem nada. **Pergunta:** no celular estreito, você aceita os botões por cima da casa? **Sugestão do Produto: sim.** A alternativa é encolher a tela do jogo para abrir faixas: a casa fica menor e a pixel art perde nitidez. **Decidida (Diretor, 2026-11-09): sim.** Layout B só na exploração, com cruz, A e B a 60%; diálogo e introdução com A e B, sem cruz; menus sem botão (18.2, 18.4). Autor: Produto | Diretor (decidida) |
+| ~~39~~ | **Cruz com braços encostados, 144 px (Marco 5, 18.2; ADR-007, V1). PERGUNTA AO DIRETOR.** Decidida (Diretor, 2026-11-09): sim. Cada braço da cruz tem 48 px e os braços ficam encostados, somando 144 px (faixa mínima do layout A). O 8 px continua entre a cruz, A, B e os demais controles. **Pergunta:** a cruz pode ter os braços encostados, com 144 px? **Sugestão do Produto: sim.** Alternativa: braços com 8 px entre eles (cruz de 160 px); nesse caso o layout A exige faixas de 160 px, e em 844×390 (faixa de 156 px) a tela cai no layout B. **Decidida (Diretor, 2026-11-09): sim.** Braços encostados, 144 px. Autor: Produto (conta) e Especialista (ADR-007, V1) | Diretor (decidida) |
+| ~~40~~ | **Teclado do painel no toque, em 5 colunas × 3 linhas (Marco 5, 18.6; ADR-007, V5). PERGUNTA AO DIRETOR.** Decidida (Diretor, 2026-11-09): sim. No computador, a grade fica como está (3 × 4). No toque, a grade passa a 5 colunas × 3 linhas: linha 1 = 1 a 5; linha 2 = 6 a 0; linha 3 = Apagar, OK e Fechar. A conta mostra que a grade de 4 linhas desce até o y 332 em 480×352, e a barra começa no y 296. **Pergunta:** no toque, aceita a grade de 5 × 3 com "Fechar"? **Sugestão do Produto: sim.** **Decidida (Diretor, 2026-11-09): sim.** Grade de 5 × 3, só no toque. Autor: Produto (grade) e Especialista (ADR-007, V5) | Diretor (decidida) |
+| ~~41~~ | **Grade do painel no toque: "Apagar" e "Fechar" em 2 colunas, "OK" em 1 (Marco 5, 18.6). PERGUNTA AO DIRETOR.** A linha 3 da grade de 5 × 3 tem 5 colunas: Apagar (2), OK (1), Fechar (2). Motivo: "Apagar" e "Fechar" não cabem em 1 coluna de 56 px (Dev, backlog 102). **Decidida (Diretor, 2026-11-09): sim.** Autor: Orquestrador (padrão), Dev | Diretor (decidida) |
+| 42 | **Seleção no layout B sem o botão B: como voltar ao título por toque? PERGUNTA AO DIRETOR.** Pela regra de 18.4, a seleção do celular estreito não tem cruz nem A/B, e o cartão é tocado direto. Sem B, a única saída é recarregar a página. **Opções:** (A) botão de menu "Voltar ao título" abaixo dos cartões, só no layout B, como em Como jogar e Créditos; (B) o botão B aparece na seleção do layout B (contraria 18.4); (C) sem saída por toque (não recomendado). **Sugestão do Produto: A.** Padrão aplicado até a resposta: A (barra `barra.selecao2.toque.menu`, 18.12). Autor: Produto | Diretor (aberta; padrão aplicado) |
+| 43 | **Joystick fixo ou flutuante (Marco 5, ajuste 0.10.0, 18.19). PERGUNTA AO DIRETOR.** O controle de direção deixa de ser a cruz e passa a ser um joystick virtual (base redonda com bolinha que acompanha o polegar; movimento em grade de 4 direções, sem diagonal). **Pergunta:** a base fica sempre no mesmo lugar (embaixo à esquerda, onde estava a cruz) ou aparece onde o polegar toca? **Sugestão do Produto: fixo.** Motivos: no layout B, a área da casa é reservada (18.4); no flutuante, a tela inteira vira zona de toque, o que contraria a regra 5 (18.5); e o analógico físico também é fixo. O pedido "modelo analógico" vale nas duas posições e não muda essa sugestão. **Padrão aplicado até a resposta:** fixo. Autor: Produto | Diretor (aberta; padrão aplicado) |
+| 44 | **Estilo da música de fundo (Marco 6, 19.2.1). PERGUNTA AO DIRETOR.** O GDD 7.3 pede música tranquila, com clima de Natal. A faixa será gerada por síntese, sem terceiros. **Opções:** (A) chiptune suave, com ondas quadradas e triangulares, no mesmo estilo dos efeitos e da pixel art (lembra o GBA); (B) sinos e celesta sintetizados, mais acústicos e mais de Natal. **Pergunta:** A ou B? **Sugestão do Produto: B.** Padrão aplicado até a resposta: B. Só a faixa (item 123) espera a resposta; os demais itens do Marco 6 seguem | Diretor (aberta; padrão aplicado) |
 
 ---
 
@@ -312,8 +323,8 @@ Todas as telas têm barra de controles no rodapé (14.8).
 2. **Peças da árvore:** as três peças, com a tela de conquista e a árvore se montando. Especificado na seção 15 (versão 0.6.0), com a opção B de áreas (Quarto e Escritório abertos; a Suíte fica fechada, pergunta 30 = A; o Quarto tem 4 tiles novos, 15.3.4, item 9).
 3. **Nick e dicas:** despertar, farejar e a tela de dica com imagem. Especificado na seção 16 (versão 0.7.0; backlog 064 a 078; ajustes da versão 0.7.1 em 16.17, backlog 080 a 085).
 4. **Enfeite e créditos:** caixa de enfeite e fim do jogo. Especificado na seção 17 (versão 0.8.0; backlog 086 a 095).
-5. **Toque e rotação:** controles do celular e aviso de modo retrato.
-6. **Polimento:** áudio, textos, QA com crianças e adultos.
+5. **Toque e rotação:** controles do celular e aviso de modo retrato. Especificado na seção 18 (versão 0.9.0; backlog 097 a 109). Ajuste 0.10.0: joystick virtual no lugar da cruz (18.19; backlog 111 a 119).
+6. **Polimento:** áudio, pausa, polimento, acessibilidade básica e desempenho. Especificado na seção 19 (versão 0.11.0 no PT5; release 1.0.0 depois da aprovação do PT5; backlog 120 a 142).
 
 ---
 
@@ -331,7 +342,7 @@ Detalha o Marco 1. Textos entre aspas são os textos finais da v1 (vão para `co
 - "Mover: setas ou WASD"
 - "Botão A: Z ou Enter. Conversar, examinar e avançar textos."
 - "Botão B: X ou Esc. Voltar e fechar textos."
-- "No celular, em breve: botões na tela."
+- "No celular, em breve: botões na tela." (sai no Marco 5; a versão de toque está em 18.7)
 
 Botão "Voltar" (foco inicial). Z, X, Enter, Esc e clique voltam ao título, com foco em "Começar". Barra: "Z ou X: voltar" (14.8). No Marco 1 só estes controles aparecem. Quando o Nick (Marco 3) e o toque (Marco 5) existirem, a tela ganha as linhas correspondentes.
 
@@ -348,7 +359,7 @@ Depois da página 4, aparece o diálogo de orientação (14.9.1) e só então o 
 
 **Porta.** Examinar a porta trancada (A), que é a P8 entre o Hall e a Sala, abre o painel. Pergunta no painel: "Senha". Teclado numérico na tela com 0 a 9, "Apagar" e "OK", exibindo 3 campos. Teclado do computador: dígitos 0-9 digitam no próximo campo, sem mover o foco (ignorados com os 3 campos cheios). Setas ou WASD movem o foco entre as teclas (0-9, "Apagar", "OK"); ao abrir o painel, o foco começa em OK. **PT2 (itens 038 e 039):** WASD e setas valem igual no painel. O painel não tem texto de dica: só a pergunta, os campos, o teclado e as mensagens. A dica fica no bilhete. Z ou Enter aperta a tecla em foco; em OK, confirma. X ou Backspace apaga o último dígito. Esc fecha o painel, e nenhuma outra tecla fecha. Sem penalidade. Barra, em duas linhas: "Setas: escolher  Z: apertar" e "X: apagar  Esc: fechar" (14.8). As mensagens do painel aparecem acima da barra.
 - Menos de 3 dígitos ao confirmar: "Faltam números."
-- Código errado (mensagem alterna, na ordem, sem contagem visível): "Quase! Leia o bilhete de novo." / "Hmm, esse não é. Tente outra vez!" / "Sem pressa. Você consegue!" Os campos são limpos.
+- Código errado (mensagem alterna, na ordem, sem contagem visível): "Quase! Leia o bilhete de novo." / "Hmm, esse não é. Tente outra vez!" / "Sem pressa. Você consegue!" Os campos são limpos. **Marco 6 (19.11, j):** as mensagens de erro e "Faltam números." somem na primeira tecla digitada ou apagada.
 - Código certo: o painel fecha e aparece o diálogo "Clique! A porta abriu." (toca efeito de porta, se houver; barra de diálogo). Ao fechar o diálogo, o jogador entra na casa (14.3).
 - Porta já aberta: examinar de novo só atravessa.
 
@@ -433,8 +444,8 @@ Toda tela mostra, o tempo todo, uma linha fixa de teclas no rodapé, dizendo com
 
 **Próximos marcos (não valem no Marco 1)**
 - Marco 3 (detalhado na 16.9): a dica tem "Z ou X: voltar" (16.8.4). A exploração ganha uma segunda linha, "X: farejar  H: dica", fixa: o texto não muda com o estado do Nick. Isso substitui a versão anterior deste bullet, que dizia "com Nick acordado".
-- Marco 5: a barra ganha a versão de toque (ex.: "A: avançar  B: voltar"). A regra acima não muda.
-- Pausa e Créditos: a linha é definida quando o marco for detalhado. Toda tela terá linha fixa.
+- Marco 5: a barra ganha a versão de toque (ex.: "A: avançar  B: voltar"). A regra acima não muda. Textos de toque em 18.4 e 18.12.
+- Pausa: linha definida na seção 19.3 (Marco 6). Créditos: linha definida na 17.7. Toda tela terá linha fixa.
 
 ### 14.9 Ajustes do PT1 (Marco 1.1)
 
@@ -974,11 +985,13 @@ Tudo o que o Marco 1 fixou (seções 4, 5, 8 e 14) continua valendo, salvo o que
 
 **15.3.5 Rota da condução (passos medidos pelo Dev, 2026-11-08; o QA confere ao vivo).** Passos = tiles visitados pela rota + 3 da passagem (ADR-004, seção 11.2). A velocidade segue 14.11.3: até 10 passos, normal; mais de 10, 2× no trajeto inteiro. A condução não passa pelo Quarto, nem pelo Escritório, nem pela Suíte: nenhuma peça fica lá, e as rotas usam só a passagem P7.
 
+**Faixas medidas (QA, 2026-11-09, item 133; 4 sobrinhos, mesmo número em todos).** A rota não muda; a faixa antiga (15 a 17 e 20 a 22) era estimativa e fica superada. O QA contou trocas de tile durante a condução: E7 = 10 e E20 = 14. Pela regra de passos desta seção, somam-se os 3 da passagem: **E7 = 13 passos e E20 = 17 passos**, ambas em 2× (passam de 10). Como o script conta a troca de mapa da passagem como uma troca só, o QA reconfirma ao vivo a contagem total (PO5) antes de fechar o item 133.
+
 | Peça | Tile de início (frente da peça) | Passos | Total estimado | Velocidade |
 |---|---|---|---|---|
 | Parte 1, Sala (1, 4) | (2, 4), (1, 5), (1, 3) ou (0, 4) | sem passagem | 4 a 6 | normal |
-| Parte 2, Cozinha (4, 1) | (3, 1) ou (4, 2) | inclui a passagem P7 (3 passos) | 15 a 17 | 2× |
-| Parte 3, Lavanderia (3, 5), fixa (pergunta 27) | (3, 4) ou (4, 5) | inclui a passagem P7 (3 passos) | 20 a 22 | 2× |
+| Parte 2, Cozinha (4, 1) | (3, 1) ou (4, 2) | inclui a passagem P7 (3 passos) | 13 (medido: 10 tiles + 3) | 2× |
+| Parte 3, Lavanderia (3, 5), fixa (pergunta 27) | (3, 4) ou (4, 5) | inclui a passagem P7 (3 passos) | 17 (medido: 14 tiles + 3) | 2× |
 | ~~Parte 3, Quarto~~ e ~~Escritório~~ | removidas (pergunta 27) | — | — | — |
 
 **15.3.6 Conteúdo (`missions[]`, ADR-002 e ADR-004, seção 9).**
@@ -1101,7 +1114,7 @@ Com os 4 sobrinhos, no teclado, salvo indicação. Cada rodada do QA dura no má
 - **E4 (condução):** sem tocar em nada, o sobrinho vai até (3, 7) da Sala, de frente para a árvore. Teclas e Esc não mudam nada, e a barra fica vazia no trajeto.
 - **E5 (encaixe e diálogo):** depois do encaixe de 0,6 s, a árvore passa ao estado 1. O diálogo "Agora a árvore tem 1 parte. Faltam 2 partes!" aparece sozinho, com entrada bloqueada de 200 ms. Z ou X fecham, e o controle volta na hora.
 - **E6 (exame):** A na frente da árvore, no estado 1, mostra "Ela já tem 1 parte. Faltam 2 partes." quantas vezes for, sem disparar o diálogo de novo.
-- **E7 (parte 2 e 2×):** a parte 2 só aparece depois do encaixe da parte 1, no tile (4, 1) da Cozinha e Lavanderia. Ao pegar, a condução cruza a P7 com fade de 0,5 s e A bloqueado, segue do spawn da Sala e chega à árvore. Registrar passos e velocidade (esperado: 15 a 17 passos, 2×; 15.3.5).
+- **E7 (parte 2 e 2×):** a parte 2 só aparece depois do encaixe da parte 1, no tile (4, 1) da Cozinha e Lavanderia. Ao pegar, a condução cruza a P7 com fade de 0,5 s e A bloqueado, segue do spawn da Sala e chega à árvore. Registrar passos e velocidade (esperado: 13 passos, 2×; 15.3.5, medido em 2026-11-09).
 - **E8 (parte 3):** a parte 3 só aparece depois do encaixe da parte 2, no tile (3, 5) da Lavanderia. Conquista, condução, encaixe, e o diálogo de 3 páginas da chegada 3 (15.8; 17.18, EN-PT1 a EN-PT3), com a árvore no estado 3.
 - **E9 (depois da parte 3):** exploração livre, sem objetivo novo. O exame da árvore mostra o estado 3, e nenhuma peça fica visível.
 - **E10 (uma vez):** voltar pela P7 e pela P8 não repete condução nem diálogo de nenhuma peça, e as peças pegas não reaparecem.
@@ -1114,7 +1127,7 @@ Com os 4 sobrinhos, no teclado, salvo indicação. Cada rodada do QA dura no má
 - **E17 (passagens novas):** sem andar, P2 e P3 aparecem como abertura (14.10.9) e com os indicadores de 15.3.3 (captura). Andar sobre o gatilho de P2 leva ao Quarto, e sobre o de P3, ao Escritório, com fade de 0,5 s. Voltar pelo mesmo gatilho nasce no tile de chegada da Sala, (7, 2). Entrar pela P2 nasce em (0, 6) do Quarto, olhando para cima (15.3.4, item 9); entrar pela P3 nasce em (11, 2), no Escritório.
 - **E18 (vão):** o vão de P2 (8, 1) da Sala e o de P3 (9, 2) não são andáveis; o Quarto não tem tapete (a P2 tem seta, 15.3.3).
 - **E19 (áreas fechadas):** a Suíte e os banheiros não são alcançáveis (pergunta 30 = A). P1 segue porta fechada, com o texto de 14.10.3 e seta para a esquerda. P4 e P6 mostram o texto de 14.10.3.
-- **E20 (rota com passagem P7 e 2×):** a condução da parte 3, saindo da Lavanderia (3, 5), cruza a P7 e chega a (3, 7) da Sala, com 2× e fade na passagem. Registrar passos (esperado: 20 a 22). As áreas novas (Quarto e Escritório) não têm peça: só entram no E17 e no E18.
+- **E20 (rota com passagem P7 e 2×):** a condução da parte 3, saindo da Lavanderia (3, 5), cruza a P7 e chega a (3, 7) da Sala, com 2× e fade na passagem. Registrar passos (esperado: 17 passos, 2×; 15.3.5). As áreas novas (Quarto e Escritório) não têm peça: só entram no E17 e no E18.
 - **E21 (Quarto, ida e volta):** da Sala, em (7, 2), andar para cima sobre o gatilho (7, 1): fade de 0,5 s, nasce em (0, 6) do Quarto, de frente para cima. Andar para baixo sobre o gatilho (0, 7) e voltar: fade, nasce em (7, 2) da Sala, de frente para baixo. Tentar andar para o vão (8, 1) não faz nada, porque ele não é andável. Com os 4 sobrinhos, no teclado.
 - **E22 (Quarto, caixa e câmera):** captura em 480×352 com os 4 tiles novos do Quarto desenhados (gatilho (0, 7), chegada (0, 6) e corredor (0, 5) e (0, 4)), a seta para a esquerda sobre o gatilho (0, 7) e nenhum tapete; a caixa do Quarto (5×8) inclui os tiles novos; câmera centralizada, sem rolagem e sem corte; a última linha da tela sem chão andável. Teste: nenhum piso do Quarto encosta em piso da Sala (E004). Captura aprovada pelo Diretor antes da conversão.
 - **E23 (Suíte, N/A no Marco 2; vale numa versão posterior):** ida e volta pela P1, pelo caminho que a 30 escolher; a chegada de entrada é o tile novo da Suíte; Cama e Armário no lugar da planta, sem reação a A; P5 é porta fechada com o texto de 14.10.3. No Marco 2, E23 vira N/A no checklist e vale o E19.
@@ -1537,7 +1550,7 @@ Tudo o que os Marcos 1 a 3 fixaram continua valendo, salvo o que esta seção mu
 - **Layout:** cabe em 480×352 sem zoom e sem corte. Cada linha tem até 28 caracteres. O arranjo exato é da Arte e do Dev, dentro do perfil HD.
 - **Como volta ao título:** botão "Voltar ao título" com foco inicial. Z, X, Enter, Esc ou clique voltam ao título, com foco em "Começar" (como em "Como jogar", 14.1). Barra: "Z ou X: voltar ao título".
 - **Sem save:** ao voltar, o título começa do zero (ADR-002 seção 3). "Começar" leva à seleção e à introdução de novo.
-- **Sem pressão:** nada se mexe sozinho, exceto a entrada do fade. Sem música (Marco 6). Fica o tempo que a pessoa quiser.
+- **Sem pressão:** nada se mexe sozinho, exceto a entrada do fade. Música de fundo a partir do Marco 6 (19.2.1; a mesma faixa do jogo). Ao abrir, toca uma vez o jingle de Natal por cima da trilha (19.2.7, item c). Fica o tempo que a pessoa quiser.
 - **Sem dica e sem farejar:** H, o ícone "?" e B não fazem nada nos créditos (16.8.6).
 
 ### 17.8 Textos do Marco 4 (pt-BR)
@@ -1714,3 +1727,949 @@ Origem: o Diretor, 2026-11-09, no retorno do PT4a (`decisions.md`, "Plot twist n
 - **EN-PT4 (entrada bloqueada):** Z, X, Enter e Esc nos primeiros 200 ms, ao abrir o diálogo, não avançam nem fecham. Depois disso, Z avança normalmente.
 - **EN-PT5 (versão):** título "v0.8.1" e créditos "Versão 0.8.1" (captura, junto com CR6).
 - **Regressão:** E8 e E12 de 15.10 mudam para o novo texto da chegada 3; RG1 e RG5 valem sem outra mudança.
+
+---
+
+## 18. Especificação do Marco 5 (toque e rotação, versão 0.9.0)
+
+Detalha o Marco 5 (seção 13, item 5). Origem: o Diretor liberou o Marco 5 em 2026-11-09 ("depois libere o marco 5", `decisions.md`). O playtest deste marco é o PT4 (CLAUDE.md): jogo completo, em paisagem, em aparelho real. Versão do jogo ao fim do marco: **0.9.0** (SemVer: recurso novo, versão menor; ADR-002 seção 1). Textos entre aspas são propostas do Produto para `content/texts/pt-BR.json` (chaves em 18.12). **[Pendente]** = pergunta aberta (seção 12; hoje só a 42), com o padrão já aplicado. As perguntas 38 a 41 foram decididas pelo Diretor em 2026-11-09 (`decisions.md`).
+
+Tudo o que os Marcos 1 a 4 fixaram continua valendo, salvo o que esta seção muda de forma explícita: o movimento no toque (5), a barra (14.8, 18.4), a tela Como jogar (14.1, 18.7), os textos com tecla (16.11, 18.12) e a escala no celular (ADR-003, 18.9). No computador nada muda.
+
+### 18.1 Escopo e fluxo
+
+| Item | No Marco 5 | Onde está |
+|---|---|---|
+| Controles de toque | Joystick virtual em grade de 4 direções (substitui a cruz, 18.19), botão A, botão B e ícone "?" na tela | 18.2, 18.3, 18.6, 18.19 |
+| Barra e botões por tela | Mesmas telas do teclado, com os nomes "A" e "B" no lugar das teclas | 18.4, 18.12 |
+| Regras de toque | Ação ao pressionar, toque fora dos botões não age, gestos do navegador desligados | 18.5 |
+| Como jogar do celular | Linhas de toque no lugar das linhas de teclado | 18.7 |
+| Aviso de rotação | Aparelho com toque em retrato mostra pedido para girar | 18.8 |
+| Escala no celular | Tela 480×352 inteira, sem rolagem, em paisagem | 18.9 |
+| Tocar para começar | Os botões do título aceitam toque; nenhuma tela extra | 18.10 |
+| Sem save e teclado junto | Continuam valendo; nenhum modo desliga o outro | 18.11 |
+| Fora deste marco | Áudio, música, sons e tela de pausa (Marco 6); analógico de curso livre (o joystick em grade é 18.19); sorteio e corrida (seção 11); app nativo | 18.16 |
+
+### 18.2 Controles de toque: o que existe e onde ficam
+
+**Ajuste 0.10.0 (18.19):** a cruz descrita abaixo sai no toque e é substituída pelo joystick virtual. Os tamanhos de A, B e "?", os textos de menu e a regra de layouts A e B (com a regra por tela de 18.4) continuam valendo. Onde esta seção diz "cruz", leia "joystick" (18.19).
+
+**Peças (sem texto de frase; só desenho, com as letras A e B dentro do botão, V7):**
+- **Cruz (direcional):** 4 teclas (cima, baixo, esquerda e direita), sem diagonal e sem analógico. Fica à esquerda da tela. Cada braço tem 48 CSS px e os braços ficam encostados entre si, sem espaço entre eles; o centro é vazio. A cruz inteira é um quadrado de 3 × 48 = 144 CSS px (V1).
+- **Botão A:** redondo, com a letra A, à direita, no alcance do polegar direito. **Botão B:** redondo, à esquerda do A, na mesma linha.
+- **Ícone "?":** canto superior direito da tela do jogo (16.8.1), só na exploração.
+
+**Tamanhos.** Os tamanhos são valores do perfil de arte (bloco `toque`, ADR-003), em CSS px do aparelho. Não escalam com a tela do jogo. Mínimo de **48 CSS px** em todo alvo de toque (o style-guide diz 44; o Especialista atualiza, backlog 097). Espaço de **8 CSS px** entre a cruz, A, B e os demais controles, para que nenhuma área de toque sobreponha outra. Dentro da cruz, os braços se encostam (V1).
+
+| Elemento | Desenho | Área de toque |
+|---|---|---|
+| Cruz (cada braço) | 48 CSS px; cruz inteira de 144 CSS px, braços encostados (V1) | 48 CSS px por braço |
+| Botões A e B | 64 CSS px de diâmetro | 64 CSS px |
+| Ícone "?" | 32 px do jogo (16.8.1) | 48 CSS px (pode ser maior que o desenho) |
+| Botões de menu (título, Como jogar, seleção, dica, créditos) | Caixa da linha do botão (14.9.4) | 48 CSS px de altura, a faixa inteira da linha |
+| Cartões da seleção | Cartão (4.8) | 48 CSS px de altura, o cartão inteiro |
+| Teclas do painel da porta e "Fechar" | Grade do painel (14.1): 3 × 4 no teclado; 5 × 3 no toque (18.6, V5) | 48 CSS px; a Arte confere a grade 5 × 3 no perfil de toque (18.6) |
+
+**Duas disposições.** Vale a que couber no aparelho:
+- **Layout A (faixas laterais; preferido).** Quando as duas faixas livres, entre a borda da janela e a tela do jogo, têm **pelo menos 144 CSS px** cada. A cruz fica na faixa da esquerda, e A e B na faixa da direita, no terço de baixo. Nenhum botão cobre a tela do jogo. Exemplo: 844×390, tela 532×390, faixas de 156 px; a cruz (144 px) fica com 6 px de folga de cada lado (TQ1).
+- **Layout B (sobreposto; celular estreito).** Quando alguma faixa tem menos de 144 CSS px. Os botões ficam **por cima da tela do jogo**, nas linhas 2 a 8 da tela (nunca nas linhas 0, 9 e 10, onde estão o "?" e a barra). Repouso com **60% de opacidade**; pressionado com 100%. Exemplo: 667×375, tela 511×375, faixas de 78 px. Quais botões aparecem em cada tela (regra de 2026-11-09, pergunta 38; detalhe em 18.4):
+  - **Exploração:** cruz no lado esquerdo, A e B no lado direito, e o "?".
+  - **Diálogo e introdução:** sem cruz. A e B no maior trecho livre da faixa de linhas 2 a 8, **fora da caixa de texto** e sem cobrir o texto.
+  - **Título, Como jogar, seleção, conquista, dica, créditos e painel:** nenhum botão de toque; o toque vai direto no item. Exceção da seleção: o botão "Voltar ao título" (pergunta 42, padrão aplicado).
+- Os dois layouts usam as mesmas cores de 14.9.4 (caixa `#1b2452`, borda `#9aa3c7`, pressionado `#f4d35e`), sem cor nova.
+- A escolha é recalculada ao girar ou redimensionar a janela, sem reiniciar o jogo.
+
+**Pergunta 38 (seção 12): decidida (Diretor, 2026-11-09): sim.** Layout B só na exploração, com cruz, A e B a 60%; nos demais casos, como descrito acima.
+
+**Pergunta 39 (seção 12): decidida (Diretor, 2026-11-09): sim.** Cruz de 144 CSS px com os braços encostados (V1).
+
+### 18.3 Como cada tecla vira toque
+
+| Tecla no computador | No toque | Observação |
+|---|---|---|
+| Setas ou WASD | Cruz | 4 direções, sem diagonal (18.5, regra 1) |
+| Z ou Enter (botão A) | Botão A | Examina, confirma, avança |
+| X ou Esc (botão B) | Botão B | Voltar, fechar, continuar; farejar na exploração |
+| Clique do mouse | Toque | Vale igual nos botões de menu e nos cartões |
+| H (dica) | Ícone "?" | Toque no ícone abre a dica (16.8) |
+| Dígitos 0 a 9 no painel | Teclas da grade | Toque direto; sem foco |
+| X no painel (apagar) | Tecla "Apagar" da grade | O botão B some no painel |
+| Esc no painel (fechar) | Tecla "Fechar" da grade | Só no toque (18.6) |
+| Backspace no painel | Tecla "Apagar" da grade | |
+
+### 18.4 Botões e barra por tela (toque)
+
+Cada tela mostra só os botões que a barra cita. Botão que não tem ação **some** (não fica apagado).
+
+As colunas de cruz, A, B e "?" valem para o layout A (e o computador, sem toque). As três últimas colunas dizem o que muda no layout B (celular estreito, 667×375; regra de 2026-11-09).
+
+| Tela | Cruz | A | B | "?" | Barra no toque, layout A (texto exato, 18.12) | Layout B: botões | Layout B: barra (18.12) |
+|---|---|---|---|---|---|---|---|
+| Título | cima e baixo | sim | não | não | "Setas: escolher  A: confirmar" | nenhum | "Toque para escolher" (`.toque.menu`) |
+| Como jogar | não | sim | sim | não | "A ou B: voltar" | nenhum | "Toque em Voltar" (`.toque.menu`) |
+| Seleção | esquerda e direita | sim | sim | não | 1: "Setas: escolher  A: confirmar"; 2: "B: voltar ao título" | nenhum, exceto "Voltar ao título" (pergunta 42, padrão aplicado) | 1: "Toque para escolher"; 2: "Toque em Voltar ao título" (`.toque.menu`) |
+| Introdução | não | sim | sim | não | "A: avançar  B: voltar" | A e B, fora da caixa de texto | igual ao layout A |
+| Exploração | sim | sim | sim (farejar) | sim | 1: "Setas: andar  A: examinar"; 2: "B: farejar  ?: dica" | cruz, A, B (60%) e "?" | igual ao layout A |
+| Diálogo (incluindo o da chegada à árvore e o do Nick) | não | sim | sim | não | "A: avançar  B: fechar" | A e B, fora da caixa de texto | igual ao layout A |
+| Painel da porta | não | não | não | não | 1: "Toque nas teclas para digitar"; 2: "Toque em Fechar para sair" | nenhum | 1: "Toque nas teclas para digitar"; 2: "Toque em Fechar" (`.toque.menu`) |
+| Conquista | não | sim | sim | não | "A ou B: continuar" | nenhum | "Toque em Continuar" (`.toque.menu`) |
+| Dica | não | sim | sim | não | "A ou B: voltar" | nenhum | "Toque em Voltar" (`.toque.menu`) |
+| Condução e fade de porta | não | não | não | não | Vazia (exceção de 14.8) | nenhum | Vazia |
+| Créditos | não | sim | sim | não | "A ou B: voltar ao título" | nenhum | "Toque em Voltar ao título" (`.toque.menu`) |
+| Aviso de rotação | não | não | não | não | Nenhuma (18.8) | não se aplica | Nenhuma (18.8) |
+
+- **Condução e fade:** nenhum botão e nenhum texto de tecla, como o "?" e a barra (decisão do Diretor, 2026-11-08, 14.11). Os botões voltam quando o controle volta.
+- **Barra conforme o aparelho:** o texto de toque aparece em todo aparelho com toque, mesmo que o jogador use o teclado. O texto não muda com o último comando dado.
+- **Textos `.toque.menu`:** no layout B, nas telas em que não há botão (título, Como jogar, seleção, conquista, dica, créditos e painel), a barra usa a versão `.toque.menu` de 18.12, com até 29 caracteres. Em todas as outras telas, e em todo o layout A, vale o texto `.toque`.
+- **Seleção sem B:** no layout B a seleção não tem botão B, e o cartão é tocado direto. Sem o botão "Voltar ao título" não haveria saída por toque; por isso o padrão aplicado é esse botão, até a pergunta 42.
+- **Painel:** a grade é o controle. Tocar numa tecla aperta na hora, sem foco. Cruz, A e B somem.
+- **Ícones de som e de pausa (nota, ADR-008 7.4):** o ícone de som (título e exploração) e o ícone II (exploração) não são controles de jogo. Ficam fora da regra "menus sem controle" desta tabela, mas não podem cobrir botão, cartão ou texto de barra (ADR-007 12.4, itens c e d). Aparecem onde 19.3.2 manda, em qualquer layout.
+
+### 18.5 Regras de toque
+
+1. **Cruz.** Enquanto o dedo estiver numa tecla, o sobrinho anda naquela direção. Com duas teclas pressionadas, vale a última; ao soltá-la, o sobrinho segue na outra, se ela ainda estiver pressionada. Nunca anda em diagonal. Arrastar o dedo de um braço para outro troca a direção; sair da cruz para fora solta a direção (V2).
+2. **Juntos.** Cruz e botões funcionam ao mesmo tempo. Ex.: com a cruz pressionada, tocar em A examina o objeto à frente, como no teclado (14.9.2).
+3. **Ação ao pressionar.** A e B agem no momento em que o dedo toca o botão, não ao soltar. Um toque, uma ação. Segurar o dedo não repete a ação. O botão fica no estado pressionado por 150 ms (14.9.4).
+4. **Toque no botão.** A e B só agem se o toque começou no botão: um toque que começa fora e termina nele não age. Arrastar o dedo para fora depois de pressionar não desfaz a ação, que já aconteceu (V2).
+5. **Toque na tela do jogo.** Fora dos botões, não faz nada: não anda, não examina e não avança. A é o único botão que age (14.9).
+6. **Menus.** Tocar num botão de menu é o mesmo que clicar: age na hora. Tocar num cartão da seleção confirma o sobrinho (não só põe o foco nele).
+7. **Diálogos.** Tocar na caixa de texto não avança nem fecha. Só A avança e só B fecha (14.8).
+8. **Gestos do navegador desligados.** A página não rola, não dá zoom com dois dedos, não abre menu de toque longo e não seleciona texto.
+
+### 18.6 Ícone "?" e "Fechar" no toque
+
+- **"?"** abre a dica (16.8) com toque na área de 48 CSS px. Some em diálogo, painel, conquista, dica, condução e fade (16.8.6).
+- **"Fechar" no painel (novo, só no toque).** Faz o que Esc faz: fecha o painel. Tocar fora da grade não fecha. Nada se perde; não há penalidade (14.1).
+- **Grade no toque (V5; pergunta 40, seção 12):** o botão "Fechar" entra na grade do painel só no toque, e a grade passa a **5 colunas × 3 linhas**: linha 1 = 1, 2, 3, 4, 5; linha 2 = 6, 7, 8, 9, 0; linha 3 = Apagar (2 colunas), OK (1), Fechar (2) (pergunta 41, decidida em 2026-11-09). No computador, a grade fica como está (3 × 4, sem "Fechar"). Motivo: com 4 linhas de 3 colunas, a grade desce até o y 332 em 480×352, e a barra começa no y 296. A Arte decide a posição e o tamanho no perfil de toque, respeitando a área mínima de 48 CSS px.
+- **Decidido (Diretor, 2026-11-09, perguntas 40 e 41):** a grade de 5 × 3, só no toque, com "Apagar" e "Fechar" em 2 colunas cada e "OK" em 1.
+
+### 18.7 Como jogar no celular
+
+A tela aparece com o mesmo título e o mesmo botão "Voltar" de 14.1. No aparelho com toque, as linhas de teclado são trocadas pelas abaixo (chaves em 18.12):
+- "Mover: setas na tela."
+- "Botão A: examinar, avançar."
+- "Botão B: voltar e fechar."
+- "Farejar: B, com o Nick acordado."
+- "Dica: toque no ícone ?"
+
+Barra: "A ou B: voltar" (18.4); no layout B, "Toque em Voltar" (18.4). A linha "No celular, em breve: botões na tela." sai de uso (decisão do Diretor, 2026-11-09). A chave `comojogar.celular` é removida. No computador, a tela segue 14.1 e 16.10, sem linha de toque. O texto precisa caber em 480×352 sem corte; se não couber, reduz-se o espaçamento (14.8), nunca o texto.
+- **Medida (V4):** até 27 caracteres por linha da lista. A linha "Farejar: B, com o Nick acordado." tem 32: se a captura T4 mostrar que a lista não cabe em 480×352, essa linha quebra em duas (sem cortar o texto). O Produto pode encurtar o texto, se preferir.
+
+### 18.8 Aviso de rotação (retrato)
+
+- **Quando aparece:** em aparelho com toque, com a janela em retrato (altura maior que a largura). A detecção usa o tamanho da janela, não a API de orientação, para que o QA possa testar no navegador. **Computador nunca mostra o aviso**, mesmo com a janela estreita: a tela só encolhe.
+- **O que mostra:** tela inteira, fundo `#0b1030`, um sprite de celular girando (Arte, sem texto) e duas linhas de texto (18.12): "Gire o celular para o lado." / "O jogo fica na horizontal." Sem barra e sem botões: não há tecla a ensinar. Não tem tempo nem botão de continuar.
+- **O que congela:** enquanto o aviso aparece, o mundo para por completo: sobrinho, Nick, a seta de farejar (seus 5 s), animações, condução e diálogo. Teclas e toques são ignorados. Uma dica aberta continua aberta.
+- **Volta:** ao girar para paisagem, o jogo retoma do mesmo ponto. Não reinicia, não perde nada e não pede nada.
+- **Não pede tela cheia nem trava de orientação.** O jogo não usa a API de tela cheia nem tenta travar a rotação. O pedido é o aviso, feito com o próprio aparelho.
+
+### 18.9 Escala e tela no celular
+
+- **Tela:** 480×352 (perfil HD, 15×11 tiles), inteira e sem rolagem, em paisagem. Escala híbrida (ADR-003 seção 9): fator = menor valor entre largura/480 e altura/352; a partir de 2× arredonda para baixo; abaixo de 2×, é fracionário.
+- **Exemplos** (janela em px CSS):
+
+| Aparelho (paisagem) | Fator | Tela | Faixa livre por lado | Layout |
+|---|---|---|---|---|
+| 844×390 | 1,11 | 532×390 | 156 | A |
+| 932×430 | 1,22 | 586×430 | 173 | A |
+| 667×375 | 1,07 | 511×375 | 78 | B |
+| 1024×768 (tablet) | 2 | 960×704 | 32 | B |
+| 1920×955 (computador, sem toque) | 2 | 960×704 | 480 | Nenhum |
+
+- **Nitidez:** a tela desenha no pixel físico do aparelho (celular de alta densidade, DPR 2 ou 3), sem borrão. Pixel art com bordas duras.
+- **Barra do navegador:** quando a barra de endereços ocupa altura, o jogo se ajusta à área visível. Nada é cortado e nada rola.
+- **Janela pequena (V6):** com a área visível abaixo de 375 CSS px de altura (fator abaixo de 1,065), um alvo de 48 CSS px dentro do canvas (menu, cartão, tecla do painel, "?" e "Continuar") vale só quando não invade o vizinho. Se invadir, o alvo fica no tamanho do desenho e o QA anota. O PT4 mede num aparelho pequeno real. Não bloqueia o marco.
+- **Computador:** nada muda.
+
+### 18.10 Tocar para começar
+
+- O título não ganha tela extra de "toque para começar". "Começar" e "Como jogar" aceitam toque como clique, e o foco inicial continua em "Começar" (14.1).
+- Liberar áudio no primeiro toque fica para o Marco 6 (7.3). O Marco 5 não tem nenhum passo de áudio.
+- A versão "v0.9.0" aparece no título, como nos demais marcos.
+
+### 18.11 Sem save e teclado junto
+
+- **Sem save (seção 3):** cada abertura do jogo começa no título, em qualquer aparelho. Girar o aparelho não reinicia a partida (18.8). Recarregar a página começa do zero, como no computador.
+- **Teclado e toque juntos:** um celular com teclado ou um computador com tela de toque aceita os dois. Nenhum modo desliga o outro, e a mesma partida pode usar os dois.
+
+### 18.12 Textos do Marco 5 (pt-BR)
+
+Chaves novas em `content/texts/pt-BR.json`. Limite de 29 caracteres por linha da barra (V3; a medida real é do QA; o teclado já usa 29 com espaçamento reduzido), de 28 nos diálogos (16.11) e de 27 nas linhas de Como jogar (V4). Os textos são propostas do Produto.
+
+| Chave | Texto | Onde aparece |
+|---|---|---|
+| `barra.titulo.toque` | "Setas: escolher  A: confirmar" | Título (18.4) |
+| `barra.comojogar.toque` | "A ou B: voltar" | Como jogar |
+| `barra.selecao1.toque` | "Setas: escolher  A: confirmar" | Seleção, linha 1 |
+| `barra.selecao2.toque` | "B: voltar ao título" | Seleção, linha 2 |
+| `barra.intro.toque` | "A: avançar  B: voltar" | Introdução |
+| `barra.dialogo.toque` | "A: avançar  B: fechar" | Diálogos |
+| `barra.painel1.toque` | "Toque nas teclas para digitar" | Painel, linha 1 |
+| `barra.painel2.toque` | "Toque em Fechar para sair" | Painel, linha 2 |
+| `barra.conquista.toque` | "A ou B: continuar" | Conquistas |
+| `barra.casa.toque` | "Setas: andar  A: examinar" | Exploração, linha 1 |
+| `barra.casa2.toque` | "B: farejar  ?: dica" | Exploração, linha 2 |
+| `barra.dica.toque` | "A ou B: voltar" | Dica |
+| `barra.creditos.toque` | "A ou B: voltar ao título" | Créditos |
+| `barra.titulo.toque.menu` | "Toque para escolher" | Título, layout B (18.4) |
+| `barra.comojogar.toque.menu` | "Toque em Voltar" | Como jogar, layout B |
+| `barra.selecao1.toque.menu` | "Toque para escolher" | Seleção, linha 1, layout B |
+| `barra.selecao2.toque.menu` | "Toque em Voltar ao título" | Seleção, linha 2, layout B (vale com o botão da pergunta 42, padrão aplicado) |
+| `barra.conquista.toque.menu` | "Toque em Continuar" | Conquistas, layout B |
+| `barra.dica.toque.menu` | "Toque em Voltar" | Dica, layout B |
+| `barra.creditos.toque.menu` | "Toque em Voltar ao título" | Créditos, layout B |
+| `barra.painel1.toque.menu` | "Toque nas teclas para digitar" | Painel, linha 1, layout B |
+| `barra.painel2.toque.menu` | "Toque em Fechar" | Painel, linha 2, layout B |
+| `comojogar.mover.toque` | "Mover: setas na tela." | Como jogar |
+| `comojogar.botaoA.toque` | "Botão A: examinar, avançar." | Como jogar |
+| `comojogar.botaoB.toque` | "Botão B: voltar e fechar." | Como jogar |
+| `comojogar.farejar.toque` | "Farejar: B, com o Nick acordado." | Como jogar |
+| `comojogar.dica.toque` | "Dica: toque no ícone ?" | Como jogar |
+| `painel.fechar` | "Fechar" | Tecla da grade do painel (só no toque) |
+| `rotacao.1` | "Gire o celular para o lado." | Aviso de rotação |
+| `rotacao.2` | "O jogo fica na horizontal." | Aviso de rotação |
+
+**Textos com tecla que mudam no toque** (a versão de teclado não muda):
+- "Aperte X e o Nick fareja." → "Toque em B e o Nick fareja." (`dica.luzes.acordado`, `dica.parte1.acordado`, `dica.parte2.acordado`, `dica.parte3.acordado` e `dica.enfeites.acordado`, na linha final).
+- "Aperte X para farejar." → "Toque em B para farejar." (`nick.acordou`, página 2, só no toque).
+- Chave `comojogar.celular`: sai de uso e é removida.
+
+**Regra:** nenhum texto de toque cita Z, X, H, Esc, Enter ou Backspace. O teste é de busca em `content/`.
+
+### 18.13 Regras para crianças de 5 a 10 anos (toque)
+
+1. **Alvos grandes e separados.** 48 a 64 CSS px, com 8 px entre a cruz, A, B e os demais controles: a criança não toca no botão errado por acaso. Dentro da cruz, os braços se encostam (V1).
+2. **Um botão, uma ação.** A e B fazem só o que a barra diz, e agem ao pressionar.
+3. **Botão só onde serve.** A cruz não aparece onde não há andar, e o "?" não aparece onde não há dica (18.4). Nas telas de menu do celular estreito não há botão: a criança toca direto no item.
+4. **Nada se perde.** Girar o aparelho, abrir a dica ou ficar parado não tira nada da criança (pilar 1).
+5. **Toque fora dos botões não faz nada.** A criança não precisa aprender onde tocar.
+6. **Mesmo texto para criança e adulto.** A barra diz "A" e "B", e o adulto pode ler junto (pilar 4).
+
+### 18.14 Casos de aceite (QA)
+
+**Regras de execução:** cada rodada do QA dura no máximo 15 minutos (regra do Diretor, 2026-11-07). Com os 4 sobrinhos quando couber (LoLô inteiro e um dos outros três). O que não couber vira "não testado (limite de tempo)".
+
+**Como o QA emula o toque no Chromium:** modo de dispositivo com toque ligado e tamanho da janela do aparelho; multitoque por comandos de toque (ex.: `Input.dispatchTouchEvent` no DevTools); rotação por troca do tamanho da janela (retrato ↔ paisagem), sem recarregar a página. Tudo emulado deve ser marcado como "emulado" no relatório.
+
+**Emulável no Chromium:**
+- **TQ1 (layout A):** janela 844×390 com toque. Cruz de 144 px à esquerda, na faixa de 156 px, com 6 px de folga de cada lado; A e B à direita; nenhum botão sobre a tela do jogo (folga medida); tela de 532×390 (captura).
+- **TQ2 (layout B):** janela 667×375 com toque. Na exploração, botões sobre a tela, 60% de opacidade no repouso; nenhum botão nas linhas 0, 9 e 10. Captura de Hall, Sala, Cozinha, Quarto e Escritório. Se um botão cobrir objeto interativo (bilhete, interruptor, porta, peça, árvore ou Nick), o QA anota para o PT4 (pergunta 38, decidida); isso não reprova sozinho. Menus, diálogo e introdução: ver TQ22.
+- **TQ3 (cruz):** cada uma das 4 teclas anda na direção certa, no Hall e na Sala, com colisão. Com duas teclas, vence a última; soltar a última mantém a outra. Nenhuma diagonal.
+- **TQ4 (juntos):** cruz pressionada e toque em A: examina o objeto à frente, na direção em que o sobrinho está olhando.
+- **TQ5 (ação ao pressionar):** A e B agem no toque ao pressionar, no botão onde o toque começou; estado pressionado por 150 ms; toque que começa fora e termina no botão não age; arrastar para fora de A ou B depois de pressionar não desfaz a ação, que já aconteceu. Na cruz, arrastar de um braço para outro troca a direção, e sair da cruz solta a direção (18.5, regras 1 e 4; V2).
+- **TQ6 (tela do jogo):** toque no meio da tela, fora dos botões, em cada uma das 4 salas: nenhum movimento, nenhuma ação, nenhum diálogo.
+- **TQ7 (título e Como jogar):** toque em "Começar" vai à seleção; toque em "Como jogar" abre a tela com as linhas de 18.7; "Voltar" fecha com foco em "Começar". Área de toque de cada botão medida em ≥ 48 CSS px.
+- **TQ8 (seleção):** toque num cartão confirma o sobrinho e leva à introdução com o nome certo (testar os 4). B volta ao título.
+- **TQ9 (dica):** "?" abre a dica; "Voltar" fecha; a imagem é a árvore do estado atual. "?" some em diálogo, painel, conquista, condução e fade (captura de cada um).
+- **TQ10 (painel):** teclas da grade e "Fechar" com área ≥ 48 CSS px. Digitar o código por toque com os 4 sobrinhos (017, 020, 023, 024). Erros sem limite (20 seguidos, nada muda). Só "Fechar" fecha; tocar fora não fecha. Cruz, A e B somem.
+- **TQ11 (barra de toque):** textos de 18.4 exatos em cada tela, nos dois layouts (em 667×375, os textos `.toque.menu` nas telas sem botão), em captura; nenhuma tela de toque mostra Z, X, H, Esc ou Enter (busca e captura). Barra de duas linhas cabe em 480×352 sem corte.
+- **TQ12 (condução e fade):** depois de "Continuar" na conquista 1 e na conquista de uma peça, os botões somem e a barra fica vazia. Tocar não interrompe a condução. Ao devolver o controle, os botões voltam.
+- **TQ13 (aviso de rotação):** janela 390×844 com toque mostra o aviso com as duas linhas exatas, sem barra e sem botão. Com a seta de farejar em andamento e a dica aberta, nada avança durante o aviso. Voltar para 844×390 retoma no mesmo ponto (mesma posição, mesma peça, mesma dica), sem recarregar a página.
+- **TQ14 (aviso só no toque):** janela 390×844 sem toque (computador): nenhum aviso; o jogo segue na janela.
+- **TQ15 (escala):** 844×390 dá tela 532×390; 667×375 dá 511×375; 1920×955 sem toque dá 960×704 (inalterado). Pixels nítidos, sem borrão, também com DPR 2 e 3 emulados.
+- **TQ16 (gestos do navegador):** pinça com dois dedos não dá zoom (escala visual 1); arrastar sobre a tela não rola a página; toque longo não abre menu de contexto nem seleciona texto.
+- **TQ17 (teclado junto):** com toque ligado, setas, WASD, Z, X, H, Esc e Enter continuam funcionando, na mesma partida.
+- **TQ18 (sem save):** recarregar a página em celular emulado volta ao título; "Começar" de novo começa do zero.
+- **TQ19 (alvos):** medir a área de toque de cada braço da cruz, A, B, "?", botões de menu, cartões, teclas do painel, "Fechar" e "Voltar ao título": todos ≥ 48 CSS px (a cruz inteira mede 144 px, com os braços encostados, V1). Entre a cruz, A, B e os demais alvos, ≥ 8 CSS px. Exceção V6 (18.9): em janela com fator abaixo de 1,065, um alvo do canvas pode ficar no tamanho do desenho quando a área de 48 px invadiria o vizinho; o QA anota e não reprova sozinho.
+- **TQ20 (versão):** título "v0.9.0" com toque e com teclado; créditos "Versão 0.9.0" (lido do `package.json`).
+- **TQ21 (textos de farejar):** com toque, "Toque em B e o Nick fareja." e "Toque em B para farejar." (18.12); com teclado, os textos "Aperte X" de antes, sem mudança.
+- **TQ22 (sobreposição no layout B, 667×375, com toque):** em título, Como jogar, seleção, introdução, diálogo (com bilhete e com "Clique!"), conquista 1, dica, créditos, painel, e na exploração (Hall e Sala). (a) Telas de menu (título, Como jogar, seleção, conquista, dica, créditos e painel): nenhum controle de jogo (direções, A, B ou "?") aparece; reprova se aparecer. Os ícones de som e de pausa não são controles de jogo: não reprovam por aparecer, mas não podem cobrir cartão, botão ou texto de barra (18.4, nota). (b) Introdução e diálogo: sem cruz; A e B não cobrem o texto nem a caixa de texto, e ficam dentro das linhas 2 a 8; reprova se cobrirem. (c) Exploração: cruz, A, B e "?" não cobrem botão de menu nem texto de barra; se cobrirem objeto interativo, o QA anota (TQ2), sem reprovar. (d) Seleção: o botão "Voltar ao título" (pergunta 42) não cobre cartão e volta ao título ao toque. Medida: `window.__alvosDeToque()` (ADR-007 12.3) para cruz, A, B, "?" e botões de menu; a caixa de texto e a barra, por captura na mesma escala. Reprova só por sobreposição confirmada na captura.
+
+**Só o Diretor testa (aparelho real, PT4):**
+- Conforto e precisão do toque de criança de 5 a 10 anos e de adulto; se 48 CSS px é suficiente.
+- Dedo cobrindo botão ou objeto de verdade (layout B).
+- Barra de endereços real do Safari no iPhone e do Chrome no Android, e a altura útil que sobra.
+- Girar o aparelho de verdade (sensor e animação do sistema) e a sensação do aviso.
+- Desempenho e aquecimento em celular intermediário (seção 9).
+- Latência do toque e sensação de resposta.
+- Safari no iPhone e Chrome no Android em aparelho real (compatibilidade, seção 9).
+
+**Regressão no teclado (RM1 a RM5):**
+- **RM1:** os roteiros prioritários de 16.14 (N1, N2, N4, N9, N10, F1, F4, D1, D3, B1) e a ordem de prioridade de 17.13 passam, sem mudança de texto nem de tecla.
+- **RM2:** o checklist do Marco 1 (`qa/checklist-marco1.md`) passa em amostra com os 4 sobrinhos.
+- **RM3:** Como jogar no computador mostra as linhas de 16.10 e 14.1, sem "No celular" e sem linhas de toque.
+- **RM4:** os textos com "Aperte X" continuam iguais no computador.
+- **RM5:** o fluxo completo (porta, luzes, partes 1 a 3, enfeites, créditos) passa sem erro no console, com teclado.
+
+### 18.15 Versão, entrega e playtest
+
+- **Versão:** 0.9.0 (SemVer, versão menor: recurso novo). Título "v0.9.0" e créditos "Versão 0.9.0", lidos do `package.json`.
+- **Capturas antes do artifact (o Diretor aprova):** T1 (layout A, 844×390, Sala), T2 (layout B, 667×375, Sala e Hall; título e diálogo da introdução, para TQ22), T3 (aviso de rotação), T4 (Como jogar de toque), T5 (painel com "Fechar") e T6 (dica com "?" e "Voltar").
+- **Roteiro do PT4 (Orquestrador; o Diretor joga no celular, em paisagem):**
+  1. Abrir, título, "Como jogar" (ler e voltar).
+  2. "Começar", escolher um sobrinho com o toque, introdução com A e B.
+  3. Porta: digitar o código com o toque (um erro e depois o certo).
+  4. Girar para retrato e voltar à paisagem.
+  5. Luzes, interruptor e condução até a árvore (girar de novo durante a condução, se possível).
+  6. Farejar com B e dica com "?".
+  7. Partes 1 a 3 e enfeites.
+  8. Créditos e voltar ao título.
+- **Perguntas-chave (CLAUDE.md, PT4):** Os botões A e B e a cruz são confortáveis? O aviso de rotação funciona? Acrescentar: os botões cobrem a casa no celular estreito? A criança acha o "?" e entende a barra de toque? Alguém toca no botão errado? Um adulto consegue segurar o aparelho e jogar junto?
+- **Playtest:** a rodada do PT4 só começa depois do QA aprovar (backlog 106 e 107) e o Diretor aprovar as capturas (108).
+
+### 18.16 Fora de escopo deste marco
+
+- Áudio, música, sons e a liberação de áudio no toque (Marco 6, 7.3).
+- Tela de pausa e tamanho de fonte ajustável (Marco 6, 8 e 13).
+- Analógico de curso livre no toque (andar em qualquer ângulo, velocidade proporcional ao empurrão): fora. O controle é o joystick em grade da 18.19 (ajuste 0.10.0, que substitui a cruz). Se o Diretor pedir curso livre, vira ideia futura.
+- Andar tocando no destino (toque na tela para andar) e gestos de arrastar para andar.
+- Tela cheia obrigatória, trava de orientação e app nativo (seção 11).
+- Vibração e gestos com mais de dois dedos.
+- Tocar na caixa de diálogo para avançar (padrão: não, 18.5, regra 7).
+- Corrida e sorteio (seção 11); save (seção 3).
+
+### 18.17 Pendências deste marco e padrões aplicados
+
+- **Perguntas 38 a 41 (seção 12): decididas (Diretor, 2026-11-09): sim às quatro.** 38: layout B a 60% de opacidade, só na exploração, com a regra por tela de 18.2 e 18.4. 39: cruz de 144 CSS px com braços encostados (V1). 40: grade de 5 × 3 só no toque, com "Fechar" (V5). 41: "Apagar" e "Fechar" em 2 colunas, "OK" em 1.
+- **Pergunta 42 (seção 12): aberta.** Saída por toque da seleção no layout B, que não tem botão B. Padrão aplicado: botão "Voltar ao título" de menu, só no layout B. Sugestão do Produto: sim.
+- **Padrões aplicados (sugestões do Produto, sem pergunta ao Diretor):**
+  - a. Cruz digital de 4 teclas, sem analógico (seção 5 atualizada).
+  - b. A à direita e B à esquerda do A; cruz à esquerda (18.2).
+  - c. Alvo mínimo de 48 CSS px, acima dos 44 do style-guide (Especialista atualiza, backlog 097).
+  - d. Ação ao pressionar; toque fora dos botões não age; toque no cartão confirma; tocar na caixa de diálogo não avança (18.5).
+  - e. Botão some onde não tem ação, e some na condução e no fade (18.4, consistente com a decisão de 2026-11-08 sobre a condução).
+  - f. Painel no toque ganha "Fechar", que equivale ao Esc; cruz, A e B somem no painel (18.6).
+  - g. Aviso de rotação: 2 linhas, sem barra, congela o mundo; detecção pela janela; computador nunca mostra; sem tela cheia nem trava de orientação (18.8).
+  - h. Textos de toque usam "A", "B" e "?"; nenhum texto de toque cita tecla do teclado (18.12).
+  - i. A barra e o Como jogar seguem o aparelho com toque, não o último comando (18.4).
+  - j. Tocar para começar: sem tela extra; áudio fica para o Marco 6 (18.10).
+  - k. Versão 0.9.0 (SemVer, versão menor).
+  - l. `comojogar.celular` sai de uso (18.7).
+  - m. Divergências V1 a V7 do ADR-007 (aceitas em 2026-11-09) aplicadas em 18.2, 18.5, 18.6, 18.7, 18.9, 18.12, 18.13 e nos casos TQ1, TQ5 e TQ19.
+
+### 18.18 Riscos
+
+| # | Risco | Tratamento |
+|---|---|---|
+| 1 | Botões tapam a casa em celular estreito | Layout B a 60%, só na exploração; diálogo e introdução sem cruz e fora da caixa de texto; menus sem botão (18.4); TQ2 e TQ22 medem; o PT4 confirma no aparelho |
+| 2 | Criança erra o botão, ou toca sem querer | Alvos de 48 a 64 CSS px, 8 px entre cruz, A, B e os demais controles, ação ao pressionar, toque fora sem ação (TQ5, TQ6, TQ19) |
+| 3 | A barra de endereços do navegador reduz a altura útil | O jogo se ajusta sem cortar (TQ15, backlog 104); o Diretor confere no aparelho real (PT4) |
+| 4 | Tela HD (4,4 vezes os pixels do v1) pesa em celular intermediário | Medir no PT4 (ADR-003, Desempenho). Se pesar, a Arte reduz o perfil de toque, não a regra |
+| 5 | Girar o aparelho no meio de uma ação | O mundo congela e nada se perde (18.8, TQ13) |
+| 6 | Grade do painel com teclas pequenas no toque | Área mínima de 48 CSS px; grade de 5 × 3 no toque (18.6, V5; TQ19) |
+| 7 | Layout A e layout B divergem no visual | Mesmas cores e mesmos sprites; captura T1 e T2 aprovadas pelo Diretor antes de publicar |
+
+### 18.19 Ajuste 0.10.0: joystick virtual no lugar da cruz (PT4, 2026-11-09)
+
+**Origem:** no PT4 (v0.9.0), o Diretor pediu trocar as setas direcionais do celular por um controle de direção analógico. Depois, pediu o "modelo analógico": base redonda com uma haste (bolinha) que acompanha o polegar, e não uma cruz de setas. **Versão 0.10.0** (SemVer: recurso que troca o controle de movimento no toque; não é correção, por isso não é 0.9.x).
+
+**Substitui** (onde o texto antigo diz "cruz", leia "joystick"): 18.1 (linha de controles), 18.2 (peça da cruz e tamanhos), 18.3 (linha de setas no toque), 18.4 (coluna da cruz e barras com "Setas"), 18.5 regras 1 e 4 na parte da direção, 18.7 (linha de movimento), 18.12 (textos com "Setas"), 18.13 regra 1, 18.14 (TQ1 a TQ5, TQ19 e TQ22, em 18.19.14) e 18.16 (analógico). A pergunta 39 (cruz de 144 px, braços encostados) fica superada e vai ao histórico. Todo o resto do Marco 5 vale como está.
+
+**18.19.1 O que é.** Um joystick virtual: uma base redonda, fixa, e uma bolinha no centro. O polegar arrasta a bolinha dentro da base. O movimento é em grade: o sobrinho anda em 4 direções (cima, baixo, esquerda e direita), nunca em diagonal, e continua andando enquanto a bolinha estiver inclinada. A velocidade é a mesma de hoje, sem depender de quanto a bolinha foi empurrada. Teclado, A e B não mudam.
+
+**18.19.2 Posição: fixa (padrão aplicado; pergunta 43).** A base fica no lugar da cruz:
+- **Layout A:** faixa da esquerda, a 8 CSS px da borda da janela, alinhada pela base com A e B (como a cruz, ADR-007 P2).
+- **Layout B:** lado esquerdo da tela do jogo, a 8 CSS px da borda, centrada na faixa das linhas 2 a 8.
+
+**18.19.3 Tamanho.**
+- **Base:** 120 CSS px de diâmetro (sugestão do Produto; a faixa aceita vai de 96 a 120). É a área de toque inteira.
+- **Bolinha:** 48 CSS px de diâmetro (só desenho; a área de toque é a base).
+- **Curso da bolinha:** 36 CSS px do centro (raio da base menos o raio da bolinha). Além disso, a bolinha fica presa na borda, na direção do dedo.
+- **Layout A:** 120 + 2 × 8 = 136 CSS px, que cabe na faixa de 144. A faixa mínima de 144 (18.2) não muda, e a escolha entre A e B fica igual.
+- **Layout B:** a base é menor que a cruz (que ocupava 144 × 144), então cobre menos da casa.
+- **Perfil de arte:** os tamanhos ficam em `toque.analogico` (base 120, bolinha 48). O curso (36) é derivado; `cruzCss` e `cursoCss` não entram no perfil (ADR-007 5.1).
+
+**18.19.4 Zona morta, limiar e histerese.** Medidas a partir do centro da base, pela distância euclidiana (`hypot(dx, dy)`), em CSS px:
+- **Zona morta:** distância `≤ 12` solta. Dentro dela, nenhuma direção.
+- **Engajamento:** distância `≥ 20`, e só a partir do repouso. Com o joystick em repouso, ao chegar a 20 a direção começa e o setor aparece (18.19.7). Trocar de direção sem voltar à zona morta não engaja nada (18.19.8).
+- **Histerese:** depois de engajada, a direção continua enquanto a distância for maior que 12, mesmo abaixo de 20 (por exemplo, 16 continua). Só solta com `≤ 12`. Assim o tremor do dedo na borda não liga e desliga o andar.
+- **Eixo dominante:** vale o eixo de maior módulo (|dx| ou |dy|). Uma direção só, sem diagonal.
+- **Empate exato** (|dx| = |dy|): mantém a direção anterior; sem direção anterior, nenhuma.
+- **Ordem de decisão:** (1) distância `≤ 12`: nenhuma. (2) Em repouso e distância menor que 20: nenhuma. (3) Empate: a anterior, ou nenhuma. (4) Eixo dominante.
+- Esses números são constantes de código (ADR-007 5.2), não do perfil de arte.
+
+**18.19.5 Movimento.**
+- Uma direção por vez, sem diagonal. Se a bolinha passar de um eixo para o outro, o sobrinho muda de direção no quadro seguinte, sem parar.
+- Só o primeiro dedo que começa dentro da base comanda. Um segundo dedo na base não muda nada.
+- Soltar, ou voltar para a zona morta, para o sobrinho. Parar nunca dá um passo a mais.
+
+**18.19.6 Toque e captura.**
+- Um toque que começa dentro da base comanda o joystick até soltar, mesmo que o dedo saia da base (captura do navegador, ADR-007 R7).
+- Ao sair da base, a bolinha fica na borda, e a direção segue o lado onde o dedo está. Soltar em qualquer lugar zera o joystick.
+- Toque que começa fora da base não age no joystick (18.5, regra 5).
+- Redimensionar a janela ou mudar a área visível (barra do navegador) não solta o dedo: a base é medida de novo a cada movimento e o comando segue. Solta tudo só na troca de layout (A para B) e no aviso de rotação (ADR-007 10.3 e 10.5).
+- Joystick, A e B são independentes: um dedo na base e outro em A, juntos, funcionam (18.5, regra 2). Toque que começa em A e desliza até a base não move o sobrinho (18.5, regra 4).
+
+**18.19.7 Feedback visual.**
+- A bolinha acompanha o dedo até o curso (36). Em repouso, fica no centro.
+- **Setor em anel:** ao engajar uma direção (18.19.4), a borda da base acende em amarelo `#f4d35e` num único setor de 90°, em anel entre 52 e 60 CSS px do centro, do lado do eixo ativo. Fica acima da bolinha, para continuar visível quando ela encosta na borda. Nunca dois setores. O setor mostra a grade mesmo quando a bolinha está num ângulo intermediário.
+- **Quando acende e quando some:** acende ao engajar (a partir do repouso, 20) e continua aceso na histerese; some ao voltar a `≤ 12`. Em repouso, nenhum setor.
+- **Só nas direções da tela:** o setor acende só para as direções que a tela aceita (18.19.9 e ADR-007 6): título, cima e baixo; seleção, esquerda e direita; exploração, as quatro. No título, empurrar para a esquerda move a bolinha, mas não acende setor, porque nada anda.
+- Repouso: opacidade da 18.4 (100% no layout A; 60% no layout B). Pressionado: 100%.
+- Sem setas desenhadas e sem texto no joystick (V7).
+
+**18.19.8 Menus.** Um empurrão = um passo, como cada tecla do teclado.
+- Empurrão é a passagem da zona morta (`≤ 12`) para o engajamento (`≥ 20`, a partir do repouso), numa direção. No quadro em que engaja, o foco anda um item: uma borda por engajamento.
+- Trocar de direção sem voltar à zona morta não dá passo (por exemplo, de cima para a direita, sem passar por `≤ 12`).
+- **Segurar não repete (BUG-M5-04; decisão do Orquestrador de 2026-11-09).** Num menu, um empurrão = um passo; segurar não repete. Para o foco andar de novo, a bolinha tem de voltar à zona morta. A mesma regra valia para a cruz na correção 0.9.1.
+- Nos limites (primeiro e último item), o foco para e não dá volta.
+- Trocar de tela solta o joystick e descarta o passo pendente: nenhum passo passa de uma tela para a seguinte.
+- **Título (layout A):** cima e baixo trocam o botão em foco (Começar e Como jogar). Esquerda e direita são ignoradas.
+- **Seleção (layout A):** esquerda e direita trocam o cartão em foco. Cima e baixo são ignorados.
+- **Como jogar, conquista, créditos, dica e painel:** sem joystick (18.4). A dica tem só o botão "Voltar" (16.8.2), e não há item a mover; por isso "um empurrão = um passo" vale só para título e seleção.
+- **Layout B:** título e seleção seguem sem botão de toque (18.4, pergunta 38). O toque vai direto no item, então o empurrão não aparece nesse layout.
+- Tocar num item continua valendo como clique (18.5, regra 6).
+
+**18.19.9 Exploração e telas sem joystick.** Na exploração, o joystick anda nas 4 direções pelo eixo dominante (18.19.5). Nada muda na barra, no "?" e na dica. O joystick não aparece na introdução, no diálogo, no painel, na conquista, na condução nem no fade (18.4, sem alteração).
+
+**18.19.10 Textos.** Só estas chaves mudam (`content/texts/pt-BR.json`). As demais chaves de toque (18.12) seguem iguais.
+
+| Chave | Antes (0.9.0) | Agora (0.10.0) | Caracteres |
+|---|---|---|---|
+| `barra.titulo.toque` | "Setas: escolher  A: confirmar" | "Mover: escolher  A: confirmar" | 29 |
+| `barra.selecao1.toque` | "Setas: escolher  A: confirmar" | "Mover: escolher  A: confirmar" | 29 |
+| `barra.casa.toque` | "Setas: andar  A: examinar" | "Mover: andar  A: examinar" | 25 |
+| `comojogar.mover.toque` | "Mover: setas na tela." | "Mover: controle na tela." | 24 |
+
+- "Mover:" e não "Controle:": "Controle: escolher  A: confirmar" tem 32 caracteres e passa do limite de 29 (V3).
+- **Regra nova:** nenhum texto de toque cita "setas". No toque não há setas.
+- Mesmos limites de 18.12 (barra 29; Como jogar 27 por linha; diálogo 28).
+- Textos de teclado: iguais (RM4).
+
+**18.19.11 Teclado, A e B.** Setas e WASD, Z, X, Enter, Esc, H e Backspace valem como antes. O teclado não ganha joystick e nenhum texto de teclado muda.
+
+**18.19.12 Regras para crianças de 5 a 10 anos (joystick).**
+1. **Um lugar só.** A base fica sempre no mesmo lugar, onde estava a cruz. A criança aprende uma vez.
+2. **Empurrão claro.** Nos menus, cada empurrão anda um item. Não há passos extras se a criança segura o dedo.
+3. **Setor amarelo.** Mostra para onde o sobrinho vai, sem depender de ler a bolinha.
+4. **Só onde há o que mover.** O joystick aparece só no título, na seleção e na exploração (no layout A).
+
+**18.19.13 Casos de aceite (QA).** Vale a regra de 15 minutos por rodada (18.14). Os casos abaixo somam-se aos da 18.14, com a troca de "cruz" por "joystick".
+
+*Ajustes nos casos existentes (18.14):*
+- **TQ1 (layout A):** a base de 120 cabe na faixa de 156 px (844×390), a 8 CSS px da borda da janela; nenhum controle sobre a tela do jogo. Substitui a cruz de 144 px e a folga de 6 px.
+- **TQ2 (layout B):** a base fica nas linhas 2 a 8 (667×375), sem nada nas linhas 0, 9 e 10. Objeto coberto segue para anotação (pergunta 38).
+- **TQ3 e TQ4:** o joystick anda nas 4 direções, sem diagonal (TQ24); com A, funciona junto (TQ30).
+- **TQ5:** vale o 18.19.6. Toque que começa fora da base não age; arrastar para fora da base não solta a direção até soltar o dedo.
+- **TQ19:** a base mede 120 CSS px (≥ 48). A bolinha não é alvo. Os quatro braços da cruz saem da lista.
+- **TQ22 (c):** o joystick não cobre botão de menu nem texto da barra.
+
+*Casos novos:*
+- **TQ23 (posição fixa):** em 844×390 e 667×375, a base aparece no mesmo lugar da cruz e não se move quando se toca fora dela (captura antes e depois). Emulado (CDP).
+- **TQ24 (grade):** toque no centro da base e arrasto até o curso (≥ 30 CSS px) em 0°, 90°, 180° e 270°: anda naquela direção. A 45° ± 5°: anda só no eixo dominante. Teste de domínio: 1000 ângulos aleatórios, uma direção por quadro. Emulado (CDP) e automático.
+- **TQ25 (zona morta, limiar e histerese; distância euclidiana):** em repouso, deslocamentos de 0, 8 e 16 CSS px: nada. (14, 14) (≈ 19,8): nada. (16, 12) (= 20): engaja para a direita. Com a direção engajada, 16 continua; 12 solta. Teste de domínio e CDP.
+- **TQ26 (empurrão nos menus, layout A):** no título, empurrar para baixo: "Como jogar" em foco, uma vez; segurar 3 s: nenhum passo a mais; voltar ao centro e empurrar de novo: "Começar" em foco. Na seleção, esquerda e direita trocam o cartão uma vez por empurrão; cima e baixo não fazem nada. Emulado (CDP).
+- **TQ27 (telas sem joystick):** introdução, diálogo, painel, dica, conquista e créditos não mostram a base (captura). Na dica, o empurrão não faz nada além de "Voltar" pelo botão.
+- **TQ28 (feedback):** captura com a bolinha a 10, 30 e 40 CSS px do centro: a 10 não há setor (zona morta); a 30 a bolinha segue o dedo, dentro do curso de 36; a 40 ela fica presa na borda do curso. Em 30 e 40 o setor em anel (52 a 60) aparece na direção do eixo dominante, só um, mesmo com dois eixos. Ele aparece ao engajar (acima de 20, a partir do repouso) e some ao voltar a 12 ou menos. No título, empurrar para a esquerda move a bolinha e não acende setor. Emulado (CDP) e captura.
+- **TQ29 (deslizar para fora):** o toque começa na base e sai dela (mais de 60 CSS px do centro): a direção segue o lado do dedo; a bolinha fica na borda; soltar fora zera e nada mais age. Emulado (CDP).
+- **TQ30 (multitoque):** com a bolinha para a direita, toque em A com outro dedo (id fixo): o sobrinho anda e A examina o objeto à frente; soltar A não para o andar; um terceiro dedo que começa na base não muda a direção. Emulado (CDP).
+- **TQ31 (textos):** nenhum texto de toque tem "setas" (busca em `content/`); as chaves de 18.19.10 saem exatas e com até 29 caracteres na barra (captura T1 e T4). Automático e captura.
+- **TQ32 (sem cruz):** `window.__alvosDeToque()` (build de QA, ADR-007 12.3) não lista os quatro braços; lista a base de 120 CSS px. Emulado (Playwright).
+- **TQ33 (teclado inalterado):** setas e WASD andam nas 4 direções, sem base na tela; RM1 a RM5 (18.14) passam; capturas do smoke de teclado iguais à linha de base do Marco 5. Teclado.
+
+*Só o Diretor testa (aparelho real, PT4b):*
+- O setor amarelo basta para a criança entender a direção, ou a bolinha escondida pelo polegar confunde?
+- O empurrão nos menus anda na velocidade certa para uma criança de 5 anos?
+- O movimento parece controle analógico ou de setas? Uma criança que empurra pouco espera andar mais devagar?
+- A base de 120 CSS px cabe no polegar e não cansa?
+- A base fixa é natural, ou o polegar procura o controle?
+- A base cobre objeto da casa no celular estreito (layout B)?
+
+**18.19.14 Versão e entrega.**
+- **Versão:** 0.10.0. Título "v0.10.0" e créditos "Versão 0.10.0", lidos do `package.json`.
+- **Antes da 0.10.0:** a 0.9.1 (correção BUG-M5-04: num menu, um toque no braço da cruz passa a dar um passo, sem repetir ao segurar) sai primeiro e tem reteste do QA. A 0.10.0 começa depois desse reteste (decisão do Orquestrador de 2026-11-09).
+- **Capturas antes do artifact (o Diretor aprova):** T1 (layout A, 844×390, Sala com a base), T2 (layout B, 667×375, Sala e introdução), T4 (Como jogar com "Mover: controle na tela.") e T7 (close-up do joystick: repouso, no curso e com o setor amarelo, em 844×390).
+- **Roteiro sugerido do PT4b (Orquestrador decide):** 1) título, empurrar para baixo e para cima; 2) seleção, esquerda e direita; 3) Sala, andar nas 4 direções e segurar; 4) diagonal: só um eixo anda; 5) deslizar o polegar para fora da base; 6) A e B com o joystick ao mesmo tempo; 7) Como jogar, ler "Mover: controle na tela.".
+- **Perguntas-chave:** parece controle analógico ou de setas? A base cobre a casa no celular estreito? O polegar acha a base de primeira? O empurrão nos menus é confortável?
+- **Playtest:** a rodada começa só depois do QA (backlog 118) e da aprovação das capturas (backlog 119).
+
+**18.19.15 Fora deste ajuste.**
+- Curso livre (andar em diagonal, velocidade proporcional ao empurrão): fora (18.16).
+- Joystick flutuante: fora nesta versão. Só muda se a pergunta 43 for respondida com "flutuante"; nesse caso, 18.5 regra 5, 18.19.2 e TQ23 mudam.
+- Joystick nos menus do layout B: exige rever a pergunta 38.
+- Empurrão na dica: a dica não tem item a mover.
+- Sensibilidade ajustável: fica com a fonte ajustável, no Marco 6 (seção 13, item 8).
+
+**18.19.16 Padrões aplicados e pendências.**
+- **Pergunta 43 (seção 12):** fixo ou flutuante. Padrão aplicado: fixo.
+- **Padrões do Produto (sem pergunta ao Diretor):** base 120 e bolinha 48; curso 36; zona morta 12; distância euclidiana; zona morta `≤ 12`; engajamento `≥ 20` só a partir do repouso, com histerese até 12; eixo dominante; empate mantém a direção anterior; setor em anel de 52 a 60, único, ao engajar; menus com um empurrão = um passo só no layout A; dica sem joystick; textos com "Mover:" e sem "setas" no toque. Os valores são ajustáveis no código depois do PT4b, sem mudar a regra.
+
+**18.19.17 Riscos.**
+
+| # | Risco | Tratamento |
+|---|---|---|
+| R1 | A bolinha num ângulo intermediário parece diagonal | Setor em anel único, eixo dominante; TQ24 e TQ28 |
+| R2 | Dedo sai da base no meio do andar | Captura; bolinha na borda; soltar zera; TQ29 |
+| R3 | Joystick e A/B se atrapalham no multitoque | Fontes independentes, um pointer por controle; TQ30 |
+| R4 | Tremor do dedo na zona morta ou no limiar liga e desliga o andar | Histerese (12 e 20); TQ25 |
+| R5 | Polegar cobre a bolinha e a direção fica ilegível | Setor amarelo na borda, fora do polegar; PT4b |
+| R6 | Criança espera andar mais devagar ao empurrar pouco | Velocidade fixa, sem curso proporcional (18.19.1); PT4b |
+| R7 | Base cobre objeto no layout B | Base menor que a cruz; TQ2 anota; PT4b |
+
+---
+
+## 19. Especificação do Marco 6 (áudio, pausa e polimento; versão 0.11.0; release 1.0.0)
+
+Detalha o Marco 6 (seção 13, item 6). Origem: o Diretor aprovou o Marco 5 (v0.10.0, joystick) e autorizou a próxima etapa (2026-11-09). O playtest deste marco é o **PT5** (CLAUDE.md): o jogo final, jogado por pelo menos uma criança e um adulto juntos.
+
+**Versão.** Ao fim do marco, **0.11.0** (SemVer: áudio e tela de pausa são recursos novos, versão menor). A **1.0.0** é a tag de release e sai só depois do PT5 aprovado (19.7.1). Textos entre aspas são propostas do Produto para `content/texts/pt-BR.json` (chaves em 19.8). **[Pergunta]** = pergunta aberta (seção 12, 44). Tudo o que os Marcos 1 a 5 fixaram continua valendo, salvo o que esta seção muda de forma explícita.
+
+**Pilares.** Pausa e confirmação não têm tempo (pilar 1). A pausa não abre na dica e não bloqueia nada (pilar 2). Música calma, com sinos, e textos curtos (pilares 3 e 4).
+
+### 19.1 Escopo e fluxo
+
+| Item | No Marco 6 | Onde está |
+|---|---|---|
+| Áudio | Música de fundo, 13 efeitos, liberação no primeiro gesto, mudo (M e ícone) | 19.2 |
+| Tela de pausa | P ou ícone II; continuar, som, como jogar, voltar ao título | 19.3 |
+| Polimento | Lista priorizada do que sobrou dos Marcos 1 a 5 e das ideias; o que entra na 1.0 e o que fica fora | 19.4 |
+| Acessibilidade básica | Contraste, mudo, tamanho do texto, nenhuma informação só no som | 19.5 |
+| Desempenho | Celular intermediário e tamanho do HTML | 19.6 |
+| Release 1.0.0 | Critérios de pronto, CHANGELOG, GitHub Pages, roteiro do PT5 | 19.7 |
+| Textos | Chaves novas | 19.8 |
+| Casos de aceite | O que o QA emula, o que só o Diretor testa, regressão dos Marcos 1 a 5 | 19.9 |
+| Fora deste marco | Volume, voz, Nick na conquista, arte nova | 19.10 |
+| Pendências e riscos | Pergunta 44, padrões aplicados, riscos | 19.11 e 19.12 |
+
+### 19.2 Áudio
+
+**19.2.1 Música de fundo.**
+- Uma faixa, em loop, tranquila, com clima de Natal: **sinos e celesta sintetizados** (padrão aplicado; pergunta 44). Sem voz e sem bateria marcada. Não muda por cômodo.
+- Duração-alvo de **36 s** (faixa de 30 a 40 s), com emenda sem silêncio e sem clique audível. Arquivo-alvo de 144 000 bytes (ADR-008 1.4).
+- Toca em todas as telas, a partir da liberação (19.2.3): título, seleção, introdução, exploração, diálogo, painel, conquista, dica, pausa, condução, fade, créditos e aviso de rotação. Nenhuma tela pausa a música. Só o mudo a silencia. Durante um jingle de conquista ou o jingle de créditos, a trilha baixa de nível (ducking), sem parar (19.2.7).
+- Nos créditos, a mesma faixa (17.7 deixa de dizer "sem música"), com o jingle de créditos JC tocado uma vez por cima dela (19.2.7 c).
+
+**19.2.2 Efeitos.**
+
+| ID | Evento (quando toca) | Caráter | Máximo |
+|---|---|---|---|
+| S01 | Passos: a cada tile andado pelo sobrinho, na exploração e na condução. Não toca no fade nem no diálogo | Suave, dois tons alternados, baixo | 0,15 s |
+| S02 | Troca de área pela porta, no fade de 14.10.5 (P1 a P3, P7 e P8) | Porta curta, grave | 0,5 s |
+| S03 | Porta destrancada (P8, código certo), junto com "Clique! A porta abriu." | Clique e ranger leve | 1 s |
+| S04 | Interruptor: "Clique!" e as luzes acendendo (14.3) | Clique e acorde curto | 0,8 s |
+| S05 | Peça encontrada (15.5) | Brilho e tilintar | 1 s |
+| S06 | Encaixe da peça ou da caixa na árvore (15.6, 17.4) | Clique e sino | 1,5 s |
+| S07 | "Au!" do Nick (16.5, 16.7) | Latido curto, de brinquedo | 0,4 s |
+| S08 | Nick farejando (16.5) | Fungada curta | 0,5 s |
+| S09 | Abertura de uma tela de conquista (14.1, 15.5, 17.4). Uma variante por conquista: J01 a J05 (19.2.7) | Jingle curto de sinos e celesta, diferente em cada conquista | 2,5 a 3,8 s (19.2.7) |
+| S10 | Abertura de cada página de diálogo (não por letra) | Blip baixo e curto | 0,2 s |
+| S11 | Trocar o item em foco (título, seleção, pausa, confirmação, painel) | Tique | 0,1 s |
+| S12 | Confirmar um item (A ou Enter, ou toque em item) | Tique mais agudo | 0,2 s |
+| S13 | Código errado no painel (14.1) | Dois tons descendentes, suaves, sem buzzer | 0,6 s |
+
+- No máximo 3 efeitos ao mesmo tempo. Se houver mais, o mais antigo para (AU5).
+- Nenhum efeito no aviso de rotação. No fade, só o S02.
+- Nenhum som é a única informação: cada evento já tem sinal visual (19.5, item 4).
+
+**Regras de derivação (ADR-008 5).** A tabela acima não cobre todos os casos. Estas regras cobrem os demais e valem para o Dev, o QA e a Arte. A tabela de eventos e os ganhos de `content/audio.json` (ADR-008 5) são a fonte dos IDs e dos níveis.
+- **R1 (diálogo):** cada página de diálogo que abre toca S10, inclusive a primeira, os avisos "ainda não" (15.2.7) e as falas do Nick. Fechar o diálogo não toca nada.
+- **R2 (confirmar):** confirmar um item (A, Enter ou toque no item) toca S12. Vale para "Começar", "Como jogar", "Voltar", "Continuar", "Sim", "Não", "Voltar ao título", "Fechar" e os cartões da seleção. B, X e Esc sem item confirmado não tocam nada.
+- **R3 (foco):** mudar o foco com setas, WASD ou empurrão do joystick toca S11. Tocar num item não move o foco visual (18.3): toca só S12.
+- **R4 (painel):** dígito e Apagar tocam S11. OK e Fechar tocam S12. Código certo toca S03 (na porta que abre). Código errado toca S13.
+- **R5 (sem som):** abrir ou fechar dica, pausa, Como jogar, créditos e painel não toca nada, salvo os casos acima. Fumaça de dormir e abanar do Nick também não tocam.
+- **R6 (som ligado):** ligar o som (M, ícone ou item da pausa) toca S12. Desligar não toca.
+- **R7 (limite):** quando mais de 3 efeitos tocam ao mesmo tempo, para o mais antigo, com rampa de 10 ms (AU5). A música não conta no limite.
+- **R8 (por tela):** aviso de rotação: nenhum efeito (AU7). Pausa: só S11 e S12 de menu. Condução: só S01. Fade: só S02. Música: em todas as telas (19.2.1), inclusive diálogo, painel e conquista.
+
+**19.2.3 Liberação, gesto e mudo.**
+- O navegador só libera som depois de um gesto do jogador. Por isso nada toca antes do **primeiro toque, clique ou tecla** em qualquer tela. `Esc` não conta, porque o navegador não o trata como gesto. O gesto libera o som mesmo quando o jogo o ignora (ex.: aviso de rotação, 18.8). Daí em diante, a música começa.
+- **Mudo**, sempre ao alcance:
+  - **M** (teclado), em todas as telas, exceto no aviso de rotação.
+  - **Ícone de som** (toque e mouse), no canto superior esquerdo: no título e na exploração (19.3.2).
+- O ícone mostra o estado: alto-falante (ligado) e alto-falante com risco (desligado). Na pausa, o texto diz "Som: ligado" ou "Som: desligado".
+- Mudo silencia música e efeitos. Não pausa nem muda nada no jogo.
+- **Sem save:** o estado do mudo fica só na memória. Recarregar a página volta a "ligado" (seção 3; sem `localStorage`).
+- **Volume fixo.** Sem controle deslizante na 1.0 (19.10).
+- **Dentro do iframe (ADR-008 2.5).** O gesto que libera precisa acontecer dentro do documento do jogo. Num artifact do Claude, um clique na interface fora do iframe não libera o som. O jogo não controla o atributo `allow` nem o `sandbox` do iframe. Por isso, antes do PT5, o Orquestrador publica um artifact de teste (um botão e um tom, sem nada da casa) e confirma o som no clique (AU14). Se o ambiente bloquear, o PT5 espera.
+
+**19.2.4 Mixagem.**
+- Nenhum arquivo passa de -3 dBFS de pico.
+- A música fica cerca de 10 dB abaixo dos efeitos (medida por RMS).
+- Passos e diálogo são os mais baixos. Conquista e "Au!" são os mais altos.
+- Os níveis ficam em `content/audio.json` (conteúdo, editável sem código). O formato é do ADR-008.
+- Os jingles de conquista (19.2.7) entram nas regras (a) e (c) como efeitos, com o ganho de `content/audio.json`. O jingle de créditos entra como música, em soma com a trilha.
+- `validarAudio` confere as regras (a) a (d) do ADR-008 4.3 e reprova o conteúdo que as violar (AU10). O efetivo de cada som é o arquivo mais o ganho de `content/audio.json`, com o mestre incluído.
+
+**19.2.5 Fonte e licença.**
+- Tudo é **gerado por síntese, original do projeto**. Não há sample, faixa, trecho ou fonte de terceiros, nem de domínio público.
+- Os arquivos saem de um script em `tools-arte/` (a Arte escreve; o ADR-008 define a linguagem). O script gera; ninguém edita o arquivo à mão.
+- `docs/audio-licencas.md` lista cada arquivo, com origem ("gerado pelo projeto, síntese original") e data.
+- Isto substitui, neste marco, o "domínio público ou licença gratuita" da 7.3 (ver 19.11, h).
+
+**19.2.6 Formato e orçamento.**
+- Formato: **MP3, mono, 22.050 Hz, CBR 32 kbps**, com a tag do encoder. Toca em Chrome, Edge, Firefox e Safari. Decidido no ADR-008 (aceito em 2026-11-09). AAC em m4a só se a emenda do laço falhar em WebKit (ADR-008 1.3).
+- **1 KB = 1000 bytes** (ADR-008 1.4). A faixa-alvo é de **36 s**, que dá 144 000 bytes a 32 kbps.
+- Orçamento (áudio em arquivo, antes do base64):
+
+| Item | Limite |
+|---|---|
+| Música | 160 000 bytes (alvo: 144 000) |
+| Cada efeito | 12 000 bytes |
+| Todos os efeitos (13) | 160 000 bytes |
+| Áudio total | 320 000 bytes |
+| HTML único de playtest e de release, com o áudio em base64 | 2 500 000 bytes |
+
+- **Ajuste 0.12.0 (19.2.7):** os limites de jingles e de créditos e o total de 320 000 bytes, com a previsão, estão em 19.2.7 (item e). Os limites acima continuam valendo para o que já existe.
+- O `verificar:tamanho` (item 136) reprova o build que passar de um desses limites, com a mensagem do limite e do valor medido.
+- **Aviso, sem reprovar:** HTML sem áudio acima de 2 000 000 bytes. No pior caso, o áudio ocupa 426 667 bytes em base64, então o HTML sem áudio precisa ficar em até cerca de 2 073 000 bytes para caber em 2 500 000. Se o aviso aparecer, o Dev avisa o Produto antes de gerar a faixa final. O limite é revisto, não estourado.
+
+**19.2.7 Jingles de conquista e de créditos (ajuste 0.12.0, 2026-11-10).**
+Origem: retorno do PT5 do Diretor, literal: "as páginas de conquista pode tocar músicas diferentes?" e "a página de crédito pode tocar um jingle de natal?". O Diretor achou os áudios "legais". Padrão do Produto, com a decisão e o motivo de cada item.
+
+*(a) Conquistas: um jingle por tela.* Hoje as cinco telas de conquista tocam o mesmo S09. Passam a ter um jingle próprio, da mesma família S09 (ADR-008 5), em dó maior, com o timbre de sinos e celesta da trilha (19.2.1), terminando na tônica:
+
+| ID | Conquista (chave) | Tela (onde) | Duração | Caráter |
+|---|---|---|---|---|
+| J01 | `conquista.luzes` | Conquista 1, luzes (14.1) | 2,5 s | Acorde ascendente curto: a casa acende |
+| J02 | `conquista.parte1` | Parte 1 (15.5) | 3,0 s | Tilintar de sinos, leve |
+| J03 | `conquista.parte2` | Parte 2 (15.5) | 3,0 s | Como J02, com um degrau a mais |
+| J04 | `conquista.parte3` | Parte 3 (15.5) | 3,0 s | Fecho da última peça |
+| J05 | `conquista.enfeites` | Caixa de enfeites (17.4) | 3,8 s | O mais cheio, com a última frase da árvore |
+
+- **Arquivos:** `jin_j01_luzes.mp3`, `jin_j02_parte1.mp3`, `jin_j03_parte2.mp3`, `jin_j04_parte3.mp3` e `jin_j05_enfeites.mp3`, e o jingle de créditos `jin_jc_natal.mp3`. Mapa em `assets/audio/audio-jingles-proposta.json` (proposta da Arte, a ser integrada em `content/audio.json` pelo Dev, ADR-008 rev. 2).
+- **Motivo:** cada conquista ganha um som com identidade, sem trocar a regra de S09. O S09 deixa de ser um som único e vira a família J01 a J05. O arquivo `sfx_s09_conquista.mp3` sai do catálogo e de `assets/audio/`.
+- A dica do jogo não muda: nenhum jingle toca fora de uma tela de conquista ou dos créditos.
+- Os sinos, a celesta e a tonalidade seguem a trilha. Não há voz nem bateria (19.2.1).
+
+*(b) Como a trilha se comporta: ducking, não pausa.* Durante um jingle de conquista, a trilha baixa **8 dB** em 0,3 s e volta em 0,5 s, quando o jingle acaba. A trilha não para e não reinicia: é um único laço, e o ganho muda, não a posição. Ao sair da tela (Continuar, X ou B), o jingle para com rampa de 30 ms (sem clique) e a trilha volta ao nível normal.
+- **Sem sobreposição:** (1) nunca dois jingles tocam ao mesmo tempo; (2) se a conquista abre com um efeito ainda em curso (S04 interruptor, S05 peça ou S06 encaixe), o jingle espera o fim dele, com teto de 1,5 s. A tela aparece na hora; só o som espera.
+- **Ao confirmar Continuar**, o jingle para e S12 toca. Os dois não tocam juntos.
+- **Mudo:** o jingle segue no tempo, em silêncio, como a trilha. Desmudar não reinicia nada.
+- **Pausa:** não há conquista na pausa nem jingle; a pausa não muda o nível da trilha (19.3.5).
+
+*(c) Créditos: jingle de Natal, uma vez, por cima da trilha.* Ao abrir os créditos (depois do fade de 17.4, item 6), toca **uma vez** o jingle de créditos (JC, `jin_jc_natal.mp3`), de **15 s** (dentro da faixa de 12 a 16 s). A trilha baixa **10 dB** em 0,5 s, durante o jingle, e volta ao nível normal em 0,5 s ao fim dele. Não há laço: o jingle não volta. Ao voltar ao título, o som está no nível normal, e a próxima partida começa sem jingle de créditos até os créditos de novo.
+- **Melodia:** original, composta pelo script da Arte (19.2.5), em dó maior, 3/4 ou 4/4, sinos e celesta, terminando na tônica. **Não é domínio público nem tema conhecido**, para não depender de checar licença e para o arquivo sair como "síntese original" (AU12). Um tema de domínio público (ex.: "Jingle Bells", de 1857) seria a alternativa; não foi escolhido porque a faixa de créditos deve soar nova.
+- **Duração de 12 a 16 s, e não 20 s:** 20 s dão 80 000 bytes e levam o total a cerca de 312 000, quase no teto de 320 000 e sem folga para um ajuste de Arte. A Arte entregou 15 s (60 517 bytes), com folga. Se o Diretor quiser 20 s, é mudança de orçamento (item e).
+
+*(d) Níveis (ADR-008 4.4 e content/audio.json).* Os jingles de conquista (J01 a J05) entram em **0 dB** de partida, e JC em **−2 dB**. Os 0 dB dos conquistas foram uma correção: com −2 dB, a Arte mediu que a regra A6 de mixagem (ADR-008 4.3) falha; em 0 dB ela passa. A regra (c) fica perto do limite, e o `validarAudio` decide. Os níveis são conteúdo: a Arte ajusta, e os testes decidem.
+
+*(e) Orçamento novo.* O total de 320 000 bytes não sobe. Medido pela Arte em 2026-11-10 (arquivos em `assets/audio/audio-meta.json`):
+
+| Item | Limite (bytes) | Medido em 2026-11-09 | Medido em 2026-11-10 (Arte) |
+|---|---|---|---|
+| Música (trilha) | 160 000 (sem mudança) | 144 526 | 144 526 |
+| Cada jingle de conquista (J01 a J05) | 16 000 | — | 10 466 a 15 690 |
+| Jingles de conquista somados | 64 000 | — | 63 509 (folga de 491) |
+| Jingle de créditos (JC) | 64 000 | — | 60 517 |
+| Efeitos (S01 a S08, S10 a S13, 12 arquivos) somados | 160 000 | 31 446 | 31 446 |
+| Áudio total | 320 000 (sem mudança) | 184 453 | 299 998 sem o S09 antigo (308 479 se ele ficar no meta) |
+| HTML único (playtest e release) | 2 500 000 | cerca de 1 898 000 | cerca de 2 050 000 (previsão) |
+
+- **Atenção ao S09:** `sfx_s09_conquista.mp3` (8 481 bytes) tem de sair de `assets/audio/` e do meta. Sem ele, o total é 299 998; com ele, 308 479. O teto de 320 000 vale nos dois casos.
+- **Folga pequena em J01 a J05:** 491 bytes. Qualquer ajuste de duração de um dos cinco estoura o limite de 64 000 e obriga a voltar ao Produto.
+- A previsão de HTML usa o base64 do áudio (4/3) e supõe o HTML sem áudio de cerca de 1 652 000 bytes, o que está abaixo de 2 000 000: o aviso de 19.2.6 não dispara.
+- Se algum arquivo passar do limite, ou o total de 320 000, o `verificar:tamanho` reprova. A decisão de subir qualquer limite volta ao Produto, não sai do Dev.
+
+*(f) Testes.* Ver AU15 a AU20 em 19.9, e o item de catálogo em 19.2.2.
+
+### 19.3 Tela de pausa
+
+**19.3.1 Como abre e onde.**
+- Teclado: **P**, na exploração.
+- Toque: ícone de pausa (duas barras, "II"), no canto superior esquerdo, com 48 CSS px de área de toque.
+- Abre nas mesmas telas em que o "?" aparece (16.8.6): a exploração, em todas as áreas. Não abre no título, na seleção, na introdução, no diálogo, no painel, na conquista, na dica, na condução, no fade, nos créditos nem no aviso de rotação. O ícone II some nessas telas.
+- A condução não é interrompida (14.11), e a pausa não entra na dica, que já congela o mundo (16.8.5).
+
+**19.3.2 Ícones na tela.**
+
+| Ícone | Onde aparece | Toque | Teclado |
+|---|---|---|---|
+| II (pausa) | Canto superior esquerdo, exploração | Abre a pausa | P |
+| Som (ligado ou desligado) | Canto superior esquerdo: ao lado do II na exploração; sozinho no título | Liga e desliga | M |
+| ? (dica, 16.8.1) | Canto superior direito, exploração | Abre a dica | H |
+
+- Mesma caixa e borda dos botões (14.9.4). Desenho de 32 px de jogo, como o "?".
+- Nenhum ícone cobre objeto, porta, peça, árvore, bilhete ou Nick. A linha 0 e a coluna de fora não pertencem a nenhuma área (16.8.1); o QA confere em captura.
+- O ícone de som aparece no título em qualquer layout. Não é controle de jogo: a regra "menus sem botão" de 18.4 vale para cruz, A e B (19.11, d).
+
+**19.3.3 Itens da pausa.** Título "Pausa" (texto informativo, sem caixa). Quatro itens em coluna, no centro, cada um com caixa (14.9.4):
+1. **"Continuar"** (foco inicial). Z ou Enter, X, Esc ou P fecham a pausa e voltam ao mesmo ponto.
+2. **"Som: ligado"** ou **"Som: desligado"**. Z ou Enter alterna, e o texto troca na hora. M faz o mesmo.
+3. **"Como jogar"**. Abre a tela de 16.10 com as linhas de teclado ou de toque. X, Z, Esc ou "Voltar" fecham e voltam à **pausa**, com foco em "Como jogar". Não vai ao título.
+4. **"Voltar ao título"**. Abre a confirmação (19.3.4).
+- Setas ou WASD trocam o foco. No toque com layout A, o joystick também troca (cima e baixo; um empurrão = um passo, 18.19.8). Nos limites, o foco para. Tocar em item é clique (18.5, regra 6).
+
+**19.3.4 Confirmação de "Voltar ao título".** Sem save, voltar ao título perde a partida. Por isso, antes de sair, a tela pergunta:
+- Texto: "Sair da partida?" / "Ela não fica salva."
+- Botões: **"Sim"** e **"Não"**. Foco inicial em **"Não"**, a mesma proteção do aviso de save de 2026-11-07.
+- "Sim": vai ao título e começa do zero (seção 3).
+- "Não": volta à pausa, com foco em "Voltar ao título".
+- Esquerda e direita trocam o foco entre Sim e Não. Sem tempo.
+
+**19.3.5 O que congela.** Com a pausa aberta, o mundo para por completo, como na dica (16.8.5): o sobrinho, o Nick, as animações e a seta de farejar (com os 5 s) param. Ao fechar, tudo retoma do mesmo ponto. A música continua (19.2.1). Se o aparelho girar com a pausa aberta, o aviso de rotação aparece (18.8); ao voltar à paisagem, a pausa segue no mesmo item.
+
+**19.3.6 Barra e botões por tela.**
+
+| Tela | Barra, teclado | Barra, toque layout A | Barra, toque layout B | Botões de toque (layout B) |
+|---|---|---|---|---|
+| Pausa | "Setas: escolher  Z: confirmar" / "X ou P: continuar" | "Mover: escolher  A: confirmar" / "B: continuar" | "Toque para escolher" / "Toque em Continuar" | Nenhum (18.4) |
+| Confirmação | "Z: sim  X: não" | "A: sim  B: não" | "Toque em Sim ou em Não" | Nenhum |
+| Como jogar, vindo da pausa | "Z ou X: voltar" | "A ou B: voltar" | "Toque em Voltar" | Nenhum |
+
+**19.3.7 Textos.** Em 19.8.
+
+### 19.4 Polimento: o que entra e o que fica fora da 1.0
+
+**19.4.1 Lista priorizada.** P0 = bloqueia o PT5. P1 = entra se não atrasar o PT5. "Fechado" = sem trabalho novo.
+
+| # | Item | Origem | Prioridade | Entra na 1.0 | Dono | Backlog |
+|---|---|---|---|---|---|---|
+| 1 | "Quase! Leia o bilhete de novo." continua na tela enquanto o jogador apaga | Checklist do Marco 5; `qa/bugs.md` | P0 | Sim | Dev | 129 |
+| 2 | Nome do DanDan quase tocando a borda do cartão da seleção | Briefing do Orquestrador (ver 19.11, n) | P0 | Sim | Dev + Arte | 130 |
+| 3 | BUG-M2-02, BUG-M2-04 e BUG-M2-05 (a confirmar) | `qa/bugs.md` | P0 | Sim, se confirmados | QA; Dev ou Arte corrige | 132 |
+| 4 | BUG-M2-03: faixa de passos da condução (E7 e E20) | `qa/bugs.md` | P0 (documento) | Sim | Produto | 133 |
+| 5 | Casos ainda sem teste: F9, F6-AU e F8 (diálogo e painel); fumaça de dormir no Escritório; Nick no Quarto e no Escritório | PT1e, PT3, PT4a e checklists dos Marcos 3 e 5 | P0 | Sim | QA | 132, 138 |
+| 6 | Alvo "Voltar ao título" da seleção no layout B, com 1 px de folga | PT4 | P1 | Sim | Dev | 138 |
+| 7 | Setor amarelo no título e na seleção; TQ27 nas telas de conquista, painel e introdução; velocidade do joystick igual à do teclado (REG-V) | QA do Marco 5 (joystick) | P1 | Sim | QA | 138 |
+| 8 | Piso de 12 px de jogo para texto (acessibilidade) | GDD 10 e pendência 8 | P0 | Sim | Dev | 131 |
+| 9 | Ícones de pausa e som, tela de pausa e linhas de Como jogar | Marco 6 | P0 | Sim | Arte + Dev | 123 a 128 |
+| 10 | BUG-R13-03: resto de cena atrás do painel da senha | `qa/bugs.md` | P1 | Sim | Dev (fundo sólido) | 132 |
+| 11 | Gancho de QA: base do joystick listada durante o fade | QA do Marco 5 | P1 (ferramenta de QA) | Sim, só no build de QA | Dev | 134 |
+| 12 | Sprites parados por direção (item 015) | Playtest PT1 | P1 | Só se ainda estiver aberto | Arte (confirma) | 132 |
+| 13 | BUG-R13-01 (geometria de P1 a P3), BUG-R14-01 (árvore desmontada no tile (3,8)) e BUG-R15-01 (caixa do diálogo no topo) | `qa/bugs.md` | Fechado | Sem trabalho, salvo reteste negativo | QA (fecha) | 132 |
+
+**19.4.2 Regra de polimento.** Na 1.0 entra só correção e o que está nesta lista. Se um item pedir tela, controle ou conteúdo novo, ele vai para 1.x (19.4.3). Nada entra por gosto de última hora sem decisão do Diretor.
+
+**19.4.3 Ideias futuras (1.x e depois).**
+
+| Ideia | Origem | Destino |
+|---|---|---|
+| Novos mapas e missões, pelo manifesto, sem mudar o motor | Seção 11 e ADR-002 | 1.1 ou depois (versão menor) |
+| Arte em estilo Sea of Stars, com perfil novo | Item 021 (critério 4) e decisão de 2026-11-07 | 1.x (já decidido; 19.11, t) |
+| Sprite 48×72 | Pendência 13 | Só com perfil novo, se a arte pedir |
+| Nick na tela de conquista | 16.15 e 17.14 | Ideia |
+| Afagar o Nick, com texto | 16.15 | Ideia |
+| Caminhada especial do Nick, como animação extra | 16.15 | Ideia (a Arte decide) |
+| Sorteio das peças e da caixa a cada partida | Seção 11 | Ideia (exige revisar 4.5 e 16.2) |
+| Botão "Créditos" no título; créditos com tempo ou rolagem; mais de um final; "novo jogo +" | 17.14 | Ideia |
+| Pergunta de créditos (opção B da 37) | 17.4 | Ideia (padrão A) |
+| Corrida | 4.1 e seção 11 | Fora da v1 (B é do farejar) |
+| Analógico de curso livre; joystick flutuante; sensibilidade ajustável | 18.16 e 18.19.15 | Ideia |
+| Andar tocando no destino; vibração | 18.16 | Ideia |
+| Volume ajustável; trilha por cômodo; som espacial | 19.10 | Ideia |
+| Tamanho de fonte ajustável | Pendência 8 | 1.x (19.5) |
+| Idiomas | Seção 11 | Fora |
+| Save e "continuar" | Seção 3 e ADR-002 | Nunca na v1.x |
+
+### 19.5 Acessibilidade básica (1.0)
+
+1. **Contraste.** Texto com ≥ 4,5:1 sobre o fundo, medido em captura. Borda e ícones (II e som) com ≥ 3:1. Os ícones usam `#1b2452` com borda `#9aa3c7` (5,9:1), como os botões de 14.9.4.
+2. **Mudo.** M e ícone de som, com um gesto (19.2.3).
+3. **Tamanho do texto.** Fonte fixa, corpo de 16 px de jogo (Press Start 2P, decidido em 2026-11-07). Nenhum texto abaixo de 12 px de jogo; o validador (item 131) impede. Em 667×375, o menor texto tem ≥ 12 CSS px. Ajuste de tamanho de fonte fica para 1.x: barras e caixas têm limites de caracteres medidos (29, 28 e 27), e um segundo tamanho quebraria esses limites.
+4. **Nenhuma informação só no som.** Porta, interruptor, peça, encaixe, "Au!", farejar e conquista têm sinal visual (balão, seta, luz, tela de conquista, tremida). O QA joga com o mudo ligado (AU6).
+5. **Sem pisca rápido.** Nenhum elemento pisca mais de 3 vezes por segundo. O halo (2 s), as tremidas (0,4 s) e o fade (0,5 s) ficam abaixo disso. Sem flash de tela.
+6. **Não depender só de cor.** O mudo tem o risco no desenho, e o menu escreve "Som: desligado". A seta de farejar tem as tremidas, além da cor amarela.
+7. **Teclado e toque.** Toda ação tem as duas formas (19.3.6 e 18.4).
+8. **Sem pressa.** A pausa e a confirmação não têm tempo (pilar 1).
+
+### 19.6 Desempenho em celular intermediário
+
+- **Referência:** celular de faixa média de 2021. No Chromium, o QA aproxima com CPU 4× mais lenta e rede "Fast 4G" (emulados; DS1 a DS4). O aparelho real é do Diretor, no PT5.
+- **Quadros:** em 60 s de exploração a 844×390 ou 667×375, com música e efeitos ligados, média ≥ 45 quadros por segundo e nenhum intervalo de 2 s abaixo de 30.
+- **Início:** título pronto em até 4 s, com rede Fast 4G emulada.
+- **Decodificação do áudio:** os 14 arquivos decodificados no boot em até 500 ms com CPU 4× (`__estado().audio.tempoDecodeMs`, ADR-008 10). Não bloqueia o título.
+- **Tamanho:** HTML de playtest e de release ≤ 2,5 MB (19.2.6).
+- **Som e toque:** do toque ao primeiro som ou à primeira ação, no máximo 100 ms.
+- **Memória:** 10 min de jogo com trocas de área e efeitos, sem crescimento acima de 30 MB. Se a rodada não couber, vira "não testado (limite de tempo)".
+- **Se falhar:** o Dev reduz trabalho de quadro (ex.: halo, luz) antes de mexer em regra. A regra de 18.9 e a escala do ADR-003 não mudam.
+
+### 19.7 Versão, release 1.0.0 e PT5
+
+**19.7.1 Versão.**
+- O Marco 6 entrega **0.11.0** (recurso novo, versão menor). Título "v0.11.0" e créditos "Versão 0.11.0", lidos do `package.json`.
+- **Ajuste pós-PT5 (2026-11-10): 0.12.0.** O retorno do PT5 pediu jingles por conquista e um jingle de créditos (19.2.7). São arquivos de áudio novos e um comportamento novo (ducking): é recurso, então versão menor, e não patch. Não se aplica o "0.11.1" desta seção a esse ajuste; o 0.11.1 fica para correções sem recurso novo.
+- A **1.0.0** é a tag de release e sai só depois do PT5 aprovado pelo Diretor. Motivo: a 1.0.0 promete jogo completo; antes do teste com crianças seria um rótulo sem prova. Ajustes do PT5 saem como 0.11.1, 0.11.2 etc. (SemVer, patch), e a 1.0.0 é o build aprovado.
+- Sem tag de pré-lançamento (1.0.0-rc): o pipeline (ADR-002 seção 1) não tem regra para isso, e o artifact de playtest não é release.
+
+**19.7.2 Critérios de pronto da release 1.0.0.** Todos precisam valer:
+1. PT5 aprovado pelo Diretor, com uma criança e um adulto jogando juntos. Retorno em `playtests.md`. Nenhum bug de severidade alta aberto; os de média e baixa aparecem como conhecidos no CHANGELOG.
+2. QA: checklist do Marco 6 (19.9) aprovado, com o que ficou "não testado (limite de tempo)" listado no relatório.
+3. `package.json` com `"version": "1.0.0"`; título "v1.0.0" e créditos "Versão 1.0.0".
+4. `CHANGELOG.md` na raiz, em Keep a Changelog, com as seções de 0.1.0 a 1.0.0. A 1.0.0 resume os Marcos 1 a 6 e a lista de conhecidos.
+5. Tag `v1.0.0` na `main`. O GitHub Actions passa: testes, `verificar:conteudo`, `validar:perfil`, `verificar:tamanho` e build (ADR-002 seção 1).
+6. **GitHub Pages** com o jogo e a versão visível. **GitHub Release** com a seção do CHANGELOG.
+7. O build final é o código aprovado no PT5 (mesmo commit, ou só versão e CHANGELOG).
+8. Checagens automáticas no build de release: nenhum gancho de QA; nenhum `localStorage`; nenhum nome de pessoa da família além de "Tio Ítalo" e "Tia Nath" no nome do jogo (seção 10, item 034).
+9. `docs/audio-licencas.md` completo (19.2.5).
+10. Smoke no Pages: título, exploração, créditos e volta ao título, no Chromium, sem erro de console.
+11. Teste de novo mapa via manifesto (item 013) passa no workflow.
+12. `metrics/resumo.md` escrito pelo Orquestrador (CLAUDE.md).
+
+**19.7.3 Roteiro do PT5 (sugestão do Produto; o Orquestrador decide).**
+
+Pré-requisito: o artifact de teste de áudio (AU14, 19.2.3) toca o som no clique, no computador e no celular. Se bloquear, o PT5 espera.
+
+1. Título: tocar em qualquer lugar (o som começa). Desligar e ligar o som pelo ícone.
+2. Como jogar: ler o botão de pausa e o do som.
+3. Seleção, introdução e porta: um código errado e depois o certo. Ver o "Quase!" sumir ao apagar.
+4. Luzes, condução e farejar com o Nick.
+5. Pausa (P ou o ícone II): ver os itens, abrir Como jogar e voltar; em "Voltar ao título", escolher "Não".
+6. Partes 1 a 3, enfeites, créditos com música e volta ao título.
+
+Perguntas-chave (CLAUDE.md, PT5): dá para jogar junto? Alguém travou? Algo confuso ou infantil demais? A música cansa depois de 15 min? O ícone de som é achado sem ajuda? A pausa é clara e não tira nada? O "Quase!" some na hora certa?
+
+### 19.8 Textos do Marco 6 (pt-BR)
+
+Chaves novas em `content/texts/pt-BR.json`. Limites: barra até 29 caracteres por linha; diálogo até 2 linhas de 28; Como jogar até 27 por linha. Os textos são propostas do Produto.
+
+| Chave | Texto | Onde aparece |
+|---|---|---|
+| `pausa.titulo` | "Pausa" | Título da pausa |
+| `pausa.continuar` | "Continuar" | Item 1 |
+| `pausa.som.ligado` | "Som: ligado" | Item 2 |
+| `pausa.som.desligado` | "Som: desligado" | Item 2 |
+| `pausa.comojogar` | "Como jogar" | Item 3 |
+| `pausa.sair` | "Voltar ao título" | Item 4 |
+| `pausa.sair.pergunta` | "Sair da partida?" (linha 1) / "Ela não fica salva." (linha 2) | Confirmação |
+| `pausa.sair.sim` | "Sim" | Confirmação |
+| `pausa.sair.nao` | "Não" | Confirmação (foco inicial) |
+| `barra.pausa1` | "Setas: escolher  Z: confirmar" | Pausa, teclado, linha 1 |
+| `barra.pausa2` | "X ou P: continuar" | Pausa, teclado, linha 2 |
+| `barra.pausa1.toque` | "Mover: escolher  A: confirmar" | Pausa, toque, layout A, linha 1 |
+| `barra.pausa2.toque` | "B: continuar" | Pausa, toque, layout A, linha 2 |
+| `barra.pausa1.toque.menu` | "Toque para escolher" | Pausa, toque, layout B, linha 1 |
+| `barra.pausa2.toque.menu` | "Toque em Continuar" | Pausa, toque, layout B, linha 2 |
+| `barra.sair` | "Z: sim  X: não" | Confirmação, teclado |
+| `barra.sair.toque` | "A: sim  B: não" | Confirmação, toque, layout A |
+| `barra.sair.toque.menu` | "Toque em Sim ou em Não" | Confirmação, toque, layout B |
+| `comojogar.pausa` | "P: pausa.  M: mudo." | Como jogar, teclado (linha nova, no fim) |
+| `comojogar.pausa.toque` | "No alto: pausa e mudo." | Como jogar, toque (linha nova, no fim) |
+
+- Nenhum texto de toque cita Z, X, P, M, H, Esc, Enter ou Backspace (teste de busca em `content/`).
+- Os textos de teclado e de toque que já existem não mudam (teste de igualdade).
+- Nenhum texto cita nome de família (034).
+
+### 19.9 Casos de aceite (QA)
+
+**Regras.** Cada rodada dura no máximo 15 minutos (regra do Diretor, 2026-11-07). O que não couber vira "não testado (limite de tempo)". "Emulado" = Chromium, com teclado e CDP. "Gancho" = `window.__estado()` do build de QA, com os campos `audio` e `pausa` (itens 125 e 127). **Ordem de prioridade**, se o tempo acabar: PO1, PS1, PS3, PS4, AU1, AU4, PS7, PO2, RG6-6, RG6-3, AU6, AC1.
+
+*Áudio (AU)*
+- **AU1 (liberação):** sem nenhum gesto, nada toca (gancho: liberado = falso). O primeiro clique ou toque no título libera, e a música começa. A primeira tecla (setas, Z ou Enter) também libera. Um toque no aviso de rotação (390×844) libera. Emulado (gancho).
+- **AU2 (música):** a música toca em título, seleção, introdução, exploração, dica, pausa, condução, fade e créditos (gancho: música ativa em cada tela), e não para ao trocar de área. Emulado (gancho).
+- **AU3 (efeitos):** o gancho registra cada evento no momento certo: 5 tiles andados (S01 ×5), a troca de área (S02), a P8 destrancada (S03), o interruptor (S04), uma peça (S05), o encaixe (S06), o "Au!" (S07), o farejar (S08), uma conquista (S09), cada página de diálogo (S10, uma vez por página), o foco de menu (S11), o confirmar (S12) e o código errado (S13). Emulado (gancho) e teclado.
+- **AU4 (mudo):** M liga e desliga (gancho: mudo). Com mudo, nenhum evento toca e a música para. O ícone e o texto da pausa mudam para desligado. Recarregar a página volta a ligado. Teclado e, no toque, o clique no ícone. Emulado.
+- **AU5 (limite):** no máximo 3 efeitos ao mesmo tempo, mesmo andando rápido e trocando de área (gancho). Emulado.
+- **AU6 (sem informação só no som):** com o mudo ligado, jogar porta, luzes, peça, encaixe, "Au!" e conquista. Cada um tem sinal visual (captura de cada um). Teclado.
+- **AU7 (horário):** nada toca no aviso de rotação, no título antes da liberação, na pausa (só S11 e S12 de menu), na condução (só S01) e no fade (só S02). Emulado (gancho).
+- **AU8 (mapa de eventos):** teste automático: os 13 IDs têm arquivo e chave em `content/audio.json`; nenhum evento fica sem som. Automático.
+- **AU9 (orçamento):** `verificar:tamanho`: música ≤ 160 000 bytes; cada efeito ≤ 12 000; **todos os efeitos somados ≤ 160 000**; jingles de conquista (16 000 cada, 64 000 somados) e jingle de créditos (64 000), conforme 19.2.7 (e) a partir de 0.12.0; áudio total ≤ 320 000; HTML ≤ 2 500 000 bytes. Aviso, sem reprovar, se o HTML sem áudio passar de 2 000 000 (19.2.6). Automático.
+- **AU10 (mixagem):** o pico de cada arquivo fica ≤ -3 dBFS. Medido no **efetivo** (arquivo mais o ganho de `content/audio.json`, mestre incluído): a música fica entre 7 e 13 dB abaixo da média dos 13 efeitos (10 ± 3 dB), e a soma do pico dos três efeitos mais altos com o da música fica ≤ 1,0 (ADR-008 4.3, regras a e c). Automático.
+- **AU11 (laço):** início e fim da faixa com no máximo 20 ms de silêncio, medido no meta depois da aparagem do atraso do encoder (ADR-008 1.4). Automático. A emenda sem clique é ouvida pelo Diretor (AU13).
+- **AU12 (licença):** `docs/audio-licencas.md` lista cada arquivo com "gerado pelo projeto, síntese original" e data; nenhum arquivo de terceiros em `assets/` ou `content/`. Verificação manual do QA.
+- **AU13 (só o Diretor):** a música agrada, a emenda do laço não se percebe, os efeitos não irritam e a música não cansa em 15 min.
+- **AU15 (jingle por conquista, 19.2.7 a):** ao abrir cada uma das cinco conquistas, `ultimosEventos` registra S09 com a variante certa (J01 a J05), uma vez. Os cinco arquivos têm hash diferente. Emulado (gancho).
+- **AU16 (ducking, 19.2.7 b e c):** durante o jingle, o campo de ganho da trilha no gancho cai 8 dB (conquista) ou 10 dB (créditos) e volta ao normal ao fim. A posição do laço cresce sem voltar a zero (sem reinício). Emulado (gancho).
+- **AU17 (sem sobreposição, 19.2.7 b):** nunca dois jingles ao mesmo tempo. Com S04, S05 ou S06 em curso, o jingle da conquista começa só depois do fim desse efeito (teto de 1,5 s). Ao confirmar Continuar, o jingle para e S12 toca. Emulado (gancho, instantes de `ultimosEventos`).
+- **AU18 (sem clique, 19.2.7 b):** no corte (Continuar, mudo ou fim), a saída usa rampa de 30 ms, e o gancho registra a rampa. Não há salto de amplitude. Emulado (gancho) e ouvido pelo Diretor (AU13).
+- **AU19 (mudo e pausa, 19.2.7 b e f):** com o mudo ligado, nenhum jingle é ouvido, e a trilha não para (gancho: mudo, ganho mestre 0, posição da trilha). Na pausa não há jingle e a trilha mantém o nível (gancho). Emulado (gancho).
+- **AU20 (créditos, 19.2.7 c):** ao abrir os créditos, JC toca uma vez (gancho: `ultimosEventos` com JC, contado 1), a trilha baixa 10 dB durante o jingle e volta ao fim. Voltar ao título e recomeçar não toca JC de novo fora dos créditos. Emulado (gancho).
+- **AU21 (iPhone, interruptor de silencioso; só o Diretor, com o conserto do Dev):** no iPhone 16 Pro, Safari, com o interruptor de silencioso **desligado**, a música e os efeitos tocam depois do primeiro toque dentro do artifact (AU1, AU14). Com o interruptor **ligado**, o jogo não mostra erro e fica sem som pelo aparelho; ao desligar o interruptor, o som volta sem recarregar a página. Padrão do Produto: o jogo respeita o silencioso do aparelho, como qualquer app de jogo. O teste usa o artifact de diagnóstico (backlog 149). Só o Diretor testa.
+- **AU14 (ambiente, Orquestrador, antes do PT5):** o artifact de teste (um botão e um tom de 1 s, sem nada da casa) toca o tom no clique dentro dele (19.2.3). No celular, o Diretor confirma no mesmo teste. Manual; se bloquear, o PT5 espera.
+
+*Pausa (PS)*
+- **PS1 (abrir, teclado):** P na exploração de Hall, Sala, Cozinha, Quarto e Escritório abre a pausa, com foco em "Continuar". Teclado.
+- **PS2 (abrir, toque):** o ícone II abre a pausa em 844×390 e em 667×375 (layout B). Emulado.
+- **PS3 (fechar):** "Continuar", X, Esc e P fecham, e o jogo volta ao mesmo ponto (mesma posição, mesmo tile). Teclado e emulado.
+- **PS4 (congela, sem tempo):** com a pausa aberta, setas, WASD e joystick não movem; o Nick não anda; a seta de farejar não avança. Depois de 3 min de pausa, a seta retoma com o tempo que faltava. Emulado (gancho).
+- **PS5 (não abre onde não deve):** P e o ícone II não abrem no título, na seleção, na introdução, no diálogo, no painel, na dica, na conquista, na condução, no fade, nos créditos nem no aviso; o ícone II some nessas telas (captura). Teclado e emulado.
+- **PS6 (itens):** Z ou Enter em "Som" alterna o texto; M também. "Como jogar" abre a tela; X, Z, Esc ou "Voltar" voltam à pausa com foco em "Como jogar", não ao título. Teclado.
+- **PS7 (voltar ao título):** "Voltar ao título" pede confirmação com foco em "Não". "Não" volta à pausa, com foco em "Voltar ao título". "Sim" vai ao título, e "Começar" leva à seleção do zero, sem nada salvo. Teclado e toque.
+- **PS8 (textos):** os textos de 19.8 aparecem exatos em cada tela e layout (captura). Busca em `content/`: nenhum texto de toque cita tecla. Emulado.
+- **PS9 (layout B, 667×375):** pausa e confirmação sem cruz, A, B ou joystick; toque direto no item; os ícones de pausa e som não cobrem texto (captura). Emulado.
+- **PS10 (girar):** com a pausa aberta, girar para retrato mostra o aviso; voltar à paisagem mostra a pausa com o mesmo item em foco. Emulado.
+- **PS11 (Como jogar):** as linhas novas ("P: pausa.  M: mudo." no teclado; "No alto: pausa e mudo." no toque) aparecem no fim da lista e cabem em 480×352 sem corte (captura). Emulado.
+- **PS12 (sem tempo na tela):** a pausa não mostra contagem nem tempo. Emulado.
+- **PS13 (dica):** P e o ícone II não fazem nada na dica, e a dica segue igual (16.8.5). Teclado.
+
+*Polimento (PO)*
+- **PO1 ("Quase!"):** depois de "Quase! Leia o bilhete de novo.", a primeira tecla de dígito, X ou Backspace tira a mensagem. O próximo código errado mostra a mensagem seguinte da ordem ("Hmm, esse não é. Tente outra vez!"). "Faltam números." também some na primeira tecla. Teclado e toque emulado.
+- **PO2 (DanDan):** captura dos 4 cartões em 480×352 e 667×375: o nome tem ≥ 4 px de folga até a borda interna, sem corte. Emulado (captura).
+- **PO3 ("Voltar ao título" na seleção, layout B):** a área de toque tem ≥ 48 CSS px sem invadir o cartão (medida por `__alvosDeToque`), e o toque volta ao título. Se invadir (V6), o QA anota. Emulado.
+- **PO4 (bugs):** cada item 3, 5, 10, 11, 12 e 13 de 19.4.1 fechado com evidência ou com correção no backlog; nenhum "a confirmar" resta. QA.
+- **PO5 (GDD 15.10):** a faixa de passos de E7 e E20 bate com a rota medida ao vivo (19.11, l). QA.
+
+*Acessibilidade (AC)*
+- **AC1 (contraste):** texto da pausa e da confirmação com ≥ 4,5:1; II e som com ≥ 3:1. Medidor sobre captura. Emulado.
+- **AC2 (piso de texto):** automático: nenhum texto abaixo de 12 px de jogo. Captura em 667×375: menor texto ≥ 12 CSS px. Automático e captura.
+- **AC3 (sem informação só no som):** é o AU6.
+- **AC4 (pisca):** nenhum elemento pisca mais de 3 vezes por segundo (captura de 2 s com halo, tremida e fade). Emulado.
+- **AC5 (cor):** o estado do som aparece no desenho (risco) e no texto. Captura.
+- **AC6 (teclado e toque):** P e II, M e som, Z e A, X e B, setas e joystick: cada par faz a mesma coisa (PS1, PS2 e AU4). Emulado.
+- **AC7 (só o Diretor):** texto e ícones legíveis no celular, na distância normal de uso.
+
+*Desempenho (DS)* (19.6)
+- **DS1 (quadros):** 60 s de exploração com CPU 4× mais lenta e som ligado: média ≥ 45 e nenhum intervalo de 2 s abaixo de 30. Num carregamento com a mesma CPU 4×, `tempoDecodeMs` ≤ 500 ms (19.6). Emulado.
+- **DS2 (início):** título pronto em até 4 s com Fast 4G emulado. Emulado.
+- **DS3 (latência):** do toque ao primeiro som ou ação, até 100 ms (gancho com marcas de tempo). Emulado.
+- **DS4 (memória):** 10 min com trocas de área e efeitos, sem crescimento acima de 30 MB. Emulado; se não couber, "não testado (limite de tempo)".
+- **DS5 (tamanho):** `verificar:tamanho` (AU9). Automático.
+- **DS6 (só o Diretor):** aparelho intermediário real: travamento, aquecimento, bateria e sensação de resposta.
+
+*Regressão dos Marcos 1 a 5 (RG6)*
+- **RG6-1 (Marco 1):** título, Como jogar, seleção (os 4 nomes), introdução, porta (um erro, código certo), luzes, condução, e Hall, Sala e Cozinha. Teclado (amostra do checklist do Marco 1, com os 4 sobrinhos).
+- **RG6-2 (Marco 2):** as 3 partes em ordem; "ainda não" fora de ordem; condução 2× acima de 10 tiles; árvore com 3 partes; fade na P7. Teclado (casos prioritários da 15.10).
+- **RG6-3 (Marco 3):** N1, N2, N4, N9, N10, F1, F4, D1, D3 e B1 (ordem de 16.14), e agora F9 (passar pelo gatilho com a seta), F6-AU ("Au!" depois da parte 3 com Nick acordado) e F8 (B em diálogo, painel, dica, conquista e condução não tem efeito). Teclado.
+- **RG6-4 (Marco 4):** EN-PT1 a EN-PT5 (17.18), encaixe, diálogo final, créditos com música e volta ao título. Teclado.
+- **RG6-5 (Marco 5):** TQ1, TQ3, TQ5, TQ7, TQ8, TQ10, TQ13, TQ16, TQ19 e TQ22 (layout B, 667×375), os casos de joystick TQ23 a TQ33 (18.19.13) e RM1 a RM5 do teclado. Emulado.
+- **RG6-6 (fluxo completo):** roteiro do PT5 (19.7.3) sem o passo da pausa, primeiro em teclado e depois em toque emulado, sem erro no console. Teclado e emulado.
+
+*Release (RL)* (item 141, depois do tag)
+- **RL1 (versão):** "v1.0.0" no título e "Versão 1.0.0" nos créditos, lidos do `package.json`. Emulado (captura).
+- **RL2 (CHANGELOG):** seções de 0.1.0 a 1.0.0 presentes. Automático.
+- **RL3 (publicação):** workflow verde; o jogo abre no GitHub Pages; GitHub Release com a seção do CHANGELOG. Manual.
+- **RL4 (checagens de release):** sem gancho de QA, sem `localStorage` e sem nome de familiar além dos permitidos. Automático.
+- **RL5 (smoke no Pages):** título, exploração, créditos e volta ao título, sem erro de console. Emulado.
+
+*Só o Diretor testa (PT5, aparelho real e pessoas)*
+- Dá para jogar junto, criança e adulto? Alguém travou?
+- A música agrada, e os efeitos não incomodam?
+- O ícone de som é achado sem ajuda? A pausa é clara?
+- No celular real, os ícones II e som são alvos confortáveis e não cobrem a casa.
+- Som no Safari (iPhone) e no Chrome (Android): a liberação do áudio funciona no primeiro toque.
+- O "Quase!" some na hora certa? Algo confuso ou infantil demais?
+
+### 19.10 Fora de escopo deste marco
+- Volume ajustável, trilha por cômodo, som espacial e música por fase.
+- Voz, narração e som de diálogo por letra.
+- Guardar a preferência de som (sem save).
+- Nick na tela de conquista, afagar e caminhada especial (19.4.3).
+- Arte nova em estilo Sea of Stars e sprite 48×72 (19.4.3).
+- Tamanho de fonte ajustável (19.5).
+- Idiomas, app nativo, tela cheia e trava de orientação (seção 11; 18.16).
+- Botão "Créditos" no título e créditos com tempo ou rolagem.
+- Novos mapas e missões (1.1 ou depois).
+
+### 19.11 Pendências deste marco e padrões aplicados
+
+- **Pergunta 44 (seção 12): estilo da música.** Aberta; padrão aplicado: B (sinos e celesta). Só a faixa (item 123) espera a resposta.
+- **Padrões aplicados (sem pergunta ao Diretor):**
+  - a. P abre a pausa; M alterna o mudo; II e som ficam no canto superior esquerdo (19.3.2).
+  - b. A pausa só abre onde o "?" abre (16.8.6). A música não para em nenhuma tela (19.2.1).
+  - c. "Voltar ao título" pede confirmação, com "Não" em foco, porque não há save.
+  - d. O ícone de som aparece no título em qualquer layout. Não é controle de jogo; a regra de 18.4 vale para cruz, A e B.
+  - e. A liberação do som vem do primeiro gesto, mesmo quando o jogo o ignora.
+  - f. O mudo volta a "ligado" ao recarregar a página (sem save).
+  - g. Volume fixo, sem controle deslizante.
+  - h. Áudio gerado por síntese, original do projeto. Substitui, neste marco, o "domínio público ou licença gratuita" da 7.3 e do style-guide (o Especialista atualiza o style-guide no item 122).
+  - i. Formato MP3 mono 32 kbps e orçamento de 19.2.6; o ADR-008 confirma.
+  - j. "Quase!" e "Faltam números." somem na primeira tecla de dígito, X ou Backspace. Antes, ficavam na tela até o próximo OK.
+  - k. Fonte fixa, com piso de 12 px de jogo. Pendência 8 decidida por padrão; ajuste de fonte fica para 1.x.
+  - l. BUG-M2-03 não é bug de jogo. A regra de 14.11 (2× acima de 10 tiles) está certa; as faixas da 15.10 e da 15.3.5 ficaram desatualizadas com a planta girada e a Lavanderia. Corrigidas em 2026-11-09 pela medida do QA: E7 = 13 passos e E20 = 17 passos, ambas em 2× (15.3.5). A rota não mudou.
+  - m. BUG-R13-01, BUG-R14-01 e BUG-R15-01 ficam fechados pelas decisões de 2026-11-08 (`decisions.md`), salvo reteste negativo.
+  - n. Origem da observação do DanDan: não encontrei o registro nos arquivos do repositório (`playtests.md`, `qa/`). Tratei como vinda do briefing do Orquestrador. Confirmar a origem e a captura antes do item 130.
+  - o. Versão 0.11.0 no PT5 e 1.0.0 na release, sem tag de pré-lançamento (19.7.1).
+  - p. As pendências 31 a 37 e 42 a 43 fecham por implicação dos retornos (PT3b, PT4a e PT4b) e da aprovação do Marco 5. O Orquestrador registra em `decisions.md`.
+  - q. Os créditos ganham a faixa de fundo (17.7), sem texto novo.
+  - r. Nick na tela de conquista: fora da 1.0 (19.4.3).
+  - s. Como jogar ganha uma linha por modo (19.8). Se não couber em 480×352, reduz-se o espaçamento (14.8); a linha de som não sai.
+  - t. Arte nova em estilo Sea of Stars: fora da 1.0. Já decidido em 2026-11-07 (item 021, critério 4: versão 1.x), por isso não virou pergunta.
+  - u. Liberação do som dentro do iframe do artifact (ADR-008 2.5): o gesto precisa ser no documento do jogo. O artifact de teste antes do PT5 é o AU14.
+  - w. Jingles de conquista e de créditos (19.2.7, retorno do PT5, 2026-11-10): um jingle por conquista (J01 a J05), ducking da trilha em vez de pausa, jingle de créditos uma vez, original, 12 a 16 s. Limites novos em 19.2.7 (e); o total de 320 000 não sobe.
+  - x. Versão 0.12.0 para o ajuste pós-PT5 (19.7.1), não 0.11.1.
+  - y. Pergunta ao Diretor (créditos): o jingle de créditos toca uma vez por cima da trilha (padrão aplicado, 19.2.7 c), ou em laço durante os créditos? Sugestão: uma vez, porque os créditos ficam o tempo que a pessoa quiser e um jingle em laço cansa.
+  - v. Música em todas as telas, inclusive diálogo, painel e conquista (19.2.1 diz "todas as telas"; a lista de R8 no ADR-008 não citava essas três, e o GDD prevalece).
+
+### 19.12 Riscos
+
+| # | Risco | Tratamento |
+|---|---|---|
+| 1 | A música cansa em 15 min de jogo | Faixa curta de 30 a 40 s, em loop, volume baixo; mudo fácil (M e ícone); PT5 pergunta. Se cansar, troca de faixa é arte, sem mudar a regra |
+| 2 | O som no celular atrasa o toque ou trava em aparelho intermediário | Orçamento pequeno; no máximo 3 efeitos; DS1 e DS3, medidos antes do PT5 |
+| 3 | A criança não acha o mudo nem a pausa | Ícones visíveis; a pausa aparece em Como jogar; PT5 pergunta. Se não achar, ajusta-se o texto, não a regra |
+| 4 | A pausa vira espera e a seta de farejar some | A pausa congela o tempo; nada avança (PS4) |
+| 5 | Voltar ao título por engano apaga a partida | Confirmação com "Não" em foco (PS7) |
+| 6 | O HTML único passa do limite com o áudio | `verificar:tamanho` reprova o build; orçamento de 19.2.6 |
+| 7 | O polimento vira recurso novo e atrasa a 1.0 | Regra de 19.4.2: só correção e o que está na lista; o resto é 1.x |
+| 8 | Ícones cobrem objeto no celular estreito | Canto superior esquerdo, linha 0 fora das áreas (16.8.1); QA confere em captura; PT5 |
+| 9 | Regressão nos Marcos 1 a 5 ao mexer em tela e som | Linha de base nova antes de qualquer código (item 121); RG6 |
+| 10 | Confusão entre 0.11.0 e 1.0.0 | Regra de 19.7.1 |

@@ -1,4 +1,8 @@
 import { SCHEMA_PERFIL_SUPORTADO, TIPOS_DE_LUZ, type PerfilDeArte } from './PerfilDeArte';
+import { validarToque } from './validarToque';
+
+/** Piso de texto em px de jogo (GDD 19.4.1, item 8; backlog 131). A apresentação usa o mesmo valor (teste de igualdade). */
+export const PISO_DE_TEXTO_JOGO = 12;
 
 export type ResultadoPerfil = { ok: true; perfil: PerfilDeArte } | { ok: false; erros: string[] };
 
@@ -6,11 +10,16 @@ const COR = /^#[0-9a-fA-F]{6}$/;
 const ehInteiro = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
 const ehObjeto = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
+/** `ativo`: o perfil é o da build (manifesto `artProfile`). O perfil ativo precisa do bloco `toque` (ADR-007 seção 5.3). */
+export interface OpcoesDoPerfil {
+  ativo?: boolean;
+}
+
 /**
  * Valida o perfil de arte (ADR-003 seção 1). Devolve todos os erros de uma vez, em português.
  * `idEsperado` é o nome do arquivo do perfil (sem .json); o campo `id` precisa bater.
  */
-export function validarPerfilDeArte(bruto: unknown, idEsperado?: string): ResultadoPerfil {
+export function validarPerfilDeArte(bruto: unknown, idEsperado?: string, opcoes: OpcoesDoPerfil = {}): ResultadoPerfil {
   const erros: string[] = [];
   if (!ehObjeto(bruto)) return { ok: false, erros: ['O perfil de arte precisa ser um objeto.'] };
   const p = bruto as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -61,6 +70,10 @@ export function validarPerfilDeArte(bruto: unknown, idEsperado?: string): Result
       if (!ehInteiro(valor) || valor <= 0) erros.push(`fonte.${campo} precisa ser um inteiro positivo.`);
       else if (ehInteiro(grade) && grade > 0 && valor % grade !== 0) {
         erros.push(`fonte.${campo} (${valor}) precisa ser múltiplo de fonte.grade (${grade}).`);
+      }
+      // Piso de texto (GDD 19.4.1, item 8; backlog 131): nenhum texto do jogo abaixo de 12 px de jogo.
+      else if (opcoes.ativo && ehInteiro(valor) && valor < PISO_DE_TEXTO_JOGO) {
+        erros.push(`fonte.${campo} (${valor}) abaixo do piso de texto de ${PISO_DE_TEXTO_JOGO} px de jogo (GDD 19.4.1, item 8).`);
       }
     }
     if (typeof p.fonte.familia !== 'string' || p.fonte.familia.length === 0) erros.push('fonte.familia ausente.');
@@ -128,6 +141,15 @@ export function validarPerfilDeArte(bruto: unknown, idEsperado?: string): Result
   if (ehObjeto(p.painel) && ehObjeto(p.painel.grade)) {
     const g = p.painel.grade;
     if (!ehInteiro(g.colunas) || g.colunas < 1) erros.push('painel.grade.colunas precisa ser inteiro ≥ 1.');
+  }
+
+  // Controles de toque (ADR-007 seção 5.3): obrigatórios no perfil ativo; o bloco, quando existe, é sempre validado.
+  if (p.toque === undefined) {
+    if (opcoes.ativo) erros.push('toque ausente: o perfil ativo precisa do bloco "toque" (ADR-007 seção 5.1).');
+  } else if (ehObjeto(p.sala) && ehObjeto(p.barra) && ehObjeto(p.painel) && ehInteiro(p.tile)) {
+    erros.push(...validarToque(p.toque, p as unknown as Parameters<typeof validarToque>[1]));
+  } else {
+    erros.push('toque não pode ser validado: faltam sala, barra, painel ou tile.');
   }
 
   return erros.length > 0 ? { ok: false, erros } : { ok: true, perfil: bruto as unknown as PerfilDeArte };

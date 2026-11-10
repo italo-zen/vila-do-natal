@@ -406,3 +406,267 @@
 ## 2026-11-09 — Marco 4 aprovado (Diretor, PT4b)
 - **Decisão:** Marco 4 (enfeite, créditos e plot twist, v0.8.1) aprovado ("Está ótimo."). Marco 5 aguarda liberação explícita.
 - **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Marcos 3 e 4 commitados; Marco 5 liberado (Diretor)
+- **Decisão:** commits 6ab0907 (documentos) e 0edf562 (código) na branch `claude/marco-1-orchestration-c3b37a`, sem push. Fora do Git: referências, arquivos de teste de sprite, dist-qa, evidências do QA e a planta original. Marco 5 (celular, v0.9.0) liberado ("depois libere o marco 5").
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Produto: escopo do Marco 5 (toque e rotação, v0.9.0)
+- **Decisão:** GDD seção 18 e backlog 097 a 109. Padrões do Produto: cruz digital de 4 teclas, sem analógico; A à direita, B à esquerda do A, cruz à esquerda (layout A quando as faixas livres têm 144 CSS px ou mais); layout B (botões sobre a casa, 60% de opacidade) em celular estreito; alvo mínimo de 48 CSS px; ação ao pressionar; toque fora dos botões não age; botões somem onde não têm ação, na condução e no fade; painel no toque ganha "Fechar"; aviso de rotação só em aparelho com toque, congela o mundo, sem tela cheia nem trava de orientação; tocar para começar sem tela extra (áudio no Marco 6); `comojogar.celular` sai de uso.
+- **Pergunta 38 aberta:** botões por cima da casa em celular estreito (sugestão do Produto: sim). Padrão aplicado: layout B.
+- **Quem decidiu:** Produto (padrões); Diretor (pergunta 38, pendente).
+
+## 2026-11-09 — Especialista: ADR-007 (toque e rotação) proposto
+- **Decisão:** entrada de toque como segunda fonte de `Controles` (mesma API, sem tocar domínio nem aplicação); controles em DOM, alvos dentro do canvas em Phaser; perfil `toque` em CSS px, com os mínimos (48 CSS px e 8 CSS px) impostos pelo validador; detecção de toque por três sinais no boot e de retrato pela área visível; `resolution` = DPR; aviso de rotação congela com `loop.sleep`; textos de toque com sufixo `.toque`; `comojogar.celular` sai do teclado também. Alvo mínimo passa de 44 para 48 CSS px no `style-guide.md`.
+- **Divergências do GDD 18 (seção própria no ADR-007):** V1 cruz de 144 px (braços encostados); V2 ação ao pressionar não é desfeita ao arrastar; V3 barra de 29 caracteres (não 32); V4 "Farejar" quebra em duas linhas se couber; V5 painel de toque em 5 colunas; V6 alvo abaixo de 375 px de altura; V7 letra de A e B é desenho.
+- **Pendente do Diretor:** V1 (cruz) e V5 (painel em 5 colunas), com sugestão sim para as duas. Aceite do ADR-007 pelo Orquestrador.
+- **Quem decidiu:** Especialista (proposta técnica); aceite pendente do Orquestrador.
+
+## 2026-11-09 — ADR-007 aceito (Orquestrador)
+- **Decisão:** ADR-007 aceito (entrada compartilhada por Dev, Arte, QA). Divergências V1 a V7 resolvidas com os padrões do Especialista. Perguntas ao Diretor: 38 (layout B em celular estreito), 39 (cruz com braços encostados, 144 px) e 40 (painel de 5 colunas no toque); padrões aplicados até a resposta.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite); Diretor decide 38 a 40.
+
+## 2026-11-09 — Marco 5: desvios do Dev aceitos (Orquestrador, padrão)
+- (a) `margemCss: 8` entra no bloco `toque` (ADR-007 5.1 e 4.2). (b) Phaser 3.90 não tem `resolution` no Canvas: o canvas fica 1x com `image-rendering: pixelated`; em DPR 2 e 3 os pixels podem ficar de tamanhos desiguais (aceito pelo ADR 3.3); o PT4 em aparelho real mede. (c) Painel de toque 5 × 3: Apagar e Fechar ocupam 2 colunas, OK 1 (pergunta 41 ao Diretor). (d) Defeito de 0.8.1 corrigido: a barra da dica mostrava "[Z ou X: voltar]" por texto no lugar de chave; as capturas de dica mudam em relação à linha de base. (e) Testes de versão atualizados para 0.9.0. (f) `smoke:playtest` roda também `tools/smoke-toque.mjs`.
+- **Quem decidiu:** Orquestrador (padrão), Diretor decide 38 a 41.
+
+## 2026-11-09 — Marco 5: layout B não pode cobrir texto dos menus (Orquestrador)
+- **Decisão:** nas capturas do layout B (667×375) a cruz e os botões A/B cobrem texto e botões do título e do Como jogar. Em layout B, nas telas de menu e de texto, os controles não aparecem ou ficam fora do texto; o toque direto nos itens já funciona. Dev ajusta; a pergunta 38 (layout B sobre a casa a 60%) continua valendo só para a exploração.
+- **Quem decidiu:** Orquestrador, a partir da revisão das capturas; o Diretor vê as capturas antes de publicar.
+
+## 2026-11-09 — PR dos Marcos 3 e 4 mergeada (Diretor)
+- **Decisão:** a PR dos commits 6ab0907 e 0edf562 foi aberta e mergeada pelo Diretor em `setup/estrutura-de-agentes`. O trabalho do Marco 5 segue sem commit na mesma branch local; sincronizar com a base (`sync_with_base_branch`) só depois de commitar o Marco 5, porque a ferramenta recusa mexer com alterações não commitadas.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Perguntas 38 a 41 respondidas (Diretor)
+- **38:** sim, layout B (cruz e A/B sobre a casa a 60%) em celular estreito, só na exploração (menus ficam limpos, decisão do Orquestrador acima). **39:** sim, cruz de braços encostados, 144 px. **40:** sim, painel 5 × 3 só no toque. **41:** sim, Apagar e Fechar em 2 colunas, OK em 1.
+- **Quem decidiu:** Diretor. Os padrões aplicados passam a decisão.
+
+## 2026-11-09 — Marco 5: layout B por tela; textos `.toque.menu`; TQ22 (Produto, regra do Orquestrador)
+- **Decisão:** no layout B (667×375), título, Como jogar, seleção, conquista, dica, créditos e painel não têm cruz nem A/B (o toque vai direto no item). Diálogo e introdução têm A e B, sem cruz, no maior trecho livre das linhas 2 a 8, fora da caixa de texto. Exploração: cruz, A e B a 60%, como antes. Layout A não muda. Nas telas sem botão no layout B, a barra usa `.toque.menu` (até 29 caracteres; chaves em GDD 18.12). Caso TQ22 (sobreposição) incluído.
+- **Perguntas 38 a 41:** sim às quatro (Diretor, 2026-11-09). P12 a P15 decididas.
+- **Pergunta 42 (nova, aberta):** a seleção do layout B não tem botão B, então não há saída por toque para o título. Padrão aplicado: botão "Voltar ao título" de menu, só no layout B. Sugestão do Produto: sim.
+- **Quem decidiu:** Orquestrador (regra por tela, a partir das capturas); Diretor (38 a 41 e a regra confirmada); Produto (textos, TQ22 e padrão da 42).
+
+## 2026-11-09 — BUG-M5-03 não é bug (Orquestrador)
+- **Decisão:** no layout A (844×390) os menus mostram cruz e A/B nas faixas laterais, sem cobrir nada; vale o GDD 18.4. O layout B (667×375) é que esconde os controles nos menus. QA fecha BUG-M5-03 como comportamento esperado.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.0 publicada (Diretor aprovou as capturas)
+- Artifact Version 12. Pergunta 42 (botão "Voltar ao título" na seleção em layout B, opção A) mantida como padrão: o Diretor aprovou a captura da seleção. Marco 5 fechado pelo QA com ressalvas (RM2-d/e jogados de verdade, F8 e F9 sem teste; cobertos pelos Marcos 2 e 3 e por testes). PT4 aguarda o retorno em aparelho real.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — PT4: joystick virtual no lugar da cruz (ajuste 0.10.0, Produto)
+- **Pedido do Diretor (PT4, v0.9.0):** trocar as setas direcionais do celular por controle analógico; depois, "modelo analógico" (base redonda com bolinha que acompanha o polegar). Movimento segue em grade de 4 direções, sem diagonal.
+- **Escopo escrito:** GDD 18.19 (base 120 CSS px, bolinha 48, curso 36, zona morta 12, limiar 20, histerese, eixo dominante, um empurrão = um passo nos menus do layout A, dica sem joystick). Textos: "Setas" sai do toque; "Mover:" entra. Backlog 111 a 119.
+- **Versão:** 0.10.0 (troca de controle é recurso, não correção).
+- **Pergunta 43 aberta:** fixo ou flutuante. Padrão aplicado: fixo, no lugar da cruz (layout B reserva a área; flutuante exigiria a tela inteira como zona de toque, contra a regra 5).
+- **Quem decidiu:** Diretor (pediu o joystick e o modelo analógico); Produto (escopo, padrões e versão 0.10.0, aguardando aceite do Orquestrador).
+
+## 2026-11-09 — Joystick virtual: versão e padrões aceitos (Orquestrador)
+- **Decisão:** versão 0.10.0 (ajuste de recurso); padrões da GDD 18.19 aceitos (grade de 4 direções, base 120 CSS px, zona morta 12 e limiar 20, menus com um empurrão = um passo no layout A; dica e layout B sem joystick, conforme pergunta 38). Pergunta 43 (fixo ou flutuante) ao Diretor, padrão fixo.
+- **Quem decidiu:** Orquestrador (padrões); Diretor decide a 43.
+
+## 2026-11-09 — BUG-M5-04 e comportamento da cruz nos menus (Orquestrador)
+- **Decisão:** bug registrado como BUG-M5-04 (PT4); correção v0.9.1. Regra: num menu, um toque no braço da cruz = um passo; segurar não repete. Repetição ao segurar seria mudança de regra (decide o Diretor). O ADR-007 seção 1.1 ("`apertada` vem só de A e B") fica desatualizado e o Especialista corrige na revisão do joystick.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Revisão 2 do ADR-007 para o joystick (Especialista, proposta; aguarda aceite do Orquestrador)
+- **Decisão:** `docs/ADR-007.md` revisado (backlog 112). (1) `direcaoDoAnalogico` (pura, em `presentation/input/direcaoDoAnalogico.ts`) substitui `pilhaDaCruz`: zona morta ≤ 12, limiar ≥ 20, distância euclidiana, empate mantém a direção anterior. (2) Borda de menu só no engajamento (repouso para direção); trocar de direção sem zona morta não dá passo (contrato de menu, ADR seção 7.1). (3) Base do joystick a 8 CSS px da borda no layout A e no B (x = `margemCss`); A e B não mudam. (4) `cruzCss` e `cursoCss` fora do bloco `toque` (curso derivado = 36). Validação: base de 96 a 120, bolinha ≥ 40, curso ≥ 20, layout A cabe (base + 2 × margem e par de botões ≤ faixa). (5) Setor do joystick em anel na borda (52 a 60 CSS px), só nas direções que a tela aceita, acima da bolinha; corrige o disco do gerador da Arte. (6) Redimensionar não solta o dedo (correção de `soltarTudo` em `ControlesDeToque`). (7) V1 e pergunta 39 viram histórico. Pergunta 43 segue com padrão fixo e não bloqueia 111 a 119. (8) `style-guide.md` atualizado nos pontos de controle e de texto.
+- **Pedidos ao Produto (GDD 18.19):** 18.19.4 (distância euclidiana; `≤ 12` solta, `≥ 20` engaja; empate mantém a anterior), 18.19.7 (setor em anel na borda, só nas direções da tela), 18.19.8 (passo só da zona morta), TQ25 e TQ28 (setor ao engajar e sumir ao voltar à zona morta).
+- **Motivo:** a cruz sai com o PT4 (GDD 18.19); o contrato de menu não estava escrito (BUG-M5-04); o código atual solta o dedo a cada resize; o setor da Arte desenha disco, não borda.
+- **Quem decidiu:** Especialista (proposta). Orquestrador aceita ou ajusta; o Diretor decide só a pergunta 43.
+
+## 2026-11-09 — ADR-007 revisão 2 aceito (Orquestrador)
+- **Decisão:** ADR-007 revisão 2 aceito (joystick: função pura `direcaoDoAnalogico`, contrato de menu M1 a M7, captura do ponteiro, bloco `analogico` sem `cruzCss` nem `cursoCss`, setor em anel nas direções da tela, resize não solta o dedo). Pergunta 43 segue com padrão fixo. Ordem: v0.9.1 (correção) primeiro; Dev implementa a 0.10.0 depois do reteste do QA.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite).
+
+## 2026-11-09 — GDD 18.19 ajustado à revisão 2 do ADR-007 (Produto; backlog 111 a 113)
+- **Decisão:** GDD 18.19.3, 18.19.4, 18.19.6, 18.19.7, 18.19.8, 18.19.13 (TQ25 e TQ28), 18.19.14 e 18.19.16 atualizados conforme P13 a P17 e P19 a P22 do ADR-007. (1) Distância euclidiana. (2) `≤ 12` solta; `≥ 20` engaja só a partir do repouso; histerese até 12. (3) Empate exato mantém a direção anterior, ou nenhuma. (4) Setor em anel de 52 a 60 CSS px, único, ao engajar, só nas direções que a tela aceita. (5) Passo de menu só ao engajar: trocar de direção sem passar por `≤ 12` não dá passo. (6) `cruzCss` e `cursoCss` fora do perfil (`toque.analogico`: base 120, bolinha 48). (7) Redimensionar e `visualViewport` não soltam o dedo. (8) Regra de menu do BUG-M5-04: um empurrão (toque) = um passo; segurar não repete. (9) v0.9.1 (correção) sai antes da 0.10.0, com reteste do QA.
+- **Correção no TQ28:** o texto antigo dizia que a 30 CSS px a bolinha fica presa na borda. Com curso de 36, só a 40 fica presa; a 30 segue o dedo dentro do curso.
+- **Ponto para o Especialista (ADR-007 10.5):** o ADR diz que `soltarTudo` roda na troca de layout. Como o layout é recalculado em cada resize, um resize que cruze a faixa de 144 solta o dedo. O GDD segue o ADR (18.19.6). Se o Orquestrador preferir que resize nunca solte, o ADR muda.
+- **Consequência aceita (ADR P15):** o empate exato (|dx| = |dy|) sem direção anterior não engaja. Com dedos reais, o empate exato é raro.
+- **Status (backlog):** 111 pronto (ajustado); 112 aprovado; 113 em andamento (Arte: falta `cruzCss` fora do perfil, conferir PNGs e captura T7).
+- **Quem decidiu:** Produto (texto, seguindo a revisão 2 do ADR-007 aceita pelo Orquestrador em 2026-11-09).
+
+## 2026-11-09 — Joystick: resize e troca de layout (Orquestrador)
+- **Decisão:** resize ou rolagem do `visualViewport` que NÃO troca de layout não solta o dedo; troca de layout (A ↔ B, ao cruzar a faixa de 144 CSS px, ou giro do aparelho) solta o joystick (ADR-007 10.5 vale). O Especialista ajusta a frase do ADR e o status "aceito" no cabeçalho.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.1 publicada (Diretor aprovou as capturas)
+- Artifact Version 13. Próximo: Dev implementa o joystick 0.10.0 (ADR-007 rev. 2). Pergunta 43 segue com padrão fixo.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — Commit e PR do Marco 5 só no fim do marco (Diretor)
+- **Decisão:** não commitar agora. Ao finalizar o Marco 5 (joystick 0.10.0 aprovado pelo QA e pelo Diretor): dois commits (documentos e código), push da branch e entrega do link de comparação para a PR (o `gh` não está instalado; o Diretor abre a PR). Depois, sincronizar a branch com a base.
+- **Quem decidiu:** Diretor ("abra a PR quando finalizar o marco 5").
+
+## 2026-11-09 — Aprovação antecipada do joystick e liberação da próxima etapa (Diretor)
+- **Decisão:** o Diretor viu a captura do joystick (prévia da Arte) na conversa do agente. Quando o joystick (0.10.0) passar no QA, o Orquestrador aprova as capturas e publica a v0.10.0 sem nova rodada de aprovação, e segue para a próxima etapa: commit, push e link da PR do Marco 5, e abrir o Marco 6 (áudio, polimento) com o Produto. Se o QA reprovar ou aparecer decisão de visão, volto ao Diretor.
+- **Quem decidiu:** Diretor ("quando passar pelo QA, pode aprovar e seguir para a próxima etapa").
+
+## 2026-11-09 — Joystick 0.10.0: desvios do Dev aceitos (Orquestrador)
+- (1) Engajamento a partir de 12 < distância < 20 em repouso: vale o ADR (a função pura não guarda a última distância); parar em 15 e ir a 25 na mesma direção gera o passo. (2) `gestos.ts`: `preventDefault` do `touchmove` só se `e.cancelable` (sem efeito em aparelho real). (3) Bolinha a 100% de opacidade quando há dono. (4) Sem versão pressionada da base. (6) Multitoque base + A coberto por teste de unidade; o QA cobre emulado. (7) Os 8 `ctl_cruz_*.png` (não rastreados, sem registro) foram removidos. `comparar:capturas` (434 diferenças com `qa/baseline-014`): a linha de base 014 é anterior aos Marcos 3 e 4; não refazer agora, vai ao backlog do Marco 6.
+- **Quem decidiu:** Orquestrador (padrões), com aprovação antecipada do Diretor para o fluxo do joystick.
+
+## 2026-11-09 — v0.10.0 publicada; Marco 5 fechado pelo QA (Orquestrador, por autorização do Diretor)
+- Artifact Version 14. QA: joystick (118) e toque (106) aprovados; teclado (107) aprovado com pendências (F9, "Au!" do F6, F8 em diálogo), levadas ao PT4c e ao Marco 6. Observação de baixa severidade: o gancho `__alvosDeToque` ainda listou a base durante o fade (ferramenta de QA).
+- **Quem decidiu:** Orquestrador, seguindo a autorização do Diretor ("quando passar pelo QA, pode aprovar e seguir").
+
+## 2026-11-09 — Pergunta 43 respondida (Diretor)
+- **Decisão:** o joystick é FIXO (embaixo à esquerda, no lugar da cruz). Padrão confirmado; nada muda no código nem no GDD 18.19.
+- **Quem decidiu:** Diretor ("Joystick é fixo mesmo").
+
+## 2026-11-09 — Marco 6: escopo do Produto aceito (Orquestrador)
+- **Decisão:** versão 0.11.0 no PT5 (áudio e pausa são recursos novos); a tag 1.0.0 só depois do PT5 aprovado pelo Diretor; sem `-rc`. Padrões do GDD 19.11 aceitos ("Quase!" some na primeira tecla; mudo volta ligado ao recarregar; fonte fixa, piso de 12 px; áudio por síntese original, orçamento 160/12/320 KB e HTML ≤ 2,5 MB; arte nova em 1.x). Pergunta 44 (estilo da música) ao Diretor, padrão B. O Marco 5 está aprovado pelo QA e a observação do cartão do DanDan veio de uma captura minha (seleção em 844×390). Pendências 31 a 37 e 42 a 43 fechadas por implicação dos retornos do Diretor (PT3b, PT4a, PT4b e resposta à 43).
+- **Quem decidiu:** Orquestrador; Diretor decide a 44.
+
+## 2026-11-09 — Triagem de bugs do Marco 6 (Orquestrador)
+- **BUG-M12-02 (última linha da Sala andável):** já decidido na pergunta 31 (Diretor, 2026-11-09): só (0,9) e (1,9) ficam bloqueados sob a barra de 2 linhas; o resto da Sala segue como o Diretor aprovou. Fecha como decidido (item 132, QA confirma na captura).
+- **BUG-R15-01 (caixa de diálogo da condução cobre o tile da árvore):** já decidido em 2026-11-08 (diálogo da árvore forçado e no topo, condução automática); fecha, salvo reteste negativo do QA no item 132.
+- **BUG-R13-01, R14-01:** fechados por decisões de 2026-11-08, salvo reteste negativo.
+- **Fila do Dev:** 129 e 130 (P0), 131, BUG-R13-03 e o gancho do fade (P1); BUG-M2-05 só depois de confirmar com a Arte.
+- **Quem decidiu:** Orquestrador, com base nas decisões do Diretor já registradas.
+
+## 2026-11-09 — ADR-008 aceito (Orquestrador)
+- **Decisão:** áudio gerado offline (`tools-arte/gerar_audio.py`, MP3 mono 22.050 Hz, 32 kbps, base64 no HTML único) em vez de síntese no navegador; KB = 1000 bytes; música alvo de 36 s (144.000 bytes), em laço gapless (`loopStart`/`loopEnd`); `content/audio.json` e chave `audio` no manifesto (aditivo, `schemaVersion` 2); pasta `assets/audio/` (supera ADR-002 linha 129 e ADR-003 seção 3, só para áudio); licença por síntese original; ícones de som e de pausa não são controles de jogo (fora de `botoesDaTela`); pausa por cena sobreposta, só onde o "?" abre, com "Voltar ao título" confirmado e "Não" em foco; teste de áudio no iframe do artifact antes do PT5.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite). Pergunta 44 (estilo da música) segue com o padrão B.
+
+## 2026-11-09 — GDD e backlog ajustados ao ADR-008 (Produto)
+- **Decisão:** GDD 18.4 (nota: ícones de som e de pausa não são controles de jogo); 18.14 TQ22 (a) com "controle de jogo" (direções, A, B e "?"); 19.2.1 (alvo de 36 s, 144 000 bytes; música em todas as telas, incluindo diálogo, painel e conquista); 19.2.2 (regras R1 a R8); 19.2.3 (Esc não libera; liberação só por gesto dentro do iframe do artifact; artifact de teste antes do PT5, AU14); 19.2.4 (validação de `content/audio.json`); 19.2.6 (1 KB = 1000 bytes; música 160 000 bytes; aviso, sem reprovar, de HTML sem áudio acima de 2 000 000 bytes); 19.6 (decodificação ≤ 500 ms com CPU 4×); 19.7.3 (pré-requisito do artifact de teste); 19.9 (AU9 com o total dos efeitos; AU10 medido no efetivo; AU11; DS1; AU14 novo); 19.11 (u e v). Backlog: 122 aprovado; 123 a 128, 135 e 136 com os critérios do ADR-008 e as dependências na ordem da seção 12.
+- **Motivo:** o Dev, o QA e a Arte trabalham sobre o mesmo texto. O ADR-008 deixou em aberto as pendências de Produto da seção 15.
+- **Quem decidiu:** Produto (proposta), para validação do Orquestrador. Ponto de atenção: o R8 do ADR-008 listava as telas com música sem diálogo, painel e conquista. O GDD 19.2.1 diz "todas as telas", e foi o texto adotado. Se o Diretor preferir silêncio nessas três telas, muda-se R8 e 19.2.1.
+
+## 2026-11-09 — Faixa de passos da condução ajustada à rota medida (Produto, item 133)
+- **Decisão:** E7 = 13 passos e E20 = 17 passos, ambas em 2×, em GDD 15.3.5, 15.10 e 19.11 (l). A rota não muda. A faixa antiga (15 a 17 e 20 a 22) era estimativa, superada.
+- **Motivo:** QA mediu 10 e 14 trocas de tile nos 4 sobrinhos (`qa/evidencias/marco6-r5-rota.txt`); somados os 3 da passagem (15.3.5), 13 e 17. O QA reconfirma o total ao vivo (PO5) antes de fechar o 133.
+- **Quem decidiu:** Orquestrador (padrão: ajustar o GDD à rota medida); Produto registrou.
+
+## 2026-11-10 — Jingles de conquista e de créditos, versão 0.12.0 (Produto, retorno do PT5)
+- **Decisão:** um jingle por conquista (J01 a J05, 2,5 a 4 s) no lugar do S09 único; a trilha baixa (ducking) em vez de pausar, e volta do mesmo ponto; créditos tocam um jingle de Natal original (JC, 12 a 16 s) uma vez por cima da trilha. Total de 320 000 bytes mantido; previsão ≈ 296 000. Versão 0.12.0 (recurso novo, não patch). GDD 19.2.7, 19.9 (AU15 a AU20), 19.11 (w a y); backlog 143 a 148.
+- **Motivo:** pedido do Diretor no PT5 ("as páginas de conquista podem tocar músicas diferentes?" e "a página de crédito pode tocar um jingle de Natal?"); os áudios "estão legais".
+- **Quem decidiu:** Orquestrador (escopo); Produto (padrões acima). Pergunta aberta ao Diretor: créditos, uma vez ou em laço (19.11 y; padrão: uma vez).
+- **Ajuste ao entregue (Arte, item 143, aceito pelo Orquestrador, 2026-11-10):** J04 3,0 s, J05 3,8 s, JC 15 s; conquistas em 0 dB (regra A6 de mixagem), JC em −2 dB; arquivos `jin_*.mp3`; `sfx_s09_conquista.mp3` sai do catálogo (total 299 998 bytes, não 308 479).
+- **Novo aceite AU21 (iPhone 16 Pro, interruptor de silencioso):** backlog 149; padrão do Produto: o jogo respeita o silencioso do aparelho. Só o Diretor testa, com o artifact de diagnóstico.
+
+## 2026-11-09 — Música em todas as telas (Orquestrador, padrão)
+- **Decisão:** a música de fundo toca em todas as telas (inclusive diálogo, painel e conquista), como no GDD 19.2.1; o ADR-008 R8 não cita essas três, então vale o GDD. O Diretor pode pedir silêncio nelas.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Perguntas 1 a 4 do pipeline de release respondidas (Diretor)
+- **1:** endereço padrão do GitHub Pages (`https://italo-zen.github.io/vila-do-natal/`), sem domínio próprio. **2:** repositório público. **3:** `main` vira o branch padrão do GitHub depois de a `main` receber o código (Diretor altera em Settings > Branches). **4:** sem nomes a acrescentar na lista de bloqueados do build.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Teste de áudio no artifact (AU14): funcionou (Diretor)
+- **Resultado:** o Diretor ouviu o teste (artifact privado de dois sinos) e o áudio funcionou dentro do artifact. A arquitetura do ADR-008 (liberação no primeiro gesto) é viável no PT5. Texto exato da caixa de estado não informado; aparelho e navegador não informados.
+- **Quem decidiu:** resultado informado pelo Diretor.
+
+## 2026-11-09 — Pergunta 44 respondida (Diretor)
+- **Decisão:** a música de fundo é a opção B: sinos e celesta sintetizados, acústicos e natalinos. Padrão confirmado; a Arte segue no estilo já em produção.
+- **Quem decidiu:** Diretor ("44) B").
+
+## 2026-11-09 — Arte entrega a trilha e os 13 efeitos (itens 123, Marco 6)
+- **Decisão:** áudio final aceito para integração: trilha 144.526 B (limite 160.000), efeitos somados 39.927 B, total 184.453 B (limite 320.000); maior efeito S09 com 8.481 B (limite 12.000). Desvios do ADR-008 aceitos: (1) ganhos de partida alterados em `content/audio.json` para passar A6(a)/(b): S04 -7, S05 -7, S06 -6, S08 0, S11 0, S12 -4, S13 -15, música -15; (2) atraso/preenchimento do MP3 lidos do ffprobe (ffmpeg 7.0.1 não grava na tag LAME); (3) nome do S13 = `sfx_s13_erro` (tabela da seção 5 prevalece sobre a 1.2). Laço da trilha: o meta traz `loopSeAparado` [0, 793800] e `loopSeNaoAparado` [1105, 794905]; o QA confirma por navegador qual vale.
+- **Pendências:** `tools/verificar-tamanho.mjs` reconhece a trilha por prefixo `musica` e deve usar `mus_` (Generalista); item 124 (ícones) é do Dev; aprovação da faixa pelo Diretor (critério 7) depende de ouvir no jogo.
+- **Quem decidiu:** Orquestrador (desvios técnicos pequenos, dentro do ADR); pergunta de volume ao Diretor.
+
+## 2026-11-09 — Volume da música mantido no padrão (Diretor)
+- **Decisão:** a trilha fica 10 dB abaixo da média dos efeitos (padrão AU10, ganho -15 em `content/audio.json`). Só sobe depois de ouvir no jogo, se o Diretor pedir.
+- **Quem decidiu:** Diretor ("Manter padrão").
+
+## 2026-11-09 — Polimento do Marco 6 aprovado (Diretor)
+- **Decisão:** nome do DanDan em 14 px (os outros em 16); rótulos de móveis em 16 px e "Au!" em 12 px (piso de 12 px do item 131). Itens 129, 130, 131, 134 e BUG-R13-03 entregues. As capturas da casa passam a ser a nova referência: o QA refaz `qa/baseline-0100` antes das rodadas.
+- **Quem decidiu:** Diretor ("aprovado").
+
+## 2026-11-09 — Ícones de pausa e som aprovados em creme (Diretor)
+- **Decisão:** item 124 aceito: seis sprites em `assets/hd-480x352/ctl_*` (pausa, som ligado, som desligado, normal e pressionado). Desenho em creme #f4e9c8; pressionado em dourado #f4d35e com desenho #0b1030. Som desligado distinto pelo risco, não só pela cor. Entrada em `botoesDaTela` fica com o Dev no item 126.
+- **Quem decidiu:** Diretor ("Manter").
+
+## 2026-11-09 — Áudio, pausa e ícones integrados; ícone de som do título em y=2 (Diretor)
+- **Decisão:** itens 125, 126, 127 e 128 entregues (826 testes). Ícone de som do título em y=2 (não y=8) para não encostar no nome do jogo. Desvios aceitos do ADR-008: casa dorme (`scene.sleep`/`wake`) na pausa, em vez de `pause`/`resume`; `__estado()` fora da casa devolve objeto com `mapa: null` (roteiros do QA checam `e.mapa`); áudio entra por `virtual:audio`, sem `FonteDeAudio`.
+- **Quem decidiu:** Diretor ("aprovo"); desvios técnicos: Orquestrador.
+
+## 2026-11-09 — Mudo: a música silencia e volta do mesmo ponto (Orquestrador)
+- **Decisão:** vale o código e o GDD 19.2.3: o mudo silencia a música (ela segue rodando sem som). O texto de AU4 no checklist passa a "a música silencia". Padrão aplicado por mim (divergência de spec, P3 do QA).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — PO3 corrigido; DS2 por transferência de rede; build enxuto do Phaser (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** PO3 (P1) corrigido (zona de toque do "Voltar ao título" começa na linha de baixo dos cartões, ≥ 48 CSS px). DS2: o tempo é transferência de rede (Fast 4G emulado: 9,4 s sem gzip, 3,9 s com gzip; decodificação do áudio 16–32 ms, não atrasa o título). Aplicada a sugestão do Dev: build enxuto do Phaser (só os módulos usados) para dar margem antes do PT5. `npm run verificar:audio` criado (AU10 e AU11).
+- **Quem decidiu:** Orquestrador, aplicando a sugestão do Dev como padrão; o Diretor é avisado.
+
+## 2026-11-09 — DS2: build enxuto do Phaser testado e revertido; fica o build atual (Orquestrador)
+- **Decisão:** o núcleo enxuto do Phaser deu HTML 1.411 KB (-26%), gzip 614 KB (-17%), título 3,23 s contra 3,86 s (-16%), abaixo do corte de 20%; revertido. Mantém-se o build atual: com gzip o título sai em 3,86 s (limite 4 s, Fast 4G emulado). Build customizado do Phaser a partir da fonte descartado (manutenção). A medida real fica para o QA no artifact/Pages e o PT5 no aparelho. Experimento guardado no scratchpad (`experimento-phaser-enxuto/`).
+- **Quem decidiu:** Orquestrador (dentro do padrão "siga suas sugestões"; o Diretor é avisado e pode pedir o contrário).
+
+## 2026-11-09 — AC4: pisca medido por ciclos, não por quadros (Orquestrador)
+- **Decisão:** a "caixa que muda 20x/s" do Hall é o bilhete (tween de alfa 1→0,6, ciclo de 1,8 s). O limite do AC4 (≤ 3 ciclos/s) vale para pares de inversões de luminância com variação ≥ 10%, não para quadros que mudam. Períodos dos pulsos em `src/presentation/ui/pisca.ts` (halo 2000, brilho 2000, bilhete 1800, seta 900 ms), teste `pisca-limite`. Aparência inalterada (351 capturas idênticas). Amplitude do bilhete não muda sem decisão do Diretor (GDD 14.4).
+- **Quem decidiu:** Orquestrador, seguindo o Dev.
+
+## 2026-11-09 — P na Sala depois das luzes: por projeto, item 137 sem bug aberto (Orquestrador)
+- **Decisão:** o P3 do QA (P não abre a pausa na Sala depois das luzes) é por projeto (GDD 19.3.1: a pausa só abre na exploração; ~4,7 s de bloqueio por diálogo, conquista e condução, e abre na primeira tentativa livre). Sem bug P0 a P3 aberto no jogo; DS2 (gzip) e o ícone no fade (só no gancho) ficam como observações. Item 137 aceito pelo Orquestrador como fechado no alcance do QA automatizado; escuta (AU13), aparelho real (AC7, DS6) e Firefox/WebKit ficam com o Diretor no PT5.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Item 136: checagem de rede do release com exceções documentadas (Orquestrador)
+- **Decisão:** aceito o desvio do ADR-008 8.4: `verificarConteudoDoHtml` exige 14 áudios embutidos, nenhum .mp3 como caminho, nenhum `rascunho`, e nenhum http(s) em src/href/url() (exceto w3.org), com exceções só para código de biblioteca (polyfill de pré-carregamento do Vite, 1 XMLHttpRequest do Phaser, `importScripts` como detecção). Zero literal exigiria mexer no build/motor e fica descartado. O passo "Áudio (AU10 e AU11)" entra no release.yml (ffmpeg e numpy do apt); só um `workflow_dispatch` no GitHub prova o passo, o que fica para o release.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.0 publicada para o PT5 (Diretor)
+- **Decisão:** build de playtest 0.11.0 (jogo completo com música, 13 efeitos, pausa e mudo) publicada no artifact do jogo, Version 15 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP). Item 137 fechado no alcance automatizado; escuta (AU13), aparelho real (AC7, DS6) e Firefox/WebKit ficam no PT5.
+- **Quem decidiu:** Diretor ("pode aprovar e publicar").
+
+## 2026-11-10 — Retorno parcial do PT5 (Diretor)
+- **Retorno:** no macbook o som saiu normalmente; no iPhone 16 Pro não saiu nada. Os áudios "estão legais". Pedidos: músicas diferentes nas páginas de conquista; jingle de Natal na página de créditos.
+- **Classificação:** bug P1 (iOS sem som) → Dev, com artifact de diagnóstico para o aparelho; ajustes de áudio (conquistas e créditos) → Produto, depois Arte e Dev. Escuta (AU13) aprovada no macbook.
+- **Quem decidiu:** Orquestrador classificou; Diretor deu o retorno.
+
+## 2026-11-10 — Créditos: o jingle toca uma vez (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** o jingle de Natal dos créditos (JC, 12 a 16 s) toca uma vez por cima da trilha, com ducking de 10 dB, e a trilha volta. Não toca em laço (cansa, e os créditos ficam o tempo que a pessoa quiser). Escopo do ajuste 0.12.0 aceito (backlog 143 a 148); o Diretor é avisado.
+- **Quem decidiu:** Orquestrador, aplicando a sugestão do Produto.
+
+## 2026-11-10 — Bug P1 do iPhone: conserto de decodificação e destrava; diagnóstico publicado (Orquestrador)
+- **Decisão:** causas prováveis (1) decodificação tudo-ou-nada no `Som` (uma falha no WebKit derrubava trilha e efeitos) e (2) chave de silencioso do iPhone silenciando o Web Audio (confirmado: chave ligada, Chrome no iOS = WebKit). Conserto aplicado pelo Dev: decodificação isolada por arquivo com nova tentativa no gesto, `navigator.audioSession.type = 'playback'`, `<audio>` silencioso no caminho de mídia, destrava a cada gesto até "running"; 851 testes. Não validado em aparelho real. Artifact de diagnóstico privado (https://claude.ai/artifact/TjueYFhSdymf4o3vw52Lm4) para o Diretor testar com o silencioso ligado e desligado. Se o truque de mídia não bastar, o próximo passo é aviso de produto ("no iPhone, desligue o silencioso").
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Jingles J01–J05 e JC entregues; cortes de duração aceitos (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** item 143 entregue (`assets/audio/jin_*.mp3`, `audio-meta.json`, `docs/audio-licencas.md`, `assets/audio/audio-jingles-proposta.json`). Aceitos os cortes para caber em 64.000 B somados: J04 3,0 s (era 3,5), J05 3,8 s (era 4,0), JC 15 s (era 16); ganho das conquistas em 0 dB (GDD 19.2.7 d dizia -2 dB; com -2 dB elas ficavam 3,7–4,2 dB abaixo do S09 e a regra A6 falhava), JC em -2 dB. Áudio total 308.479 B de 320.000. JC é melodia original em 3/4, sem direitos a citar. O GDD 19.2.7 deve ser ajustado a esses valores. Pendências: `verificar-tamanho` precisa reconhecer `mus_`, `jin_j0` e `jin_jc` (Generalista, item 147); schema e integração (Especialista 144, Dev 145). A pré-escuta fica com o Diretor.
+- **Quem decidiu:** Orquestrador, aplicando a sugestão da Arte.
+
+## 2026-11-10 — Jingles: mais distintos e JC com carol tradicional (Diretor)
+- **Decisão:** (1) os cinco jingles de conquista devem ser bem diferentes entre si (tonalidades, ritmos e timbres próprios; a J05 pode citar "Jingle Bells"); (2) o jingle dos créditos usa a melodia tradicional de "We Wish You a Merry Christmas" (domínio público; arranjo nosso original, sem o arranjo de Warrell de 1935). A regra "dó maior" do GDD 19.2.7 deixa de valer para os jingles; o Produto ajusta. Limites de bytes mantidos.
+- **Quem decidiu:** Diretor (retorno do PT5, pedido de 2026-11-10).
+
+## 2026-11-10 — AU21 (silencioso do iPhone): padrão do Produto em aberto, pergunta ao Diretor (Orquestrador)
+- **Situação:** o Produto escreveu em AU21 que "o jogo respeita o silencioso do aparelho". O Dev, porém, aplicou o caminho de mídia (`audioSession='playback'` e `<audio>` silencioso), cuja intenção é tocar mesmo com o silencioso ligado. As duas coisas se contradizem; a decisão é do Diretor. Até a resposta, vale o conserto do Dev e o AU21 fica pendente. Sugestão: respeitar o silencioso (convenção do iOS, evita som em sala de aula e igreja) e, se o Diretor preferir tocar sempre, manter o caminho de mídia.
+- **Quem decidiu:** pendente (Diretor).
+
+## 2026-11-10 — O jogo respeita o silencioso do iPhone (Diretor)
+- **Decisão:** com a chave de silencioso ligada o jogo fica mudo; com ela desligada toca normalmente, sem recarregar. Remove-se o truque de mídia (`audioSession='playback'`, `<audio>` silencioso). Fica a decodificação isolada por arquivo com nova tentativa e a destrava a cada gesto (corrigem falhas reais do WebKit). AU21 vale como o Produto escreveu. O ícone de som continua sendo o mudo do jogo.
+- **Quem decidiu:** Diretor ("respeite o silencioso").
+
+## 2026-11-10 — Jingles refeitos (item 143, revisão a pedido do Diretor); aguardam escuta
+- **Decisão:** J01 dó maior (celesta, caixinha de música), J02 sol maior (tercinas de celesta), J03 fá maior (sinos em quintas), J04 ré maior (sinos com tremolo), J05 dó maior com citação de 4 notas de "Jingle Bells" (domínio público), JC em sol maior com a melodia tradicional de "We Wish You a Merry Christmas" em 3/4 a 128 BPM (arranjo nosso). Durações: J05 3,6 s, JC 15,5 s; J01–J05 somam 62.674 B (limite 63.500), JC 62.502 B, áudio total 309.629 B de 320.000. A melodia do JC foi escrita de memória: a escuta do Diretor confirma se é reconhecível. Integração (item 145) só depois da aprovação.
+- **Quem decidiu:** Orquestrador aceitou; Diretor aprova na escuta.
+
+## 2026-11-10 — ADR-008 rev. 2 aceita; S09 vira família de jingles (Orquestrador)
+- **Decisão:** (1) rev. 2 do ADR-008 aceita, com a decisão "respeite o silencioso" (a falta de som com a chave ligada é comportamento do sistema, não bug); (2) o efeito único `sfx_s09_conquista` sai do embutimento e de `assets/audio/` e do meta quando o Dev integrar os jingles (item 145, critério 7); sem fallback; build 0.12.0 com 19 arquivos embutidos; (3) prefixo `jin_`, durações e ganhos da entrega da Arte; (4) ducking e rampas em constante de código (`presentation/audio/jingle.ts`), não em JSON, e `audio-jingles-proposta.json` não entra em `content/audio.json`; (5) `schemaVersion: 2` aditivo. Generalista ajusta `verificar:tamanho` (item 147) em paralelo; Dev integra (145) só depois da aprovação do Diretor na escuta.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.1: patch do conserto de áudio no iPhone (Diretor)
+- **Decisão:** o diagnóstico no iPhone (silencioso desligado) mostrou decodificação 14/14 e saída pelo Web Audio. Publica-se a v0.11.1 (conserto: decodificação isolada por arquivo, destrava a cada gesto, respeito ao silencioso), sem os jingles (0.12.0). Aprovada pelo Diretor ("sim").
+- **Quem decidiu:** Diretor.
+
+## 2026-11-10 — v0.11.1 publicada (Diretor aprovou)
+- **Decisão:** build de playtest 0.11.1 (conserto de áudio no iPhone, sem jingles) publicada no artifact do jogo, Version 16 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP). 847 testes, 14 áudios embutidos, HTML 1.898,5 KB. As 5 capturas com versão da baseline mudam só pelo texto; o QA as atualiza na próxima rodada.
+- **Quem decidiu:** Diretor ("sim").
+
+## 2026-11-10 — Silêncio no iPhone: bug real do laço achado; build de diagnóstico do jogo publicada (Orquestrador)
+- **Decisão:** o Dev achou um bug real (não explica o silêncio total): o laço da trilha comparava amostras de taxas diferentes e laçava só 18 s (44,1 kHz) ou 16,5 s (48 kHz) de 36 s; agora decide em segundos com a taxa do buffer (`intervaloDoLaco`). Também: música iniciada com o contexto suspenso é refeita quando vira "running"; `retomar()` e os descartes de efeitos deixam rastro em `estado()`. 855 testes. Não confirmado em aparelho: a causa do silêncio total no iPhone segue sem prova. Build de diagnóstico do jogo (flag `__DIAG__`, fora dos builds oficiais) publicada como artifact privado (https://claude.ai/artifact/5Tkxtptk8HTT2pyFLC2gGU) com painel de texto copiável. Versão do jogo segue 0.11.1; as correções entram na 0.11.2 depois do diagnóstico.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.2: correções de áudio sem painel, a pedido do Diretor
+- **Decisão:** o build de diagnóstico tocou no iPhone; o Diretor pediu para tirar a caixa de texto e testar. v0.11.2 = correções do laço (segundos, não amostras), música refeita ao virar "running" e rastros de erro, sem painel nem `__DIAG__` nos builds oficiais. Causa exata do silêncio na v0.11.1 não foi isolada (as correções juntas resolveram); o painel de diagnóstico fica como ferramenta de QA fora do release.
+- **Quem decidiu:** Diretor ("pode tirar a caixa de texto para eu testar").
+
+## 2026-11-10 — v0.11.2 publicada sem painel (Diretor pediu para testar)
+- **Decisão:** build de playtest 0.11.2 publicada no artifact do jogo, Version 17 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP): laço da trilha em segundos, música refeita ao virar "running", rastros de erro no `Som`, respeito ao silencioso, sem painel nem `__DIAG__` (conferido em dist-playtest e dist-release). 855 testes, HTML 1.898,5 KB, 14 áudios embutidos, `verificar:release` OK na 0.11.2.
+- **Quem decidiu:** Diretor ("pode tirar a caixa de texto para eu testar").
