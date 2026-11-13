@@ -80,6 +80,64 @@
       "tipo": "imagem"
     },
     {
+      "arquivo": "dec_arvore_g.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_arvore_p.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_bola.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_cortina.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_estrela.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_guirlanda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_luz.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "dec_meias.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_pano.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_presente_verde.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_presente_vermelho.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_vela.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
       "arquivo": "spr_arvore_1parte.png",
       "tipo": "imagem"
     },

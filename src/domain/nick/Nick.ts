@@ -81,6 +81,18 @@ export class Nick {
     return { tipo: 'acordou', primeiraVez };
   }
 
+  /**
+   * Modo explorar (ADR-010 1.2, EX1): o Nick nasce acordado, no `tile` de trás do sobrinho, e segue o jogador. Não é
+   * acordar de novo (não mostra `nick.acordou`): só posiciona. Não toca em `jaAcordou`.
+   */
+  posicionarNoModoExplorar(tile: Tile, direcao: Direcao): void {
+    this._estado = 'acordado';
+    this._tile = tile;
+    this._direcao = direcao;
+    this._fila = FilaDoSobrinho.vazia().comSemente(tile);
+    this._oculto = false;
+  }
+
   /** Volta a dormir no `tile` e zera a fila (ADR-005 seção 3.5). Chamado no fim da fase. Não anda até lá (pergunta 33). */
   dormirEm(tile: Tile, direcao: Direcao): void {
     this._estado = 'dormindo';

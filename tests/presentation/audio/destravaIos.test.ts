@@ -8,7 +8,12 @@ import { decodificarComCallbacks } from '../../../src/presentation/audio/motorWe
 /** Destrava no iOS/WebKit (PT5, bug P1): decodificação isolada por arquivo, nova tentativa no gesto, WAV silencioso. */
 const config = JSON.parse(readFileSync(join(__dirname, '..', '..', '..', 'content', 'audio.json'), 'utf-8'));
 const laco = { atrasoInicial: 1105, preenchimentoFinal: 551, amostrasNoArquivo: 795456, amostras: 793800 };
-const ids: string[] = [config.musica.id, ...Object.values(config.eventos as Record<string, { id: string }>).map((e) => e.id)];
+const ids: string[] = [
+  config.musica.id,
+  ...Object.values(config.eventos as Record<string, { id?: string }>).map((e) => e.id).filter((id): id is string => !!id),
+  ...Object.values(config.conquistas as Record<string, { id: string }>).map((c) => c.id),
+  config.creditos.id,
+];
 
 function entrada(): EntradaDeAudio {
   const bytes: Record<string, ArrayBuffer> = {};
@@ -35,9 +40,12 @@ function motor(falhar: Set<string>, falharNoGesto = false) {
     taxaDoBuffer: () => 22050,
     tocar(): VozDeAudio {
       reg.tocadas++;
-      return { parar: () => undefined };
+      return { parar: () => undefined, fimEm: Infinity, pararEm: () => undefined };
     },
     definirMestre: () => undefined,
+    barramentoDaTrilha: () => ({}),
+    agora: () => 0,
+    rampaGanho: () => undefined,
     estado: () => estado,
     async retomar() {
       reg.retomou++;
@@ -47,7 +55,7 @@ function motor(falhar: Set<string>, falharNoGesto = false) {
 }
 
 describe('decodificação isolada por arquivo (iOS: uma falha não silencia o jogo)', () => {
-  it('se um arquivo falha, os outros 13 decodificam e tocam', async () => {
+  it('se um arquivo falha, os demais decodificam e tocam', async () => {
     const { m } = motor(new Set([ids[3]]));
     const som = new Som(m, entrada());
     await som.decodificarTudo();

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { servicosDe, perfilDe, telaDe, numeroDaCor, estilo } from '../ui/tema';
+import { servicosDe, perfilDe, telaDe, numeroDaCor, estilo, arteDe } from '../ui/tema';
+import { quadroDoPisca, type EnfeiteBruto } from '../../application/content/decoracao';
 import { maiorTamanhoQueCabe, tamanhosAteOPiso } from '../ui/tamanhoDoTexto';
 import { definirTelaDoSom, somDaCena, telaDoSomDaCena, tocarSom } from '../audio/somDaCena';
 import { IconeDeTela, CHAVES_DA_PAUSA, CHAVES_DO_SOM } from '../ui/icones/IconeDeTela';
@@ -93,7 +94,7 @@ import { alfaDoPisca, PERIODOS_DE_PULSO_MS } from '../ui/pisca';
 
 export interface DadosDaCasa {
   /** "intro": começa pela introdução no início da missão. "conducao": a conquista acabou; o jogo leva o Sobrinho ao destino da fase (GDD 14.11). */
-  modo: 'intro' | 'conducao';
+  modo: 'intro' | 'conducao' | 'explorar';
   /** Tile (local) de onde a condução começa, e a fase que ela conclui (modo "conducao"). */
   origem?: { mapa: string; x: number; y: number };
   fase?: string;
@@ -174,6 +175,8 @@ export class CasaScene extends Phaser.Scene {
   private objetosTela: ObjetoDoMapa[] = [];
   /** Desenhos da subárea atual (apagados ao trocar de subárea). */
   private desenhos: Phaser.GameObjects.GameObject[] = [];
+  /** Enfeites do modo explorar da subárea atual (ADR-010 3): total e os que piscam (quadro pelo tempo). */
+  private enfeitesDaArea: { area: string | null; total: number; piscantes: Phaser.GameObjects.Sprite[] } = { area: null, total: 0, piscantes: [] };
   private halo: Phaser.GameObjects.Rectangle | null = null;
   private inicioPisca = 0;
   private estado: Estado = 'livre';
@@ -279,6 +282,14 @@ export class CasaScene extends Phaser.Scene {
     if (dados.modo === 'intro') {
       this.carregarSubarea(inicio.mapa, inicio.spawn);
       this.iniciarIntroducao(this.sobrinho());
+    } else if (dados.modo === 'explorar') {
+      // Modo explorar (ADR-010 1.2, EX1): a Sala, tile (3, 7), de frente para a árvore, com o Nick acordado atrás (3, 6).
+      this.carregarSubarea('sala', undefined, { x: 3, y: 7 });
+      this.dir = 'baixo';
+      this.sv.sessao.progresso.nick.posicionarNoModoExplorar({ mapa: 'sala', x: 3, y: 6 }, 'baixo');
+      this.atualizarVisualDoNick();
+      this.fade.setAlpha(1);
+      this.tweens.add({ targets: this.fade, alpha: 0, duration: 500 });
     } else {
       // Condução: a casa já está com as luzes acesas; o Sobrinho começa no tile da ação (na frente do interruptor).
       const o = dados.origem!;
@@ -509,7 +520,8 @@ export class CasaScene extends Phaser.Scene {
       targets: this.fade,
       alpha: 1,
       duration: DURACAO_DO_FADE_FINAL_MS,
-      onComplete: () => this.scene.start('Creditos'),
+      // Tela de fim (GDD 20.4) antes dos créditos: a família, o texto e o JC (uma vez).
+      onComplete: () => this.scene.start('Fim'),
     });
   }
 
@@ -522,6 +534,7 @@ export class CasaScene extends Phaser.Scene {
   }
 
   private atualizarQuadro(time: number, delta: number): void {
+    this.atualizarPisca(time);
     // Tela da dica aberta: o mundo está parado (GDD 16.8.5). Só as teclas da dica agem.
     if (this.dica) {
       this.controles.atualizar();
@@ -573,9 +586,9 @@ export class CasaScene extends Phaser.Scene {
     this.registrarPassoDoSobrinho();
     this.atualizarNickEFarejo(delta);
     const modo = this.modo();
-    if (this.estado === 'livre') this.barra.definir(['barra.casa', 'barra.casa2']);
+    if (this.estado === 'livre') this.barra.definir(this.sv.sessao.modo === 'explorar' ? ['barra.explorar1', 'barra.explorar2'] : ['barra.casa', 'barra.casa2']);
     this.barra.setVisible(this.estado === 'livre');
-    this.icone.setVisible(podeAbrirDica(modo));
+    this.icone.setVisible(podeAbrirDica(modo, this.sv.sessao.modo));
     this.atualizarIconesDeTela();
   }
 
@@ -673,10 +686,14 @@ export class CasaScene extends Phaser.Scene {
     this.desl = deslocamentoDaSubarea(mapa, tela);
     this.colisao = new ColisaoDoMapa(this.bloqueiosComNick());
     this.objetosTela = objetosNaTela(mapa, this.desl);
+    this.enfeitesDaArea = { area: null, total: 0, piscantes: [] };
+    const decoracao = this.sv.sessao.modo === 'explorar' ? this.sv.conteudo.decoracao.get(id) : undefined;
+    if (decoracao) this.objetosTela.push(...this.objetosDaDecoracao(decoracao.enfeites, mapa));
 
     this.desenharPiso();
     this.desenharObjetos();
     this.desenharIndicadores();
+    if (decoracao) this.desenharDecoracao(id, decoracao.enfeites);
 
     if (tile) {
       // Tile dado (condução): o personagem fica no tile, de frente para a direção que tinha.
@@ -843,6 +860,58 @@ export class CasaScene extends Phaser.Scene {
    * laterais): imagens estáticas, sem colisão nem gatilho. A seta fica logo acima do sprite da própria porta
    * (profundidade da porta + 0,5); o tapete fica no chão.
    */
+  /**
+   * Enfeites do modo explorar (ADR-010 3.3 e 3.4): só os de tile bloqueado com texto viram alvo do A, como objetos
+   * examináveis. A colisão não muda: o tile já era bloqueado.
+   */
+  private objetosDaDecoracao(enfeites: EnfeiteBruto[], mapa: MapaDoJogo): ObjetoDoMapa[] {
+    return enfeites
+      .filter((e) => mapa.colisao[e.y]?.[e.x] === true && e.examinar !== null)
+      .map((e) => ({ tipo: 'examinavel', x: e.x + this.desl.x, y: e.y + this.desl.y, dados: { texto: e.examinar!, nome: e.id } }));
+  }
+
+  /** Desenha os enfeites da subárea (ADR-010 3.9): ordenados pela base, como os outros objetos de tile. */
+  private desenharDecoracao(area: string, enfeites: EnfeiteBruto[]): void {
+    const tile = this.perfil.tile;
+    const piscantes: Phaser.GameObjects.Sprite[] = [];
+    for (const e of enfeites) {
+      const x = (this.desl.x + e.x) * tile;
+      const y = (this.desl.y + e.y) * tile;
+      if (this.quadrosDoSprite(e.sprite) === 2) {
+        const s = this.add.sprite(x, y, e.sprite, 0).setOrigin(0, 0).setDepth(y + tile);
+        this.registrar(s);
+        if (e.pisca) piscantes.push(s);
+      } else {
+        this.registrar(this.add.image(x, y, e.sprite).setOrigin(0, 0).setDepth(y + tile));
+      }
+    }
+    this.enfeitesDaArea = { area, total: enfeites.length, piscantes };
+  }
+
+  /** Quadros do sprite do perfil (ADR-003): 2 para folha de luz ou vela; 1 para imagem. */
+  private quadrosDoSprite(chave: string): number {
+    const img = arteDe(this).sprites.imagens.find((i) => i.arquivo === `${chave}.png`);
+    return img?.quadros ?? 1;
+  }
+
+  /** Pisca de 1 Hz das luzes (ADR-010 3.5). Só troca o quadro; nunca mais de um ciclo por segundo (AC4). */
+  private atualizarPisca(time: number): void {
+    const quadro = quadroDoPisca(time);
+    for (const s of this.enfeitesDaArea.piscantes) s.setFrame(quadro);
+  }
+
+  /** Resumo dos enfeites para o gancho de QA (ADR-010 4): total, visíveis, piscando e quadro. */
+  enfeites(): { area: string | null; total: number; visiveis: number; piscando: number; quadro: 0 | 1 } {
+    const visiveis = this.sv.sessao.modo === 'explorar' ? this.enfeitesDaArea.total : 0;
+    return {
+      area: this.enfeitesDaArea.area ?? this.mapa?.id ?? null,
+      total: this.enfeitesDaArea.total,
+      visiveis,
+      piscando: this.enfeitesDaArea.piscantes.length,
+      quadro: quadroDoPisca(this.time.now),
+    };
+  }
+
   private desenharIndicadores(): void {
     const tile = this.perfil.tile;
     for (const i of indicadoresDaSubarea(this.mapa, this.perfil.sala)) {
@@ -1018,7 +1087,8 @@ export class CasaScene extends Phaser.Scene {
         this.falar([String(alvo.dados.texto)]);
         break;
       case 'interruptor':
-        this.acenderLuzes();
+        // No modo explorar as luzes já estão acesas: o interruptor não tem ação, nem som nem texto (ADR-010 2).
+        if (this.sv.sessao.modo !== 'explorar') this.acenderLuzes();
         break;
       case 'arvore':
         // Antes das luzes, A na árvore não faz nada (GDD 14.10.2, item 7). Depois, mostra o texto do estado (GDD 15.4).
@@ -1257,6 +1327,11 @@ export class CasaScene extends Phaser.Scene {
    */
   private farejar(): void {
     if (this.nickOcupado) return;
+    // Modo explorar (ADR-010 2): o Nick fareja com a animação e o S08, sem seta (não há alvo).
+    if (this.sv.sessao.modo === 'explorar') {
+      this.farejarEDepois(() => undefined);
+      return;
+    }
     const oculto = this.sv.sessao.progresso.nick.oculto;
     const r = this.sv.farejarComNick.executar(this.mapa.id);
     switch (r.tipo) {
@@ -1340,7 +1415,7 @@ export class CasaScene extends Phaser.Scene {
 
   /** Dica (H ou o ícone): só na exploração (ADR-005 seção 5.2). Congela o mundo. */
   private abrirDica(): void {
-    if (!podeAbrirDica(this.modo())) return;
+    if (!podeAbrirDica(this.modo(), this.sv.sessao.modo)) return;
     const d = this.sv.montarDica.executar();
     if (!d) return;
     const t = this.sv.conteudo.textos;

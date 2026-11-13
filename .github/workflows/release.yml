@@ -105,11 +105,16 @@ jobs:
             npm run verificar:release
           fi
 
-      - name: Guardar o HTML de release
+      # Smoke da release (ADR-009 seções 9 e 10; GDD 20.9 DS1b e RG7): sobe dist-release em subcaminho e na raiz, com gzip,
+      # e confere título, rede e console. Usa o Google Chrome que já vem no runner (channel 'chrome'); sem instalação de navegador.
+      - name: Smoke da release (subcaminho, gzip, sem erro de console)
+        run: npm run smoke:release
+
+      - name: Guardar a pasta de release
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: release-html
-          path: dist-release/index.html
+          name: release
+          path: dist-release
           if-no-files-found: error
           retention-days: 90
 
@@ -127,13 +132,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Baixar o HTML de release
+      - name: Baixar a pasta de release
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          name: release-html
+          name: release
           path: release
 
-      - name: Criar a GitHub Release com a seção do CHANGELOG
+      - name: Criar a GitHub Release com a seção do CHANGELOG e o zip da pasta inteira
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
@@ -141,10 +146,10 @@ jobs:
           set -euo pipefail
           VERSAO="${TAG#v}"
           NOTAS="$RUNNER_TEMP/notas.md"
-          ARQUIVO="$RUNNER_TEMP/vila-do-natal-$TAG.html"
+          ZIP="$RUNNER_TEMP/vila-do-natal-$TAG.zip"
           node tools/changelog.mjs --versao "$VERSAO" > "$NOTAS"
-          cp release/index.html "$ARQUIVO"
-          gh release create "$TAG" "$ARQUIVO" \
+          (cd release && zip -qr "$ZIP" .)
+          gh release create "$TAG" "$ZIP" \
             --verify-tag \
             --title "$TAG" \
             --notes-file "$NOTAS"
@@ -162,10 +167,10 @@ jobs:
       name: github-pages
       url: ${{ steps.publicar.outputs.page_url }}
     steps:
-      - name: Baixar o HTML de release
+      - name: Baixar a pasta de release
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          name: release-html
+          name: release
           path: site
 
       - name: Empacotar o site

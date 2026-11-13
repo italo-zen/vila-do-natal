@@ -177,8 +177,8 @@ describe('textos `.toque.menu` exatos (GDD 18.12, 9 chaves)', () => {
   it.each(EXATOS)('%s = "%s"', (chave, texto) => {
     expect(textos[chave]).toBe(texto);
   });
-  it('são doze chaves .toque.menu: as nove do Marco 5 (GDD 18.12) e as três da pausa do Marco 6 (GDD 19.8)', () => {
-    expect(Object.keys(textos).filter((c) => c.endsWith('.toque.menu'))).toHaveLength(12);
+  it('são dezesseis chaves .toque.menu: as nove do Marco 5 (GDD 18.12), as três da pausa do Marco 6 (GDD 19.8) e as quatro do Marco 7 (créditos, fim e explorar)', () => {
+    expect(Object.keys(textos).filter((c) => c.endsWith('.toque.menu'))).toHaveLength(16);
   });
   it('rótulo do botão da seleção: "Voltar ao título", até 20 caracteres, sem tecla', () => {
     expect(textos['selecao.voltar.toque']).toBe('Voltar ao título');

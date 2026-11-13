@@ -1,9 +1,10 @@
 /**
- * Regra de abertura da pausa (GDD 19.3.1; ADR-008 6.1; PS5). Abre exatamente onde o "?" abre (ADR-005 1.4), e não abre
- * na dica, que já congela o mundo (16.8.5). Função pura.
+ * Regra de abertura da pausa (GDD 19.3.1; PS5; ADR-010 2). Abre na exploração, e não na dica, que já congela o mundo
+ * (16.8.5). No modo explorar também abre (EX4). Não depende do modo de sessão, por isso não é igual a `podeAbrirDica`
+ * fora de `historia`. Função pura.
  */
-import { podeAbrirDica, type ModoDaTela } from '../../../application/mundo/nick/modoDaTela';
+import type { ModoDaTela } from '../../../application/mundo/nick/modoDaTela';
 
 export function podeAbrirPausa(modo: ModoDaTela): boolean {
-  return podeAbrirDica(modo);
+  return modo === 'exploracao';
 }

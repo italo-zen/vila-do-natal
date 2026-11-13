@@ -64,7 +64,6 @@ CATALOGO = [
     ("S06", "sfx_s06_encaixe", 1.5, -6),
     ("S07", "sfx_s07_au", 0.4, 0),
     ("S08", "sfx_s08_fungada", 0.5, 0),
-    ("S09", "sfx_s09_conquista", 2.0, 0),
     ("S10", "sfx_s10_dialogo", 0.2, -12),
     ("S11", "sfx_s11_foco", 0.1, 0),
     ("S12", "sfx_s12_confirma", 0.2, -4),
@@ -256,18 +255,6 @@ def fx_s08_fungada(rng):
     return fim(r * env * janela(n, 0.003, 0.05), 20)
 
 
-def fx_s09_conquista(rng):
-    n = amostras(2.0)
-    y = sino_nota(n, 72, PARC_SINO, 1.0, 0.6, 0.0)
-    y += sino_nota(n, 76, PARC_SINO, 1.0, 0.55, 0.12)
-    y += sino_nota(n, 79, PARC_SINO, 1.0, 0.55, 0.24)
-    y += sino_nota(n, 84, PARC_SINO, 1.0, 0.5, 0.36)
-    for midi, amp in [(84, 0.5), (88, 0.45), (91, 0.45)]:
-        y += sino_nota(n, midi, PARC_CELESTA, 1.5, amp, 0.6)
-    y += sino_nota(n, 72, PARC_SINO, 1.2, 0.35, 0.6)
-    return fim(y, 80)
-
-
 def fx_s10_dialogo(rng):
     n = amostras(0.2)
     y = golpe(n, 420, 300, expo(n, 0.06, 0.0), 0.12, 0.6)
@@ -300,7 +287,7 @@ def fx_s13_erro(rng):
 FX = {
     "S01": fx_s01_passo, "S02": fx_s02_porta, "S03": fx_s03_porta_abriu,
     "S04": fx_s04_interruptor, "S05": fx_s05_peca, "S06": fx_s06_encaixe,
-    "S07": fx_s07_au, "S08": fx_s08_fungada, "S09": fx_s09_conquista,
+    "S07": fx_s07_au, "S08": fx_s08_fungada,
     "S10": fx_s10_dialogo, "S11": fx_s11_foco, "S12": fx_s12_confirma,
     "S13": fx_s13_erro,
 }
@@ -386,7 +373,8 @@ def gerar_pcm(rascunho):
     """Devolve {id do arquivo: (evento ou None, PCM float64 normalizado)}, na ordem do catálogo."""
     saida = {}
     saida[MUS_ID] = (None, musica_rascunho() if rascunho else musica_final())
-    for k, (evento, arq, max_s, _) in enumerate(CATALOGO):
+    for evento, arq, max_s, _ in CATALOGO:
+        k = int(evento[1:]) - 1  # índice pelo número do evento: a semente de cada S não muda ao tirar o S09
         if rascunho:
             pcm = efeito_rascunho(k, max_s)
         else:
@@ -640,12 +628,17 @@ def medir(x, loop=False):
 
 # ---------------------------------------------------------------- regras (ADR-008 seção 8.2)
 
-def avaliar(efeitos, musica, ganhos, mestre):
-    """efeitos: {evento: meta}; musica: meta; ganhos: {evento ou 'musica': dB}. Devolve lista de (ok, texto)."""
+def avaliar(efeitos, musica, ganhos, mestre, conquista=None):
+    """efeitos: {evento: meta}; musica: meta; ganhos: {evento ou 'musica' ou 'CONQ': dB}.
+    conquista: {rmsDbfs, picoDbfs} da família J01 a J05 (a média dos cinco no papel do antigo S09). Lista (ok, texto)."""
     fator = 20.0 * math.log10(mestre)
     res = []
     ef_rms = {e: m["rmsDbfs"] + ganhos[e] + fator for e, m in efeitos.items()}
     ef_pico = {e: 10 ** ((m["picoDbfs"] + ganhos[e] + fator) / 20.0) for e, m in efeitos.items()}
+    papel_s09 = "CONQ"
+    if conquista is not None:
+        ef_rms[papel_s09] = conquista["rmsDbfs"] + ganhos["CONQ"] + fator
+        ef_pico[papel_s09] = 10 ** ((conquista["picoDbfs"] + ganhos["CONQ"] + fator) / 20.0)
     mus_rms = musica["rmsDbfs"] + ganhos["musica"] + fator
     media_db = sum(ef_rms.values()) / len(ef_rms)
     media_pot = 10 * math.log10(sum(10 ** (v / 10) for v in ef_rms.values()) / len(ef_rms))
@@ -656,7 +649,10 @@ def avaliar(efeitos, musica, ganhos, mestre):
     ordem = sorted(ef_rms, key=lambda e: ef_rms[e])
     baixos, altos = set(ordem[:2]), set(ordem[-2:])
     res.append((baixos == {"S01", "S10"}, f"A6(b) dois mais baixos: {sorted(baixos)} (exigido S01 e S10)"))
-    res.append((altos == {"S07", "S09"}, f"A6(b) dois mais altos: {sorted(altos)} (exigido S07 e S09)"))
+    alvo_altos = {"S07", papel_s09} if conquista is not None else {"S07", "S09"}
+    res.append((altos == alvo_altos,
+                f"A6(b) dois mais altos: {sorted(altos)} (exigido S07 e a família de conquistas J01 a J05)"
+                if conquista is not None else f"A6(b) dois mais altos: {sorted(altos)} (exigido S07 e S09)"))
     topo3 = sum(sorted(ef_pico.values(), reverse=True)[:3])
     pico_mus = 10 ** ((musica["picoDbfs"] + ganhos["musica"] + fator) / 20.0)
     soma = topo3 + pico_mus
@@ -685,7 +681,7 @@ def avaliar_jingles(jingles, jc, efeitos, musica, ganhos, mestre):
     """Orçamento dos jingles (GDD 19.2.7 e) e mixagem (regra c com os jingles entre os efeitos). Lista (ok, texto)."""
     res = []
     fator = 20.0 * math.log10(mestre)
-    ganho_j = {**{e: JINGLE_GANHO_CONQUISTA for e in jingles}, "JC": JINGLE_GANHO_JC}
+    ganho_j = {**{e: ganhos["CONQ"] for e in jingles}, "JC": ganhos["JC"]}
     for e, m in jingles.items():
         res.append((m["bytes"] <= LIM_JINGLE["cada_bytes"],
                     f"J {e} {m['bytes']} bytes (limite 16.000); {m['duracaoS']} s"))
@@ -694,6 +690,10 @@ def avaliar_jingles(jingles, jc, efeitos, musica, ganhos, mestre):
     res.append((soma_j <= LIM_JINGLE["somados_bytes"], f"J01 a J05 somados {soma_j} bytes (limite 63.500)"))
     res.append((jc["bytes"] <= LIM_JINGLE["jc_bytes"], f"JC {jc['bytes']} bytes, {jc['duracaoS']} s (limite 64.000; 12 a 16 s)"))
     res.append((jc["picoDbfs"] <= LIM["pico_dbfs"], f"JC pico {jc['picoDbfs']} dBFS (limite -3,0)"))
+    for e, m in list(jingles.items()) + [("JC", jc)]:
+        res.append((m["silencioInicialMs"] <= 5.0 and m["silencioFinalMs"] <= 20.0,
+                    f"sem clique {e}: silêncio de {m['silencioInicialMs']} ms no início e {m['silencioFinalMs']} ms "
+                    "no fim (limite 5 e 20)"))
     res.append((12.0 <= jc["duracaoS"] <= 16.0, f"JC duração {jc['duracaoS']} s (12 a 16)"))
     # Mixagem: níveis efetivos dos jingles contra os efeitos e a música (ADR-008 4.3, regra c com jingles)
     todos = {**{e: m for e, m in efeitos.items()}, **jingles, "JC": jc}
@@ -701,41 +701,17 @@ def avaliar_jingles(jingles, jc, efeitos, musica, ganhos, mestre):
     rms = {e: m["rmsDbfs"] + ganho[e] + fator for e, m in todos.items()}
     pico = {e: 10 ** ((m["picoDbfs"] + ganho[e] + fator) / 20.0) for e, m in todos.items()}
     ordem = sorted(rms, key=lambda e: -rms[e])
-    s09 = rms["S09"]
-    acima = [e for e in jingles if rms[e] >= s09 - 3.0]
+    media_conq = sum(rms[e] for e in jingles) / len(jingles)  # papel do antigo S09: média dos cinco jingles (dB)
+    acima = [e for e in jingles if rms[e] >= media_conq - 3.0]
     res.append((len(acima) == len(jingles),
-                "jingles de conquista entre os mais altos (até 3 dB abaixo do S09): " +
-                ", ".join(f"{e} {rms[e]:.1f}" for e in sorted(jingles)) + f" (S09 {s09:.1f})"))
+                "jingles de conquista dentro de 3 dB da média do grupo: " +
+                ", ".join(f"{e} {rms[e]:.1f}" for e in sorted(jingles)) + f" (média {media_conq:.1f})"))
     topo3 = sum(sorted(pico.values(), reverse=True)[:3])
     pico_mus = 10 ** ((musica["picoDbfs"] + ganhos["musica"] + fator) / 20.0)
     res.append((topo3 + pico_mus <= 1.0,
                 f"regra c com jingles: 3 picos efetivos mais altos + música = {topo3 + pico_mus:.3f} (limite 1,0)"))
     res.append((True, "ordem de nível efetivo (informativo): " + ", ".join(f"{e} {rms[e]:.1f}" for e in ordem[:6])))
     return res
-
-
-def escrever_proposta_jingles():
-    """Rascunho de trecho do content/audio.json para a revisão 2 do ADR-008. content/audio.json NÃO é alterado."""
-    dados = {
-        "_status": "proposta da Arte (2026-11-10, item 143). Não é content/audio.json. O Especialista escreve a "
-                   "revisão 2 do ADR-008 e o Dev integra o schema.",
-        "conquistas": {
-            "duckingDb": -8, "duckingEntradaS": 0.3, "duckingSaidaS": 0.5,
-            "eventos": {e: {"id": JINGLE_ARQ[e], "ganhoDb": JINGLE_GANHO_CONQUISTA} for e in JINGLE_DUR},
-            "chave": {"J01": "conquista.luzes", "J02": "conquista.parte1", "J03": "conquista.parte2",
-                      "J04": "conquista.parte3", "J05": "conquista.enfeites"},
-        },
-        "creditos": {"id": JINGLE_ARQ["JC"], "ganhoDb": JINGLE_GANHO_JC, "loop": False,
-                     "duckingDb": -10, "duckingEntradaS": 0.5, "duckingSaidaS": 0.5},
-        "melodias": {
-            "JC": "We Wish You a Merry Christmas: melodia tradicional (domínio público); arranjo original",
-            "J05": "citação de Jingle Bells (1857, domínio público), mi-mi-mi-sol; resto original",
-        },
-        "limites": {"jingleBytes": LIM_JINGLE["cada_bytes"], "jingleSomadosBytes": LIM_JINGLE["somados_bytes"],
-                    "jcBytes": LIM_JINGLE["jc_bytes"]},
-    }
-    (PASTA_AUDIO / "audio-jingles-proposta.json").write_text(
-        json.dumps(dados, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 # ---------------------------------------------------------------- conteúdo e documentação
@@ -750,18 +726,13 @@ def ganhos_atuais():
         ganhos = {"musica": float(atual["musica"]["ganhoDb"])}
         for e, _, _, _ in CATALOGO:
             ganhos[e] = float(atual["eventos"][e]["ganhoDb"])
+        # família de conquistas (J01 a J05, no lugar do antigo S09) e créditos (JC): schema 2 do Dev
+        ganhos["CONQ"] = float(next(iter(atual["conquistas"].values()))["ganhoDb"])
+        ganhos["JC"] = float(atual["creditos"]["ganhoDb"])
         return mestre, ganhos
+    padrao["CONQ"] = JINGLE_GANHO_CONQUISTA
+    padrao["JC"] = JINGLE_GANHO_JC
     return MESTRE_PADRAO, padrao
-
-
-def escrever_conteudo(mestre, ganhos):
-    dados = {
-        "mestre": mestre,
-        "musica": {"id": MUS_ID, "ganhoDb": ganhos["musica"], "loop": True},
-        "eventos": {e: {"id": arq, "ganhoDb": ganhos[e]} for e, arq, _, _ in CATALOGO},
-    }
-    ARQ_CONTEUDO.parent.mkdir(parents=True, exist_ok=True)
-    ARQ_CONTEUDO.write_text(json.dumps(dados, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def escrever_licencas(metas, rascunho, data):
@@ -898,7 +869,6 @@ def main(argv):
     }
     PASTA_AUDIO.mkdir(parents=True, exist_ok=True)
     ARQ_META.write_text(json.dumps(meta_total, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    escrever_conteudo(mestre, ganhos)
     escrever_licencas(metas, rascunho, data)
 
     por_id = {m["arquivo"][:-4]: m for m in metas}
@@ -906,12 +876,15 @@ def main(argv):
     efeitos = {m["evento"]: m for m in metas if m["evento"] and m["evento"].startswith("S")}
     jingles = {m["evento"]: m for m in metas if m["evento"] and m["evento"].startswith("J")}
     jc = jingles.pop("JC")
-    resultados = avaliar(efeitos, musica, ganhos, mestre)
+    familia_conq = {  # papel do antigo S09 na A6: média dos cinco jingles de conquista (dB) e o pico mais alto
+        "rmsDbfs": sum(m["rmsDbfs"] for m in jingles.values()) / len(jingles),
+        "picoDbfs": max(m["picoDbfs"] for m in jingles.values()),
+    }
+    resultados = avaliar(efeitos, musica, ganhos, mestre, familia_conq)
     resultados += avaliar_jingles(jingles, jc, efeitos, musica, ganhos, mestre)
     falhas = [t for ok, t in resultados if not ok]
     for ok, t in resultados:
         print(("OK   " if ok else "FALHA ") + t)
-    escrever_proposta_jingles()
     total = sum(m["bytes"] for m in metas)
     print(f"Áudio total: {total} bytes ({total / 1000:.1f} KB) de 320 KB.")
     if falhas and not rascunho:

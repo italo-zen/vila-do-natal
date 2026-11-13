@@ -5,7 +5,7 @@ import { Menu } from '../ui/Menu';
 import { Controles } from '../input/Controles';
 import { toqueDaCena } from '../ui/toque/toqueDaCena';
 import { CHAVE, sprites } from '../assets/registro';
-import { definirTelaDoSom, tocarSom } from '../audio/somDaCena';
+import { definirTelaDoSom, pararConquistaDaCena, tocarConquistaDaCena } from '../audio/somDaCena';
 
 export interface DadosDaConquista {
   /** Chave do texto da conquista (ex.: "conquista.luzes"). */
@@ -21,6 +21,8 @@ export interface DadosDaConquista {
 export class ConquistaScene extends Phaser.Scene {
   private controles!: Controles;
   private dados!: DadosDaConquista;
+  /** Evita sair duas vezes (A e o botão, no mesmo quadro). */
+  private saindo = false;
 
   constructor() {
     super('Conquista');
@@ -33,9 +35,11 @@ export class ConquistaScene extends Phaser.Scene {
     const tela = p.telas.conquista;
     this.controles = new Controles(this);
     definirTelaDoSom(this, 'conquista');
-    tocarSom(this, 'S09');
     toqueDaCena(this)?.mostrarPara('conquista');
     this.dados = dados;
+    this.saindo = false;
+    // Jingle próprio da conquista (GDD 19.2.7 a); no lugar do S09 único.
+    tocarConquistaDaCena(this, dados.chave);
 
     this.add.rectangle(0, 0, largura, altura, numeroDaCor(p.tema.fundo)).setOrigin(0);
     // Sobrinho comemorando (GDD 7.2: pose de comemoração na tela de conquista). Na conquista das luzes, a lâmpada;
@@ -59,7 +63,8 @@ export class ConquistaScene extends Phaser.Scene {
 
     new Menu(
       this,
-      [{ texto: t.t('conquista.continuar'), y: tela.continuarY, aoAtivar: () => this.continuar() }],
+      // Confirmar não toca S12 aqui: o S12 sai depois do corte do jingle (pararConquistaDaCena).
+      [{ texto: t.t('conquista.continuar'), y: tela.continuarY, aoAtivar: () => this.continuar('continuar'), semConfirmacaoSonora: true }],
       { tamanho: p.fonte.titulo, mouse: false, focoInicial: 0 },
     ).definirFoco(0);
     barraDaTela(this, ['barra.conquista']);
@@ -67,12 +72,15 @@ export class ConquistaScene extends Phaser.Scene {
 
   update(): void {
     this.controles.atualizar();
-    // Z, X ou Esc continuam (GDD 14.1 e 14.8: a conquista não tem voltar).
-    if (this.controles.apertada('a') || this.controles.apertada('b')) this.continuar();
+    // A continua (com S12 depois do corte); B, X ou Esc saem sem S12 (ADR-008 5.2). GDD 14.1 e 14.8: a conquista não tem voltar.
+    if (this.controles.apertada('a')) this.continuar('continuar');
+    else if (this.controles.apertada('b')) this.continuar('saida');
   }
 
-  private continuar(): void {
-    tocarSom(this, 'S12');
+  private continuar(saida: 'continuar' | 'saida'): void {
+    if (this.saindo) return;
+    this.saindo = true;
+    pararConquistaDaCena(this, saida);
     this.scene.start('Casa', { modo: 'conducao', origem: this.dados.origem, fase: this.dados.fase });
   }
 }

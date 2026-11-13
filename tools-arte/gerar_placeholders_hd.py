@@ -531,6 +531,208 @@ def icone_som(ligado, pressionado=False):
     return im
 
 
+# ---------------------------------------------------------------- enfeites de Natal (GDD 20.6; item 153)
+# 12 tipos `dec_*` (ADR-010 3.2), 32×32 de jogo, sem texto. Cores da paleta do jogo; contorno 1 px #0b1030.
+ENF_CONTORNO = (11, 16, 48, 255)
+ENF_VERDE_ESC = (31, 90, 58, 255)
+ENF_VERDE = (63, 154, 95, 255)
+ENF_VERMELHO = (192, 57, 43, 255)
+ENF_VERMELHO_CLARO = (224, 83, 63, 255)
+ENF_DOURADO = (244, 211, 94, 255)
+ENF_CREME = (244, 233, 200, 255)
+ENF_MARROM = (92, 58, 33, 255)
+ENF_LUZ_APAGADA = (120, 70, 40, 255)
+
+
+def _enf_canvas(w=32, h=32):
+    return canvas(w, h)
+
+
+def _enf_arvore(escala):
+    """Mini-árvore: três tiers de triângulo, tronco e estrela. `escala` 1,0 (P) a 1,4 (G)."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    def ponto(x, y):
+        return (16 + (x - 16) * escala, 32 - (32 - y) * escala)
+    base_y = 27
+    d.rectangle([15 - 1, base_y, 16 + 1, base_y + 3], fill=ENF_MARROM)
+    tiers = ((1, 12, 10), (7, 14, 11), (13, 15, 14)) if escala > 1.2 else ((4, 9, 9), (9, 12, 9), (14, 15, 10))
+    for topo, larg, alt in tiers:
+        meio = (topo + alt)
+        d.polygon([(16, topo), (16 + larg, meio), (16 - larg, meio)], fill=ENF_VERDE, outline=ENF_CONTORNO)
+        d.polygon([(16 - larg, meio), (16 + larg, meio), (16 + larg - 3, meio + 1), (16 - larg + 3, meio + 1)], fill=ENF_VERDE_ESC)
+    d.polygon([(16, 1), (18, 4), (21, 4), (19, 6), (20, 9), (16, 7), (12, 9), (13, 6), (11, 4), (14, 4)], fill=ENF_DOURADO, outline=ENF_CONTORNO)
+    for x, y in ((11, 15), (20, 13), (14, 21), (19, 22), (9, 24), (24, 25)):
+        d.rectangle([x, y, x + 1, y + 1], fill=ENF_VERMELHO_CLARO)
+    if escala > 1.2:
+        for x, y in ((12, 19), (21, 27), (16, 29)):
+            d.rectangle([x, y, x + 1, y + 1], fill=ENF_DOURADO)
+    return im
+
+
+def dec_guirlanda():
+    """Guirlanda na parede: fita verde em arco, com bolinhas vermelhas e douradas."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    pontos = [(x, 11 + int(round(4 * math.sin(math.pi * x / 31)))) for x in range(0, 32)]
+    for x, y in pontos:
+        d.rectangle([x, y, x, y + 2], fill=ENF_VERDE)
+        d.rectangle([x, y + 2, x, y + 2], fill=ENF_VERDE_ESC)
+    for i, x in enumerate((3, 9, 16, 22, 28)):
+        y = 11 + int(round(4 * math.sin(math.pi * x / 31)))
+        cor = ENF_VERMELHO if i % 2 == 0 else ENF_DOURADO
+        d.ellipse([x - 2, y + 2, x + 2, y + 6], fill=cor, outline=ENF_CONTORNO)
+    return im
+
+
+def dec_meias():
+    """Meia de Natal pendurada na parede: vermelha, com punho creme e listra verde."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.polygon([(10, 3), (19, 3), (19, 17), (27, 21), (28, 27), (10, 27)], fill=ENF_VERMELHO, outline=ENF_CONTORNO)
+    d.rectangle([9, 3, 20, 7], fill=ENF_CREME, outline=ENF_CONTORNO)
+    d.rectangle([12, 13, 17, 14], fill=ENF_VERDE)
+    d.rectangle([21, 23, 26, 24], fill=ENF_CREME)
+    return im
+
+
+def _enf_presente(cor_caixa, cor_laco):
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.rectangle([6, 13, 25, 27], fill=cor_caixa, outline=ENF_CONTORNO)
+    d.rectangle([5, 9, 26, 13], fill=cor_caixa, outline=ENF_CONTORNO)
+    d.rectangle([14, 9, 17, 27], fill=cor_laco)
+    d.rectangle([5, 17, 26, 19], fill=cor_laco)
+    d.ellipse([9, 3, 15, 9], outline=cor_laco, width=2)
+    d.ellipse([16, 3, 22, 9], outline=cor_laco, width=2)
+    return im
+
+
+def dec_presente_vermelho():
+    return _enf_presente(ENF_VERMELHO, ENF_DOURADO)
+
+
+def dec_presente_verde():
+    return _enf_presente(ENF_VERDE, ENF_VERMELHO_CLARO)
+
+
+def dec_arvore_p():
+    return _enf_arvore(1.0)
+
+
+def dec_arvore_g():
+    return _enf_arvore(1.4)
+
+
+def _dec_vela_quadro(altura_chama):
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.rectangle([11, 28, 20, 30], fill=ENF_CONTORNO)
+    d.rectangle([13, 14, 18, 27], fill=ENF_CREME, outline=ENF_CONTORNO)
+    topo = 12 - altura_chama
+    d.polygon([(16, topo), (19, 12), (16, 14), (13, 12)], fill=ENF_DOURADO, outline=ENF_CONTORNO)
+    d.rectangle([15, topo + 3, 16, max(topo + 3, 11)], fill=ENF_VERMELHO_CLARO)
+    return im
+
+
+def dec_vela():
+    """Vela elétrica: 2 quadros de 32×32 (chama alta e chama baixa), alternados pelo jogo."""
+    folha = _enf_canvas(64, 32)
+    folha.paste(_dec_vela_quadro(6), (0, 0))
+    folha.paste(_dec_vela_quadro(3), (32, 0))
+    return folha
+
+
+def dec_cortina():
+    """Cortina vermelha com vara dourada e luzinhas, para a janela."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.rectangle([2, 1, 29, 3], fill=ENF_DOURADO, outline=ENF_CONTORNO)
+    d.rectangle([4, 4, 27, 29], fill=ENF_VERMELHO, outline=ENF_CONTORNO)
+    for x in (9, 15, 21):
+        d.line([(x, 5), (x, 28)], fill=ENF_VERMELHO_CLARO)
+    for i, (x, y) in enumerate([(6, 8), (12, 14), (18, 8), (24, 14), (6, 22), (12, 26), (18, 22), (24, 26)]):
+        d.rectangle([x, y, x + 1, y + 1], fill=ENF_DOURADO if i % 2 == 0 else ENF_CREME)
+    return im
+
+
+def _enf_pisca_quadro(acesa):
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.line([(0, 8), (31, 8)], fill=ENF_VERDE_ESC, width=1)
+    for x in (4, 10, 16, 22, 28):
+        y = 8 + int(round(2 * math.sin(math.pi * x / 31)))
+        if acesa:
+            d.ellipse([x - 3, y - 1, x + 3, y + 5], fill=(255, 240, 160, 255))
+            d.ellipse([x - 2, y, x + 2, y + 4], fill=ENF_DOURADO, outline=ENF_CONTORNO)
+        else:
+            d.ellipse([x - 2, y, x + 2, y + 4], fill=ENF_LUZ_APAGADA, outline=ENF_CONTORNO)
+    return im
+
+
+def dec_luz():
+    """Luz pisca: fio com lâmpadas; 2 quadros (acesa e apagada), 1 ciclo por segundo (GDD 20.6, AC4)."""
+    folha = _enf_canvas(64, 32)
+    folha.paste(_enf_pisca_quadro(True), (0, 0))
+    folha.paste(_enf_pisca_quadro(False), (32, 0))
+    return folha
+
+
+def dec_pano():
+    """Pano de prato natalino: creme com listras vermelhas, pendurado por uma alça."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.ellipse([12, 1, 19, 6], outline=ENF_CONTORNO, width=2)
+    d.rectangle([6, 5, 25, 28], fill=ENF_CREME, outline=ENF_CONTORNO)
+    for y in (9, 15, 21):
+        d.rectangle([6, y, 25, y + 2], fill=ENF_VERMELHO)
+    return im
+
+
+def dec_estrela():
+    """Estrela dourada de 5 pontas."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    pontos = []
+    for k in range(10):
+        r = 13 if k % 2 == 0 else 5.5
+        ang = -math.pi / 2 + k * math.pi / 5
+        pontos.append((16 + r * math.cos(ang), 17 + r * math.sin(ang)))
+    d.polygon(pontos, fill=ENF_DOURADO, outline=ENF_CONTORNO)
+    d.rectangle([14, 14, 15, 15], fill=ENF_CREME)
+    return im
+
+
+def dec_bola():
+    """Bola de Natal vermelha, com tampa dourada e uma faixa verde."""
+    im = _enf_canvas()
+    d = ImageDraw.Draw(im)
+    d.rectangle([14, 2, 17, 6], fill=ENF_DOURADO, outline=ENF_CONTORNO)
+    d.ellipse([5, 6, 26, 27], fill=ENF_VERMELHO, outline=ENF_CONTORNO)
+    d.arc([8, 10, 19, 21], 200, 320, fill=ENF_VERMELHO_CLARO, width=2)
+    d.rectangle([9, 17, 22, 18], fill=ENF_VERDE)
+    d.rectangle([11, 9, 13, 11], fill=ENF_CREME)
+    return im
+
+
+ENFEITES = {
+    "dec_guirlanda.png": dec_guirlanda,
+    "dec_meias.png": dec_meias,
+    "dec_presente_vermelho.png": dec_presente_vermelho,
+    "dec_presente_verde.png": dec_presente_verde,
+    "dec_arvore_p.png": dec_arvore_p,
+    "dec_arvore_g.png": dec_arvore_g,
+    "dec_vela.png": dec_vela,
+    "dec_cortina.png": dec_cortina,
+    "dec_luz.png": dec_luz,
+    "dec_pano.png": dec_pano,
+    "dec_estrela.png": dec_estrela,
+    "dec_bola.png": dec_bola,
+}
+# Folhas de 2 quadros de 32×32 (64×32 no arquivo): vela e luz pisca.
+ENFEITES_FOLHAS = {"dec_vela.png", "dec_luz.png"}
+
+
 def _r(d, caixa, s, fill=None, outline=None, w=1, ox=0, oy=0):
     """Retângulo com coordenadas de tile (32) na escala s; a caixa inclui o último pixel de cada célula."""
     x0, y0, x1, y1 = caixa
@@ -753,6 +955,12 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
         imagens.append({"arquivo": f"spr_{nome}.png", "tipo": "imagem"})
     imagens.append({"arquivo": "spr_fumaca_dormir.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 3})
     imagens.append({"arquivo": "spr_enfeite_caixa.png", "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 2})
+    # Enfeites de Natal do modo explorar (GDD 20.6; item 153): 12 tipos, 2 quadros nas folhas de vela e luz pisca.
+    for nome in ENFEITES:
+        if nome in ENFEITES_FOLHAS:
+            imagens.append({"arquivo": nome, "tipo": "folhas", "quadro": {"w": 32, "h": 32}, "quadros": 2})
+        else:
+            imagens.append({"arquivo": nome, "tipo": "imagem"})
     # Controles de toque (ADR-007 5.5): PNG em 3× o tamanho CSS. Sem texto no joystick e no celular.
     for letra in ("a", "b"):
         imagens.append({"arquivo": f"ctl_botao_{letra}.png", "tipo": "imagem"})
@@ -836,6 +1044,8 @@ def main():
         "ctl_som_desligado.png": icone_som(False),
         "ctl_som_desligado_pressionado.png": icone_som(False, True),
     }
+    for nome, fn in ENFEITES.items():
+        desenhos[nome] = fn()
     for nome, im in desenhos.items():
         im.save(PASTA / nome, optimize=True)
     (PASTA / "sprites.json").write_text(json.dumps(sprites_json(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

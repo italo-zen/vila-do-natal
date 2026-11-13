@@ -35,6 +35,11 @@ export class ContentSourceDeArquivos implements ContentSource {
     if (!d) throw new Error(`Mapa "${id}" não está no manifesto.`);
     return this.ler(d.file);
   }
+  async decoracao(id: string): Promise<unknown | null> {
+    const d = this.manifestoBruto().maps?.find((m) => m.id === id) as { decoracao?: string } | undefined;
+    if (!d?.decoracao) return null;
+    return this.ler(d.decoracao);
+  }
   async textos(locale: string): Promise<unknown> {
     const d = this.manifestoBruto().texts?.find((t) => t.locale === locale);
     if (!d) throw new Error(`Textos "${locale}" não estão no manifesto.`);

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 2,
+  "subarea": "sala",
+  "enfeites": [
+    {
+      "id": "sala_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 0,
+      "y": 0,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "sala_arvore_g_1",
+      "sprite": "dec_arvore_g",
+      "x": 0,
+      "y": 4,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "sala_presente_vermelho_1",
+      "sprite": "dec_presente_vermelho",
+      "x": 0,
+      "y": 8,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "sala_presente_verde_1",
+      "sprite": "dec_presente_verde",
+      "x": 1,
+      "y": 8,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "sala_meias_1",
+      "sprite": "dec_meias",
+      "x": 2,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "sala_luz_1",
+      "sprite": "dec_luz",
+      "x": 3,
+      "y": 3,
+      "pisca": true,
+      "examinar": "enfeite.pisca"
+    },
+    {
+      "id": "sala_guirlanda_1",
+      "sprite": "dec_guirlanda",
+      "x": 10,
+      "y": 6,
+      "pisca": false,
+      "examinar": "enfeite.guirlanda"
+    },
+    {
+      "id": "sala_vela_1",
+      "sprite": "dec_vela",
+      "x": 10,
+      "y": 7,
+      "pisca": true,
+      "examinar": "enfeite.vela"
+    }
+  ]
+}

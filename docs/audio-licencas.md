@@ -25,7 +25,6 @@
 | `sfx_s06_encaixe.mp3` | S06 | gerado pelo projeto, síntese original | 2026-11-10 | 5659 | 1.300 |
 | `sfx_s07_au.mp3` | S07 | gerado pelo projeto, síntese original | 2026-11-10 | 2107 | 0.400 |
 | `sfx_s08_fungada.mp3` | S08 | gerado pelo projeto, síntese original | 2026-11-10 | 2525 | 0.500 |
-| `sfx_s09_conquista.mp3` | S09 | gerado pelo projeto, síntese original | 2026-11-10 | 8481 | 2.000 |
 | `sfx_s10_dialogo.mp3` | S10 | gerado pelo projeto, síntese original | 2026-11-10 | 1271 | 0.200 |
 | `sfx_s11_foco.mp3` | S11 | gerado pelo projeto, síntese original | 2026-11-10 | 853 | 0.100 |
 | `sfx_s12_confirma.mp3` | S12 | gerado pelo projeto, síntese original | 2026-11-10 | 1271 | 0.200 |

@@ -5,7 +5,7 @@
 import { validarAudio, type ConfigDeAudio, type MetaDeAudio } from '../../application/audio/validarAudio';
 import type { InfoDoLaco } from './laco';
 import type { EntradaDeAudio } from './Som';
-import { config, meta, base64 } from 'virtual:audio';
+import { config, meta, base64, modo } from 'virtual:audio';
 
 export function base64ParaBytes(dataUrl: string): ArrayBuffer {
   const texto = dataUrl.slice(dataUrl.indexOf(',') + 1);
@@ -31,5 +31,5 @@ export function entradaDeAudio(): EntradaDeAudio {
   };
   const bytes: Record<string, ArrayBuffer> = {};
   for (const [id, texto] of Object.entries(base64)) bytes[id] = base64ParaBytes(texto);
-  return { config: cfg, laco, bytes };
+  return { config: cfg, laco, bytes, externo: modo === 'externo' };
 }

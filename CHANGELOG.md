@@ -8,6 +8,32 @@ Entradas de 0.1.0 a 0.4.0 ainda não foram transcritas; entram antes da 1.0.0 (v
 
 - Versão 1.0.0 (lançamento completo) entra aqui depois que o teste final com crianças e adultos for aprovado.
 
+## [0.13.0] - 2026-11-10
+
+### Adicionado
+- A tela de título ganhou a imagem da árvore de Natal.
+- Tela de fim, antes dos créditos, com a imagem da família: Nath, Ítalo, Nick e os sobrinhos. Um toque em qualquer ponto avança para os créditos.
+- "Explorar a casa", nos créditos: depois do fim, dá para andar livremente pela casa, com 25 enfeites de Natal espalhados pelos cômodos, com pausa e com o Nick junto.
+
+### Alterado
+- Os créditos ficaram mais enxutos. A mensagem de fim agradece sem citar nomes.
+- A barra de comandos de baixo muda no modo "Explorar a casa".
+
+### Corrigido
+- Na tela de fim, em celular estreito (667 por 375), o toque não avançava. Agora avança.
+
+## [0.12.0] - 2026-11-10
+
+### Adicionado
+- Cada conquista tem o próprio jingle: luzes, parte 1, parte 2, parte 3 e enfeites.
+- Jingle de Natal nos créditos, com a melodia tradicional de "We Wish You a Merry Christmas" em arranjo próprio.
+
+### Alterado
+- A música de fundo abaixa durante os jingles, em vez de parar, e volta do mesmo ponto.
+- O som único de conquista saiu, no lugar dos jingles novos.
+
+Sem mudança visual.
+
 ## [0.11.2] - 2026-11-10
 
 ### Corrigido

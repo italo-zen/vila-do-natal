@@ -23,3 +23,22 @@ export function definirTelaDoSom(cena: Phaser.Scene, tela: TelaDoSom): void {
 export function tocarSom(cena: Phaser.Scene, evento: EventoDeAudio): void {
   somDaCena(cena)?.tocar(evento, telaDoSomDaCena(cena));
 }
+
+/** Conquista: toca o jingle da chave da missão (ADR-008 5.1). Só a tela de conquista chama. */
+export function tocarConquistaDaCena(cena: Phaser.Scene, chave: string): void {
+  somDaCena(cena)?.tocarConquista(chave, telaDoSomDaCena(cena));
+}
+
+/** Continuar (com S12 depois do corte) ou X e B (sem S12), ADR-008 5.2. */
+export function pararConquistaDaCena(cena: Phaser.Scene, saida: 'continuar' | 'saida'): void {
+  somDaCena(cena)?.pararConquista(telaDoSomDaCena(cena), saida);
+}
+
+/** Créditos: o jingle JC uma vez, depois do fade (ADR-008 5.2). */
+export function tocarCreditosDaCena(cena: Phaser.Scene): void {
+  somDaCena(cena)?.tocarCreditos();
+}
+
+export function pararCreditosDaCena(cena: Phaser.Scene): void {
+  somDaCena(cena)?.pararCreditos();
+}

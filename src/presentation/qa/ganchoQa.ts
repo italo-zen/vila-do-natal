@@ -1,5 +1,7 @@
 import type Phaser from 'phaser';
 import { centroDosPes } from '../../application/mundo/movimento';
+import { podeAbrirDica } from '../../application/mundo/nick/modoDaTela';
+import type { ModoDeSessao } from '../../application/sessao/modoDeSessao';
 import { FASES } from '../../domain/progresso/Fase';
 
 /**
@@ -27,6 +29,8 @@ interface CasaPorDentro {
   sv: {
     sessao: {
       fase: string;
+      modo: ModoDeSessao;
+      faseConcluida(f: string): boolean;
       progresso: { nick: { estado: string; tile: { mapa: string; x: number; y: number }; oculto: boolean; direcao: string; fila: { entradas: unknown[] } }; concluir(f: string): { ok: boolean; valor: { progresso: unknown } } };
       farejo: { ativo: boolean; restanteMs: number; porta: { id: string; saida: string; mapa: string } | undefined };
       definir(p: unknown): void;
@@ -36,10 +40,12 @@ interface CasaPorDentro {
   dica: unknown;
   nickOcupado: boolean;
   sniffando: boolean;
-  nick: { sprite: { anims: { currentAnim: { key: string } | null; isPlaying: boolean } | undefined } | undefined } | undefined;
+  nick: { sprite: { texture?: { key: string }; frame?: { name: string | number }; alpha?: number; visible: boolean; x: number; y: number; depth: number; anims: { currentAnim: { key: string } | null; isPlaying: boolean } | undefined } | undefined } | undefined;
   fade: { setAlpha(v: number): unknown };
   tweens: { killTweensOf(alvo: unknown): void };
   carregarSubarea(id: string, spawn?: string): void;
+  /** Enfeites da subárea (modo explorar, ADR-010 4): total, visíveis, piscando e quadro do pisca. */
+  enfeites(): { area: string | null; total: number; visiveis: number; piscando: number; quadro: 0 | 1 };
 }
 
 export function instalarGancho(jogo: Phaser.Game): void {
@@ -59,6 +65,12 @@ export function instalarGancho(jogo: Phaser.Game): void {
     const sessao = (navigator as unknown as { audioSession?: { type?: string } }).audioSession?.type ?? null;
     return { ...s.estado(), sessao };
   };
+  /** Recursos da build (ADR-009 4.4): modo, estado de cada arquivo e falhas. Só no build de QA; a release não tem gancho. */
+  const recursosDoGancho = () => {
+    const r = jogo.registry.get('recursos') as { modo: string; todos(): Record<string, string>; falhas(): string[] } | undefined;
+    if (!r) return null;
+    return { modo: r.modo, estados: r.todos(), falhas: r.falhas() };
+  };
   const pausa = () => {
     if (!jogo.scene.isActive('Pausa')) return { aberta: false, visao: null, foco: null };
     const cena = jogo.scene.getScene('Pausa') as unknown as { estado?: { visao: string; foco: number } };
@@ -66,7 +78,7 @@ export function instalarGancho(jogo: Phaser.Game): void {
   };
   janela.__estado = () => {
     const c = casa();
-    if (!c) return { mapa: null, audio: audio(), pausa: pausa() };
+    if (!c) return { mapa: null, audio: audio(), pausa: pausa(), recursos: recursosDoGancho() };
     const centro = centroDosPes(c.pos, c.geo);
     const t = c.geo.tile;
     return {
@@ -85,7 +97,8 @@ export function instalarGancho(jogo: Phaser.Game): void {
       /** Nick (ADR-005): estado, tile local da subárea, se está oculto, direção e quantas entradas tem a fila. */
       nick: (() => {
         const n = c.sv.sessao.progresso.nick;
-        return { estado: n.estado, mapa: n.tile.mapa, tileX: n.tile.x, tileY: n.tile.y, oculto: n.oculto, direcao: n.direcao, filaEntradas: n.fila.entradas.length };
+        const sp = c.nick?.sprite;
+        return { estado: n.estado, mapa: n.tile.mapa, tileX: n.tile.x, tileY: n.tile.y, oculto: n.oculto, direcao: n.direcao, filaEntradas: n.fila.entradas.length, textura: sp?.texture?.key ?? null, frame: sp?.frame?.name ?? null, alfa: sp?.alpha ?? null, visivel: sp?.visible ?? null, xPx: sp?.x ?? null, yPx: sp?.y ?? null, profundidade: sp?.depth ?? null };
       })(),
       /** Farejo (ADR-005 seção 4.5): seta visível, tempo restante e porta a seguir (id e saída). */
       farejo: (() => {
@@ -105,6 +118,13 @@ export function instalarGancho(jogo: Phaser.Game): void {
       audio: audio(),
       /** Pausa (ADR-008 6): aberta, visão e foco. */
       pausa: pausa(),
+      /** Modo explorar (ADR-010 4): modo da sessão, partida concluída, dica disponível, enfeites e Nick. */
+      modo: c.sv.sessao.modo,
+      partidaConcluida: c.sv.sessao.faseConcluida('enfeites'),
+      dicaDisponivel: podeAbrirDica('exploracao', c.sv.sessao.modo),
+      enfeites: c.enfeites(),
+      recursos: recursosDoGancho(),
+      nickEstado: { acordado: c.sv.sessao.progresso.nick.estado === 'acordado', dormindo: c.sv.sessao.progresso.nick.estado === 'dormindo' },
     };
   };
   janela.__teleportar = (mapa: string, spawn: string) => {
@@ -124,6 +144,29 @@ export function instalarGancho(jogo: Phaser.Game): void {
    * na posição do sobrinho: depois use __teleportar. Devolve a fase atual, ou null se a fase não existe ou não dá para
    * chegar a ela (já passou).
    */
+  /**
+   * Atalho de QA (ADR-010 9, capturas do modo explorar): começa uma partida nova com o sobrinho pedido, conclui todas as
+   * fases pelas regras de domínio e, se `explorar`, entra no modo explorar. Não é atalho de jogo: só existe no build de QA.
+   */
+  janela.__partidaConcluida = (personagem: string, explorar: boolean) => {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string): void }; sessao: { progresso: { concluir(f: string): { ok: boolean; valor: { progresso: unknown } } }; definir(p: unknown): void; entrarNoModoExplorar(): void } };
+    sv.iniciarNovoJogo.executar(personagem);
+    for (const fase of FASES) {
+      const r = sv.sessao.progresso.concluir(fase);
+      if (!r.ok) break;
+      sv.sessao.definir(r.valor.progresso);
+    }
+    if (explorar) sv.sessao.entrarNoModoExplorar();
+    return sv.sessao;
+  };
+  /** Troca de cena sem passar pelos menus (build de QA; as capturas dos Marcos 7). */
+  janela.__irPara = (cena: string, dados?: unknown) => {
+    // Para as cenas no ar antes de iniciar: `scene.start` do gerenciador não para as outras (o jogo real usa `this.scene.start`).
+    for (const ativa of jogo.scene.getScenes(true)) {
+      if (ativa.scene.key !== cena) jogo.scene.stop(ativa.scene.key);
+    }
+    jogo.scene.start(cena, dados as object | undefined);
+  };
   janela.__irParaFase = (fase: string) => {
     const c = casa();
     if (!c || !(FASES as readonly string[]).includes(fase)) return null;

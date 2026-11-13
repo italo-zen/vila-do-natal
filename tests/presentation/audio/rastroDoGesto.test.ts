@@ -7,7 +7,12 @@ import type { EstadoDoMotor, MotorDeAudio, VozDeAudio } from '../../../src/prese
 /** Diagnóstico do PT5 (iPhone): a música recomeça quando o contexto fica ativo; descartes e erros não somem em silêncio. */
 const config = JSON.parse(readFileSync(join(__dirname, '..', '..', '..', 'content', 'audio.json'), 'utf-8'));
 const laco = { atrasoInicial: 1105, preenchimentoFinal: 551, amostrasNoArquivo: 795456, amostras: 793800, taxaHz: 22050 };
-const ids: string[] = [config.musica.id, ...Object.values(config.eventos as Record<string, { id: string }>).map((e) => e.id)];
+const ids: string[] = [
+  config.musica.id,
+  ...Object.values(config.eventos as Record<string, { id?: string }>).map((e) => e.id).filter((id): id is string => !!id),
+  ...Object.values(config.conquistas as Record<string, { id: string }>).map((c) => c.id),
+  config.creditos.id,
+];
 const entrada = (): EntradaDeAudio => ({ config, laco, bytes: Object.fromEntries(ids.map((id, i) => [id, new ArrayBuffer(10 + i)])) });
 
 function motor(opcoes: { retomarFalha?: boolean } = {}) {
@@ -22,9 +27,12 @@ function motor(opcoes: { retomarFalha?: boolean } = {}) {
     taxaDoBuffer: () => 22050,
     tocar(_b, o): VozDeAudio {
       reg.tocadas.push({ loop: o.loop });
-      return { parar: () => void reg.paradas++ };
+      return { parar: () => void reg.paradas++, fimEm: Infinity, pararEm: () => void reg.paradas++ };
     },
     definirMestre: () => undefined,
+    barramentoDaTrilha: () => ({}),
+    agora: () => 0,
+    rampaGanho: () => undefined,
     estado: () => estado,
     async retomar() {
       reg.retomadas++;

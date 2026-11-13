@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { RAIZ, executadoDiretamente } from './comum.mjs';
 import { secaoDaVersao } from './changelog.mjs';
 import { acharGancho } from './verificar-sem-gancho.mjs';
-import { bytesDeAudioNoHtml, medirAudio, verificarConteudoDoHtml } from './verificar-tamanho.mjs';
+import { bytesDeAudioNoHtml, medirAudio, modoDaPasta, verificarConteudoDoHtml, verificarReleaseExterna } from './verificar-tamanho.mjs';
 
 /**
  * Nomes de pessoas da família que não podem aparecer no jogo (GDD 10, item 034; docs/mapa-casa-real.md, 1.2).
@@ -112,17 +112,26 @@ export function verificarRelease({ raiz = RAIZ, tag = null } = {}) {
     if (temVersaoNoBuild(texto, versao)) ok.push(`versão ${versao} injetada no build`);
     else erros.push(`a versão ${versao} não aparece no build (título e créditos leem o package.json).`);
 
-    // Áudio referenciado por content/audio.json (schema 1 ou 2), tamanho do HTML e aviso sem o áudio (ADR-008 8.4).
-    const htmlBytes = statSync(html).size;
-    const medida = medirAudio({ raiz, htmlBytes, htmlSemAudioBytes: htmlBytes - bytesDeAudioNoHtml(texto) });
-    erros.push(...medida.erros);
-    avisos.push(...medida.avisos);
-    if (medida.erros.length === 0) ok.push(`tamanho dentro do GDD 19.2.6 (${medida.config.descricao})`);
+    if (modoDaPasta(join(raiz, 'dist-release')) === 'externo') {
+      // Release externa (ADR-009 seção 5): lista, hashes, órfãos, áudio e imagens fora do HTML, gzip, rede e rascunho.
+      const ext = verificarReleaseExterna({ pasta: join(raiz, 'dist-release'), raiz });
+      erros.push(...ext.erros);
+      avisos.push(...ext.avisos);
+      if (ext.erros.length === 0) {
+        ok.push(`release externa (ADR-009): HTML gzip ${ext.resumo.htmlGzip} B, ${ext.resumo.audioArquivos} áudios e ${ext.resumo.imagens.length} imagens conferidos com a lista`);
+      }
+    } else {
+      // Playtest (HTML único, tudo embutido): áudio referenciado por content/audio.json, tamanho e conteúdo.
+      const htmlBytes = statSync(html).size;
+      const medida = medirAudio({ raiz, htmlBytes, htmlSemAudioBytes: htmlBytes - bytesDeAudioNoHtml(texto) });
+      erros.push(...medida.erros);
+      avisos.push(...medida.avisos);
+      if (medida.erros.length === 0) ok.push(`tamanho dentro do GDD 19.2.6 (${medida.config.descricao})`);
 
-    // Conteúdo do HTML final: áudio embutido, sem .mp3 como caminho, sem rede, sem rascunho (ADR-008 8.4).
-    const c = verificarConteudoDoHtml({ html: texto, ids: medida.config.ids });
-    erros.push(...c.erros);
-    if (c.erros.length === 0) ok.push(`áudio embutido (${c.embutidos} arquivos), sem caminho .mp3 e sem rede no HTML`);
+      const c = verificarConteudoDoHtml({ html: texto, ids: medida.config.ids });
+      erros.push(...c.erros);
+      if (c.erros.length === 0) ok.push(`áudio embutido (${c.embutidos} arquivos), sem caminho .mp3 e sem rede no HTML`);
+    }
   }
 
   // 6. Meta de áudio sem rascunho (ADR-008 8.2, A2; item 136, critério 10).

@@ -54,7 +54,7 @@ O workflow recusa a tag que não segue `vX.Y.Z` (inclui sufixos como `-rc1`) e a
 | DS2 | Título pronto em até 4 s com Fast 4G emulado, medido na transferência de rede. Referência do build atual: 9,4 s sem gzip; 3,86 s com gzip | no Pages, antes da tag | QA |
 | Gzip | A resposta do `index.html` no Pages vem comprimida (`Content-Encoding: gzip`). Sem isso, o DS2 passa de 4 s | no Pages, antes da tag | QA |
 | AU10 e AU11 | `npm run verificar:audio` passa (ganhos, pico e laço). Roda no workflow, no job de verificação, antes do build de release | em cada build | auto |
-| Tamanho | `npm run verificar:tamanho` (ADR-008 revisão 2, 8.4). Só o que `content/audio.json` referencia conta: trilha `mus_` ≤ 160.000 B; efeitos `sfx_` ≤ 12.000 B cada e ≤ 160.000 B somados; jingles `jin_j0*` ≤ 16.000 B cada e ≤ 64.000 B somados; créditos `jin_jc*` ≤ 64.000 B; áudio total ≤ 320.000 B; HTML ≤ 2.500.000 B. Aviso (não reprova) se o HTML sem o áudio passar de 2.000.000 B. A ferramenta diz qual schema detectou (1: 13 eventos, até a 0.11.0; 2: conquistas e créditos, a partir da 0.12.0). Valores de referência (Arte, 2026-11-10; podem mudar na escuta): schema 2 com 19 arquivos, total 301.148 B sem o S09 (com o S09, 309.629 B); jingles 62.674 B; JC 62.502 B. Schema 1 (0.11.0): 14 arquivos, 184.453 B | em cada build | auto |
+| Tamanho | `npm run verificar:tamanho` (ADR-008 revisão 2, 8.4). Só o que `content/audio.json` referencia conta: trilha `mus_` ≤ 160.000 B; efeitos `sfx_` ≤ 12.000 B cada e ≤ 160.000 B somados; jingles `jin_j0*` ≤ 16.000 B cada e ≤ 64.000 B somados; créditos `jin_jc*` ≤ 64.000 B; áudio total ≤ 320.000 B; HTML do playtest ≤ 2.500.000 B (na release externa, o limite é de gzip, ver "Release externa"). Aviso (não reprova) se o HTML sem o áudio passar de 2.000.000 B. A ferramenta diz qual schema detectou (1: 13 eventos, até a 0.11.0; 2: conquistas e créditos, a partir da 0.12.0). Valores de referência (Arte, 2026-11-10; podem mudar na escuta): schema 2 com 19 arquivos, total 301.148 B sem o S09 (com o S09, 309.629 B); jingles 62.674 B; JC 62.502 B. Schema 1 (0.11.0): 14 arquivos, 184.453 B | em cada build | auto |
 | PT5 | Playtest final com criança e adulto, no celular em paisagem e no computador, roteiro de GDD 19.7.3. Só depois do retorno aprovado em `playtests.md` a tag `v1.0.0` sai | antes da tag | Diretor, Orquestrador |
 
 ## Critérios da 1.0.0 (GDD 19.7.2)
@@ -79,3 +79,30 @@ O workflow recusa a tag que não segue `vX.Y.Z` (inclui sufixos como `-rc1`) e a
 - Registrar a publicação em `decisions.md` (data, versão, link do Pages e da Release).
 - Conferir que o CHANGELOG da 1.0.0 lista os conhecidos e que o `backlog.md` marca o item 141 como concluído.
 - Ideias pós-1.0 ficam no backlog (item 142), sem sair da lista sem decisão do Diretor.
+
+## Medida de referência para o ADR-009
+
+Medida em 2026-11-10 com gzip nível 6 (`zlib`, o padrão de servidores), sobre o HTML de build em 0.11.2. Sem alterar o build: a versão "sem áudio" é uma cópia fora do repositório com as data URLs removidas.
+
+| Build | Áudio embutido | Bruto | gzip nível 6 |
+|-------|----------------|-------|--------------|
+| Release atual (`dist-release/index.html`, schema 2) | 19 arquivos, 402,0 KB brutos (290,1 KB de gzip) | 2.065.399 B | 858.478 B |
+| Mesmo build sem o áudio | nenhum | 1.663.406 B | 568.396 B |
+| Playtest atual (`dist-playtest/index.html`, schema 1) | 14 arquivos | 1.903.602 B (com) / 1.657.328 B (sem) | 743.406 B (com) / 565.494 B (sem) |
+
+Leitura: o áudio pesa cerca de 290 KB de gzip no build atual, e 34% do HTML comprimido é áudio. O limite de 727.000 B do ADR-009 (seção 5) fica entre os dois casos: o build atual com áudio passa do limite em 131.478 B, e sem áudio ficaria 158.604 B abaixo. Com o 727 KB do QA (DS2, 3,86 s), a medida mais próxima é a do HTML com áudio da 0.11.x (743 KB no playtest, a diferença de 16 KB é de versão); sem áudio, seriam cerca de 565 KB. Portanto, o 727 KB do QA não é o HTML sem áudio. A confirmação exata exige o build da 0.11.0 que foi medido, que não está mais no repositório.
+
+Estimativa de transferência (não é medida): em 1,6 Mbps (200 KB/s), 858 KB levam cerca de 4,3 s só de transferência, acima do limite de 4 s do DS2. Confirmar com DS1b no Pages.
+
+## Release externa (ADR-009, item 159)
+
+A release (`npm run build:release`) não embute áudio nem imagens de tela no HTML. A pasta `dist-release/` tem `index.html` (código, sprites, textos), `audio/` (19 arquivos com hash no nome), `imagens/` (título e fim) e `recursos.json` (lista, bytes e sha256). O playtest continua HTML único, com tudo embutido.
+
+Passos de release, além dos da rotina:
+
+1. O `npm run verificar:release -- --tag vX.Y.Z` e o `npm run verificar:tamanho -- dist-release/index.html` detectam o modo pela presença de `recursos.json`. Conferem: lista ↔ arquivos ↔ hashes; nenhum órfão; nenhum `data:audio/` no HTML; nenhuma imagem de tela em base64; gzip nível 6 do HTML ≤ 727.000 B; imagem ≤ 60.000 B cada (aviso acima de 50.000); áudio ≤ 320.000 B com os orçamentos por classe; atlas `dec_*` ≤ 16.000 B e embutido; rede e rascunho.
+2. `npm run smoke:release` sobe `dist-release/` em subcaminho e na raiz, com gzip e Fast 4G emulado (DS1b). Usa o Google Chrome instalado (channel `chrome`), que já vem no runner do GitHub: nenhuma instalação de navegador é necessária. Local: confirmado em 2026-11-12, com o título desenhado em cerca de 3,1 s e 21 arquivos respondendo 200.
+3. O workflow publica a pasta inteira no GitHub Pages e anexa à GitHub Release o zip de `dist-release/` (`vila-do-natal-vX.Y.Z.zip`), com a seção do CHANGELOG.
+4. Depois do Pages no ar, conferir no endereço publicado: título com a imagem da árvore, tela de fim, áudio tocando depois do primeiro toque, e nenhum erro no console (QA, DS1b).
+
+Exceção documentada: o texto `https://phaser.io` (banner e configuração do Phaser) não é requisição, e a checagem de rede o trata como aviso. O `fetch` do polyfill do Vite e o do carregador do jogo são os dois únicos `fetch(` aceitos no HTML. A confirmação real de rede é o smoke.

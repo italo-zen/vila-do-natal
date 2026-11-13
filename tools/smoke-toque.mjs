@@ -25,8 +25,9 @@ const T = perfil.toque;
 const TELA_JOGO = { largura: perfil.sala.colunas * perfil.tile, altura: perfil.sala.linhas * perfil.tile };
 /** Posições do jogo (px de tela de jogo) de cada alvo do canvas usado no roteiro (telas do perfil HD). */
 const ALVO = {
-  comojogar: { x: TELA_JOGO.largura / 2, y: perfil.telas.titulo.menuY[1] + perfil.botao.altura / 2 },
-  comecar: { x: TELA_JOGO.largura / 2, y: perfil.telas.titulo.menuY[0] + perfil.botao.altura / 2 },
+  // Título do Marco 7 (0.13.0): botões na metade esquerda (TituloScene: CENTRO_ESQUERDO 122, Y_BOTOES 196 e 252, altura 48).
+  comojogar: { x: 122, y: 252 + perfil.botao.altura / 2 },
+  comecar: { x: 122, y: 196 + perfil.botao.altura / 2 },
   voltarComoJogar: { x: TELA_JOGO.largura / 2, y: perfil.telas.comoJogar.voltarY + perfil.botao.altura / 2 },
   cartaoLoLo: {
     x: (TELA_JOGO.largura - (4 * perfil.telas.selecao.cartaoLargura + 3 * perfil.telas.selecao.espaco)) / 2 + perfil.telas.selecao.cartaoLargura / 2,

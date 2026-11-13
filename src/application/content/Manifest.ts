@@ -3,6 +3,8 @@ export interface ManifestoMapa {
   id: string;
   file: string;
   tileset: string;
+  /** Enfeites do modo explorar desta subárea, em `maps/decoracao/<subarea>.json` (ADR-010 8.1). Opcional. */
+  decoracao?: string;
 }
 /**
  * Missão: `maps` são as subáreas abertas nela (ADR-004 seção 9). Só essas são carregadas. `final` marca a missão de fim

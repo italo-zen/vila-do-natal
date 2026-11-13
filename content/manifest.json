@@ -7,22 +7,26 @@
     {
       "id": "hall",
       "file": "maps/casa-real/hall.json",
-      "tileset": "tiles_casa"
+      "tileset": "tiles_casa",
+      "decoracao": "maps/decoracao/hall.json"
     },
     {
       "id": "sala",
       "file": "maps/casa-real/sala.json",
-      "tileset": "tiles_casa"
+      "tileset": "tiles_casa",
+      "decoracao": "maps/decoracao/sala.json"
     },
     {
       "id": "cozinha",
       "file": "maps/casa-real/cozinha.json",
-      "tileset": "tiles_casa"
+      "tileset": "tiles_casa",
+      "decoracao": "maps/decoracao/cozinha.json"
     },
     {
       "id": "escritorio",
       "file": "maps/casa-real/escritorio.json",
-      "tileset": "tiles_casa"
+      "tileset": "tiles_casa",
+      "decoracao": "maps/decoracao/escritorio.json"
     },
     {
       "id": "banheiro_escritorio",
@@ -32,7 +36,8 @@
     {
       "id": "quarto",
       "file": "maps/casa-real/quarto.json",
-      "tileset": "tiles_casa"
+      "tileset": "tiles_casa",
+      "decoracao": "maps/decoracao/quarto.json"
     },
     {
       "id": "banheiro_casal",

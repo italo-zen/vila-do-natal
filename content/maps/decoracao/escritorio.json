@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "subarea": "escritorio",
+  "enfeites": [
+    {
+      "id": "escritorio_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 5,
+      "y": 1,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "escritorio_luz_1",
+      "sprite": "dec_luz",
+      "x": 6,
+      "y": 2,
+      "pisca": true,
+      "examinar": "enfeite.pisca"
+    },
+    {
+      "id": "escritorio_meias_1",
+      "sprite": "dec_meias",
+      "x": 6,
+      "y": 3,
+      "pisca": false,
+      "examinar": "enfeite.meias"
+    }
+  ]
+}
