@@ -440,3 +440,49 @@
 | I-348 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Versao 0.11.2 sem painel, verificar que builds oficiais nao tem __DIAG__ |
 | I-349 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Generalista | | | | CHANGELOG 0.11.2 |
 | I-350 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | 6374 | 268 | | Versao 0.11.2, painel removido (builds oficiais sem __DIAG__), 855 testes; v0.11.2 publicada, Version 17; tokens = 967881 - 961507 |
+| I-351 | 2026-11-10 | M6 | sonnet 5.5 | Diretor | Orquestrador | | | | v0.11.2 funcionou no iPhone; pede link da PR; novas imagens de inicio e fim; modo explorar a casa com mais enfeites; commits f94a44a e edd2f87 enviados por push |
+| I-352 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Produto | | | | Escopo Marco 7: imagem do titulo (so arvore), imagem do fim (familia), modo explorar a casa, enfeites em todos os comodos; versao 0.13.0 |
+| I-353 | 2026-11-10 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Publicar sem aceite previo quando finalizar |
+| I-354 | 2026-11-10 | M7 | haiku 5.5 | Produto | Orquestrador | 77502 | 243 | | Escopo Marco 7 (GDD 20, backlog 150-161); DS2 quase no limite: release com audio e imagens fora do HTML (ADR-009); perguntas P1 a P3; tokens = 277723 - 200221 |
+| I-355 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Especialista | | | | ADR-009 (carga fora do HTML na release) e ADR-010 (modo explorar e enfeites como dados) |
+| I-356 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Arte | | | | Itens 151-153: imagem do titulo, imagem do fim, 12 enfeites e posicoes |
+| I-357 | 2026-11-10 | M6 | haiku 5.5 | Orquestrador | Dev | | | | Item 145: integrar jingles e ducking, versao 0.12.0 |
+| I-358 | 2026-11-10 | M7 | haiku 5.5 | Especialista | Orquestrador | | | | ADR-009 (release com audio/imagens fora do HTML, hash, 3 tentativas) e ADR-010 (modo explorar e decoracao como dados) escritos; aceitos |
+| I-359 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Dev, Produto, Generalista | | | | vite.audio.ts p/ variantes; GDD 20 ajustes (vela, farejar, pausa); medir release com/sem audio |
+| I-360 | 2026-11-10 | M7 | haiku 5.5 | Produto | Orquestrador | | | | GDD 19.3.1, 20.2, 20.5, 20.6, 20.8, 20.10 e backlog 127, 154-159 ajustados aos ADR-009/010 (pausa em explorar, vela enfeite.vela, farejar sem seta, ordem de release) |
+| I-361 | 2026-11-10 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | Medida ADR-009: release com audio 858 KB gzip, sem audio 568 KB; 727 KB do QA = com 14 audios; limite aplica ao HTML sem recursos externos |
+| I-362 | 2026-11-10 | M7 | haiku 5.5 | Arte | Orquestrador | 98850 | 354 | | Itens 151-153: tela_titulo (31 KB), tela_fim (41 KB), 12 sprites de enfeite (3,5 KB), 25 posicoes; veu no titulo recusado; tokens = 383750 - 284900 |
+| I-363 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Arte | | | | Titulo sem veu; posicoes no formato do ADR-010 |
+| I-364 | 2026-11-10 | M7 | haiku 5.5 | Arte | Orquestrador | | | | Titulo sem veu (31,2 KB), decoracao no formato do ADR-010 (5 JSONs, 25 enfeites, prefixo dec_), validador E1-E8; E9 pendente (chaves de texto, item 156) |
+| I-365 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Produto | | | | Item 156: textos e chaves do Marco 7 (fim, creditos, explorar, enfeites) |
+| I-366 | 2026-11-10 | M7 | haiku 5.5 | Produto | Orquestrador | 17599 | 42 | | Item 156: chaves de enfeite, fim, creditos e barra do modo explorar; 2 testes falham (fim.obrigado cita nomes, contagem de .toque.menu); ajustes pedidos; tokens = 308260 - 290661 |
+| I-367 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Produto e Arte | | | | fim.obrigado sem nomes (regra 034); velas com enfeite.vela |
+| I-368 | 2026-11-10 | M7 | haiku 5.5 | Arte | Orquestrador | | | | Velas usam enfeite.vela; validador E1-E9 passa; 25 enfeites; atlas dec_ 2.438 B |
+| I-369 | 2026-11-10 | M7 | haiku 5.5 | Produto | Orquestrador | 6950 | 85 | | fim.obrigado sem nomes ("Obrigado por jogar! / A arvore ficou linda. / Feliz Natal!"); 16 chaves .toque.menu (12 + 4 novas); barra.creditos.toque.menu fica sem uso; tokens = 315210 - 308260 |
+| I-370 | 2026-11-10 | M6 | haiku 5.5 | Dev | Orquestrador | | | | Item 145: jingles integrados (schema 2, ducking, 899/900 testes, 19 audios, 0.12.0); verificar:audio falha pelo gerar_audio.py da Arte; sem commit |
+| I-371 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Dev, Arte, Especialista, Produto | | | | Dev: itens 157/158; Arte: gerar_audio.py sem S09; Especialista e Produto: numeros finais dos jingles |
+| I-372 | 2026-11-10 | M7 | haiku 5.5 | Produto | Orquestrador | | | | GDD 19.2 e 20.7 e backlog 143-147 com numeros do meta (J01-J05 62.674 B, JC 62.502 B, total 301.148 B); corrigido o 62.274 do Dev para 62.674 |
+| I-373 | 2026-11-10 | M7 | haiku 5.5 | Especialista | Orquestrador | | | | ADR-008/009 e style-guide com numeros do meta (J05 14.855 B, jingles 62.674 B, JC 62.502 B, total 301.148 B); excecao de licenca por arquivo; Produto e Arte com pendencias |
+| I-374 | 2026-11-10 | M6 | haiku 5.5 | Arte | Orquestrador | | | | gerar_audio.py sem S09; verificar:audio passa (21 OK); audio-licencas.md sem S09; A6 com familia de conquistas |
+| I-375 | 2026-11-10 | M7 | haiku 5.5 | Dev | Orquestrador | 254362 | 2302 | | Marco 7 (0.13.0): titulo com imagem, FimScene, creditos com Explorar a casa, modo explorar, 25 enfeites, 948 testes; 3 ajustes visuais pedidos apos inspecao; tokens = 477087 - 222725 (leituras anteriores do agente) |
+| I-376 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Arte e Dev | | | | Arte: enfeites so em tiles visiveis; Dev: layout do titulo e versao nos creditos |
+| I-377 | 2026-11-10 | M7 | haiku 5.5 | Arte | Orquestrador | | | | 25 enfeites sobre tiles visiveis, fora de rotulos; validador E1-E8 e 6/6 testes de conteudo; sem cortina/estrela/bola; capturas por comodo geradas |
+| I-378 | 2026-11-10 | M7 | haiku 5.5 | Dev | Orquestrador | 23376 | 493 | | Titulo com nome e botoes a esquerda e arvore livre; creditos com versao sem colisao; 948 testes; smoke-toque atualizado; capturas inspecionadas ok; tokens = 500463 - 477087 |
+| I-379 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | QA | | | | Itens 146 e 160: checklist do Marco 7 e rodadas de 15 min (jingles, fim, creditos, titulo, explorar, enfeites) |
+| I-380 | 2026-11-10 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Pergunta: os testes repetem testes ja aprovados? Respondido; regra de regressao uma vez por rodada |
+| I-381 | 2026-11-10 | M7 | haiku 5.5 | QA | Orquestrador | | 681 | | Marco 7 rodada 1: jingles AU15-18 e AU20, FI1, FI3, TI1, EX1/2/4, 25 enfeites OK; sem bug; 11 min 21 s de 15; baseline refeita (351/351); item 160 aberto |
+| I-382 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | QA | | | | Rodada 2 do Marco 7: pendencias (AU19, FI2, TI2, EX3, EN2-4, explorar por toque, exploracao livre), regressao uma vez |
+| I-383 | 2026-11-10 | M7 | haiku 5.5 | QA | Orquestrador | | 780 | | Marco 7 rodada 2: P0 BUG-M7-01 (fim sem avanço por toque em 667x375); AU19, EX3, EN3, EN4, EX5 (416 passos) e toque 844 OK; 13 min 20 s; 160 e 146 abertos |
+| I-384 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | Dev | | | | Corrigir BUG-M7-01 (P0): FimScene sem avanco por toque no layout B |
+| I-385 | 2026-11-10 | M7 | haiku 5.5 | Dev | Orquestrador | | | | BUG-M7-01 corrigido: Fim:Zone de toque, guarda de avanco, creditos so respondem apos o fade; 951 testes; smoke do fim nos dois layouts |
+| I-386 | 2026-11-10 | M7 | haiku 5.5 | Orquestrador | QA | | | | Rodada 3 do Marco 7: confirmar P0, fluxo completo por toque no layout B e A, EN2, FI2, TI2, exploracao livre |
+| I-387 | 2026-11-10 | M7 | haiku 5.5 | QA | Orquestrador | 23035 | 873 | | Rodada 3 do Marco 7: P0 fechado, fluxo completo por toque nos 2 layouts OK, EN2 por dados OK, exploracao 2 min; 160 e 146 aceitos no alcance automatizado; tokens = 837272 - 814296 |
+| I-388 | 2026-11-10 | M7 | sonnet 5.5 | Orquestrador | Diretor | | | | v0.13.0 publicada (Version 18) sem aceite previo, por ordem do Diretor |
+| I-389 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | v0.13.0 aprovada ("Esta otimo"); pergunta qual o proximo passo |
+| I-390 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | Dev | | | | Item 159: release com audio e imagens fora do HTML (ADR-009) |
+| I-391 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | Generalista | | | | CHANGELOG 0.12.0 e 0.13.0 |
+| I-392 | 2026-11-12 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | CHANGELOG 0.12.0 e 0.13.0 escritos (changelog.mjs le as duas secoes) |
+| I-393 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | PT5 aprovado ("o playtest esta otimo"); P1 respondida: pode publicar os desenhos no GitHub Pages |
+| I-394 | 2026-11-12 | M7 | haiku 5.5 | Dev | Orquestrador | | | | Item 159 (Dev): release com audio e imagens fora do HTML, gzip 574 KB, titulo 3,115 s, 971 testes; criterio do smoke:release 3,5 s |
+| I-395 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | Dev e Generalista | | | | Dev: smoke:release em 3,5 s; Generalista: verificar:tamanho/release e workflow para release externa |
+| I-396 | 2026-11-12 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | Item 159 completo: verificadores nos dois modos, workflow com pasta inteira e smoke, checklist; 10 testes negativos; excecoes de rede aceitas |

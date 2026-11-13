@@ -2227,7 +2227,7 @@ Detalha o Marco 6 (seção 13, item 6). Origem: o Diretor aprovou o Marco 5 (v0.
 - Uma faixa, em loop, tranquila, com clima de Natal: **sinos e celesta sintetizados** (padrão aplicado; pergunta 44). Sem voz e sem bateria marcada. Não muda por cômodo.
 - Duração-alvo de **36 s** (faixa de 30 a 40 s), com emenda sem silêncio e sem clique audível. Arquivo-alvo de 144 000 bytes (ADR-008 1.4).
 - Toca em todas as telas, a partir da liberação (19.2.3): título, seleção, introdução, exploração, diálogo, painel, conquista, dica, pausa, condução, fade, créditos e aviso de rotação. Nenhuma tela pausa a música. Só o mudo a silencia. Durante um jingle de conquista ou o jingle de créditos, a trilha baixa de nível (ducking), sem parar (19.2.7).
-- Nos créditos, a mesma faixa (17.7 deixa de dizer "sem música"), com o jingle de créditos JC tocado uma vez por cima dela (19.2.7 c).
+- Nos créditos, a mesma faixa (17.7 deixa de dizer "sem música"), com o jingle de créditos JC (15,5 s) tocado uma vez por cima dela (19.2.7 c). Os jingles de conquista J01 a J05 duram de 2,5 a 3,6 s (19.2.7 a).
 
 **19.2.2 Efeitos.**
 
@@ -2241,7 +2241,7 @@ Detalha o Marco 6 (seção 13, item 6). Origem: o Diretor aprovou o Marco 5 (v0.
 | S06 | Encaixe da peça ou da caixa na árvore (15.6, 17.4) | Clique e sino | 1,5 s |
 | S07 | "Au!" do Nick (16.5, 16.7) | Latido curto, de brinquedo | 0,4 s |
 | S08 | Nick farejando (16.5) | Fungada curta | 0,5 s |
-| S09 | Abertura de uma tela de conquista (14.1, 15.5, 17.4). Uma variante por conquista: J01 a J05 (19.2.7) | Jingle curto de sinos e celesta, diferente em cada conquista | 2,5 a 3,8 s (19.2.7) |
+| S09 | Abertura de uma tela de conquista (14.1, 15.5, 17.4). Uma variante por conquista: J01 a J05 (19.2.7) | Jingle curto de sinos e celesta, diferente em cada conquista | 2,5 a 3,6 s (19.2.7) |
 | S10 | Abertura de cada página de diálogo (não por letra) | Blip baixo e curto | 0,2 s |
 | S11 | Trocar o item em foco (título, seleção, pausa, confirmação, painel) | Tique | 0,1 s |
 | S12 | Confirmar um item (A ou Enter, ou toque em item) | Tique mais agudo | 0,2 s |
@@ -2281,7 +2281,8 @@ Detalha o Marco 6 (seção 13, item 6). Origem: o Diretor aprovou o Marco 5 (v0.
 - `validarAudio` confere as regras (a) a (d) do ADR-008 4.3 e reprova o conteúdo que as violar (AU10). O efetivo de cada som é o arquivo mais o ganho de `content/audio.json`, com o mestre incluído.
 
 **19.2.5 Fonte e licença.**
-- Tudo é **gerado por síntese, original do projeto**. Não há sample, faixa, trecho ou fonte de terceiros, nem de domínio público.
+- Tudo é **gerado por síntese, original do projeto**. Não há sample, faixa, trecho ou fonte de terceiros.
+- **Exceção por arquivo (ajuste 0.12.0, 2026-11-10):** a melodia tradicional de domínio público pode ser usada, sinteticamente recriada pela Arte, em dois arquivos, e só nestes: **JC** (`jin_jc_natal.mp3`) usa a melodia tradicional de "We Wish You a Merry Christmas", pedido literal do Diretor ("Não podemos usar um já conhecido mas adaptado para nossa versão?"); **J05** (`jin_j05_enfeites.mp3`) cita 4 notas de "Jingle Bells" (1857, domínio público), decisão do Orquestrador, ainda sujeita à escuta do Diretor. Os demais arquivos seguem a regra geral. A origem de cada um fica em `docs/audio-licencas.md` com a obra e a data de domínio público (AU12).
 - Os arquivos saem de um script em `tools-arte/` (a Arte escreve; o ADR-008 define a linguagem). O script gera; ninguém edita o arquivo à mão.
 - `docs/audio-licencas.md` lista cada arquivo, com origem ("gerado pelo projeto, síntese original") e data.
 - Isto substitui, neste marco, o "domínio público ou licença gratuita" da 7.3 (ver 19.11, h).
@@ -2306,7 +2307,7 @@ Detalha o Marco 6 (seção 13, item 6). Origem: o Diretor aprovou o Marco 5 (v0.
 **19.2.7 Jingles de conquista e de créditos (ajuste 0.12.0, 2026-11-10).**
 Origem: retorno do PT5 do Diretor, literal: "as páginas de conquista pode tocar músicas diferentes?" e "a página de crédito pode tocar um jingle de natal?". O Diretor achou os áudios "legais". Padrão do Produto, com a decisão e o motivo de cada item.
 
-*(a) Conquistas: um jingle por tela.* Hoje as cinco telas de conquista tocam o mesmo S09. Passam a ter um jingle próprio, da mesma família S09 (ADR-008 5), em dó maior, com o timbre de sinos e celesta da trilha (19.2.1), terminando na tônica:
+*(a) Conquistas: um jingle por tela.* Hoje as cinco telas de conquista tocam o mesmo S09. Passam a ter um jingle próprio, da mesma família S09 (ADR-008 5), com o timbre de sinos e celesta da trilha (19.2.1), terminando na tônica da própria peça. Tonalidade por arquivo: J01 dó maior, J02 sol, J03 fá, J04 ré, J05 dó maior e JC sol maior (a trilha de fundo segue em dó maior, 19.2.1; a tonalidade de cada jingle não precisa ser a da trilha):
 
 | ID | Conquista (chave) | Tela (onde) | Duração | Caráter |
 |---|---|---|---|---|
@@ -2314,12 +2315,12 @@ Origem: retorno do PT5 do Diretor, literal: "as páginas de conquista pode tocar
 | J02 | `conquista.parte1` | Parte 1 (15.5) | 3,0 s | Tilintar de sinos, leve |
 | J03 | `conquista.parte2` | Parte 2 (15.5) | 3,0 s | Como J02, com um degrau a mais |
 | J04 | `conquista.parte3` | Parte 3 (15.5) | 3,0 s | Fecho da última peça |
-| J05 | `conquista.enfeites` | Caixa de enfeites (17.4) | 3,8 s | O mais cheio, com a última frase da árvore |
+| J05 | `conquista.enfeites` | Caixa de enfeites (17.4) | 3,6 s | O mais cheio, com a última frase da árvore |
 
 - **Arquivos:** `jin_j01_luzes.mp3`, `jin_j02_parte1.mp3`, `jin_j03_parte2.mp3`, `jin_j04_parte3.mp3` e `jin_j05_enfeites.mp3`, e o jingle de créditos `jin_jc_natal.mp3`. Mapa em `assets/audio/audio-jingles-proposta.json` (proposta da Arte, a ser integrada em `content/audio.json` pelo Dev, ADR-008 rev. 2).
 - **Motivo:** cada conquista ganha um som com identidade, sem trocar a regra de S09. O S09 deixa de ser um som único e vira a família J01 a J05. O arquivo `sfx_s09_conquista.mp3` sai do catálogo e de `assets/audio/`.
 - A dica do jogo não muda: nenhum jingle toca fora de uma tela de conquista ou dos créditos.
-- Os sinos, a celesta e a tonalidade seguem a trilha. Não há voz nem bateria (19.2.1).
+- Os sinos e a celesta seguem a trilha; a tonalidade de cada jingle é a da lista acima. Não há voz nem bateria (19.2.1).
 
 *(b) Como a trilha se comporta: ducking, não pausa.* Durante um jingle de conquista, a trilha baixa **8 dB** em 0,3 s e volta em 0,5 s, quando o jingle acaba. A trilha não para e não reinicia: é um único laço, e o ganho muda, não a posição. Ao sair da tela (Continuar, X ou B), o jingle para com rampa de 30 ms (sem clique) e a trilha volta ao nível normal.
 - **Sem sobreposição:** (1) nunca dois jingles tocam ao mesmo tempo; (2) se a conquista abre com um efeito ainda em curso (S04 interruptor, S05 peça ou S06 encaixe), o jingle espera o fim dele, com teto de 1,5 s. A tela aparece na hora; só o som espera.
@@ -2327,26 +2328,26 @@ Origem: retorno do PT5 do Diretor, literal: "as páginas de conquista pode tocar
 - **Mudo:** o jingle segue no tempo, em silêncio, como a trilha. Desmudar não reinicia nada.
 - **Pausa:** não há conquista na pausa nem jingle; a pausa não muda o nível da trilha (19.3.5).
 
-*(c) Créditos: jingle de Natal, uma vez, por cima da trilha.* Ao abrir os créditos (depois do fade de 17.4, item 6), toca **uma vez** o jingle de créditos (JC, `jin_jc_natal.mp3`), de **15 s** (dentro da faixa de 12 a 16 s). A trilha baixa **10 dB** em 0,5 s, durante o jingle, e volta ao nível normal em 0,5 s ao fim dele. Não há laço: o jingle não volta. Ao voltar ao título, o som está no nível normal, e a próxima partida começa sem jingle de créditos até os créditos de novo.
-- **Melodia:** original, composta pelo script da Arte (19.2.5), em dó maior, 3/4 ou 4/4, sinos e celesta, terminando na tônica. **Não é domínio público nem tema conhecido**, para não depender de checar licença e para o arquivo sair como "síntese original" (AU12). Um tema de domínio público (ex.: "Jingle Bells", de 1857) seria a alternativa; não foi escolhido porque a faixa de créditos deve soar nova.
-- **Duração de 12 a 16 s, e não 20 s:** 20 s dão 80 000 bytes e levam o total a cerca de 312 000, quase no teto de 320 000 e sem folga para um ajuste de Arte. A Arte entregou 15 s (60 517 bytes), com folga. Se o Diretor quiser 20 s, é mudança de orçamento (item e).
+*(c) Créditos: jingle de Natal, uma vez, por cima da trilha.* Ao abrir os créditos (depois do fade de 17.4, item 6), toca **uma vez** o jingle de créditos (JC, `jin_jc_natal.mp3`), de **15,5 s** (dentro da faixa de 12 a 16 s; `assets/audio/audio-meta.json`). A trilha baixa **10 dB** em 0,5 s, durante o jingle, e volta ao nível normal em 0,5 s ao fim dele. Não há laço: o jingle não volta. Ao voltar ao título, o som está no nível normal, e a próxima partida começa sem jingle de créditos até os créditos de novo.
+- **Melodia (ajuste 2026-11-10, 19.2.5):** JC usa a melodia tradicional de "We Wish You a Merry Christmas", recriada pela Arte com sinos e celesta, em sol maior, 3/4 ou 4/4, terminando na tônica. Pedido literal do Diretor: "Não podemos usar um já conhecido mas adaptado para nossa versão?". O arquivo é recriação sintética, e a obra e a data de domínio público vão em `docs/audio-licencas.md` (AU12). A decisão anterior ("melodia original, sem tema conhecido") fica superada por esta.
+- **Duração de 12 a 16 s, e não 20 s:** 20 s dão 80 000 bytes e levam o total a cerca de 312 000, quase no teto de 320 000 e sem folga para um ajuste de Arte. O meta do Dev (2026-11-10) registra 15,5 s e 62 502 bytes, com folga de 1 498 bytes. Se o Diretor quiser 20 s, é mudança de orçamento (item e).
 
 *(d) Níveis (ADR-008 4.4 e content/audio.json).* Os jingles de conquista (J01 a J05) entram em **0 dB** de partida, e JC em **−2 dB**. Os 0 dB dos conquistas foram uma correção: com −2 dB, a Arte mediu que a regra A6 de mixagem (ADR-008 4.3) falha; em 0 dB ela passa. A regra (c) fica perto do limite, e o `validarAudio` decide. Os níveis são conteúdo: a Arte ajusta, e os testes decidem.
 
 *(e) Orçamento novo.* O total de 320 000 bytes não sobe. Medido pela Arte em 2026-11-10 (arquivos em `assets/audio/audio-meta.json`):
 
-| Item | Limite (bytes) | Medido em 2026-11-09 | Medido em 2026-11-10 (Arte) |
+| Item | Limite (bytes) | Medido em 2026-11-09 | Medido em 2026-11-10 (meta do Dev, `audio-meta.json`) |
 |---|---|---|---|
 | Música (trilha) | 160 000 (sem mudança) | 144 526 | 144 526 |
-| Cada jingle de conquista (J01 a J05) | 16 000 | — | 10 466 a 15 690 |
-| Jingles de conquista somados | 64 000 | — | 63 509 (folga de 491) |
-| Jingle de créditos (JC) | 64 000 | — | 60 517 |
+| Cada jingle de conquista (J01 a J05) | 16 000 | — | 10 466 a 14 855 (J02 a J04: 12 451 cada) |
+| Jingles de conquista somados | 64 000 | — | 62 674 (folga de 1 326) |
+| Jingle de créditos (JC) | 64 000 | — | 62 502 (15,5 s) |
 | Efeitos (S01 a S08, S10 a S13, 12 arquivos) somados | 160 000 | 31 446 | 31 446 |
-| Áudio total | 320 000 (sem mudança) | 184 453 | 299 998 sem o S09 antigo (308 479 se ele ficar no meta) |
+| Áudio total | 320 000 (sem mudança) | 184 453 | 301 148 sem o S09 antigo (309 629 se ele ficar no meta). 19 arquivos embutidos (música, 12 efeitos, 5 jingles e JC) |
 | HTML único (playtest e release) | 2 500 000 | cerca de 1 898 000 | cerca de 2 050 000 (previsão) |
 
-- **Atenção ao S09:** `sfx_s09_conquista.mp3` (8 481 bytes) tem de sair de `assets/audio/` e do meta. Sem ele, o total é 299 998; com ele, 308 479. O teto de 320 000 vale nos dois casos.
-- **Folga pequena em J01 a J05:** 491 bytes. Qualquer ajuste de duração de um dos cinco estoura o limite de 64 000 e obriga a voltar ao Produto.
+- **Atenção ao S09:** `sfx_s09_conquista.mp3` (8 481 bytes) tem de sair de `assets/audio/` e do meta. Sem ele, o total é 301 148; com ele, 309 629. O teto de 320 000 vale nos dois casos.
+- **Folga pequena em J01 a J05:** 1 326 bytes. Qualquer ajuste de duração de um dos cinco estoura o limite de 64 000 e obriga a voltar ao Produto.
 - A previsão de HTML usa o base64 do áudio (4/3) e supõe o HTML sem áudio de cerca de 1 652 000 bytes, o que está abaixo de 2 000 000: o aviso de 19.2.6 não dispara.
 - Se algum arquivo passar do limite, ou o total de 320 000, o `verificar:tamanho` reprova. A decisão de subir qualquer limite volta ao Produto, não sai do Dev.
 
@@ -2357,6 +2358,7 @@ Origem: retorno do PT5 do Diretor, literal: "as páginas de conquista pode tocar
 **19.3.1 Como abre e onde.**
 - Teclado: **P**, na exploração.
 - Toque: ícone de pausa (duas barras, "II"), no canto superior esquerdo, com 48 CSS px de área de toque.
+- Exceção do modo explorar (20.5, ADR-010 2): a pausa abre também em "Explorar a casa", onde a dica não existe. Por isso `podeAbrirPausa` e `podeAbrirDica` deixam de ser iguais: a igualdade vale só no modo história. Os testes de ADR-008 9.1 mudam para `podeAbrirPausa(m) === podeAbrirDica(m, 'historia')` nos 12 modos, e a pausa abre em `explorar`.
 - Abre nas mesmas telas em que o "?" aparece (16.8.6): a exploração, em todas as áreas. Não abre no título, na seleção, na introdução, no diálogo, no painel, na conquista, na dica, na condução, no fade, nos créditos nem no aviso de rotação. O ícone II some nessas telas.
 - A condução não é interrompida (14.11), e a pausa não entra na dica, que já congela o mundo (16.8.5).
 
@@ -2673,3 +2675,233 @@ Chaves novas em `content/texts/pt-BR.json`. Limites: barra até 29 caracteres po
 | 8 | Ícones cobrem objeto no celular estreito | Canto superior esquerdo, linha 0 fora das áreas (16.8.1); QA confere em captura; PT5 |
 | 9 | Regressão nos Marcos 1 a 5 ao mexer em tela e som | Linha de base nova antes de qualquer código (item 121); RG6 |
 | 10 | Confusão entre 0.11.0 e 1.0.0 | Regra de 19.7.1 |
+
+## 20. Especificação do Marco 7 (imagens do título e do fim, modo "Explorar a casa", enfeites; versão 0.13.0)
+
+Origem: pedido do Diretor após o PT5 e a validação no iPhone da 0.11.2 ("Deu certo!"), em 2026-11-10 (`decisions.md`). Imagens de referência do Diretor, fora do Git: `assets/referencia/diretor-2026-11-10/` (`inicio-arvore.webp`, `fim-familia.webp`, `titulo-modelo.webp`, esta só como modelo de composição). Tudo o que os Marcos 1 a 6 fixaram continua valendo, salvo o que esta seção muda de forma explícita.
+
+**Pilares.** Imagens sem texto de pressa; o modo explorar não tem tempo nem objetivo (pilar 1). A dica não existe no modo explorar, e o "?" some (pilar 2). Tom afetuoso, com a família desenhada (pilar 3). Textos curtos (pilar 4).
+
+### 20.1 Escopo e fluxo
+
+| Item | No Marco 7 | Onde está |
+|---|---|---|
+| Imagem do título | Fundo só com a sala e a árvore, sem pessoas; título e menu legíveis | 20.3 |
+| Imagem de fim | Árvore, Nath, Ítalo, Nick e os 4 sobrinhos, antes dos créditos | 20.4 |
+| Créditos com menu | "Voltar ao título" ou "Explorar a casa" | 20.4 |
+| Modo "Explorar a casa" | Casa livre, sem missão, sem dica, Nick segue, pausa com confirmação | 20.5 |
+| Enfeites no modo | Enfeites novos por cômodo, sem colisão nem rota novas | 20.6 |
+| Peso e desempenho | Imagens e áudio fora do HTML na release; DS2 ≤ 4 s | 20.7 |
+| Textos | Chaves novas | 20.8 |
+| Casos de aceite | TI, FI, EX, EN e DS1b | 20.9 |
+| Quem faz e ordem | Arte, Especialista, Dev, Generalista, QA, Orquestrador | 20.10 |
+
+### 20.2 Versão e ordem de lançamento
+
+- **Base:** 0.11.2, aprovada pelo Diretor no iPhone (2026-11-10).
+- **0.12.0** (jingles, 19.2.7): espera a escuta do Diretor. Entra na release **só depois do ADR-009 e da correção do `vite.audio.ts`** (ADR-009), porque os jingles embutidos estouram DS2.
+- **0.13.0** (este marco): recurso novo, versão menor (SemVer; 19.7.1). A release com a imagem de fim só sai **depois da resposta P1 do Diretor**; sem ela, a 0.13.0 segue como build de playtest.
+- **1.0.0:** só depois do 0.13.0 aprovado pelo Diretor (19.7.2). A decisão de ordem é do Orquestrador.
+
+### 20.3 Imagem do título (1)
+
+- **Conteúdo:** a sala da referência `inicio-arvore.webp` (espelho com cacto, aparador com casinhas e lanterna, janela com a cidade, e a árvore). **Sem pessoas e sem o Nick**; sem o logo, porque o nome do jogo é texto desenhado pelo jogo. A leitura de "apenas a árvore" é esta: a árvore é o centro, e não há personagens. Se o Diretor quiser a árvore isolada, a Arte refaz (é ajuste de arte, sem pergunta).
+- **Formato:** pixel art feita **nativamente em 480×352** (1 px de arte = 1 px de tela), com paleta de até 32 cores (perfil `hd-480x352`, `paleta.maximoDeCores`). A referência de 1536×1024 (3:2) **não é reduzida nem ampliada**: ela serve de composição. Escalar 3:2 para 480×352 deixa pixel irregular; por isso a Arte repinta o chão e as paredes para o quadro 480×352.
+- **Nítido:** sem interpolação (`NEAREST`); a imagem entra inteira, sem recorte de pixel.
+- **Layout:** nome do jogo em faixa `#1b2452` (alfa 0.94) no topo (`telas.titulo.nomeY` 36); os dois botões (`menuY` 192 e 240) em caixas `#1b2452` com borda `#9aa3c7`. A árvore fica na metade direita, e os botões não a cobrem por inteiro. Versão "v0.13.0" no canto, em caixa.
+- **Contraste:** texto `#f4e9c8` sobre `#1b2452` passa de 4,5:1 (AC1); caixas passam de 3:1 (AC1).
+- **Carga:** a imagem não bloqueia o título. Antes dela chegar, o fundo é `#0b1030` e os textos aparecem; a imagem entra quando carregar (20.7).
+- **Limite:** ≤ 60 000 bytes (PNG indexado ou WebP sem perda).
+
+### 20.4 Imagem de fim e créditos (2)
+
+- **Conteúdo:** a composição da referência `fim-familia.webp`: árvore, Nath (cabelo longo), Ítalo (óculos e barba), Nick no colo, e os 4 sobrinhos sorrindo. **Ordem da esquerda para a direita: LoLô, BiBi, DanDan, TuTu.** Confirmada pelas roupas e cabelos das folhas `assets/referencia/ref_<nome>_folha.webp`: LoLô (camiseta vinho, cabelo com lacinho azul), BiBi (blusa branca, cacho castanho), DanDan (camisa vermelha, cacho loiro), TuTu (camiseta azul-marinho com dinossauro).
+- **Os 4 aparecem sempre.** A imagem é a mesma para qualquer sobrinho escolhido. A aparência fixa dos 4 é a da imagem: os sprites finais em `assets/sobrinhos_final/` devem bater com ela (a Arte confere; não há sprite novo para isso).
+- **Onde aparece:** tela própria, depois do diálogo final e do fade (17.4, item 6) e antes dos créditos. Sem pressão: fica até Z, X ou Enter. **Padrão** (P3 pergunta se o Diretor prefere a imagem como fundo dos créditos).
+- **Texto da tela de fim (3 linhas, ≤ 28 caracteres por linha):** "Obrigado por jogar!" / "A árvore ficou linda." / "Feliz Natal!" (chave `fim.obrigado`, 20.8). **Sem nomes de sobrinhos nem da família no texto** (regra 034, decisão do Diretor: nos créditos não se adiciona nome).
+- **Música:** o jingle de créditos (JC, 19.2.7 c) toca **ao abrir a tela de fim**, uma vez, e não ao abrir os créditos. Esta é a única mudança de gatilho do JC em relação à 19.2.7 c.
+- **Créditos (17.7), depois da imagem:** mantêm os itens 1 (título "Créditos"), 2 (nome do jogo), 5 ("O Nick também ajudou muito!", sem o sprite), 6 e 7 (versão). Saem os itens 3 e 4 (sobrinho e árvore), que a imagem de fim já traz.
+- **Menu dos créditos:** dois botões, "Voltar ao título" (foco inicial) e "Explorar a casa" (20.5). Z, X, Enter e clique agem sobre o botão; Esc age como X (volta ao título). Barra 20.8.
+- **Limite:** ≤ 60 000 bytes por imagem (PNG indexado ou WebP sem perda), no mesmo perfil de 20.3. Rosto ≥ 16 px de altura em cada personagem, para ser reconhecível sem zoom (risco 2).
+
+### 20.5 Modo "Explorar a casa" (3)
+
+- **Entrada:** botão "Explorar a casa" nos créditos. Fade de 0,5 s na cor `#0b1030` (14.10.5). O jogador nasce **na Sala, no tile (3, 7), de frente para a árvore**, como depois da conquista 1 (14.11), com o Nick acordado ao lado.
+- **Estado:** partida concluída (campo `final` de 17.12). **Não há missão, objetivo, conquista, encaixe, nem diálogo automático.** O estado é só de sessão; nada é salvo (ADR-002 seção 3).
+- **Áreas:** as que o jogo já abre: Hall, Sala, Cozinha e Lavanderia, Quarto e Escritório (15.3, opção B). A Suíte e os banheiros continuam fechados, **salvo P2**. Nenhuma porta nova.
+- **Controles:** direções; A examina (objetos e enfeites, 20.6); P ou o ícone II abrem a pausa (19.3.1). **Não há "?" nem H**: a dica não existe no modo (16.8.6). O Nick segue o jogador (16.4) e não volta a dormir.
+- **B (farejar):** o Nick fareja com a animação e o S08, **sem seta**, porque não há alvo no modo (ADR-010 2). Não existe a seta de próxima porta.
+- **Interruptor:** no modo, não tem ação. As luzes já estão acesas. Examinar o interruptor não toca S04 nem muda nada (ADR-010 2).
+- **Pausa:** como em 19.3. "Voltar ao título" pede confirmação, com "Não" em foco (19.3.4). "Sim" vai ao título, sem save.
+- **Saída:** só pelo título (pausa, Voltar ao título, Sim). Recarregar a página também volta ao título.
+- **Música:** normal, da 19.2.1. Nenhum jingle de conquista toca no modo. Ao examinar um enfeite, toca S10 por página (R1).
+- **Mudo:** M e o ícone funcionam (19.2.3).
+- **Toque:** o mesmo layout de 18.4 para a exploração. Layout B sem cruz nem A/B, só "Toque para andar" e o ícone II (18.4).
+
+### 20.6 Mais enfeites de Natal na casa toda (4)
+
+Os enfeites **só aparecem no modo explorar**. Até os créditos, a casa é a mesma (o que o Diretor jogou no PT5 não muda). São objetos de decoração no mapa, sem colisão nova, sem gatilho novo e sem alterar rota (ADR-010 define o formato em `content/maps`).
+
+Posições e tipos conforme a entrega da Arte (2026-11-10, `content/maps/decoracao/*.json`, capturas em `scratchpad/capturas-decoracao-m7/`). Os enfeites estão só em tiles visíveis (piso ou móvel desenhado), fora dos rótulos. Cortina, estrela e bola **não** estão no mapa.
+
+| Cômodo | Quantidade | Enfeites (tipo, sprite em `content/maps/decoracao`) |
+|---|---|---|
+| Hall | 4 | 2 mini-árvores (`dec_arvore_p`, `dec_arvore_g`); 2 presentes (`dec_presente_vermelho`, `dec_presente_verde`) |
+| Sala | 8 | 2 mini-árvores; 2 presentes; meias (`dec_meias`); luz pisca sobre o sofá (`dec_luz`); guirlanda (`dec_guirlanda`); vela sobre a estante (`dec_vela`) |
+| Cozinha e Lavanderia | 6 | Pano de prato na pia (`dec_pano`); meias (`dec_meias`); 2 mini-árvores; 2 presentes |
+| Quarto | 4 | 2 presentes; 2 mini-árvores |
+| Escritório | 3 | Mini-árvore (`dec_arvore_p`); luz pisca sobre a cama (`dec_luz`); meias sobre a cama (`dec_meias`) |
+
+- **Total:** 25 objetos, com 9 sprites distintos: `dec_arvore_p`, `dec_arvore_g`, `dec_presente_vermelho`, `dec_presente_verde`, `dec_meias`, `dec_pano`, `dec_luz`, `dec_guirlanda` e `dec_vela`.
+- **Responde ao A (examinar) só o que tem `examinar` no JSON:** luz pisca na Sala e no Escritório (`enfeite.pisca`); vela na Sala (`enfeite.vela`); guirlanda na Sala (`enfeite.guirlanda`); meias no Escritório (`enfeite.meias`). Os demais são visuais e não respondem: pano de prato, meias da Cozinha e da Sala, mini-árvores e presentes (`examinar: null`). Cortina não existe no mapa.
+- **`enfeite.arvore` não está em uso** por nenhum enfeite entregue. A chave continua em `pt-BR.json`, sem mudança, para um uso futuro.
+- **Colisão e rota:** nenhum enfeite muda a grade de colisão, os gatilhos, as portas, o spawn ou a rota da condução. Enfeite de parede cai em tile que já é parede; enfeite de chão é só visual, ou ocupa tile que já bloqueia (móvel).
+- **Não cobre:** porta, interruptor, bilhete, painel, passagem, árvore, caixa, Nick nem o chão de passagem. A captura de cada cômodo confere (EN2).
+- **Pisca:** 1 ciclo por segundo (metade acesa, metade apagada), no limite de 3 ciclos por segundo do AC4. Nenhuma tela inteira pisca, e não há flash.
+- **Examinar:** só enfeite com `examinar` no JSON responde ao A (lista de 20.6, tabela acima). Os demais são visuais. **Pano de prato e cortina não respondem ao A.** Textos curtos, em 1 ou 2 linhas (S10 por página, R1):
+  - luz pisca: "Que luzinhas bonitas! Elas piscam devagarinho."
+  - vela elétrica (texto próprio, `enfeite.vela`): "Uma vela elétrica! A luz / fica piscando, sem fogo." (decisão do Produto, ADR-010 3.4)
+  - guirlanda: "Uma guirlanda vermelha para a porta da festa."
+  - presente: "Tem presente aqui! Será que é para alguém da família?"
+  - meias: "Meias de Natal! Uma para cada pessoa da casa."
+  - mini-árvore: "Uma árvorezinha de Natal, para a casa toda."
+- **Limite do atlas:** ≤ 16 000 bytes brutos para os sprites novos (entram no HTML, 20.7).
+
+### 20.7 Peso, carga e DS2 (limite das imagens)
+
+**Medida de referência (QA, 2026-11-09, `docs/checklist-release.md`, DS2):** HTML com gzip de 727 KB, título desenhado em **3,86 s** com Fast 4G emulado (1,6 Mbps, 150 ms). Sem gzip, 9,4 s. Com esse preset, **1 KB comprimido custa cerca de 5 ms**. A margem até 4 s é de **0,14 s, ou cerca de 28 KB comprimidos**.
+
+Conclusões:
+1. **Imagens dentro do HTML não cabem.** Uma imagem de 60 000 bytes, em base64 e comprimida, custa cerca de 0,3 s. Duas delas estouram DS2.
+2. **Os jingles de 0.12.0 também estouram DS2 se ficarem no HTML.** São cerca de 125 000 bytes brutos (62 674 + 62 502), ou cerca de 167 000 em base64, que custam de 0,6 a 0,8 s. Com o áudio de hoje já dentro do HTML, o título sairia perto de 4,5 s.
+3. **Portanto, na release (GitHub Pages), o áudio e as imagens saem do HTML** e são baixados como arquivos em `assets/` depois do título desenhado. O título aparece com o fundo sólido e os textos, e a imagem entra quando chega. O playtest (artifact de um único HTML) continua com tudo embutido.
+
+**Regras:**
+- **HTML de release (código, sprites, textos):** gzip ≤ **727 KB**, o valor medido hoje. Não pode crescer. O QA mede a cada versão.
+- **Imagem fora do HTML:** ≤ **60 000 bytes** cada. O alvo é ≤ 50 000.
+- **Atlas de enfeites (dentro do HTML):** ≤ 16 000 bytes brutos.
+- **Áudio fora do HTML na release:** ≤ 320 000 bytes no total (19.2.6, sem mudança).
+- **DS2:** "título desenhado" ≤ 4 s com Fast 4G emulado, servido por HTTP com gzip. O carregamento da imagem não entra na medida, mas não pode bloquear o título.
+- **Técnica:** ADR-009 (Especialista) define a carga de arquivos fora do HTML na release. Muda o embutimento de ADR-008 1.6 e o "HTML único" de ADR-003 só para a release. A checagem de ausência de rede (ADR-008 8.4) passa a aceitar arquivos do mesmo domínio, e continua proibindo `http(s)://` externo.
+
+### 20.8 Textos do Marco 7 (pt-BR, propostas do Produto)
+
+Chaves em `content/texts/pt-BR.json`. Limites: diálogo e tela de fim, 28 por linha, até 3 linhas na tela de fim; barra, 29 por linha.
+
+| Chave | Texto | Onde |
+|---|---|---|
+| `fim.obrigado` | "Obrigado por jogar!" / "A árvore ficou linda." / "Feliz Natal!" | Tela de fim (20.4). Sem nomes (regra 034) |
+| `creditos.explorar` | "Explorar a casa" | Botão 2 dos créditos |
+| `creditos.voltar` | "Voltar ao título" | Botão 1 dos créditos (já existe) |
+| `barra.creditos.menu` | "Setas: escolher  Z: confirmar" | Créditos com menu, teclado (`barra.creditos` existente não muda) |
+| `barra.creditos.menu.toque` | "Mover: escolher  A: confirmar" | Créditos com menu, toque layout A |
+| `barra.creditos.menu.toque.menu` | "Toque para escolher" | Créditos com menu, toque layout B |
+| `barra.fim` | "Z ou X: continuar" | Tela de fim, teclado |
+| `barra.fim.toque` | "A ou B: continuar" | Tela de fim, toque layout A |
+| `barra.fim.toque.menu` | "Toque para continuar" | Tela de fim, toque layout B |
+| `barra.explorar1` | "Setas: andar  Z: examinar" | Explorar, teclado, linha 1 |
+| `barra.explorar2` | "X: farejar  P: pausa" | Explorar, teclado, linha 2 |
+| `barra.explorar1.toque` | "Mover: andar  A: examinar" | Explorar, toque layout A, linha 1 |
+| `barra.explorar2.toque` | "B: farejar  II: pausa" | Explorar, toque layout A, linha 2 |
+| `barra.explorar.toque.menu` | "Toque para andar" | Explorar, toque layout B |
+| `enfeite.pisca` | "Que luzinhas bonitas!" / "Elas piscam devagarinho." | Examinar, luz pisca |
+| `enfeite.vela` | "Uma vela elétrica! A luz" / "fica piscando, sem fogo." | Examinar, vela elétrica |
+| `enfeite.guirlanda` | "Uma guirlanda vermelha" / "para a porta da festa." | Examinar, guirlanda |
+| `enfeite.presente` | "Tem presente aqui!" / "Será para quem da família?" | Examinar, presente (sem uso na decoração entregue) |
+| `enfeite.meias` | "Meias de Natal!" / "Uma para cada um da casa." | Examinar, meias |
+| `enfeite.arvore` | "Uma árvorezinha de Natal," / "para a casa toda." | Examinar, mini-árvore |
+| `barra.explorar1` | "Setas: andar  Z: examinar" | Explorar, teclado, linha 1 |
+| `barra.explorar2` | "X: farejar  P: pausa" | Explorar, teclado, linha 2 |
+| `barra.explorar1.toque` | "Mover: andar  A: examinar" | Explorar, toque layout A, linha 1 |
+| `barra.explorar2.toque` | "B: farejar  II: pausa" | Explorar, toque layout A, linha 2 |
+| `barra.explorar.toque.menu` | "Toque para andar" | Explorar, toque layout B, linha 1 |
+| `barra.explorar2.toque.menu` | "Toque em II: pausa" | Explorar, toque layout B, linha 2 |
+
+- Nenhum texto de toque cita tecla (19.8).
+- Os textos de teclado e de toque já existentes não mudam (teste de igualdade, 19.8).
+- **Chaves `.toque.menu` (teste `validar-textos-de-toque.test.ts`):** eram 12; o Marco 7 acrescenta 4, e o total passa a **16**:
+  1. `barra.creditos.menu.toque.menu` ("Toque para escolher"), créditos com menu (layout B);
+  2. `barra.fim.toque.menu` ("Toque para continuar"), tela de fim (layout B);
+  3. `barra.explorar.toque.menu` ("Toque para andar"), explorar (layout B, linha 1);
+  4. `barra.explorar2.toque.menu` ("Toque em II: pausa"), explorar (layout B, linha 2).
+  Todas as 4 são necessárias: cada tela do layout B precisa de texto de toque sem tecla.
+  Obs.: `barra.creditos.toque.menu` ("Toque em Voltar ao título", existente) deixa de ser usada pelos créditos com menu. Não se remove: "nenhuma chave existente muda" (19.8). Se o Diretor preferir limpar, o total cai para 15, com a remoção feita pelo Produto numa versão seguinte.
+
+### 20.9 Casos de aceite (QA, Marco 7)
+
+*Imagens e textos*
+- **TI1 (título, captura):** em 480×352, o fundo mostra só a sala e a árvore, sem pessoas nem Nick. Título e botões têm contraste de texto ≥ 4,5:1 e de caixa ≥ 3:1 (medidor sobre captura). Emulado.
+- **TI2 (título sem imagem):** com a imagem bloqueada, o título desenha o fundo sólido e os textos em até 4 s, sem erro de console. Emulado (CDP).
+- **TI3 (nítido):** a captura mostra pixel de 1 px, sem borrão. Captura.
+- **FI1 (fim):** depois do diálogo final e do fade, aparece a tela de fim com as 3 linhas; Z, X e Enter continuam; JC toca uma vez (gancho `ultimosEventos`). Emulado (gancho).
+- **FI2 (os 4 sempre):** a imagem de fim é a mesma com cada um dos 4 sobrinhos escolhidos, e os 4 aparecem na mesma ordem (captura ×4). Emulado.
+- **FI3 (créditos):** os itens 1, 2, 5, 6 e 7 de 17.7 aparecem; os itens 3 e 4 não; "Voltar ao título" tem o foco inicial. Emulado.
+
+*Modo explorar*
+- **EX1 (entrada):** "Explorar a casa" leva à Sala, tile (3, 7), de frente para a árvore, com o Nick acordado. Emulado (gancho).
+- **EX2 (sem missão):** nenhuma conquista, encaixe ou dica acontece; não há "?" nem H; A e B funcionam. Emulado.
+- **EX3 (áreas):** o jogador anda em Hall, Sala, Cozinha, Lavanderia, Quarto e Escritório. Suíte e banheiros seguem como em P2. Emulado (gancho).
+- **EX4 (pausa e saída):** P e II abrem a pausa; "Voltar ao título" tem "Não" em foco; "Sim" vai ao título, sem save. Emulado (gancho `pausa`).
+- **EX5 (música e mudo):** a música toca sem jingle de conquista; M silencia tudo; desmudar não reinicia a música. Emulado (gancho).
+
+*Enfeites*
+- **EN1 (colisão e rota):** a grade de colisão, os gatilhos, as portas, o spawn e a rota da condução do 0.13.0 são iguais ao 0.12.0 (teste automático de conteúdo). Automático.
+- **EN2 (cobertura):** captura de cada cômodo: nenhum enfeite cobre porta, interruptor, bilhete, painel, passagem, árvore, caixa ou Nick. Emulado (captura).
+- **EN3 (pisca):** cada luz pisca 1 vez por segundo, nunca mais de 3 (gancho com marcas de tempo). Emulado.
+- **EN4 (examinar):** só os enfeites de tile bloqueado respondem ao A; cada um mostra seu texto de 20.6, com S10 por página. Emulado.
+
+*Desempenho e release*
+- **DS1b (release):** HTML de release com gzip ≤ 727 KB; imagens e áudio em `assets/` fora do HTML; título desenhado em ≤ 4 s com Fast 4G emulado e servido por HTTP com gzip. Automático (tamanho) e emulado (CDP).
+- **RG7 (regressão):** título, Como jogar, seleção, introdução, Marcos 1 a 6 e o fluxo completo (RG6-6), com a imagem de título e a nova tela de fim, sem erro de console. Emulado.
+
+*Só o Diretor*
+- As duas imagens (título e fim), com as 4 faces, aprovadas antes de publicar (captura, regra de 2026-11-08).
+- O modo explorar no celular, em paisagem e no layout B (667×375): a casa é clara, e os enfeites não atrapalham.
+
+### 20.10 Quem faz, dependências e ordem
+
+1. **Diretor:** responde P1 a P3 (ver bloco ao fim da seção 20). Aprova as imagens antes de publicar.
+2. **Especialista:** ADR-009 (carga fora do HTML na release, 20.7). **Bloqueia** a release do 0.12.0 e a do 0.13.0. ADR-010 (modo explorar e enfeites como dados em `content/maps`, 20.5 e 20.6).
+3. **Arte:** imagem de título (151), imagem de fim (152, depois de P1 e P3), sprites de enfeites e posições por cômodo (153). A Arte também entrega a tabela de posições dos enfeites, para o Dev colocar em `content/maps`.
+4. **Produto:** textos (156, chaves de 20.8), já fixados aqui.
+5. **Dev:** título com imagem e fundo de carga (157); a correção do `vite.audio.ts` (ADR-009) vem antes de qualquer release com áudio fora do HTML; tela de fim, menu dos créditos e modo explorar, com enfeites como dados (158). Depende de ADR-010 e das imagens.
+6. **Generalista:** release com arquivos fora do HTML, `verificar:tamanho` com o limite de gzip e a checagem de rede adaptada (159). Vale para 0.12.0 e 0.13.0.
+7. **QA:** checklist do Marco 7 e DS1b, com RG7 (160).
+8. **Orquestrador:** artifact 0.13.0 para o Diretor, com as capturas aprovadas (161). Só então a decisão de 1.0.0.
+
+### 20.11 Fora de escopo deste marco
+- Suíte e banheiros abertos no modo explorar, salvo P2.
+- Animação nas imagens (árvore piscando dentro da arte); a luz pisca é só dos enfeites.
+- Botão "Créditos" no título (17.14, ideia).
+- Novos mapas, novos cômodos e novas missões (1.1 ou depois).
+- Save, "continuar" e lembrança do modo explorar (nunca na v1.x).
+- Som novo além do JC (19.2.7).
+
+### 20.12 Padrões aplicados (sem pergunta ao Diretor)
+- a. "Apenas a árvore" no título: sem pessoas e sem Nick; a árvore é o centro (20.3).
+- b. Ordem dos sobrinhos na imagem de fim: LoLô, BiBi, DanDan, TuTu, da esquerda para a direita, confirmada pelas folhas de referência (20.4).
+- c. Os 4 sobrinhos aparecem sempre na imagem de fim, e a aparência fixa é a da imagem (20.4).
+- d. Enfeites novos só no modo explorar; até os créditos, a casa não muda (20.6).
+- e. Perfil `hd-480x352`: arte nativa de 480×352, paleta até 32 cores, `NEAREST` (20.3).
+- f. JC toca ao abrir a tela de fim, e não ao abrir os créditos (20.4).
+- g. Release: áudio e imagens fora do HTML, com HTML ≤ 727 KB gzip (20.7; ADR-009).
+- h. Versão 0.13.0; 1.0.0 só depois do 0.13.0 aprovado pelo Diretor (20.2).
+- i. Explorar sem missão, dica, "?" nem save; pausa com "Voltar ao título" confirmado (20.5).
+
+**PERGUNTA AO DIRETOR (bloco, só o que é dele):**
+
+1. **P1 (publicação dos familiares):** a imagem de fim desenha a Nath e o Ítalo, e o jogo vai para o GitHub Pages, público. Você confirma a publicação desses desenhos? **Sugestão:** sim, porque é a própria família do jogo. Se preferir não publicar as pessoas, a imagem de fim sai e fica só a árvore com os sobrinhos.
+2. **P2 (áreas no modo explorar):** no modo explorar, o jogador anda só nas áreas que o jogo já abre (Hall, Sala, Cozinha, Lavanderia, Quarto e Escritório), ou também na Suíte e nos banheiros, que hoje estão fechados? **Sugestão:** só as que já abrem, sem porta nova; a Suíte pode entrar num 1.x.
+3. **P3 (fim: tela própria ou fundo dos créditos):** a imagem de fim é uma tela própria, antes dos créditos (padrão), ou o fundo da própria tela de créditos, com o texto por cima? **Sugestão:** tela própria, porque a família precisa de espaço e os créditos ficam sem disputa de texto.
+
+### 20.13 Riscos
+
+| # | Risco | Tratamento |
+|---|---|---|
+| 1 | DS2 passa de 4 s com o áudio e as imagens dentro do HTML | ADR-009 e 20.7; QA mede DS1b antes da release |
+| 2 | Oito personagens em 480×352 ficam pequenos e não se reconhecem | Rosto ≥ 16 px (20.4); captura aprovada pelo Diretor |
+| 3 | Enfeite cobre objeto ou muda rota | Colisão igual (EN1); captura por cômodo (EN2) |
+| 4 | Luz pisca cansa ou passa de 3 ciclos por segundo | 1 Hz (20.6); EN3 |
+| 5 | No modo explorar, o jogador não sabe o que fazer | Textos de examinar, Nick e a casa; sem pressão nem objetivo (pilar 1) |
+| 6 | Desenho de pessoas reais no site público | P1 |
+| 7 | 1.0.0 volta a atrasar | 1.0.0 só depois do 0.13.0 aprovado (20.2); o Orquestrador decide a ordem |

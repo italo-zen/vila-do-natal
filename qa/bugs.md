@@ -446,3 +446,30 @@ Sem bug confirmado. Observações para o Dev:
 - **P na Sala logo depois das luzes (candidato P3 da rodada 6): FECHADO como comportamento por projeto (decisão do Orquestrador; GDD 19.3.1).** A pausa só abre quando o controle é do jogador; durante a transição das luzes a P fica sem efeito por projeto. Não é bug.
 - **E7 e E20 (PO5, item 133): medidos ao vivo 10 e 14 trocas de tile após a porta, 11 da peça 2 até a árvore; o Produto declarou 13 e 17 (GDD 15.3.5, 15.10, incluindo a passagem).** Reconfirmar em PT5 ou depois, com contagem por evento se for preciso. Não bloqueia o 137.
 - **Versão 0.11.0:** `comparar:capturas` apontou 5 diferenças, todas na caixa do texto da versão (x 812..841, y 11..35); baseline atualizada (ver `qa/baseline-0100/ORIGEM.txt`). Título "v0.11.0" e créditos "Versão 0.11.0" confirmados por captura (`dist-playtest/capturas/titulo.png`, `lolo-CR1-creditos-entrada.png`).
+
+## Marco 7 (0.13.0), rodada 1
+- Nenhum bug P0 a P3 confirmado nesta rodada.
+- Observação (não é defeito): EN3, pisca dos enfeites, mediu ≈ 1,08 ciclo/s por quadros de 50 ms; o limite do GDD é 1 Hz com no máximo 3. Confirmar em amostragem mais fina (quadros por 20 ms) antes de classificar.
+- Observação: AU16 em partes 1 a 3 (leitura caiu no estado "esperando", antes do início do jingle); não é falha (AU17).
+- Pendentes da rodada: FI2 (4 faces), TI2 (imagem bloqueada), EX3 (áreas), EN2 e EN4 (captura e examinar), AU19 (mudo e pausa durante jingle), DS1b (gzip e DS2 na release).
+
+## Marco 7 (0.13.0), rodada 2
+- Nenhum bug P0 a P3 confirmado nesta rodada (EX3, EN3, EN4, AU19, FI2, toque e EX5 sem erro de console e sem travas).
+- Observação P3 (FI2, a confirmar pelo Produto/Arte): a barra "Z ou X: continuar" da tela de fim cobre a base dos corpos das crianças (rostos inteiros). Pode ser o desenho pretendido; conferir com o Diretor na captura `qa/evidencias/marco7-r2/FI2-fim-lolo.png`.
+- Observação P3 (EX5): o passeio aleatório fica em poucos tiles por cômodo (paredes e móveis), por isso a cobertura de "todos os tiles" não foi feita; a passagem por todas as portas abertas foi.
+- TI2 (título sem imagem): N/T por projeto (imagem embutida; ADR-009 não implementado).
+
+## BUG-M7-01 — P0 (candidato forte, reproduzido 3 de 3): tela de fim não avança por toque em 667×375 (layout B)
+- Ambiente: dist-qa 0.13.0, Chromium com toque emulado (hasTouch, isMobile), 667×375, `qa/scripts/marco7-r2-fim4.mjs` e `qa/scripts/marco7-r2-fim667.mjs`, `qa/scripts/marco7-r2-toque-explorar.mjs`.
+- Passos: título → `__partidaConcluida` → `__irPara('Fim')` (ou o fim real após o enfeite) → tocar o centro da tela ou o texto "Toque para continuar".
+- Esperado: o toque avança para os créditos (a barra diz "Toque para continuar"; 20.4 e 20.9 FI1).
+- Obtido: nada acontece. Em 844×390 o botão A (dom) avança e leva aos créditos. Em 667×375 não há botão A nem B na tela do fim e o texto não é alvo de toque. Só Z ou X, por teclado, avançam. No celular sem teclado o jogo trava na tela de fim.
+- Severidade: P0 (bloqueia o fim do jogo no celular em layout B; impede o PT5 nesse aparelho).
+- Ação (Dev): tornar a tela de fim tocável em layout B (botão de continuar ou toque em qualquer ponto, como o diálogo) e cobrir no smoke de toque.
+
+## Marco 7, rodada 3
+- **BUG-M7-01 — FECHADO (conserto confirmado):** fim por toque em 667×375 avança (texto, ponto, duplo toque; Z, X e Esc), e 844×390 avança por toque e por teclado; créditos aparecem uma vez (`qa/scripts/marco7-r3-fim.mjs`); fluxo completo por toque nos dois layouts (`qa/scripts/marco7-r3-fluxo-toque.mjs`).
+- **P3 (texto x controle, tela de fim em 844×390):** a barra diz "A ou B: continuar", mas só há botão A na tela (não há botão B tocável). Teclado (X e B) avança. Ajustar o texto ou o botão (Produto/Dev).
+- **P3 (FI2, decisão do Orquestrador):** a barra "Z ou X: continuar" cobre ~9% da altura da imagem de fim (faixa inferior), incluindo a base dos corpos das crianças; os rostos ficam livres.
+- **EN2:** nenhum enfeite sobre porta, interruptor, bilhete, árvore, caixa, peça, spawn ou tile do Nick (dados). Enfeites examináveis sobre móveis: previsto (GDD 20.6, EN4).
+- EX5 667×375 (2 min, não os 5 pedidos): sem erro de console; sem trava confirmada; cobertura das áreas incompleta (Sala e Quarto). Repetir 5 min na próxima rodada.
