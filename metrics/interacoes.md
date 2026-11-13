@@ -486,3 +486,5 @@
 | I-394 | 2026-11-12 | M7 | haiku 5.5 | Dev | Orquestrador | | | | Item 159 (Dev): release com audio e imagens fora do HTML, gzip 574 KB, titulo 3,115 s, 971 testes; criterio do smoke:release 3,5 s |
 | I-395 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | Dev e Generalista | | | | Dev: smoke:release em 3,5 s; Generalista: verificar:tamanho/release e workflow para release externa |
 | I-396 | 2026-11-12 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | Item 159 completo: verificadores nos dois modos, workflow com pasta inteira e smoke, checklist; 10 testes negativos; excecoes de rede aceitas |
+| I-397 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Autorizou commit do Marco 7; commits 0dd9b89 e d6faf22 enviados por push |
+| I-398 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | PR dos Marcos 5, 6 e 7 mergeada (PR #6, 8126d2f); branch sincronizada com a base |

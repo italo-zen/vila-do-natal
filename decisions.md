@@ -732,3 +732,11 @@
 ## 2026-11-12 — Item 159 completo (Generalista); exceções da checagem de rede aceitas (Orquestrador)
 - **Decisão:** `verificar:tamanho` e `verificar:release` cobrem os dois modos (release externa e playtest embutido); o workflow publica a pasta `dist-release/` inteira no Pages e um zip na GitHub Release, com o passo "Smoke da release" (`smoke:release`); actions por SHA, disparo só por tag e `workflow_dispatch`. Aceitas as exceções: os dois textos `https://phaser.io` do Phaser (banner e configuração) são aviso, não requisição; no máximo 2 chamadas `fetch(` (polyfill do Vite e carregador do jogo), uma terceira reprova; o atlas dec_* (3.476 B) embutido no HTML com limite de 16.000 B. O smoke depende do Chrome do runner `ubuntu-24.04`; só um `workflow_dispatch` no GitHub confirma (alternativa: `npx playwright-core install --with-deps chromium`). Passo do smoke obrigatório no job de verificação.
 - **Quem decidiu:** Orquestrador.
+
+## 2026-11-12 — Commits do Marco 7 e push (Diretor autorizou)
+- **Decisão:** commits `0dd9b89` (documentação) e `d6faf22` (código, v0.13.0) enviados por push na branch `claude/marco-1-orchestration-c3b37a`; a PR cobre os Marcos 5, 6 e 7 contra `setup/estrutura-de-agentes`. Fora do Git, como ordenado: referências e imagens do Diretor, `assets/teste-sprite-hd/`, `dist-*`, `qa/evidencias/`, `qa/baseline-*`, `our-home.tmx`.
+- **Quem decidiu:** Diretor ("sim").
+
+## 2026-11-12 — PR dos Marcos 5, 6 e 7 mergeada (Diretor)
+- **Decisão:** a PR #6 (Marcos 5, 6 e 7, até a v0.13.0) foi mergeada em `setup/estrutura-de-agentes` (merge `8126d2f`). Branch de trabalho sincronizada com a base. Próximo: Pages (Settings → Pages, fonte "GitHub Actions"), `main` como branch padrão, execução manual do workflow, conferência de gzip no Pages e tag v1.0.0.
+- **Quem decidiu:** Diretor ("merged").
