@@ -1,6 +1,6 @@
 {
   "name": "natal-na-casa-do-tio-italo",
-  "version": "0.11.2",
+  "version": "0.13.0",
   "private": true,
   "type": "module",
   "description": "Natal na Casa do Tio Ítalo e da Tia Nath",
@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "build:playtest": "tsc --noEmit && vite build --config vite.playtest.config.ts && node tools/verificar-sem-gancho.mjs",
-    "build:release": "tsc --noEmit && vite build --config vite.playtest.config.ts --outDir dist-release && node tools/verificar-sem-gancho.mjs dist-release/index.html",
+    "build:release": "tsc --noEmit && vite build --config vite.release.config.ts && node tools/verificar-sem-gancho.mjs dist-release/index.html",
     "verificar:tamanho": "node tools/verificar-tamanho.mjs",
     "verificar:audio": "/usr/bin/python3 tools-arte/gerar_audio.py --verificar",
     "verificar:release": "node tools/verificar-release.mjs",
@@ -19,11 +19,12 @@
     "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas && node tools/smoke-toque.mjs dist-playtest/index.html dist-playtest/capturas-toque",
     "validar:perfil": "node tools/validar-perfil.mjs",
     "comparar:capturas": "node tools/comparar-capturas.mjs",
-    "verificar:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar --verificar",
+    "verificar:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar --verificar && vitest run tests/conteudo/decoracao-real.test.ts",
     "build:qa": "tsc --noEmit && vite build --config vite.qa.config.ts",
     "smoke:toque-menus": "node tools/smoke-toque-menus.mjs dist-qa/index.html dist-qa/capturas-menus",
     "smoke:pausa-som": "node tools/smoke-pausa-som.mjs dist-qa/index.html dist-qa/capturas-pausa",
-    "smoke:icones": "node tools/smoke-icones.mjs dist-qa/index.html dist-qa/capturas-icones"
+    "smoke:icones": "node tools/smoke-icones.mjs dist-qa/index.html dist-qa/capturas-icones",
+    "smoke:release": "node tools/smoke-release.mjs dist-release"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.5",

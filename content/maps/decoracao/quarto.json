@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 2,
+  "subarea": "quarto",
+  "enfeites": [
+    {
+      "id": "quarto_presente_vermelho_1",
+      "sprite": "dec_presente_vermelho",
+      "x": 2,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 3,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_presente_verde_1",
+      "sprite": "dec_presente_verde",
+      "x": 1,
+      "y": 4,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_arvore_g_1",
+      "sprite": "dec_arvore_g",
+      "x": 4,
+      "y": 4,
+      "pisca": false,
+      "examinar": null
+    }
+  ]
+}

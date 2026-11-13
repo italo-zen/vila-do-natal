@@ -1,62 +1,88 @@
 {
+  "schemaVersion": 2,
   "mestre": 0.45,
   "musica": {
     "id": "mus_natal",
-    "ganhoDb": -15.0,
+    "ganhoDb": -15,
     "loop": true
   },
   "eventos": {
     "S01": {
       "id": "sfx_s01_passo",
-      "ganhoDb": -12.0
+      "ganhoDb": -12
     },
     "S02": {
       "id": "sfx_s02_porta",
-      "ganhoDb": -6.0
+      "ganhoDb": -6
     },
     "S03": {
       "id": "sfx_s03_porta_abriu",
-      "ganhoDb": -4.0
+      "ganhoDb": -4
     },
     "S04": {
       "id": "sfx_s04_interruptor",
-      "ganhoDb": -7.0
+      "ganhoDb": -7
     },
     "S05": {
       "id": "sfx_s05_peca",
-      "ganhoDb": -7.0
+      "ganhoDb": -7
     },
     "S06": {
       "id": "sfx_s06_encaixe",
-      "ganhoDb": -6.0
+      "ganhoDb": -6
     },
     "S07": {
       "id": "sfx_s07_au",
-      "ganhoDb": 0.0
+      "ganhoDb": 0
     },
     "S08": {
       "id": "sfx_s08_fungada",
-      "ganhoDb": 0.0
+      "ganhoDb": 0
     },
     "S09": {
-      "id": "sfx_s09_conquista",
-      "ganhoDb": 0.0
+      "variante": "conquistas"
     },
     "S10": {
       "id": "sfx_s10_dialogo",
-      "ganhoDb": -12.0
+      "ganhoDb": -12
     },
     "S11": {
       "id": "sfx_s11_foco",
-      "ganhoDb": 0.0
+      "ganhoDb": 0
     },
     "S12": {
       "id": "sfx_s12_confirma",
-      "ganhoDb": -4.0
+      "ganhoDb": -4
     },
     "S13": {
       "id": "sfx_s13_erro",
-      "ganhoDb": -15.0
+      "ganhoDb": -15
     }
+  },
+  "conquistas": {
+    "conquista.luzes": {
+      "id": "jin_j01_luzes",
+      "ganhoDb": 0
+    },
+    "conquista.parte1": {
+      "id": "jin_j02_parte1",
+      "ganhoDb": 0
+    },
+    "conquista.parte2": {
+      "id": "jin_j03_parte2",
+      "ganhoDb": 0
+    },
+    "conquista.parte3": {
+      "id": "jin_j04_parte3",
+      "ganhoDb": 0
+    },
+    "conquista.enfeites": {
+      "id": "jin_j05_enfeites",
+      "ganhoDb": 0
+    }
+  },
+  "creditos": {
+    "id": "jin_jc_natal",
+    "ganhoDb": -2
   }
 }

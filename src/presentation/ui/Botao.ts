@@ -22,6 +22,8 @@ export interface OpcoesBotao {
   profundidade?: number;
   /** Área da zona de toque em px de jogo. Padrão: o desenho, ou 48 CSS px se for menor (ADR-007 seção 4.5). */
   areaDeToque?: { w: number; h: number };
+  /** Contorno externo escuro de 1 px (#0b1030), para caixas sobre imagem (título, GDD 20.3). */
+  contornoExterno?: boolean;
 }
 
 /**
@@ -127,6 +129,7 @@ export class Botao {
     const y0 = this.y - h / 2;
     this.fundo.clear();
     this.fundo.fillStyle(numeroDaCor(fundo), 1).fillRect(x0, y0, w, h);
+    if (this.o.contornoExterno) this.fundo.lineStyle(1, numeroDaCor(p.tema.fundo), 1).strokeRect(x0 - 1, y0 - 1, w + 2, h + 2);
     this.fundo.lineStyle(espessura, numeroDaCor(borda), 1).strokeRect(x0 + espessura / 2, y0 + espessura / 2, w - espessura, h - espessura);
     this.texto.setColor(cor);
     this.marca?.setVisible(this.focado);

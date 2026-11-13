@@ -40,6 +40,9 @@ function motorFalso(): { motor: MotorDeAudio; reg: Registro } {
     definirMestre(g) {
       reg.mestres.push(g);
     },
+    barramentoDaTrilha: () => ({}),
+    agora: () => 0,
+    rampaGanho: () => undefined,
     estado: () => reg.estadoAtual,
     async retomar() {
       reg.retomadas++;

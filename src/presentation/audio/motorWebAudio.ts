@@ -1,12 +1,14 @@
 /**
- * Motor de som real (ADR-008 1.8, 2.2 e 10). Único arquivo de apresentação que usa a API Web Audio. Só toca buffers
+ * Motor de som real (ADR-008 1.8, 2.2, 5.2 e 10). Único arquivo de apresentação que usa a API Web Audio. Só toca buffers
  * decodificados; não sintetiza nada.
  *
  * Destrava no iOS (WebKit): `resume()` e o buffer de uma amostra só valem dentro de um gesto. Por isso `iniciar()` roda
  * a cada gesto enquanto o contexto não estiver "running". O jogo respeita a chave de silencioso do aparelho: não há
  * caminho de mídia que a contorne. Decodificação: forma com callback e promessa, sobre cópia dos bytes.
+ *
+ * Grafo: fonte → ganho da voz → barramento (a trilha tem o seu, para o ducking) → mestre → saída.
  */
-import type { EstadoDoMotor, MotorDeAudio, OpcoesDeToque, VozDeAudio } from './motorDeAudio';
+import type { EstadoDoMotor, MotorDeAudio, NoDeAudio, OpcoesDeToque, VozDeAudio } from './motorDeAudio';
 
 type ContextoComPrefixo = typeof AudioContext;
 
@@ -27,6 +29,7 @@ export function decodificarComCallbacks(ctx: BaseAudioContext, bytes: ArrayBuffe
 export class MotorWebAudio implements MotorDeAudio {
   private contexto: AudioContext | null = null;
   private mestre: GainNode | null = null;
+  private trilha: GainNode | null = null;
 
   iniciar(): void {
     if (!this.contexto) {
@@ -35,6 +38,8 @@ export class MotorWebAudio implements MotorDeAudio {
       this.contexto = new Ctor();
       this.mestre = this.contexto.createGain();
       this.mestre.connect(this.contexto.destination);
+      this.trilha = this.contexto.createGain();
+      this.trilha.connect(this.mestre);
     }
     this.tocarSilencioDoGesto();
   }
@@ -67,7 +72,7 @@ export class MotorWebAudio implements MotorDeAudio {
 
   tocar(buffer: unknown, opcoes: OpcoesDeToque): VozDeAudio {
     const ctx = this.contexto;
-    if (!ctx || !this.mestre) return { parar: () => undefined };
+    if (!ctx || !this.mestre) return { fimEm: 0, parar: () => undefined, pararEm: () => undefined };
     const audio = buffer as AudioBuffer;
     const fonte = ctx.createBufferSource();
     fonte.buffer = audio;
@@ -78,10 +83,14 @@ export class MotorWebAudio implements MotorDeAudio {
     }
     const ganho = ctx.createGain();
     ganho.gain.value = opcoes.ganho;
-    fonte.connect(ganho).connect(this.mestre);
+    const destino = (opcoes.barramento as AudioNode | undefined) ?? this.mestre;
+    fonte.connect(ganho).connect(destino);
     fonte.onended = () => opcoes.aoTerminar?.();
-    fonte.start();
+    const inicio = Math.max(ctx.currentTime, opcoes.inicioEm ?? 0);
+    fonte.start(inicio);
+    const fimEm = opcoes.loop ? Infinity : inicio + audio.duration;
     return {
+      fimEm,
       parar: (rampaMs = 0) => {
         if (rampaMs <= 0) {
           fonte.stop();
@@ -91,12 +100,38 @@ export class MotorWebAudio implements MotorDeAudio {
         ganho.gain.setTargetAtTime(0, agora, rampaMs / 3000);
         fonte.stop(agora + rampaMs / 1000);
       },
+      pararEm: (instante: number, rampaS = 0) => {
+        if (rampaS <= 0) {
+          fonte.stop(Math.max(0, instante));
+          return;
+        }
+        ganho.gain.cancelScheduledValues(instante);
+        ganho.gain.setValueAtTime(ganho.gain.value, instante);
+        ganho.gain.linearRampToValueAtTime(0, instante + rampaS);
+        fonte.stop(instante + rampaS);
+      },
     };
   }
 
   definirMestre(ganho: number): void {
     if (!this.contexto || !this.mestre) return;
     this.mestre.gain.setTargetAtTime(ganho, this.contexto.currentTime, 0.02);
+  }
+
+  barramentoDaTrilha(): NoDeAudio | null {
+    return this.trilha;
+  }
+
+  agora(): number {
+    return this.contexto ? this.contexto.currentTime : 0;
+  }
+
+  rampaGanho(no: NoDeAudio, alvo: number, duracaoS: number, inicioEm: number): void {
+    const g = no as GainNode | null;
+    if (!g) return;
+    g.gain.cancelScheduledValues(inicioEm);
+    g.gain.setValueAtTime(g.gain.value, inicioEm);
+    g.gain.linearRampToValueAtTime(alvo, inicioEm + duracaoS);
   }
 
   estado(): EstadoDoMotor {

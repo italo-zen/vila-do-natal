@@ -18,9 +18,13 @@ export interface OpcoesDoMenu {
   tamanho: number;
   /** Clique do mouse ativa o item (só títulos e Como jogar, decisão do Diretor). */
   mouse: boolean;
+  /** Contorno externo escuro de 1 px em cada botão (título, GDD 20.3). Padrão: sem. */
+  contornoExterno?: boolean;
   focoInicial?: number;
   /** Largura da caixa de cada botão. Padrão: perfil (botao.largura). */
   largura?: number;
+  /** Centro horizontal dos botões. Padrão: centro da tela (título, metade esquerda, GDD 20.3). */
+  centroX?: number;
 }
 
 /**
@@ -42,7 +46,7 @@ export class Menu {
     const p = perfilDe(cena);
     const largura = opcoes.largura ?? p.botao.largura;
     const altura = p.botao.altura;
-    const centroX = telaDe(p).largura / 2;
+    const centroX = opcoes.centroX ?? telaDe(p).largura / 2;
     itens.forEach((item, i) => {
       const botao = new Botao(cena, centroX, item.y + altura / 2, item.texto, {
         w: largura,
@@ -50,6 +54,7 @@ export class Menu {
         tamanho: opcoes.tamanho,
         marca: true,
         mouse: opcoes.mouse,
+        contornoExterno: opcoes.contornoExterno,
       });
       this.botoes.push(botao);
       botao.sobreMouse?.on('pointerover', () => this.definirFoco(i));

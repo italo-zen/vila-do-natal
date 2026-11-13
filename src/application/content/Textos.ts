@@ -14,6 +14,11 @@ export class Textos {
     return Object.prototype.hasOwnProperty.call(this.dicionario, chave);
   }
 
+  /** Todas as chaves (para conferir referências, ADR-010 E9). */
+  chaves(): string[] {
+    return Object.keys(this.dicionario);
+  }
+
   /** Primeira página do texto (ou o próprio texto, se for uma página só). */
   t(chave: string, vars: Variaveis = {}): string {
     return this.paginas(chave, vars)[0];

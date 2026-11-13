@@ -1,0 +1,25 @@
+{
+  "_status": "proposta da Arte (item 153, ADR-010 8.1). A chave `decoracao` é do Dev; esta Arte só propõe o trecho.",
+  "maps": [
+    {
+      "id": "hall",
+      "decoracao": "maps/decoracao/hall.json"
+    },
+    {
+      "id": "sala",
+      "decoracao": "maps/decoracao/sala.json"
+    },
+    {
+      "id": "cozinha",
+      "decoracao": "maps/decoracao/cozinha.json"
+    },
+    {
+      "id": "quarto",
+      "decoracao": "maps/decoracao/quarto.json"
+    },
+    {
+      "id": "escritorio",
+      "decoracao": "maps/decoracao/escritorio.json"
+    }
+  ]
+}

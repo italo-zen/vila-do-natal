@@ -10,8 +10,10 @@ import { SelecaoScene } from './scenes/SelecaoScene';
 import { CasaScene } from './scenes/CasaScene';
 import { ConquistaScene } from './scenes/ConquistaScene';
 import { CreditosScene } from './scenes/CreditosScene';
+import { FimScene } from './scenes/FimScene';
 import { PausaScene } from './scenes/PausaScene';
 import { Som } from './audio/Som';
+import { recursosDaBuild } from './recursos/recursosDaBuild';
 import { MotorWebAudio } from './audio/motorWebAudio';
 import { entradaDeAudio } from './audio/conteudoDeAudio';
 import { GESTOS_QUE_LIBERAM } from './audio/liberacao';
@@ -73,7 +75,7 @@ export function criarJogo(servicos: Servicos, arte: ArteDoPerfil, pai: HTMLEleme
     // Toque sempre ligado: num computador comum não chega nenhum evento de toque, e o mouse segue igual (ADR-007 1.7).
     input: { mouse: true, touch: true, activePointers: 3, gamepad: false },
     audio: { noAudio: true },
-    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene, CreditosScene, PausaScene],
+    scene: [BootScene, TituloScene, ComoJogarScene, SelecaoScene, CasaScene, ConquistaScene, FimScene, CreditosScene, PausaScene],
   });
   jogo.registry.set('servicos', servicos);
   jogo.registry.set('perfil', perfil);
@@ -83,6 +85,12 @@ export function criarJogo(servicos: Servicos, arte: ArteDoPerfil, pai: HTMLEleme
   // Som (ADR-008): decodifica no boot, sem gesto; a liberação vem do primeiro gesto (instalarSomDaJanela).
   const som = new Som(new MotorWebAudio(), entradaDeAudio());
   jogo.registry.set('som', som);
+  // Recursos (ADR-009): no playtest, tudo embutido; na release, o áudio chega por carga e é decodificado ao chegar.
+  const recursos = recursosDaBuild();
+  jogo.registry.set('recursos', recursos);
+  recursos.aoReceberTodos((item, bytes) => {
+    if (item.tipo === 'audio') void som.receberArquivo(item.id, bytes);
+  });
   jogo.registry.set('telaDoSom', 'titulo');
   void som.decodificarTudo().catch((erro: unknown) => console.error(erro));
   instalarSomDaJanela(som, jogo);

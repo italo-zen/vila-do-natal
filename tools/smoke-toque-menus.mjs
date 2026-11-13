@@ -322,6 +322,32 @@ async function roteiroDoTituloB(page) {
   conferir('título em layout B: sem joystick (decisão 38)', await centroDaBase(page), null);
 }
 
+/**
+ * Tela de fim (GDD 20.4; BUG-M7-01): um toque em qualquer ponto avança para os créditos, nos dois layouts. A zona de
+ * toque cobre a tela (alvo `Fim:Zone` em __alvosDeToque). Um toque duplo não pula os créditos nem chega ao título.
+ */
+async function roteiroDaFim(page, rotulo) {
+  await page.evaluate(() => {
+    window.__partidaConcluida('lolo', false);
+    window.__irPara('Fim');
+  });
+  await real(1600);
+  const nomes = async () => page.evaluate(() => window.__alvosDeToque().map((a) => a.nome));
+  conferir(`fim ${rotulo}: alvo de toque da tela inteira listado (Fim:Zone)`, (await nomes()).includes('Fim:Zone'), true);
+  // Ponto no canto superior esquerdo do canvas: fora dos botões dos créditos (o toque duplo não aciona Voltar).
+  const ponto = await page.evaluate(() => { const r = document.querySelector('canvas').getBoundingClientRect(); return { x: r.left + r.width * 0.05, y: r.top + r.height * 0.05 }; });
+  await page.touchscreen.tap(ponto.x, ponto.y);
+  await real(1200);
+  let n = await nomes();
+  conferir(`fim ${rotulo}: um toque avança para os créditos`, n.some((s) => s.startsWith('Creditos:')) && !n.some((s) => s.startsWith('Fim:')), true);
+  await page.touchscreen.tap(ponto.x, ponto.y);
+  await real(120);
+  await page.touchscreen.tap(ponto.x, ponto.y);
+  await real(1200);
+  n = await nomes();
+  conferir(`fim ${rotulo}: toque duplo nos créditos não vai ao título`, n.some((s) => s.startsWith('Creditos:')) && !n.some((s) => s.startsWith('Titulo:')), true);
+}
+
 const navegador = await chromium.launch({ channel: 'chrome', headless: true });
 try {
   const { contexto, page, cdp } = await abrir(844, 390);
@@ -331,6 +357,7 @@ try {
   await roteiroDaSelecao(page, cdp);
   await roteiroDaExploracao(page, cdp, 844);
   await layoutBTrocaSolta(page, cdp);
+  await roteiroDaFim(page, '844x390');
   await contexto.close();
 
   const b = await abrir(667, 375);
@@ -341,6 +368,7 @@ try {
   await conferirZonaDoVoltar(b.page, 667);
   await roteiroDaExploracao(b.page, b.cdp, 667).catch((e) => falhas.push(`exploração 667: ${e.message}`));
   await layoutBExploracao(b.page, b.cdp);
+  await roteiroDaFim(b.page, '667x375');
   await b.contexto.close();
 } finally {
   await navegador.close();
