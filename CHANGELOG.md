@@ -2,11 +2,34 @@
 
 Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), com [SemVer](https://semver.org/lang/pt-BR/).
 
-Entradas de 0.1.0 a 0.4.0 ainda não foram transcritas; entram antes da 1.0.0 (ver `docs/checklist-release.md`, item 4).
-
 ## [Não lançado]
 
-- Versão 1.0.0 (lançamento completo) entra aqui depois que o teste final com crianças e adultos for aprovado.
+- Nada por enquanto. As próximas versões entram aqui.
+
+## [1.0.0] - 2026-11-12
+
+Primeira versão pública do jogo "Natal na Casa do Tio Ítalo e da Tia Nath". É um jogo de aventura em pixel art para crianças de 5 a 10 anos, feito com Phaser 3 e TypeScript, que roda no navegador do computador e do celular.
+
+### Adicionado
+- Escolha de um dos quatro sobrinhos (LoLô, BiBi, DanDan e TuTu). O jogo usa o nome escolhido nos diálogos.
+- Procurar as três partes da árvore de Natal pela casa. O Nick, o cachorro da casa, acorda, segue o sobrinho e fareja a próxima porta.
+- Dicas para quem fica perdido (tecla H ou o ícone "?") e a seta do farejar, que aponta a próxima porta por alguns segundos.
+- Enfeites: uma caixa de enfeite no Escritório, que se encaixa na árvore.
+- Uma reviravolta na parte final: algo ainda está perdido pela casa.
+- Fim com a imagem da família, créditos e a opção "Explorar a casa", para andar livremente pela casa com 25 enfeites de Natal.
+- Controles pelo teclado (setas ou WASD, Z, X e Esc) e pelo celular, com joystick virtual e botões A e B.
+- Pausa pela tecla P ou pelo ícone II, e mudo pela tecla M ou pelo ícone de som.
+- Música de fundo de Natal, efeitos sonoros e um jingle para cada conquista, além de um jingle nos créditos.
+- Não há save: ao abrir o jogo, ele começa sempre pela tela de título.
+- Carregamento rápido: a tela de título aparece em cerca de 3 segundos numa conexão lenta emulada (1,6 Mbps), com compressão. O arquivo principal leva só o código, os sprites e os textos; o áudio e as imagens de tela carregam à parte.
+
+### Conhecidos
+- Na tela de fim, o texto "A ou B: continuar" aparece, mas o botão B não existe na tela do celular. O texto será ajustado numa versão seguinte.
+- Na tela de fim, a barra de comandos cobre a base do corpo dos personagens. Foi mantido assim.
+
+### Licenças
+- A música e os efeitos são sintetizados e originais do projeto.
+- Duas melodias são de domínio público: a do jingle dos créditos ("We Wish You a Merry Christmas", em arranjo próprio) e uma citação de quatro notas de "Jingle Bells" no jingle de enfeites. O restante é original.
 
 ## [0.13.0] - 2026-11-10
 
@@ -116,6 +139,48 @@ Sem mudanças visuais.
 - Marco 2, peças da árvore (GDD 15): as três partes (Sala, Cozinha e Lavanderia), tela de conquista, encaixe e diálogo por parte.
 - Árvore montada em 1, 2 e 3 partes; Quarto liberado pela parte 2 e Escritório pela parte 3.
 - Aviso "ainda não" para peça fora de ordem; condução com fade nas passagens.
+
+## [0.4.0] - 2026-11-08
+
+### Adicionado
+- A planta da casa gira 90° para a direita, com a tela deitada. Os cômodos seguem a planta da casa real do Diretor.
+- Interruptor no novo lugar, bilhete pendurado na parede e portas vistas de cima.
+- Passagem entre a Sala e a Cozinha, indicada com clareza.
+- Móveis desenhados com nome.
+
+### Alterado
+- O painel da senha não mostra mais a dica, que fica só no bilhete.
+- A porta P1 tem uma só entrada.
+
+### Corrigido
+- O painel da senha volta a aceitar as teclas W, A, S e D, além das setas.
+- A árvore fica no lugar certo da Sala.
+
+## [0.3.0] - 2026-11-08
+
+### Adicionado
+- Condução automática: depois de acender as luzes, o sobrinho é levado sozinho até a árvore.
+- Geladeira e Forno na Cozinha.
+
+### Alterado
+- A última linha da Sala fica bloqueada, para o sobrinho não andar sobre a barra de comandos.
+
+### Corrigido
+- A arte dos sobrinhos voltou a ter as cores certas. A versão 0.2.0 tinha saído com os sprites em 4 cores.
+
+## [0.2.0] - 2026-11-08
+
+### Adicionado
+- Casa real: a planta do Diretor, feita no programa Tiled, passa a ser o mapa do jogo.
+
+### Alterado
+- Ajustes do primeiro teste, aprovados pelo QA nos Marcos 1.1 e 1.2: texto de orientação no Hall, interação mais tolerante com o interruptor e a árvore, e botões com caixa e borda, diferentes do texto.
+
+## [0.1.0] - 2026-11-07
+
+### Adicionado
+- Primeira versão jogável, a fatia vertical do Marco 1: título com "Começar" e "Como jogar", escolha de um dos quatro sobrinhos, introdução no Hall, bilhete com a pista da porta, porta com painel de código (com o aviso de código errado), e interruptor e luzes da casa.
+- Arte provisória, que o Diretor pediu para trocar depois.
 
 ## [0.5.0] - 2026-11-08
 

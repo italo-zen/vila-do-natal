@@ -740,3 +740,15 @@
 ## 2026-11-12 — PR dos Marcos 5, 6 e 7 mergeada (Diretor)
 - **Decisão:** a PR #6 (Marcos 5, 6 e 7, até a v0.13.0) foi mergeada em `setup/estrutura-de-agentes` (merge `8126d2f`). Branch de trabalho sincronizada com a base. Próximo: Pages (Settings → Pages, fonte "GitHub Actions"), `main` como branch padrão, execução manual do workflow, conferência de gzip no Pages e tag v1.0.0.
 - **Quem decidiu:** Diretor ("merged").
+
+## 2026-11-12 — PT5 com criança e adulto confirmado (Diretor)
+- **Decisão:** "aconteceu o jogo com adulto e criança" (literal). Critério 1 do GDD 19.7.2 (criança e adulto jogando juntos) atendido; sem travas nem confusões relatadas. Falta só a triagem final de bugs do QA e os passos do GitHub antes da tag v1.0.0.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-12 — Triagem final do QA: P1 no título do playtest; 1.0.0 segura (Orquestrador)
+- **Decisão:** a triagem de `qa/bugs.md` fechou 25 entradas, marcou 6 como não reproduzidas, 4 como "não é bug", 2 como fechadas por decisão, 3 limitações conhecidas (P3) e 2 P3 abertos; achou 1 P1: no playtest embutido (e no build de QA) da 1.0.0 o título não mostra a imagem da árvore (regressão provável do item 159; a release servida por HTTP mostra). Verifiquei que as imagens estão no HTML (data URL); o defeito é de runtime. A 1.0.0 só sai depois do conserto (nenhum P0/P1 aberto). Os Conhecidos para o CHANGELOG 1.0.0 vêm da triagem. O artifact publicado (v0.13.0, Version 18) não é afetado (build anterior ao item 159).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-13 — QA em até 10 minutos e respostas curtas (Diretor)
+- **Decisão (literal):** "Reduza a quantidade de informações que você responde aqui. Mande apenas o realmente necessário. Diminua o tempo de QA para até 10 minutos." Cada rodada de QA passa a ter no máximo 10 min (antes 15); respostas ao Diretor curtas.
+- **Quem decidiu:** Diretor.

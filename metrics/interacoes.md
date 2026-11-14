@@ -488,3 +488,15 @@
 | I-396 | 2026-11-12 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | Item 159 completo: verificadores nos dois modos, workflow com pasta inteira e smoke, checklist; 10 testes negativos; excecoes de rede aceitas |
 | I-397 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Autorizou commit do Marco 7; commits 0dd9b89 e d6faf22 enviados por push |
 | I-398 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | PR dos Marcos 5, 6 e 7 mergeada (PR #6, 8126d2f); branch sincronizada com a base |
+| RECONCILIAÇÃO FINAL (get_usage, 2026-11-12) | Plano Pro, sem custo em USD. Limite de 5 h: 20% usado; semanal: 98%. Contexto da sessão: 496k de 1M tokens (mensagens 437k). Resumo completo do projeto em `metrics/resumo.md`: 102 mensagens do Diretor, 275 delegações, soma aproximada de 23,6 M tokens de agentes, 76.952 s de trabalho de agentes. |
+| I-399 | 2026-11-12 | M7 | sonnet 5.5 | Orquestrador | (resumo final) | | | | metrics/resumo.md escrito; versao 1.0.0 candidata em andamento (Dev e Generalista) |
+| I-400 | 2026-11-12 | M7 | haiku 5.5 | Generalista | Orquestrador | | | | CHANGELOG 1.0.0 e 0.1.0-0.4.0 transcritos; checklist de release atualizado; pendencias: criterio 1 do 19.7.2 (crianca e adulto), triagem de bugs antigos, Pages/ambiente/branch padrao |
+| I-401 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | QA | | | | Triagem final de qa/bugs.md para a 1.0.0 e lista de Conhecidos |
+| I-402 | 2026-11-12 | M7 | haiku 5.5 | Dev | Orquestrador | | | | Versao 1.0.0 candidata: 971 testes, build:release e smoke:release ok, 4 capturas com versao mudam (CR1 nao apareceu: QA confere a baseline) |
+| I-403 | 2026-11-12 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Confirmou que adulto e crianca jogaram; criterio 1 do 19.7.2 atendido |
+| I-404 | 2026-11-12 | M7 | haiku 5.5 | QA | Orquestrador | | 578 | | Triagem final de qa/bugs.md: 25 fechados, 6 nao reproduzidos, 4 nao-bug, 3 limitacoes; P1: titulo sem imagem no playtest embutido da 1.0.0 (regressao do item 159); 1.0.0 segura |
+| I-405 | 2026-11-12 | M7 | haiku 5.5 | Orquestrador | Dev | | | | Corrigir P1: imagem do titulo no ramo embutido; teste de pixels no playtest e na release |
+| I-406 | 2026-11-13 | M7 | haiku 5.5 | Dev | Orquestrador | | | | P1 corrigido: guard isActive() no ramo embutido (CREATING); smoke:imagem de pixels no titulo e no fim (playtest e release); 975 testes; smoke de toque falhou 1 de 3 (instabilidade, QA repete) |
+| I-407 | 2026-11-13 | M7 | haiku 5.5 | Orquestrador | QA | | | | Reconfirmar P1 do titulo, 10 execucoes do smoke de toque, baseline 1.0.0, EX5 de 5 min, veredito para a tag |
+| I-408 | 2026-11-13 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Respostas mais curtas; QA ate 10 min |
+| I-409 | 2026-11-13 | M7 | sonnet 5.5 | Diretor | Orquestrador | | | | Note taking feito (memoria: estado 2026-11-13, 1.0.0 candidata, passos ate a tag); compactacao pedida via /compact |

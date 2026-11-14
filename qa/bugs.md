@@ -1,3 +1,35 @@
+# TRIAGEM FINAL para a 1.0.0 (QA, 2026-11-12; build 1.0.0 = código da 0.13.0 + versão)
+
+## Quadro-resumo
+| Estado | Qtd | Itens |
+|---|---|---|
+| ABERTO P0 | 0 | — |
+| ABERTO P1 | 0 | (título sem imagem: FECHADO na triagem r2, ver abaixo) |
+| FECHADO P1 (título sem imagem, 1.0.0) | 1 | causa: guard `isActive()` em `carregarImagemDeTela` no ramo embutido (cena em CREATING); corrigido pelo Dev com o sinal de SHUTDOWN; reconfirmado em playtest e QA, 667×375 e 844×390, título e fim de LoLô, BiBi, DanDan e TuTu, e título depois dos créditos (168 418 px fora do fundo, igual à referência da release; `qa/evidencias/triagem-r2/p1-r2.txt`) |
+| ABERTO P2 | 0 | DS2 depende do gzip do Pages: condição de publicação, não bug |
+| ABERTO P3 | 2 | texto "A ou B: continuar" no fim em 844×390 (sem botão B); faixa de texto do fim cobre a base dos corpos (FI2, decisão do Orquestrador) |
+| LIMITAÇÃO CONHECIDA (P3) | 3 | personagem parado olha sempre para a frente (BUG-001); móveis de 1 tile sem rótulo (Sofá etc.); peças e árvore com placeholder da Arte (item 050) |
+| FECHADO (corrigido ou decidido, com evidência) | 25 | BUG-002, BUG-003, BUG-014-01, BUG-014-02, BUG-M12-01, BUG-M12-02, BUG-M12-03, BUG-M13-01, BUG-M13-02, BUG-R13-01, BUG-R13-02, BUG-R13-03, BUG-R14-01, BUG-R15-01, BUG-M2-01, BUG-M2-03, BUG-M2-04, BUG-M3-R4-01, BUG-M3-R5-01, BUG-M4-01, BUG-M5-03, BUG-M5-04, BUG-M5-05, BUG-M7-01, PO3 (M6), P2 do bilhete no AC4 (M6) |
+| NÃO REPRODUZIDO | 6 | BUG-M2-02 (2 execuções), BUG-M2-05 (1), BUG-M4-02, BUG-M5-02, P3 do primeiro B após diálogo (10 tentativas), P3 do ícone no fade (15 tentativas) |
+| Não é bug (roteiro ou projeto) | 4 | casa.mjs obsoleto; P na Sala logo após as luzes (GDD 19.3.1); Z curto (teclado humano); joystick na pausa do layout A (19.3) |
+| FECHADO por decisão | 2 | mudo "silencia" (19.2.3); passos de E7 e E20 (13 e 17, GDD 15.3.5 e 15.10) |
+
+## Verificação desta triagem
+- **Título sem imagem (P1, NOVO):** no build 1.0.0 o título desenha fundo sólido, textos e versão. No `dist-qa`, a captura a 0,8 s, 2,5 s e 5 s não tem a imagem (`qa/evidencias/triagem-r1/titulo-t5002.png`). Na `dist-release` por HTTP (modo externo), a imagem aparece (168 mil pixels fora do fundo, contra 43 mil no playtest por `file://`). Em 0.13.0 a imagem aparecia no `dist-qa` (`qa/evidencias/marco7-r1/titulo-m7.png`). A diferença da baseline cobre o quadro inteiro, não só o canto da versão. Ação (Dev): achar por que o ramo embutido (`src/presentation/recursos/recursos.ts`, `deploy.imagens`) não entrega os bytes de `titulo` no playtest/QA; corrigir e refazer a comparação.
+- **DS2 com gzip na release:** 3,05 a 3,09 s (`dist-release`, Fast 4G emulado; `qa/scripts/marco6-triagem-ds2-release.mjs`). Condição de publicação: o Pages deve comprimir. Conferir depois de publicar.
+- **BUG-R13-03 (painel):** fundo sólido #0b1030 na faixa das teclas (`qa/evidencias/triagem-r1/painel-r13-03.png`). FECHADO.
+- **BUG-M12-02 (última linha da Sala):** `sala.json` tem altura 10; a última linha tem chão 0 e colisão 1 (decisão de 2026-11-08, ADR-004 item 6). FECHADO.
+- **Regressão (uma vez):** smoke:playtest, smoke:toque-menus, smoke:pausa-som e smoke:icones sem erro. comparar:capturas: 4 diferenças (`titulo.png`, `lolo-CR2-creditos-foco-voltar-ao-titulo.png`, `lolo-CR4-creditos-30s-sem-mudanca.png`, `lolo-CR2-depois-de-voltar-titulo.png`). As de créditos e a de volta mudam pela versão; `titulo.png` muda pela imagem ausente (P1). Baseline NÃO atualizada: a diferença do título não é só a versão.
+
+## Conhecidos (para o CHANGELOG 1.0.0; só o que o jogador percebe)
+- O personagem parado olha sempre para a frente; ao andar, vira para a direção certa.
+- Alguns móveis de uma casa de largura só não têm nome escrito.
+- As peças e os estados da árvore usam desenhos provisórios; a arte final ainda não foi aprovada.
+- Na tela de fim, a faixa de texto de baixo cobre a parte de baixo das crianças da imagem.
+- Em 667×375, o botão "Voltar ao título" da seleção fica logo abaixo dos cartões.
+
+---
+
 # Bugs: Marco 1 (rodada 1, 2026-11-07)
 
 Ambiente comum: build normal (`dist/` servido em HTTP local) e playtest (`dist-playtest/index.html` por file://); versão do jogo v0.1.0; commit 4435f3a + alterações de trabalho do Marco 1; Google Chrome (headless, playwright-core) no macOS Darwin 25.6; resolução de teste 960x640.
