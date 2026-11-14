@@ -1,6 +1,6 @@
 {
   "name": "natal-na-casa-do-tio-italo",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Natal na Casa do Tio Ítalo e da Tia Nath",
@@ -16,7 +16,7 @@
     "test": "vitest run",
     "gen:assets": "node tools/gerar-assets.mjs",
     "gen:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar",
-    "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas && node tools/smoke-toque.mjs dist-playtest/index.html dist-playtest/capturas-toque",
+    "smoke:playtest": "node tools/smoke-navegador.mjs dist-playtest/index.html dist-playtest/capturas && node tools/smoke-toque.mjs dist-playtest/index.html dist-playtest/capturas-toque && node tools/smoke-imagem-de-tela.mjs dist-playtest/index.html",
     "validar:perfil": "node tools/validar-perfil.mjs",
     "comparar:capturas": "node tools/comparar-capturas.mjs",
     "verificar:conteudo": "python3 tools-arte/tmx_para_conteudo.py --girar --verificar && vitest run tests/conteudo/decoracao-real.test.ts",
@@ -24,7 +24,8 @@
     "smoke:toque-menus": "node tools/smoke-toque-menus.mjs dist-qa/index.html dist-qa/capturas-menus",
     "smoke:pausa-som": "node tools/smoke-pausa-som.mjs dist-qa/index.html dist-qa/capturas-pausa",
     "smoke:icones": "node tools/smoke-icones.mjs dist-qa/index.html dist-qa/capturas-icones",
-    "smoke:release": "node tools/smoke-release.mjs dist-release"
+    "smoke:release": "node tools/smoke-release.mjs dist-release",
+    "smoke:imagem": "node tools/smoke-imagem-de-tela.mjs dist-qa/index.html --com-fim"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.5",

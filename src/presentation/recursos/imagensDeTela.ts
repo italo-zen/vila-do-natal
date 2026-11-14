@@ -23,8 +23,12 @@ export function carregarImagemDeTela(cena: Phaser.Scene, chave: ChaveDeImagemDeT
     cena.textures.get(nome).setFilter(Phaser.Textures.FilterMode.NEAREST);
     aoChegar();
   };
+  // A cena só está RUNNING depois do create: no modo embutido, os bytes chegam síncronos, dentro do create. Por isso o guard
+  // é o desligamento da cena (SHUTDOWN), e não `isActive()` (BUG P1 da 1.0.0: a imagem era descartada no playtest).
+  let viva = true;
+  cena.events.once(Phaser.Scenes.Events.SHUTDOWN, () => (viva = false));
   recursos.aoChegar(chave, (bytes) => {
-    if (!cena.sys.isActive()) return;
+    if (!viva) return;
     if (cena.textures.exists(nome)) {
       pronta();
       return;

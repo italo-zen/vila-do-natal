@@ -95,6 +95,15 @@ async function rodarEm(navegador, base) {
   }
   // Espera os recursos da release (até 20 s).
   await page.waitForTimeout(8000);
+  // Imagem do título na release (P1 da 1.0.0): pontos da árvore e do chão fora do fundo e da caixa do nome.
+  const cores = [];
+  const rectCanvas = await page.evaluate(() => { const r = document.querySelector('canvas').getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height }; });
+  for (const [x, y] of [[330, 120], [380, 170], [300, 230], [420, 260], [360, 300], [250, 320]]) {
+    const png = await page.screenshot({ clip: { x: rectCanvas.l + ((x + 0.5) * rectCanvas.w) / 480, y: rectCanvas.t + ((y + 0.5) * rectCanvas.h) / 352, width: 1, height: 1 } });
+    cores.push(pixelDoPng(png));
+  }
+  const foraDoFundo = cores.filter((c) => !(Math.abs(c[0] - 11) < 12 && Math.abs(c[1] - 16) < 12 && Math.abs(c[2] - 48) < 12) && !(Math.abs(c[0] - 27) < 12 && Math.abs(c[1] - 36) < 12 && Math.abs(c[2] - 82) < 12)).length;
+  if (foraDoFundo < 4) falhas.push(`${base}: imagem do título ausente (${foraDoFundo}/6 pontos fora do fundo)`);
   const audio = rede.filter((x) => x.url.includes('/audio/'));
   const imagens = rede.filter((x) => x.url.includes('/imagens/'));
   const imagemTitulo = imagens.find((x) => x.url.includes('/imagens/titulo.'));
