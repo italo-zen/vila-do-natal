@@ -1,0 +1,52 @@
+// Joystick: resize sem troca de layout não solta; troca de layout e giro soltam. Só observa.
+import { chromium } from 'playwright-core';
+import { pathToFileURL, fileURLToPath } from 'node:url';
+import { resolve, join, dirname } from 'node:path';
+import { mkdirSync } from 'node:fs';
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const EVID = join(RAIZ, 'qa', 'evidencias', 'joystick-v0100'); mkdirSync(EVID, { recursive: true });
+const url = pathToFileURL(resolve(RAIZ, 'dist-qa', 'index.html')).href;
+const real = (ms) => new Promise((r) => setTimeout(r, ms));
+const reg = (id, ok, n = '') => console.log(`${ok ? 'OK   ' : 'FALHA'} ${id} :: ${n}`);
+const b = await chromium.launch({ channel: 'chrome', headless: true });
+const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+const p = await ctx.newPage(); await p.goto(url); await p.waitForSelector('canvas'); await real(2200);
+const cdp = await ctx.newCDPSession(p);
+const alvos = () => p.evaluate(() => window.__alvosDeToque());
+const an = () => p.evaluate(() => window.__analogico());
+// entra na exploração pela seleção (toques diretos)
+const z = (await alvos()).filter((a) => a.origem === 'canvas' && a.nome === 'Titulo:Zone');
+await p.touchscreen.tap(z[0].x + 20, z[0].y + 20); await real(700);
+const cs = (await alvos()).filter((a) => a.origem === 'canvas' && a.nome.startsWith('Selecao'));
+await p.touchscreen.tap(cs[0].x + 20, cs[0].y + 20); await real(800);
+for (let i = 0; i < 25; i++) { const a = (await alvos()).find((q) => q.origem === 'dom' && q.nome === 'a'); const st = await p.evaluate(() => window.__estado()); if (st && !st.travado && st.mapa) break; if (a) await p.touchscreen.tap(a.x + a.largura / 2, a.y + a.altura / 2); await real(300); }
+await real(500);
+const base = (await alvos()).find((a) => a.nome === 'analogico');
+const c0 = { x: base.x + base.largura / 2, y: base.y + base.altura / 2 };
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: c0.x, y: c0.y, id: 5 }] });
+await real(60);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: c0.x + 30, y: c0.y, id: 5 }] });
+await real(200);
+const antes = await an();
+reg('JOY segurar a base para a direita (dono e direção)', antes?.dono === true && antes?.direcao === 'direita', JSON.stringify(antes).slice(0, 100));
+await p.setViewportSize({ width: 844, height: 380 }); await real(500);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: c0.x + 30, y: c0.y - 0, id: 5 }] });
+await real(200);
+const resz = await an();
+reg('JOY resize sem troca de layout NÃO solta o dedo', resz?.dono === true, `dono=${resz?.dono} dir=${resz?.direcao}`);
+await p.screenshot({ path: join(EVID, 'resize-sem-troca-segura.png') });
+await p.setViewportSize({ width: 390, height: 844 }); await real(700);
+const rot = await an();
+reg('JOY giro para retrato (aviso) SOLTA', !rot?.dono && !rot?.direcao, `dono=${rot?.dono} dir=${rot?.direcao}`);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+await p.setViewportSize({ width: 844, height: 390 }); await real(700);
+await p.screenshot({ path: join(EVID, 'volta-paisagem-sem-dedo.png') });
+// troca de layout A -> B: solta
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 68, y: 322, id: 6 }] });
+await real(80);
+await p.setViewportSize({ width: 667, height: 375 }); await real(900);
+const lay = await an();
+reg('JOY troca de layout A→B SOLTA', !lay?.dono, `dono=${lay?.dono} dir=${lay?.direcao}`);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+await p.screenshot({ path: join(EVID, 'layout-B-joystick.png') });
+await b.close();

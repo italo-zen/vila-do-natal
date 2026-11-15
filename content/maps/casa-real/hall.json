@@ -1,0 +1,67 @@
+{
+  "altura": 3,
+  "chao": [
+    0,
+    0,
+    533,
+    537,
+    274,
+    258,
+    19,
+    3,
+    0,
+    0,
+    20,
+    4
+  ],
+  "colisao": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0
+  ],
+  "escuro": false,
+  "id": "hall",
+  "largura": 4,
+  "objetos": [
+    {
+      "destino": "sala",
+      "id": "P8",
+      "saida": "cima",
+      "spawnDestino": "P8",
+      "tipo": "porta",
+      "trancadaAte": "porta",
+      "x": 3,
+      "y": 0
+    },
+    {
+      "direcao": "baixo",
+      "nome": "P8",
+      "tipo": "spawn",
+      "x": 3,
+      "y": 1
+    },
+    {
+      "direcao": "direita",
+      "nome": "elevador",
+      "tipo": "spawn",
+      "x": 0,
+      "y": 1
+    },
+    {
+      "texto": "bilhete.pista",
+      "tipo": "bilhete",
+      "x": 2,
+      "y": 0
+    }
+  ],
+  "tile": 32
+}

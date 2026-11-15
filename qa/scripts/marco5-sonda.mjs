@@ -1,0 +1,21 @@
+// Sonda rápida do build:qa com toque emulado (Marco 5 rodada 1). Só observa.
+import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
+import { pathToFileURL, fileURLToPath } from 'node:url';
+import { resolve, join, dirname } from 'node:path';
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const url = pathToFileURL(resolve(RAIZ, 'dist-qa', 'index.html')).href;
+const real = (ms) => new Promise((r) => setTimeout(r, ms));
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const ctx = await browser.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+const page = await ctx.newPage();
+const erros = [];
+page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') erros.push(m.text()); });
+page.on('pageerror', (e) => erros.push('pageerror ' + e.message));
+await page.goto(url);
+await real(2500);
+const sonda = await page.evaluate(() => ({ mt: navigator.maxTouchPoints, ots: 'ontouchstart' in window, coarse: matchMedia('(pointer: coarse)').matches, alvos: window.__alvosDeToque ? window.__alvosDeToque() : 'sem gancho' }));
+console.log(JSON.stringify(sonda, null, 1));
+await page.screenshot({ path: join(RAIZ, 'qa/evidencias/marco5-r1/sonda-titulo-844.png') });
+console.log('erros', erros);
+await browser.close();

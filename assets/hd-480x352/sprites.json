@@ -1,0 +1,575 @@
+{
+  "schemaVersion": 1,
+  "perfil": "hd-480x352",
+  "imagens": [
+    {
+      "arquivo": "ctl_analogico_base.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_bolinha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_bolinha_pressionada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_baixo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_cima.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_analogico_brilho_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_a.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_a_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_b.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_botao_b_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_celular.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 288,
+        "h": 288
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "ctl_pausa.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_pausa_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_som_desligado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_som_desligado_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_som_ligado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "ctl_som_ligado_pressionado.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_arvore_g.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_arvore_p.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_bola.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_cortina.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_estrela.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_guirlanda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_luz.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "dec_meias.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_pano.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_presente_verde.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_presente_vermelho.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "dec_vela.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_arvore_1parte.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_arvore_2partes.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_arvore_completa.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_arvore_desmontada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_arvore_enfeitada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_au.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_exclamacao.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_balao_zzz.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bilhete.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_conquista_enfeites.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_conquista_parte1.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_conquista_parte2.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_conquista_parte3.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_enfeite_caixa.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_enfeite_flutuante.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_fogao.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_fumaca_dormir.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 3
+    },
+    {
+      "arquivo": "spr_geladeira.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_icone_dica.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_indicador_seta_baixo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_indicador_seta_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_indicador_seta_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_indicador_tapete.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_interruptor.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lampada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_nick_happy.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_idle_down.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_left.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_right.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_idle_up.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_nick_sleep.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_sniff.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_wake.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_nick_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      },
+      "quadros": 4
+    },
+    {
+      "arquivo": "spr_peca_1.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_peca_2.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_peca_3.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_pia.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_cima.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_seta_farejar_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 48
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "tiles_casa.png",
+      "tipo": "tileset",
+      "quadro": {
+        "w": 32,
+        "h": 32
+      }
+    }
+  ]
+}

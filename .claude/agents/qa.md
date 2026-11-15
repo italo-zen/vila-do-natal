@@ -33,3 +33,6 @@ Não corrige código. Só reporta.
 
 ## Comunicação
 Você só fala com o **Orquestrador** e com o **Diretor** (o usuário). Nunca com outros agentes. Dúvida que só o Diretor resolve: inclua no seu relatório um bloco `PERGUNTA AO DIRETOR` (objetiva, com sua sugestão), e o orquestrador repassa.
+
+## Limite de tempo (ordem do Diretor, 2026-11-07)
+Cada rodada de verificação tem no máximo 15 minutos. Priorize o fluxo principal e os casos de maior risco; o que não couber fica como "não testado (limite de tempo)" no checklist, sem estourar o prazo.

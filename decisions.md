@@ -15,3 +15,740 @@
 | 2026-11-07 | GitHub Pages só para releases finais, via tag `vX.Y.Z`; SemVer; conteúdo em `content/` + manifesto; saves versionados com migração | Permitir novas versões com novos mapas sem quebrar o jogo nem os saves | Diretor |
 | 2026-11-07 | Texto da pista do hall: "os 3 últimos dígitos do ano em que {nome_do_personagem} nasceu" | Pista direta e adequada a crianças | Diretor |
 | 2026-11-07 | Orquestrador mantém log de interações (`metrics/interacoes.md`) com reconciliação por marco via `/cost` | Medir tempo, custo e interações até o fim do jogo | Diretor |
+| 2026-11-07 | Pista da porta = bilhete amarelo na parede ao lado da porta, no hall (P1). Provisória até o Diretor confirmar | Simples de desenhar e visível | Produto (premissa; aguarda Diretor) |
+| 2026-11-07 | Escuro = penumbra azul-noite com círculo de luz de ~3 tiles, borda em degraus de pixel, nunca preto total (P7) | Clima de brincadeira, sem susto | Produto |
+| 2026-11-07 | Checkpoint do Marco 1 guarda `saveVersion` (=1), `characterId` e `phase` (intro, porta, luzes, parte1); grava em 4 pontos. Save inválido ou de versão desconhecida = sem save | Formato barato agora, caro depois | Produto  [SUPERADA: sem save, decisão do Diretor 2026-11-07] |
+| 2026-11-07 | "Começar" com save existente pede confirmação, foco em "Não" | Não perder progresso da criança | Produto  [SUPERADA: sem save, decisão do Diretor 2026-11-07] |
+| 2026-11-07 | Marco 1 tem 3 cômodos: hall (claro), sala (escura, interruptor no fundo), cozinha provisória (prova a troca de câmera) | Escopo mínimo da fatia vertical | Produto |
+| 2026-11-07 | ADR-001 (4 camadas: domain, application, infrastructure, presentation) e ADR-002 (SemVer, manifesto, saves versionados) criados | Itens 001 e 012 | Especialista |
+| 2026-11-07 | Premissas provisórias aguardando o Diretor: P6b (sobrinhos tratados como inspirados em pessoas reais, sem fotos/sobrenomes), save futuro só oferece "Começar", save corrompido avisa na tela | Não travar o Marco 1 | Orquestrador (sugestões dos agentes)  [SUPERADA: sem save, decisão do Diretor 2026-11-07] |
+| 2026-11-07 | Formato do save: o ADR-002 manda (nomes de campo, `atualizadoEm`, backup de save corrompido, confirmação antes de sobrescrever save futuro); GDD 14.6 deve apontar para o ADR. Premissa até o Diretor responder as perguntas 3 e 4 | QA achou divergência GDD × ADR; um só dono do formato evita retrabalho | Orquestrador  [SUPERADA: sem save, decisão do Diretor 2026-11-07] |
+| 2026-11-07 | NÃO haverá save/checkpoint no jogo: toda vez que o jogo é carregado, começa do zero. Título tem só "Começar" e "Como Jogar" (sem "Continuar"). Item 009 cancelado; `saveVersion`, migração de save e persistência em `localStorage` saem do escopo | Simplicidade; sessão curta e sempre do início | Diretor |
+| 2026-11-07 | Nova tela "Como jogar" (acessível pelo título) explicando os botões/controles | Crianças precisam saber os controles | Diretor |
+| 2026-11-07 | Respostas às perguntas dos agentes: sobrinhos são pessoas reais e o Diretor aceita a exposição (códigos 017/020/023/024 mantidos, P6b fechada); bilhete amarelo mantido; perguntas de save futuro/corrompido ficam sem efeito (não há save) | Resposta às perguntas do Produto e do Especialista | Diretor |
+| 2026-11-07 | Modelos dos agentes: Produto, Desenvolvedor, QA, Generalista e Arte/Level Design usam Haiku 5.5 esforço Médio; Especialista usa Haiku 5.5 esforço Alto | Ordem do Diretor | Diretor |
+| 2026-11-07 | Dev em andamento (Sonnet) interrompido por mudança de escopo (sem save); será reiniciado em Haiku 5.5 Médio com o escopo novo | Evitar código de save descartado | Orquestrador |
+| 2026-11-07 | Regra de privacidade dos sobrinhos mantida: o jogo guarda/mostra só nome e código, sem fotos reais nem sobrenomes (resposta à pergunta do Produto, explicada pelo Orquestrador) | Sobrinhos são pessoas reais; exposição mínima | Diretor |
+| 2026-11-07 | Botões do título e de "Como jogar" também aceitam clique do mouse (além do teclado) | Adulto pode usar o mouse ao lado da criança | Diretor |
+| 2026-11-07 | No título, X/Esc não fazem nada; ao voltar de "Como jogar", o foco vai para "Começar" | Fecha casos B-08 e B-13 do checklist | Diretor |
+| 2026-11-07 | CLAUDE.md ajustado: PT1 sem "retomar save", sem saves versionados | Coerência com a decisão de não ter save | Diretor |
+| 2026-11-07 | Painel da porta: X apaga o último dígito; só Esc fecha o painel. Foco começa em OK; Z/Enter confirma no OK e aperta a tecla em foco nos demais casos; digitar direto não move o foco | Resolve conflito X = B | Diretor |
+| 2026-11-07 | Toda tela deve mostrar claramente como avançar e como voltar (ex.: "Aperte Z para avançar, X para voltar") | Clareza para crianças | Diretor |
+| 2026-11-07 | Autorizada a remoção do código parcial de save (checkpoint, storage, ports e use cases de save) | Coerência com "sem save" | Diretor |
+| 2026-11-07 | Barra de controles em toda tela (GDD 14.8): Título "Setas: escolher   Z: confirmar"; Como jogar "Z ou X: voltar"; Seleção com "X: voltar ao título"; Introdução "Z: avançar   X: voltar" (X volta uma página, nunca pula); Diálogo "Z: avançar   X: fechar"; Painel "X: apagar   Esc: fechar"; Conquista "Z ou X: continuar"; Exploração "Setas: andar   Z: examinar". Backspace é alias de X no painel. Acerto da porta fecha o painel e mostra "Clique! A porta abriu." | Clareza de avançar/voltar | Produto; confirmado pelo Diretor (diálogos com "fechar", conquista com X = continuar)|
+| 2026-11-07 | Arte de referência dos 4 Sobrinhos e do Nick (folhas completas) entregue pelo Diretor, guardada em `assets/referencia/` (`ref_<nome>_folha.webp`). Sprites do jogo continuam provisórios até a Arte converter as folhas | Referência oficial de aparência (P6) | Diretor |
+| 2026-11-07 | Sprites finais dos 4 Sobrinhos serão feitos pela Arte a partir das folhas ANTES do PT1; Dev integra; Diretor revisa a arte integrada antes do PT1. Nick fica para o Marco 3 | Diretor quer jogar o PT1 com os personagens de verdade | Diretor |
+| 2026-11-07 | Barra do título e da seleção usa 2 espaços: "Setas: escolher  Z: confirmar" (28 caracteres, cabe com margem de 8 px). GDD 14.8 deve refletir isso | Texto não cabia com 3 espaços | Diretor |
+| 2026-11-07 | Sprites finais dos 4 Sobrinhos (16×24, 7 estados, 23–24 cores, mesmo layout dos provisórios) gerados das folhas por `tools-arte/gerar_sobrinhos.py`; sem retrato (cartões usam o idle). Simplificações: cachos viram textura; gestos e brilhos pequenos somem; Triste/Pensando/Surpresa/Feliz/Ações especiais não produzidos (fora da v1) | Redução de ~5× | Arte (revisão do Diretor pendente) |
+| 2026-11-07 | Regra geral da barra: 2 espaços entre ações, em todas as telas e no painel da porta (correção: "Setas: escolher  Z: confirmar" tem 29 caracteres, não 28). Marco 1 usa os sprites finais dos Sobrinhos. Personalidades vêm do texto das folhas do Diretor | Consistência; Produto decidiu dúvidas menores sem travar | Orquestrador (a partir da decisão do Diretor) |
+| 2026-11-07 | Nova folha geral de referência (todos os Sobrinhos e o Nick, com 4 quadros de andar, Surpresa, Feliz, Triste; Nick com dormindo, acordar, farejar, feliz) guardada em `assets/referencia/ref_todos_folha.webp`. Também grafa "Lolô" | Referência complementar do Diretor | Diretor |
+| 2026-11-07 | Caminhada do PT1 fica com 2 quadros; os 4 quadros da folha geral entram no Marco 3 junto com o Nick | Não atrasar o PT1 nem mexer no motor de animação | Diretor |
+| 2026-11-07 | Grafia oficial dos nomes: Nick, LoLô, BiBi, DanDan, TuTu (em todo o projeto: GDD, textos, código, sprites, checklist) | Padronização; as folhas do Diretor grafam "Lolô" e ficam só como referência | Diretor |
+| 2026-11-07 | Dev: tela de conquista mostra o Sobrinho comemorando (sprite celebrate) ao lado da lâmpada (GDD 7.2); renderer do Phaser passou a Canvas (captura confiável) | Decisão do Dev, reversível | Desenvolvedor (aguarda revisão do Diretor) |
+| 2026-11-07 | Arte integrada dos Sobrinhos aprovada; decisões do Dev (celebrate na conquista, renderer Canvas) e barra de 29 caracteres com letras apertadas mantidas | Revisão do Diretor | Diretor |
+| 2026-11-07 | Após o jogo estar completo, o Diretor poderá evoluir a arte para mais pixels, mais definição e mais cores (referência de estilo: Sea of Stars, só como inspiração, sem copiar). A estrutura do projeto deve permitir trocar o "perfil de arte" (resolução base, tamanho de tile/quadro, escala, paleta) sem mexer na lógica | Evitar retrabalho no motor quando a arte for refeita | Diretor |
+| 2026-11-07 | ADR-003 (perfil de arte como dado em content/art-profiles/, assets por perfil, UI ancorada, iluminação atrás de interface, playtest embute só o perfil ativo) PROPOSTO; aguarda aceite do Diretor. Auditoria: 64 pontos fixos em 36 arquivos (27 altos). Refator do v1 = esforço médio, sem mudar o visual | Preparar arte de maior resolução no futuro | Especialista (aguarda Diretor) |
+| 2026-11-07 | ADR-003 ACEITO. Refator do perfil de arte (item 014) = primeira tarefa do Dev depois do PT1 e antes de iniciar o Marco 2 | Não atrasar o PT1; evitar novas cenas com valores fixos | Diretor |
+| 2026-11-07 | Perfil de arte novo (futuro): 480×320 (tile 32, sprite 32×48); penumbra em degraus de 3–4 tons; arte nova sai como versão 1.x e o perfil v1 fica no repositório; fonte Press Start 2P corpo 16 | Seguiram as sugestões do Especialista | Diretor |
+| 2026-11-07 | Cada rodada de verificação do QA tem limite de 15 minutos; o que não couber vira "não testado (limite de tempo)" e o QA prioriza o fluxo principal. Vale para todo teste futuro | Teste extenso demais | Diretor |
+| 2026-11-07 | QA rodada 1 do Marco 1: NÃO FECHADO (2 bugs: BUG-001 Média, BUG-002 Baixa; exploração livre e alguns casos não testados). Personagem parado: solução provisória = quadro 0 da caminhada na direção olhada; sprites parados por direção ficam para a Arte depois do PT1 | Parado sempre de frente era incorreto | Orquestrador (QA sugeriu) |
+| 2026-11-07 | Build de teste v0.1.0 publicada como artifact (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP), a pedido do Diretor, ANTES da aprovação final do QA (rodada 2 em andamento). Não conta como PT1 oficial | Diretor quis ver o estado atual | Diretor |
+| 2026-11-07 | QA aprova o Marco 1 COM RESSALVAS (rodada 2, ~7 min): sem bug crítico ou alto; pendências: G-28, G-30 (indeterminado), G-31 (BiBi/DanDan/TuTu), exploração de 5 min (foi 60 s), Firefox/Safari/celular. Personagem parado: provisório aceito no PT1; 4 quadros parados pela Arte depois (item 015) | Veredito do QA | QA + Orquestrador |
+| 2026-11-07 | PT1 jogado pelo Diretor: fluxo e controles OK; ajustes 016–019 abertos; arte atual (parecida com Pokémon clássico) é provisória e a direção real será estilo Sea of Stars (021); mapa deve seguir a casa real do Diretor, feito no Tiled (020) | Retorno do PT1 | Diretor |
+| 2026-11-07 | Mapa da casa real: arquivo do Diretor `our home.tmx` (Tiled 1.12, tile 32 px, mapa infinito/recortado, 9 subáreas) copiado para `maps/casa-real/our-home.tmx` (versão em andamento). Camadas: Pisos (tiles; subáreas não se conectam no piso), Portas (retângulos P1–P8 em pares), Objetos bloqueantes (retângulos livres), Nome das subáreas. Ao passar por uma porta carrega só aquela subárea (alinha com a câmera por cômodo). Tilesets de madeira ficam fora do projeto (provisórios) | Casa inspirada no apartamento do Diretor | Diretor |
+| 2026-11-07 | Ordem: ajustes 016–019 primeiro (Marco 1.1), depois o mapa real (020), depois o refator do perfil de arte (014) | Sugestão aceita | Diretor |
+| 2026-11-07 | Ajustes do PT1 especificados (GDD 14.9): 016 diálogo "Vamos montar a árvore de Natal, {nome}!" / "Abra a porta. Há um bilhete perto dela, com a dica."; 017 regra de interação tolerante (quadrado 16×16 à frente; objeto encostado a até 4 px aciona sem direção exata); 018 árvore pisca a cada 2 s + diálogo "A árvore ainda está desmontada." / "Ela precisa de 3 partes. Examine a árvore!" (texto do exame trocado: sem prometer o que o Marco 1 não permite); 019 botões com caixa #1b2452, borda #9aa3c7, foco dourado, pressionado 150 ms | Retorno do PT1 | Produto (Diretor pode alterar) |
+| 2026-11-07 | QA Marco 1.1: 016, 017, 018 aprovados com pendências/ressalvas; 019 reprovado por BUG-003 (Alta: teclas do painel invisíveis). Dev corrige antes de republicar o artifact (v0.1.1) | Veredito do QA | QA + Orquestrador |
+| 2026-11-07 | Assimetria vertical da interação (objeto de 1 tile: quadrado avança 4 px abaixo e 0 acima) mantida como está (segue GDD 14.9.2); revisar na geometria do mapa real se incomodar | Não é falha; efeito da posição dos pés no tile | Orquestrador |
+| 2026-11-07 | QA Marco 1.1 r2: 016–019 aprovados (com pendências de navegador: uma vez por partida, parada do pisca, mouse em Como jogar); BUG-003 corrigido. Alerta: qa/scripts/casa.mjs falhou em casos de luzes (provável roteiro desatualizado; smoke completa os 4 sobrinhos) — checar em build normal. Artifact atualizado no mesmo link (a versão na tela segue 0.1.0, pois o package.json não foi alterado) | Veredito do QA | QA + Orquestrador |
+| 2026-11-07 | Mapa real, respostas do Diretor: (1) P8 é a única porta entre Sala e Hall e é nela que vai o código de 3 dígitos; (2) Hall e Elevador separados da Sala (Elevador como decoração/área do Hall); (3) NÃO mudar o tamanho da Sala; (4) árvore na Sala, na 4ª linha de baixo para cima, no bloco mais à direita (não no Elevador); (5) interruptor logo ao lado da P1; (6) bilhete no Hall junto à P8; (7) nascimento (spawn) no Elevador, no bloco mais distante da P8; (8) Marco 1 abre Hall(+Elevador), Sala, Cozinha e Lavanderia; (9) as duas passagens sem marcador são paredes (áreas não se conectam); (10) NÃO mudar os cômodos: há cama no Escritório e bancada no Escritório; a 'bancada' da Sala é uma estante; (11) perfil HD 32 px / 480×320 aprovado SE for compatível com a meta Sea of Stars (Especialista confirma); (12) tilesets do TMX só marcam o piso; o tileset real vem depois, feito pelo Diretor | Casa inspirada no apartamento real do Diretor | Diretor |
+| 2026-11-07 | Ordem do mapa: ADR-004 e ajuste do ADR-003 (Especialista) + GDD do Marco 1 com o mapa real (Produto) + refator 014 (Dev) em paralelo; depois cópia de trabalho do TMX e conversor (Arte), motor de subáreas e portas (Dev), QA | Itens independentes entre si | Orquestrador |
+| 2026-11-07 | GDD 14.10 "Casa real no Marco 1" escrito: 4 áreas abertas (Hall+Elevador, Sala, Cozinha e Lavanderia); P1 a P3 fechadas; transição com fade ~0,5 s (#0b1030), A bloqueado no fade, nascimento no destino fixo; A na árvore antes das luzes não faz nada; Cozinha: Pia, Fogão, Geladeira (Lavanderia sem objeto); nomes de familiares do TMX ficam fora do jogo. Itens PROVISÓRIOS até o Diretor responder as perguntas 2 e 3 | Escopo do Marco 1 na casa real | Produto (Diretor pode alterar) |
+| 2026-11-07 | ADR-004 (mapa multi-subárea, portas como par de gatilhos com vão de 1 tile, colisão por 50% de cobertura, origem calculada pelo conversor, subáreas fechadas fora de missions[].maps, manifesto schemaVersion 2) PROPOSTO; ADR-003 §1 e §5 ajustados (câmera por subárea). Recomendação do Especialista: tile 32 aprovado, mas tela 15×11 (480×352) em vez de 480×320, pois a Sala tem 11 linhas. Aguarda o Diretor | Mapa real e perfil HD | Especialista (aguarda Diretor) |
+| 2026-11-07 | Refator 014 (perfil de arte) entregue pelo Dev: perfil em content/art-profiles/gba-240x160.json declarado no manifesto; assets em assets/gba-240x160/; interface Iluminacao; mapas em tiles no motor. 103 testes passam; 89 capturas do smoke idênticas pixel a pixel à linha de base; perfil 2× roda sem erro. Pronto para QA | Item 014 | Desenvolvedor |
+| 2026-11-07 | Smoke do navegador passou a usar relógio virtual (o original não era reprodutível: 67 capturas variavam entre duas execuções iguais). Roteiro de teclas inalterado | Reprodutibilidade da comparação pixel a pixel | Desenvolvedor (Orquestrador registra) |
+| 2026-11-07 | Sobras do 014: tools-arte/gerar_sobrinhos.py sem --perfil (ADR-003 §11); recuo da marca é 14 no código e -20 no ADR (Especialista corrige o ADR); tempos de animação e profundidades ficam fora do perfil; ancoragem (§6) e escala fracionária adiadas | Escopo do 014 | Desenvolvedor |
+| 2026-11-07 | QA reprova o fechamento do 014: build, 103 testes e smoke passam, mas BUG-014-01 (Média: validar:perfil aceita corpo que não bate com o sprite), BUG-014-02 (Baixa: stack trace em JSON malformado), prova pixel a pixel sem linha de base reprodutível e scripts qa/scripts com falsos FALHOU de texto. Dev corrige; QA corrige os scripts e reavalia | Veredito do QA | QA + Orquestrador |
+| 2026-11-07 | Dev corrigiu BUG-014-01/02 e criou a linha de base reprodutível qa/baseline-014 (89 capturas, gerada do código pré-refator com o smoke de relógio virtual) + `npm run comparar:capturas` (89 de 89 idênticas). As 3 imagens PNG extras do HTML são do Phaser. Mudar o harness exige nova linha de base. 104 testes | Reteste do 014 | Desenvolvedor (QA reavalia) |
+| 2026-11-07 | 014 APROVADO COM RESSALVAS pelo QA (rodada 3, ~10 min): 104 testes, builds, smoke dos 4 sobrinhos sem erro e 89/89 capturas idênticas à base; BUG-014-01/02 corrigidos. Ressalvas: roteiros qa/scripts (porta de BiBi/DanDan/TuTu, K2-06) ainda com falhas não classificadas (provável roteiro), titulo-selecao/introducao não reexecutados, exploração curta não testada. Os roteiros viram item de backlog próprio (QA) e não bloqueiam o mapa | Refator sem mudança visual comprovada pelo pixel a pixel | QA + Orquestrador |
+| 2026-11-07 | Diretor aprova: (1) perfil HD com tela 15×11 tiles (480×352), tile 32; (2) escala fracionária no perfil HD (inteira a partir de 2×, encaixe na janela abaixo); (3) vão de 1 tile vazio na P8 (a Sala mantém o tamanho); (4) regra do interruptor vira "fora do círculo de luz inicial (3 tiles)", mantendo a posição ao lado da P1; (5) textos das portas fechadas ("Essa porta está fechada." / "Hoje não dá para entrar."), Cozinha com Pia, Fogão e Geladeira, Lavanderia sem objeto (ajustáveis depois); (6) teste de sprite 32×48 vs 48×72. ADR-004 ACEITO; ADR-003 §1 e §5 ajustados aceitos | Respostas às 5 decisões do mapa e do perfil HD | Diretor |
+| 2026-11-07 | Spawn no Elevador interpretado como início da introdução (o Diretor não objetou à pergunta); GDD 14.10 e ADR-004 seguem assim | Sem objeção | Orquestrador |
+| 2026-11-07 | GDD atualizado com as respostas do Diretor (14.2, 14.3, 14.5, 14.8, 14.10, 7.1, seção 12): item 033 resolvido; nenhum [TBD] do Marco 1 restante; nova pendência 13 (tamanho do sprite HD, não bloqueia). "Mais de 3 tiles do spawn" medido entre centros em linha reta (premissa do Produto; muda só 14.3 e C5 se o Diretor quiser outra) | Fechamento do escopo do mapa | Produto (Diretor pode alterar) |
+| 2026-11-08 | ADR-004 Aceito; ADR-002 revisado (manifesto schemaVersion 2, sem migração); ADR-003: recuo da marca 14, perfil hd-480x352 (tile 32, sala 15×11, escala híbrida a partir de 2×), penumbra 44 faixas, luz.tons; contrato do conversor em docs/conversor-tmx.md (erros E000–E017). Ajustes: porta fechada com diálogo (GDD 14.10.3), tipos portaFechada e examinavel, interruptor em (-8,0) | Consolidação dos ADRs | Especialista |
+| 2026-11-08 | Arte entregou: maps/casa-real/our-home-jogo.tmx (cópia de trabalho; original intacto), conversor tools-arte/tmx_para_conteudo.py com golden, content/maps/casa-real/*.json (8 subáreas), perfil hd-480x352.json (não ativo), teste de sprite 32×48 vs 48×72 em assets/teste-sprite-hd/. Manifesto NÃO alterado até o motor (026). Ajustes de Arte propostos: parede da linha -5 encurtada e estante da Sala de 3 para 2 tiles (liberam a passagem da P7); P4–P6 saíram da cópia; id `quarto` em vez de `quarto_olivia`. Aguardam o Diretor | Itens 024, 025 | Arte (aguarda Diretor) |
+| 2026-11-08 | Diretor aprova: parede da linha -5 mais curta e estante da Sala de 3 para 2 tiles (liberam a P7); id `quarto` em vez de `quarto_olivia`; sprite HD 32×48 como ponto de partida (48×72 só como perfil novo, se faltar definição) | Respostas da Arte | Diretor |
+| 2026-11-08 | Próxima entrega (Marco 1.2, casa real): Dev faz motor de subáreas, portas, manifesto v2, textos e perfil HD (026–028 código); Arte faz os assets HD (sobrinhos 32×48, tiles de piso e objetos, árvore) em assets/hd-480x352/ em paralelo | Ordem de trabalho | Orquestrador |
+| 2026-11-08 | Arte entregou assets/hd-480x352/ (sobrinhos 32×48 com 23–24 cores, tiles provisórios 1024×544, objetos, sprites.json 40 entradas), tools-arte/gerar_sobrinhos.py com --perfil e gerar_placeholders_hd.py. Tudo placeholder, exceto os sprites dos sobrinhos (gerados das folhas). Pasta é da Arte; o Dev não regrava | Item 028 (arte) | Arte |
+| 2026-11-08 | Dev entregou o Marco 1.2 (026, 027, 028 código): manifesto schema 2, subáreas, portas com fade, porta fechada, objetos examináveis, escala híbrida, penumbra com luz.tons, perfil HD ativo, textos novos. 120 testes, builds, smoke (4 sobrinhos, novo roteiro) e validar:perfil dos dois perfis passam. A linha de base qa/baseline-014 (mapa v1) vira HISTÓRICA: comparar:capturas só vale para o perfil v1 antigo e não é mais critério. Chave de fase `luzes` (minúscula) adotada; o Especialista ajusta o ADR. Regravação indevida de assets/hd-480x352 pelo Dev corrigida (script removido) | Fim da produção do 1.2 | Desenvolvedor + Orquestrador |
+| 2026-11-08 | QA REPROVA o Marco 1.2 (rodada ~11 min): BUG-M12-01 (Alta: grade do painel da P8 cortada nas laterais no perfil HD), BUG-M12-02 (Média, candidato: última linha da Sala é chão andável sob a barra; aguarda Diretor). Automáticos passam, escala híbrida ok, nascimento no Elevador ok, nenhum nome de familiar em content/. Não testado: caminhada real (o smoke teleporta). Dev corrige e passa a andar no smoke | Veredito do QA | QA + Orquestrador |
+| 2026-11-08 | Dev corrigiu BUG-M12-01 (painel.grade.colunas do perfil HD estava 6; correto 3). Smoke agora anda com as setas (rota por BFS) em Elevador->bilhete->P8, Sala (P1, interruptor, árvore) e P7->Cozinha->volta. 120 testes reais, 0 ignorados (QA contou 104 de rodada anterior). BUG-M12-02 aguarda o Diretor | Correção da rodada do QA | Desenvolvedor |
+| 2026-11-08 | QA Marco 1.2 (rodadas 5 e 6): ressalvas, não aprovado. M12-01 corrigido; sem prova ao vivo de colisão, vãos, fade, P1–P3, Cozinha e volta (rota do script não calibrada). Dev cria build de teste separado (build:qa) com window.__estado e __teleportar, fora de playtest e release | Dar ao QA como afirmar posição | QA + Orquestrador |
+| 2026-11-08 | Dev entregou `npm run build:qa` (dist-qa/index.html) com window.__estado() e __teleportar(); o gancho só existe nesse build (flag __QA__), com verificação automática no build:playtest e teste. 124 testes. Documentado em tools/build-qa.md. Não publicar o dist-qa | Teste ao vivo do QA | Desenvolvedor |
+| 2026-11-08 | QA r7 do 1.2 (ao vivo): colisão (parede e árvore) e P7 aprovados com asserção de posição; P1–P3, Cozinha, volta pela P8, fade e A bloqueado não conclusivos (rota do script). Nenhum bug de jogo novo. O Dev cria biblioteca de rota (BFS + __estado) para o QA reutilizar | Falta de rota confiável | QA + Orquestrador |
+| 2026-11-08 | Dev entregou qa/scripts/lib-rota.mjs e casa12-rotas-demo.mjs (Elevador, P8, Sala, P1–P3 com A, P7, Cozinha: Pia, Fogão, Geladeira; saída real sem erros). Achado: possível trava de movimento na Sala ((4,3), x=144,0: esquerda para em 140,9). Aberto como BUG-M12-03 (Alta) para o Dev corrigir antes da rodada final do QA | Descoberta durante a biblioteca de rota | Desenvolvedor + Orquestrador |
+| 2026-11-08 | Roadmap: testar "condução automática" no lugar do teleporte/respawn após objetivo concluído (o jogo assume o controle, acelera o ritmo e leva o jogador ao ponto de destino; ex.: interruptor > tela de sucesso > caminha até a árvore). Item 036 no backlog como ideia a testar; o teleporte atual (nascimentoPorFase) fica até lá | Ideia do Diretor para fluidez | Diretor |
+| 2026-11-08 | Condução automática (item 036), regras do Diretor: o trajeto NÃO pode ser pulado; se tiver mais de 10 blocos (tiles), a velocidade passa a 2×; o diálogo da etapa só começa DEPOIS do trajeto; a condução pode atravessar portas e subáreas; botões não fazem nada durante o trajeto (cutscene obrigatória, sem cancelar) | Respostas do Diretor às perguntas do Produto | Diretor |
+| 2026-11-08 | BUG-M12-03 (trava intermitente na Sala): NÃO corrigido; causa não encontrada. O movimento puro (127 mil casos) e o `mover` real não travam; falha entre o update da CasaScene e o mover. Entregue teste de regressão (127 testes) e ganchos de diagnóstico no build de QA. Dev instrumenta o update e segue procurando | Bug intermitente | Desenvolvedor |
+| 2026-11-08 | Escopo da condução automática (item 036) em GDD 14.11: velocidade normal = a do jogador; 2× decidido ao começar, pela rota; fade nas portas como em 14.10.5; sem interrupções; rota = colisão do jogador, sem rota de reserva (destino sem rota = conteúdo inválido); destino por fase em content/missions/ (campo sugerido `conducao`); pisca e diálogo da árvore começam ao chegar; uma vez por partida. PROVISÓRIO até o Diretor responder as perguntas 1 (barra "Aguarde...") e 2 (2× no trajeto inteiro). Implementação só depois do 1.2 aprovado pelo QA | Escopo | Produto (Diretor pode alterar) |
+| 2026-11-08 | BUG-M12-03 CORRIGIDO: a colisão contava qualquer sobreposição ≥0,001 px, e o ponto flutuante deixava a caixa dos pés milésimos além da borda do tile, recusando todo passo lateral. Agora só sobreposição ≥1 px conta (movimento.ts, SOBREPOSICAO_MINIMA_PX). Prova: antes travava em 2/4–4/4 rodadas, depois 0 de 30; teste de regressão por varredura; 127 testes. O contorno do QA saiu da biblioteca de rota; ganchos de diagnóstico removidos | Causa medida | Desenvolvedor |
+| 2026-11-08 | Condução automática (036), respostas do Diretor: (1) durante a condução NÃO mostrar nenhum botão nem texto de teclas na barra (a barra fica sem ações); (2) o 2× vale para o trajeto inteiro, decidido ao começar, quando o trajeto (do início ao fim) tiver mais de 10 tiles. As demais decisões provisórias do Produto (14.11) ficam | Respostas às perguntas 1 e 2 | Diretor |
+| 2026-11-08 | QA APROVA O MARCO 1.2 COM RESSALVAS (rodada final, ~9 min, 0 falhas ao vivo; 127 testes). Ressalvas: vão da P8/P7 sem teste de posição global (coberto por verificar:conteudo E008), C8, C14, C13 sem nova busca; BUG-M12-02 (última linha da Sala) aguarda o Diretor. Versão do jogo 0.2.0 (package.json). Artifact atualizado no mesmo link (Version 3) para o Diretor jogar | Veredito do QA | QA + Orquestrador |
+| 2026-11-08 | Especialista documentou a condução (036): `nascimentoPorFase` vira `conducao` { mapa, x, y, direcao } por fase e `conquistas` separado (manifesto segue schemaVersion 2); destino das luzes = Sala (7,7), 1 tile à esquerda da árvore; o spawn `ao-lado-da-arvore` sai do mapa; rota = colisão do sobrinho, 4 direções, sem atravessar objeto/porta fechada/vão; porta no trajeto = fade 0,5 s sem tempo extra; destino sem rota = erro de validação; constantes CONDUCAO_LIMITE_RAPIDO_TILES = 10 e CONDUCAO_FATOR_RAPIDO = 2 no domínio (não no perfil nem na missão); chave de fase `luzes`. No Marco 1 a rota das luzes tem 6–8 passos, então o 2× não aparece | Documentação da 036 | Especialista (Diretor pode alterar) |
+| 2026-11-08 | Diretor aprova as sugestões: (a) última linha de cada subárea sem chão andável (na Sala, a linha vira bloqueio, sem mudar o tamanho da Sala; ADR-004 item 6 ampliado); (b) 24 cores por sobrinho no perfil HD; (c) limpar linhas escuras e pixels soltos das folhas de andar por regra no gerador; (d) Geladeira com sprite 32×64 e colisão ajustada para 2 tiles. Alterações NÃO entram no artifact enquanto o Diretor joga o PT1b (v0.2.0); republicar só depois do retorno | Respostas às perguntas da Arte e do QA | Diretor |
+| 2026-11-08 | ADR-004 item 6 ampliado (BUG-M12-02): a linha de tela `sala.linhas − 1` (barra) não pode ter chão andável nem objeto, gatilho ou spawn; vale só para subárea com altura = sala.linhas (hoje a Sala); o piso fica (a Sala mantém 11 linhas), a Arte põe um retângulo de colisão cobrindo a linha. Novos erros do conversor E018 (chão andável) e E019 (objeto/gatilho/spawn). Diálogos e painel, que cobrem mais linhas, ficam fora da regra (premissa do Especialista). Dev implementa a validação em validarConteudo; Produto ajusta o GDD 14.8 | Respostas do Diretor | Especialista (Diretor pode alterar) |
+| 2026-11-08 | Arte entregou: Sala com a última linha bloqueada (retângulo de colisão; tamanho 10×11 mantido; golden revisável); Geladeira dividida de Forno (Geladeira 32×64, Forno 32×64 continua bloqueado para não abrir passagem nova — sugestão: manter); sobrinhos HD regenerados com limpeza de pixels soltos (BiBi e DanDan com 23 cores, ≤24); spawn ao-lado-da-arvore removido; sala.json regravado. Dev implementa validação, `conducao` e condução automática (036); nada vai ao artifact antes do retorno do PT1b | Itens (a)–(d) | Arte + Orquestrador |
+| 2026-11-08 | INCIDENTE: o artifact v0.2.0 (Version 3) foi publicado com os sprites dos 4 sobrinhos do perfil HD em 4 cores (regressão visível). Causa: o script tools/gerar-placeholders-hd.mjs do Dev regravou assets/hd-480x352 às 09:21; a Arte regenerou só objetos e sprites.json e não os sobrinhos; o QA validou comportamento e dimensões, não a arte; eu não olhei o preview antes de publicar. Os sprites corretos (23–24 cores, limpos) já estão em assets/hd-480x352 desde a entrega da Arte; vão no próximo artifact. Regra nova: antes de publicar, conferir o preview dos sobrinhos e rodar uma checagem automática de número de cores por sprite (validar:perfil deve falhar abaixo do mínimo por sprite) | Falha de processo | Orquestrador |
+| 2026-11-08 | Diretor sem acesso ao notebook; fará o playtest depois. Nada é republicado no artifact até o retorno dele. Dev entregou a condução automática (036) e a validação (139 testes; rota das luzes 6 passos a partir do interruptor, 11 passos do início, 2× só no início); barra de 2 linhas cobre a linha 10 e 75% da 9, mas aparece só em telas de painel; pendente a checagem de cores por sprite (refeita) e a rodada do QA | Retorno do Diretor | Orquestrador |
+| 2026-11-08 | Dev entregou a checagem de cores por sprite: perfis declaram sprites.sobrinho.coresMin = 16; `validar:perfil` falha para sprite de sobrinho abaixo disso (prova negativa com sprite de 4 cores); 142 testes. Removida a pasta vazia tests/fixtures/saves (resto do save cancelado) | Evita repetir a regressão de arte | Desenvolvedor + Orquestrador |
+| 2026-11-08 | Publicado artifact privado "Documentos do Natal" (https://claude.ai/artifact/BpAGnVuGsG7cMVnoA1Upq1) com Marcos, GDD e backlog, para leitura no celular. É uma cópia de 2026-11-08: republico quando o GDD ou o backlog mudarem de forma relevante; a fonte continua sendo os arquivos do repositório | Pedido do Diretor | Orquestrador |
+| 2026-11-08 | QA reprova a condução (036) no Marco 1.3: BUG-M13-01 (Média: barra visível durante o trajeto, contra D5) e BUG-M13-02 (Baixa: retângulo amarelo durante o trajeto, origem a verificar). A condução em si funciona (chega em (7,7) de frente para a árvore, controle volta após o diálogo); arte HD dos sobrinhos conferida em 23–24 cores (sem regressão); última linha da Sala e Geladeira ok ao vivo. Dev corrige e adiciona testes de domínio para D2, D6, D8, D9 | Veredito do QA | QA + Orquestrador |
+| 2026-11-08 | Dev corrigiu a condução: barra oculta durante o trajeto (Dev diz que a evidência do QA foi tirada após a chegada, QA reverifica) e o halo da árvore só nasce na chegada (origem do retângulo amarelo, BUG-M13-02); +7 testes (149): 2× só acima de 10 passos, destino em outra subárea com porta, porta trancada sem rota, uma condução por partida. Geladeira com colisão em (2,2) e (2,3), examinável em (2,3); Forno: colisão em (3,3), o (3,4) já é parede (Forno efetivo de 1 tile no JSON; a planta agrupa os dois em um objeto de 4 tiles). Pendências 1 e 2 do relatório do Dev estavam desatualizadas (assets já corrigidos pela Arte; validar:perfil passa). Reteste do QA com roteiro corrigido | Correção da 036 | Desenvolvedor |
+| 2026-11-08 | QA aprova o Marco 1.3 COM RESSALVAS (rodada 12): condução (D0, D1, D4, D5, D9) ok ao vivo; barra vazia e sem retângulo amarelo confirmados (M13-01 não reproduzido; M13-02 corrigido); arte dos 4 sobrinhos conferida (23–24 cores). Ressalvas: D2 (2×) provado só por teste de domínio (11 passos = 2×), sem medição ao vivo (a rota das luzes tem 6 passos); D3, D6, D7, D8, D10 sem teste ao vivo; C5/C14. Versão 0.3.0 publicada no mesmo artifact (Version 4), com preview e capturas dos sobrinhos conferidos por mim antes | Veredito do QA | QA + Orquestrador |
+
+## 2026-11-08 — Rotação da planta (intenção, a confirmar após o PT1)
+- **Intenção do Diretor:** girar a planta 90° para a direita em todos os mapas; a tela do jogo continua deitada (15×11 por área, sem rolagem). Equivale à opção 1 apresentada.
+- **Status:** NÃO confirmada. O Diretor confirma depois do playtest da Version 4 (v0.3.0). Nenhum trabalho de rotação iniciado.
+- **Impacto previsto (para quando confirmar):** conversor, portas/spawns/interruptor/árvore/destino da condução, ADR-004, GDD, tiles de móveis/paredes (Arte), rotas do QA. A Sala precisa continuar cabendo deitada.
+- Decidiu: Diretor.
+
+## 2026-11-08 — QA 035 rodada 2: D2/D3/D6 impossíveis no Marco 1
+- Resultado: D7/D8, D10, C5 e C14 passaram. D2 (2×), D3/D6 (fade em porta na condução) não podem ser testados com o conteúdo atual: só existe a condução das luzes (6 passos, dentro da Sala, sem porta) e o gancho `__teleportar` não inicia condução.
+- Sugestão do QA (pendente do Diretor): cobrir D2/D3/D6 no Marco 2, quando houver segunda condução (ex.: Elevador → Sala, cruzando P8), e marcar N/A no checklist do Marco 1. Os testes de domínio já cobrem o 2×.
+
+## 2026-11-08 — Rotação da planta CONFIRMADA (após PT2)
+- **Decisão:** girar a planta 90° para a direita em todos os mapas; a tela de jogo continua deitada (15×11 por área, sem rolagem). Substitui a nota "a confirmar" acima.
+- **Motivo:** o Diretor acha o jogo mais fácil de jogar com essa orientação. Decidiu: Diretor ("vai precisar rotacionar mesmo! será melhor").
+- Em aberto para a Arte/Produto: como cada área gira e ainda cabe deitada (Sala sem mudar de tamanho, ADR-004).
+
+## 2026-11-08 — Ajustes do PT2 (Diretor)
+- Painel da senha sem o texto da dica (a dica está só no bilhete); bilhete na parede do Hall; WASD também no painel da senha; passagem Sala↔Cozinha clara; novo local do interruptor (print pendente); portas em vista superior (retângulo comprido); P1 com uma só entrada. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: escopo da rotação e ajustes PT2 (proposto, aguarda Diretor)
+- GDD 14.12 (rotação: sentido horário, fórmula (x,y) → (altura−1−y, x), tamanhos Sala 11×10, Hall 4×3, Cozinha 6×7; todas cabem em 15×11), 14.10.9 (portas em retângulo comprido de vista superior, uma porta/uma entrada, passagem P7 visível), bilhete como tile de parede (040). Pendências 15 (print do interruptor) e 16 (rotação) abertas no GDD seção 12.
+- Perguntas ao Diretor enviadas: sentido horário; fim do bloqueio da última linha na Sala (Sala de 10 linhas); o print do interruptor é da planta atual ou girada; móveis/paredes/portas giram como imagem sem redesenho; dica do painel (039).
+- Consequência registrada: o novo local do interruptor pode alongar a condução para >10 passos (vale o 2× já aprovado).
+
+## 2026-11-08 — 039: pergunta do painel da senha vira "Senha"
+- O texto com a dica que o Diretor viu era a pergunta "Em que ano você nasceu?". Passa a ser "Senha". Orientação do Hall ("...com a dica.") mantida por ora. Decidiu: Diretor.
+
+## 2026-11-08 — Respostas do Diretor ao Produto (rotação e interruptor)
+1. Girar 90° à direita = sentido horário. 2. Sala 11×10: dispensa o bloqueio da última linha. 3. O print do interruptor foi tirado na planta ANTES de girar (arquivo `assets/referencia/interruptor-pt2-planta-atual.png`; retângulo vermelho = onde fica o interruptor). 4. Móveis, paredes e portas giram como imagem, sem redesenho; Sobrinhos, Nick e árvore ficam em pé. 5. Dica do painel: já respondida (pergunta vira "Senha"). Decidiu: Diretor.
+
+## 2026-11-08 — Métricas: sem custo em dinheiro, foco em tokens
+- No plano Pro o `/cost` mostra sempre 0. Removidos: coluna de custo, `metrics/precos.md` e o pedido de `/cost` ao Diretor. Passa a valer: tokens totais por interação, tempo, interações; detalhe por tipo de token (entrada, saída, cache, contexto) só quando a fonte informar, a partir de agora. Reconciliação por marco feita pelo Orquestrador com `get_usage`. Decidiu: Diretor.
+
+## 2026-11-08 — Especialista: ADR-004 revisado para a rotação e o PT2
+- ADR-004 seção 12 (rotação), seção 3 (portas em vista superior, porta fechada única), seção 6 (bilhete como tile de parede), seção 8 itens 5, 6, 11 e 14; docs/conversor-tmx.md seção 3.1 (opção de rotação, TMX original intocado); style-guide atualizado. Decisão em aberto (Diretor): (1) só o conversor gira a planta, ou a cópia de trabalho também; (2) a antiga linha 10 da Sala, agora coluna da esquerda, fica andável ou bloqueada. Padrão provisório: só o conversor gira; coluna andável. Produto deve corrigir no GDD: 14.10.8 C15/C17, 14.1, 14.3, 14.7, 14.11.3, item 15 da seção 12 (print já recebido) e o backlog 033 (2).
+
+## 2026-11-08 — Diretor: respostas ao Especialista e sobre a referência de móveis
+- (1) Só o conversor gira a planta; (2) coluna da esquerda da Sala andável (padrões sugeridos aceitos). Decidiu: Diretor.
+- Arte dos móveis: a referência `assets/referencia/ref_moveis_estilo.png` (móvel em tiles 32×32, tampo e frente, props separados) é só referência de estilo; o Diretor criará as referências dos demais móveis, na orientação correta (frente para baixo na tela). Para o PT2b os móveis seguem com a arte atual. Depois do PT2b: teste de estilo com um móvel (ex.: bancada da Sala), aprovado pelo Diretor antes de refazer a casa (item 021). Móveis giram só no layout; redesenho na orientação final virá com as referências. Decidiu: Diretor (sugestão do Orquestrador aceita).
+
+## 2026-11-08 — Arte: planta girada entregue (045, 042, 043, 044, 040, 041)
+- Conversor com `--girar` (planta=atual no TMX de jogo; original intocado), content/ e golden regenerados; Sala 11×10, Hall 4×3, Cozinha 6×7; coluna esquerda da Sala andável; bloqueio da barra removido; bilhete como parede; passagens P7/P8 por tile (gids 537/538); portas 32×32 em vista superior; `conducao.luzes` = sala (3,7) baixo; rota do interruptor: 5 passos (frente) ou 7 (cima), velocidade normal.
+- Interruptor: a Arte propõe (-7,0) planta atual = girado (5,3), por causa da regra de 3 tiles do spawn da P7 (o retângulo vermelho exato fica a 2,83 da chegada da P7). Pendente do Diretor, junto com: interruptor e bilhete em pé (não giram). Padrão provisório: (-7,0) e em pé.
+- Nada rodou ao vivo; testes: 20 falhas por coordenadas antigas e regra do bilhete, com o Dev corrigindo.
+
+## 2026-11-08 — Diretor: planta girada esperada (print)
+- O Diretor enviou como referência da planta girada `assets/referencia/planta-girada-diretor.png` (as 8 áreas, com móveis e portas P1–P8 nomeados). A entrega da Arte deve bater com ela; divergências são correção da Arte. Decidiu: Diretor.
+
+## 2026-11-08 — Diretor: interruptor definitivo
+- Interruptor em (-7,0) planta atual = (5,3) planta girada (à frente da P1; passa na regra de 3 tiles). Interruptor e bilhete em pé (sugestões da Arte aceitas, conforme "siga suas sugestões"). Item 042 resolvido. Decidiu: Diretor.
+
+## 2026-11-08 — Arte: comparação com o print; móveis passam a ir para o conteúdo
+- O print do Diretor é a planta do TMX ORIGINAL girada; a cópia de jogo difere só pelas decisões já aprovadas (vão de 1 tile da P8, estante de 2 tiles, bilhete na parede, sem rótulo "Elevador"). Piso, posição relativa das áreas, móveis (pegadas) e portas batem.
+- Causa da queixa: o conteúdo só guarda colisão, então o motor não desenha os móveis (Rack TV, Estante etc. "somem"), e a prévia antiga desenhava a porta no meio do tile vazio, parecendo solta.
+- Decidido (padrões sugeridos aceitos, conforme "siga suas sugestões"): (a) manter as decisões aprovadas; (b) "Estante" de 2 tiles; (c) o conversor grava móveis nomeados como objetos `movel` (nome, x, y, w, h) e o Dev os desenha como placeholder. Decidiu: Diretor (padrão) / Orquestrador (acionamento).
+
+## 2026-11-08 — Móvel placeholder: cor provisória
+- Cor 0x8a5a33 com borda 0x5a3a1f no código (provisória); a Arte a move para `objetos.movel` do perfil HD quando houver, e o Dev remove as constantes. A arte final dos móveis vem das referências do Diretor. Decidiu: Orquestrador (padrão sugerido pelo Dev), sem impacto de estilo.
+
+## 2026-11-08 — QA rodada 13 (planta girada) e geometria da parede de cima
+- QA: 039–042 e 045 aprovados; 038 pendente de reteste (D/S não exercitados); 043 aprovado visualmente; 044 aprovado. P1 e P3 na mesma linha e P2 uma linha acima, com parede embaixo de P1/P3: confere com o print do Diretor (alcova com P2 em cima, P1 à esquerda, P3 à direita). Aprovado como está (padrão sugerido).
+- Achado do Orquestrador nas capturas: o sprite da árvore (≈2×3 tiles) está ancorado pelo topo e cai fora do chão, sob a barra. Corrigindo com o Dev. Sem isso o PT2b não sai.
+- Pendente do QA para a rodada seguinte: roteiros antigos (coordenadas), 038 (D/S), BiBi/DanDan/TuTu na P8, capturas não inspecionadas, BUG-R13-02 (ArrowDown/S de OK vai a Apagar: confirmar no GDD 14.1).
+
+## 2026-11-08 — QA rodada 14 e respostas padrão
+- QA aprovou WASD = setas no painel (D/S do meio da grade; bordas ficam na borda, sem volta) e BiBi, DanDan e TuTu pela P8 até a chegada da condução; árvore não cobre o Sobrinho em (3,7) nem (4,8). BUG-R13-02: esperado (fechado). Roteiros antigos de qa/scripts marcados OBSOLETOS (reescrita fica no backlog 035/037).
+- Respostas padrão (sugestões aceitas, conforme "siga suas sugestões"): foco do painel fica na borda; árvore desmontada = pilha pequena no tile (3,8) (de pé só nas partes 1 a 3). Diálogo de chegada cobre as linhas 7–10: mantido (a) no Marco 1.
+- Candidato do QA: móveis de 1 tile de largura (Sofá, Estante, Cama, Pia) sem rótulo (só aparece com w ≥ 2). Aceito como placeholder.
+- Build 0.4.0 pronto localmente (package.json 0.4.0); NÃO publicado: o Orquestrador prometeu ao Diretor aprovar uma captura real antes do PT2b.
+
+## 2026-11-08 — Publicação do PT2b
+- Diretor aprovou as capturas reais (chegada, painel, Hall, Cozinha). Publicada a v0.4.0 (Version 5) no mesmo artifact. Itens 038–045 entregues, aguardando o retorno do PT2b. Decidiu: Diretor.
+
+## 2026-11-08 — PT2b: decisões do Diretor
+- Planta girada, passagem Sala↔Cozinha e fluxo de senha errada aprovados. Árvore mantida como está (a arte melhora com o estilo Sea of Stars, item 021).
+- Portas (046): as laterais ganham seta (referência `assets/referencia/ref_porta_seta.webp`); as de baixo ganham seta de saída ou tapete (`ref_saida_tapete.webp`); as de cima ficam como estão (a vista superior já as identifica).
+- Condução (047): ao chegar, o jogo FORÇA a interação com a árvore (diálogo automático); depois o jogador fica livre. Substitui a regra anterior (diálogo ao chegar mas com o jogador apertando A). Decidiu: Diretor.
+
+## 2026-11-08 — Produto: 046 e 047 (escopo fechado)
+- 046: regra pela direção de saída. Lateral = seta branca; saída para baixo = tapete vermelho; saída para cima = nada. Marco 1: P1/P2/P3 nada; P7 seta para a direita na Sala e para a esquerda na Cozinha; P8 na Sala = tapete no tile (6,6); P8 no Hall nada. Estático, só desenho. Decidiu: Diretor (regra) / Produto (aplicação).
+- 047: diálogo da árvore começa sozinho na chegada (entrada bloqueada 200 ms; Z avança, X fecha); halo pisca até o 1º A do jogador; árvore examinável e repetível; condução e diálogo automático uma vez por partida. Decidiu: Diretor / Produto.
+- Pendência 17 do GDD (seta na P7): padrão = sim; o Diretor confirma pela captura.
+
+## 2026-11-08 — Dev: 047 e 046 implementados
+- 047: diálogo automático de chegada com `arvore.nascer.1/2`; pisca para no 1º A do jogador; árvore examinável e repetível; correção: botão segurado na condução não fecha o diálogo. 046: indicador derivado de G − S (saída lateral = seta sobre o gatilho; saída para baixo = tapete na chegada; para cima = nada); P1 e P3 com `spr_porta_vertical` (tabela no código até a Arte gravar a orientação no conteúdo).
+- Diálogo de chegada cobre a árvore na tela 480×352: aceito no PT2c (padrão sugerido), a rever no aparelho.
+
+## 2026-11-08 — Diretor: "Sim para a pergunta de produto"
+- Entendido como aprovação (a) da seta na P7 (pendência 17 do GDD: decidida, sim) e, pela regra "siga suas sugestões", (b) da reescrita das seções antigas do GDD (14.10.1, 14.10.2, 14.10.3, 14.10.5, Q7 da 14.9.2) na planta girada, sem mudar regras. Decidiu: Diretor.
+
+## 2026-11-08 — Diretor: seta na P7 aprovada como referência para as portas
+- A seta na P7 está aprovada e vale como referência: todas as portas laterais, inclusive as fechadas, ganham seta. Na alcova da Sala: P1 (esquerda) seta para a esquerda, P3 (direita) seta para a direita, P2 (para cima) nada; P8 na Sala: tapete. Altera a tabela do Produto (que deixava P1–P3 sem indicador). Decidiu: Diretor (interpretação do Orquestrador de "use como referência para as portas"; confirmar pela captura).
+
+## 2026-11-08 — Produto: GDD reescrito na planta girada (14.10.x) e dúvidas
+- Seções reescritas sem mudar regras; pendência 17 decidida (seta na P7, e P1/P3 com seta). Interruptor (5,3) já confirmado pelo Diretor.
+- Regra dos 3 tiles: métrica euclidiana (círculo de luz); interruptor a 3,16 do spawn de chegada da P8. Padrão aceito (sugestão do Produto).
+- Seta de P1/P3: aponta para o tile da Sala (P1) e para a parede (P3); leitura clara a decidir pela captura C20 do Diretor; alternativa se confundir: seta para cima nas duas ou tapete.
+
+## 2026-11-08 — QA rodada final: BUG-R15-01
+- A caixa do diálogo automático cobre o tile da árvore e esconde o halo. Decisão (padrão aceito, opção b): só no diálogo da chegada a caixa vai para o topo, para a árvore ficar visível com o chamariz. Dev corrige; QA reconfere só isso.
+
+## 2026-11-08 — Diretor: tapete da P8 fora da área desenhada
+- O tapete da saída para baixo (P8 na Sala) vai para o tile do vão (conteúdo (6,8), tela (8,8)), fora do piso, para indicar saída; deixa de ficar no tile de chegada (6,6). Dev, Arte (doc/prévia) e Produto (GDD) atualizando. v0.5.0 ainda não publicada. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: tapete no vão é só desenho
+- O tile do vão (6,8) é colisão 1 em sala.json (não andável); o tapete fica sobre ele só como desenho (exceção explícita à 14.10.9; não é pisado). Coerente com o pedido do Diretor ("fora da área já desenhada"). Aceito como padrão; o Diretor vê na captura.
+
+## 2026-11-08 — Publicação do PT2c
+- Diretor aprovou as capturas (Sala com setas e tapete no vão, Cozinha, diálogo no topo). Publicada a v0.5.0 (Version 6) no mesmo artifact. Itens 046 e 047 entregues. Decidiu: Diretor.
+
+## 2026-11-08 — Marco 1 aprovado pelo Diretor (PT2c)
+- "esta tudo certo para essa versão inicial; testei e está tudo operando normalmente". Marco 1 (v0.5.0) aprovado. O Marco 2 só abre com a liberação explícita do Diretor. Decidiu: Diretor.
+
+## 2026-11-08 — Marco 2 liberado pelo Diretor
+- "Libera Marco 2" (peças da árvore: as três peças, tela de conquista e árvore se montando). Produto escreve a especificação (GDD seção 15) e quebra em itens de backlog; Arte e Dev só começam depois do escopo fechado. Decidiu: Diretor.
+
+## 2026-11-08 — Rótulo dos playtests
+- Para não colidir com o PT2 do Marco 2 (CLAUDE.md), os playtests de correção do Marco 1 passam a ser PT1d (v0.3.0), PT1e (v0.4.0) e PT1f (v0.5.0). O PT2 é o do fim do Marco 2. Decidiu: Orquestrador.
+
+## 2026-11-08 — Diretor: respostas às perguntas 18–25 do Marco 2
+- 18) Abrir a área B: Quarto (P2), Escritório (P3), Suíte Casal (P1); banheiros fechados. 19) Posições das peças aprovadas (Sala (1,4), Cozinha (4,1), Lavanderia (3,5)), a reavaliar com a área B. 20) Peça = camada da árvore (base, meio, topo), no chão em miniatura com brilho dourado. 21) Peças 2 e 3 só aparecem depois da anterior; quando o jogo disser "ainda não", diz também "essa é a parte do meio, encontre a base antes" (substitui "sem aviso"). 22) Diálogo automático de uma página depois de cada peça. 23) Conquista 1: "primeira parte da árvore de Natal". 24) Árvore montada sem enfeite; jogo livre até o Marco 4; o playtest termina aí. 25) Sem dica no Marco 2. Lavanderia como cômodo separado: não respondida, padrão do Produto. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: escopo do Marco 2 com a área B (perguntas 26–29 abertas)
+- GDD 15 e backlog 048–061 atualizados. Textos do aviso "ainda não" e da conquista 1 são propostas do Produto dentro da orientação do Diretor (conferir na 1ª captura). Padrões em vigor: Suíte fechada; peças em Sala (1,4), Cozinha (4,1), Lavanderia (3,5); gatilho de aviso no tile escondido; Cama no Escritório. Riscos: P1 não leva à Suíte na planta atual (outro lado é chão da Sala); P2 e P3 precisam de ajuste de piso (vão de 1 tile); regra 4.4 não é cumprida com as posições aprovadas. Especialista (061) começa com esses padrões; Arte e Dev esperam as respostas 26 e 27. Decidiu: Produto (padrões), Diretor (pendências).
+
+## 2026-11-08 — Especialista: ADR-004 e ADR-002 para o Marco 2 (061)
+- Peça: campo `ordem` (1–3) e `estadoInicial` (visível na 1; escondida nas 2 e 3); o conteúdo grava o tile livre e o bloqueio vem do estado. Par de porta com destino fora das áreas abertas age como porta fechada em tempo de execução. P4 e P6 = porta fechada no Marco 2 (segue GDD 15.3.2), P5 fora; Orquestrador confirma. Missão ativa: parte1 ativa no Continuar da conquista das luzes (Produto confirma). `schemaVersion` continua 2 (aditivo). `portaFechada.saida` como campo de conteúdo (substitui a tabela do código). Chegada da P3 em (7,2) fica de frente para a P1 fechada. Pendências do Especialista: 12.2/12.6 do ADR-004 e 3.1/7 do conversor ainda com [TBD] já decididos (limpar). Decidiu: Especialista, confirmado pelo Orquestrador.
+- Em aberto com o Diretor: 26 (Suíte), 27 (peça 3), 28 (gatilho do aviso), 29 (Cama).
+
+## 2026-11-08 — Diretor: respostas 26–29 do Marco 2
+- 26) "adicione um quadrado para essa versão. Mas as portas deveriam ficar nos vértices dos quadrados." Interpretação do Orquestrador (a confirmar pela prévia): a Suíte abre no Marco 2 pela P1; a Sala ganha 1 tile de chão na alcova para a P1 ter chegada e vão próprios; as portas são desenhadas sobre a BORDA entre chão e vão (como no print), e não no centro do tile do vão. 27) Lavanderia é cômodo separado da Cozinha: peça 3 fica na Lavanderia (3,5). 28) Gatilho do aviso no tile escondido (sugestão). 29) Cama no Escritório. Decidiu: Diretor.
+
+## 2026-11-08 — Diretor: correção da 26 (arestas)
+- "as portas deveriam ficar nas arestas dos quadrados" (não "vértices"): as portas são desenhadas sobre as bordas (arestas) entre o tile de chão e o vão. "Quadrado" = 1 tile novo na alcova da Sala, a confirmar pela prévia. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: 26–29 processadas; Suíte pela P1 depende do Diretor
+- 27 (Lavanderia separada, peça 3 em (3,5) na mesma subárea), 28 (gatilho no tile escondido), 29 (Cama no Escritório): decididas. Arestas aplicadas no GDD (12, 14.10.9, 15.3.3).
+- 26: um tile novo na alcova NÃO resolve a P1 (a chegada em linha reta cai no chão da Sala ou na alcova de P2/P3). Opções: A) P1 vai para o canto de cima da Sala em (1,0), zero tiles novos (gatilho (1,0), vão (1,−1), gatilho da Suíte (1,−2), chegada da Suíte (1,−3), chegada da Sala (1,1)); B) Suíte fechada no Marco 2, P1 em (6,2). Aguarda o Diretor. Arte e Especialista seguem no que não depende da 26 (P2, P3, peças, Quarto, Escritório, portas nas arestas, regra 11 só para a entrada no escuro).
+
+## 2026-11-08 — Especialista: regra 11, arestas, Lavanderia, [TBD] limpos; opções da 26
+- Regra 11 (interruptor a mais de 3 tiles) vale só para o spawn de ENTRADA NO ESCURO (chegada P8 na Sala, (6,6), 3,16 do interruptor (5,3)); P2, P3 e P7 ficam fora (a P7 é alcançável antes das luzes; hoje a distância é 4,47 e passa). Regra de ARESTAS registrada no ADR-004 seção 3 (e estendida às portas fechadas: leitura do Especialista, a Arte confirma na prévia). Lavanderia: cômodo separado, dentro da subárea `cozinha`, peça 3 em (3,5) ("mesma subárea" é leitura do Produto, não palavra do Diretor). [TBD] antigos do ADR-004 e do conversor limpos (só o conversor gira; coluna 0 da Sala andável; interruptor (5,3)).
+- Opção A da 26 tem custos que o Produto não listou: bloquear (0,0), (2,0), (0,−2), (2,−2) ("uma porta, uma entrada"); o interruptor (5,3) fica a 5,00 da P1 e deixa de estar "ao lado da P1" (decisão 5 de 2026-11-07), então pode precisar de outro tile; a P1 perde a seta aprovada; o Marco 1, já aprovado no PT1f, muda e precisa de nova aprovação. Opção B não muda nada. Aguardando o Diretor. Pendência de documento: ADR-002 linha 147 ainda com [TBD] da 26.
+
+## 2026-11-08 — Arte: entrega parcial do Marco 2; P2 e Suíte esbarram na geometria
+- Entregue: P3 (par com vão de 1 tile, Escritório 8×6), peças (1 Sala (1,4) visível, 2 Cozinha (4,1) escondida, 3 Lavanderia (3,5) escondida), P4 e P6 fechadas (lados escolha da Arte, o Diretor confirma na captura), sprites (peças, conquistas 96×96, árvore 1/2/3 partes, portas finas), previews m2-*. Falta: P2/Quarto e Suíte: a chegada da P2 cai no piso da Suíte; abrir exigiria deslocar a Suíte 2 tiles e redesenhar o Quarto (muda a planta do Diretor).
+- Padrão adotado para destravar o Dev (sugestão do Orquestrador, a confirmar pelo Diretor): áreas abertas no Marco 2 = Hall, Sala, Cozinha/Lavanderia e Escritório (P3); Quarto e Suíte ficam fechados (P1, P2, P4 como porta fechada) até a planta ser ajustada em versão menor (1.x). Nenhuma peça fica nelas, então o jogo do Marco 2 funciona completo.
+
+## 2026-11-08 — Dev: Marco 2 (v0.6.0) pronto para QA
+- Itens 051–057 entregues: missões parte1–3 (maps = hall, sala, cozinha, escritório), peças, aviso 'ainda não' (listas de 2 páginas), condução por parte com 2× e fade, conquistas, árvore 0–3, par com destino fechado = porta fechada, regra 11 só na entrada no escuro, portas finas na aresta. 295 testes. Rotas medidas: parte 2 = 15 passos, parte 3 = 20 (estimativa do GDD não contava os 3 passos da passagem P7). Decisões do Dev: exame da árvore sobe para o topo; sem bloqueio de 200 ms depois de fechar o diálogo de chegada; pisca da árvore para na primeira peça encaixada; a peça da fase conduzida vira chão livre durante a condução.
+- Gargalo: a peça 2 (4,1) é a única ligação com a Lavanderia, então o aviso da peça 3 com a parte 2 pendente nunca ocorre. Padrão aceito (opção A do Dev): o caso sai do roteiro de QA; reavaliar depois do playtest. Candidato a bug do Marco 1: travamento de 2 px contra a parede (4,4) da Cozinha (QA verifica com teclado real).
+
+## 2026-11-08 — Diretor: P1 e P2 não mudam de lugar
+- "Eu não quero mudar a P1 e P2 de lugar." Decisão: Quarto (P2) e Suíte (P1) ficam FECHADOS no Marco 2; P1 e P2 permanecem onde estão; a planta do Diretor não muda. A abertura fica para uma versão menor (1.x), avaliando antes uma mudança na REGRA do motor (chegada explícita por porta, em vez de em linha reta através do vão), para abrir sem mover portas. Decidiu: Diretor.
+
+## 2026-11-08 — Diretor: Suíte e Quarto abrem com 1 tile de chegada
+- "Adicione 1 tile em cada um dos cômodos que isso acontece, e o sobrinho cai no início do cômodo." Decisão: Suíte (P1) e Quarto (P2) ABREM no Marco 2; P1, P2 e a planta da Sala não mudam; cada cômodo ganha 1 tile de chão no início, onde o Sobrinho chega (chegada explícita por porta; a regra de linha reta passa a ter exceção declarada). Interpretação do Orquestrador, a confirmar pela prévia. Substitui a decisão anterior de manter Suíte e Quarto fechados no Marco 2. Decidiu: Diretor.
+
+## 2026-11-08 — Diretor: o que não vai para o Git
+- "Não salve as referências nem os arquivos de teste. A planta da casa fica fora do git. Mas aguarde os retornos dos agentes que estão rodando para abrir a PR." Aplicado no `.gitignore`: `assets/referencia/`, `assets/teste-sprite-hd/`, `dist-qa/`, `qa/evidencias/`, `qa/baseline-014/` e `maps/casa-real/our-home.tmx` (original do Diretor). Commit e PR só depois que os agentes em andamento terminarem. Decidiu: Diretor.
+
+## 2026-11-08 — Especialista: chegada explícita por porta (ADR-004 seção 13)
+- Correções de premissa: P2 leva ao QUARTO, P1 leva à Suíte; o que falha hoje é o tile de chegada G_B + (G_B − V) não existir como piso do destino (E009); o tile novo resolve. Contrato: 1 tile de chão no cômodo de destino encostado no gatilho de entrada, do lado de dentro, é a chegada; chegada pode ser declarada por objeto `spawn` com `chegada` (id da porta) e `direcao`; gatilho com exatamente um vizinho livre na própria subárea; erros E024–E027; itens 20 e 21 do ADR-004 seção 8; motor sem mudança obrigatória; porta sem chegada declarada = fórmula antiga. Caixas: Quarto no máximo 5×5/4×6, Suíte 7×5/6×6, cabem em 15×11.
+- P1 → Suíte exige CORTAR piso da Sala em (5,2) (vão sem piso) e bloquear (6,1) e (6,3): pergunta ao Diretor. Arte começa só pela P2/Quarto (não depende dessa resposta). Interpretação ainda a confirmar pela prévia.
+
+## 2026-11-08 — Produto: Quarto aberto, Suíte depende da pergunta 30
+- GDD 15 atualizado: Quarto aberto com tile novo em (7,−2) (chegada explícita); Escritório aberto; Suíte fechada até a pergunta 30; P5 porta fechada (entra no conteúdo só quando a Suíte abrir); backlog 059 reescrito ("Suíte e Quarto com chegada explícita"), 061 e 062 fundidos no 059. Testadas as 4 saídas da P1 com o ADR-004 (E004): nenhuma fecha com 1 tile sem mudar piso da Sala. Especialista propõe cortar o piso da Sala em (5,2) e bloquear (6,1) e (6,3) (tamanho da Sala não muda). Opções ao Diretor: A) Suíte fechada no Marco 2; B) P1 vai para (1,0); C) cortar/alterar piso da Sala. Aguardando. Riscos a conferir: caixa do Quarto 4×5 (GDD 14.12.2 diz 4×4), P3 do Marco 1 no sala.json já com destino escritorio (Dev/QA conferem que o gatilho não leva a mapa não carregado).
+
+## 2026-11-08 — Dev: BUG-M2-03 e M2-04 resolvidos
+- M2-03: era só a origem da condução. Passos = tiles visitados + 3 da passagem (ADR-004 11.2). Origens: parte 1 (2,4)=4, (1,3)=6, (1,5)=4, (0,4)=6 (normal); parte 2 (3,1)=15, (4,2)=17 (2×); parte 3 (3,4)=20, (4,5)=22 (2×). Estimativa do GDD 15.3.5 a corrigir (Produto): parte 2 de 15 a 17, parte 3 de 20 a 22.
+- M2-04: sem defeito no jogo (o exame no estado 3 mostra "A árvore está montada! Que linda!" no topo); a leitura do QA veio durante o encaixe de 0,9 s. O exame da árvore agora abre no topo. 299 testes.
+
+## 2026-11-08 — Diretor: pergunta 30 = A (Suíte fechada no Marco 2)
+- "30) A". A Suíte fica fechada no Marco 2; a P1 segue porta fechada com seta para a esquerda; o piso da Sala não muda. O Quarto abre pela P2 (tile novo em (7,−2), chegada explícita) e o Escritório pela P3. A Suíte entra numa versão posterior, com a planta ajustada (avaliar corte de 1 tile da Sala em (5,2) ou outra solução). Decidiu: Diretor.
+
+## 2026-11-08 — Arte: P2 esbarra na geometria real; Especialista avalia chegada explícita nos dois lados
+- Arte: conversor com `spawn chegada` e E024–E027 prontos (content idêntico antes/depois). A P2 em linha reta liga à SUÍTE, não ao Quarto (vão de 3 tiles na planta do Diretor; o Quarto fica a 3 tiles do vão). Opções da Arte: A) P2 leva à Suíte; B) Quarto redesenhado; C) tudo fechado. A planta do Diretor diz que a P2 é a porta do Quarto.
+- Caminho que o Orquestrador pediu ao Especialista (sem mexer na planta): par com chegada explícita nos DOIS lados, com vão de qualquer tamanho (a travessia já é lógica, com fade); o vão de 1 tile (E008) só vale para par sem chegada declarada. Se viável, o Quarto abre pela P2, a Suíte pode abrir pela P1 depois sem mover porta nem cortar a Sala. W027: aviso nos pares P7/P8 (vizinhos livres a mais), item 21 do ADR a decidir.
+
+## 2026-11-08 — Especialista: par com chegada declarada nos dois lados (ADR-004 13.13–13.24)
+- Regra viável: vão de 1 ou mais tiles sem piso quando os DOIS lados declaram chegada (spawn `chegada` com o mesmo id); E008 (vão de 1 tile) só para par de fórmula ou misto; `porta.saida` gerado pelo conversor em todo `porta` (o motor passa a lê-lo para seta/tapete/porta trancada); E028 novo (direção da chegada para dentro); item 21 (uma entrada) vira aviso W027 para par de fórmula (P7, P8 ficam como estão) e erro E027 para lado com chegada declarada; custo da travessia fixo em 3 passos. Decidiu: Especialista, aceito pelo Orquestrador.
+- Mas a marca P2 do Quarto encosta no piso da Suíte (E004): sem mudar piso, o par liga a Sala à Suíte. Opção mínima: o Quarto ganha o piso que liga à marca (corredor de 1 a 2 tiles) e a Suíte (fechada no Marco 2) perde 1 tile que encosta na marca. Pergunta ao Diretor. P1/Suíte (1.x): exige cortar 1 tile da Sala em (5,2) (vão começa em (5,2)); decidir só na 1.x.
+
+## 2026-11-08 — Arte: medidas da P2 e opção mínima (não aplicada); conversor com `porta.saida` e E028
+- Medidas: marca P2 da alcova em Sala (7,1) (fora do piso); NÃO existe marca P2 no Quarto (só P4 fechada); vão de 1 tile; o tile (1,−11) encosta no piso da Suíte (1,−12) (E004) e o piso do Quarto fica a 3 colunas do vão. Opção mínima para a P2 ligar Sala ↔ Quarto sem mover marcas: Sala +1 piso em (1,−9); Quarto +4 tiles (marca (1,−11), chegada (2,−11) lateral, corredor (3,−11) e (4,−11)); Suíte −1 tile (1,−12); Quarto fica com caixa 7×7. Prévia: tools-arte/previews/p2-opcao-minima.png. Mais do que o "1 tile" pedido, e mexe no piso da Sala aprovada. Aguardando o Diretor.
+- Conversor: `porta.saida` gravado em todo `porta` (igual a G − S nas 6 portas atuais), E028, vão livre com chegada nos dois lados. 299 testes. O motor precisa ler `porta.saida` (Dev), `validarConteudo` ganha os itens 20, 21 e 22.
+
+## 2026-11-08 — Diretor: P2 existe sem alterar a área; só acrescentar tiles
+- "não altere a área. Se necessário, aumente um tile nos cômodos para a P2 existir." A planta e os cômodos aprovados não mudam; só se acrescentam tiles de chão onde a P2 precisar (Sala: tile da marca da alcova; Quarto: os necessários). A Arte tenta uma variante só com acréscimos; se for impossível sem tirar o tile (1,−12) da Suíte (fechada no Marco 2, volta inteira na 1.x), aplica a opção mínima e destaca isso ao Diretor. Decidiu: Diretor (o tile da Suíte, exceção do Orquestrador a ser mostrada).
+
+## 2026-11-08 — Arte: P2 aplicada só com acréscimo de tiles
+- P2 liga a Sala ao Quarto na horizontal (a marca do Quarto em (1,−11) encostaria na Suíte): gatilho da Sala (1,−9) com 1 tile novo de piso (saída direita), vão (2,−9), gatilho do Quarto (3,−9) (saída esquerda), chegada do Quarto (3,−10) direção cima, corredor (3,−11) e (3,−12) até o piso do Quarto em (4,−12); chegada da Sala (1,−8) = (7,2) local, direção baixo, a mesma da P3 (ADR-004 13.9 item 6). 5 tiles novos (1 na Sala, 4 no Quarto), NENHUM tirado (a Suíte, P1, P3, P7, P8, interruptor, árvore e peças ficam iguais). Quarto 5×8. Gid placeholder nos tiles novos (padrão aceito).
+- Dev precisa: aceitar spawns de nomes diferentes no mesmo tile, ler `porta.saida`, itens 20–22 do ADR, `quarto` em `missions[].maps`, atualizar testes. Conteúdo só mudou em sala.json, quarto.json e golden.
+
+## 2026-11-08 — Dev: P2 e Quarto no motor (059 pronto para QA)
+- Motor lê `porta.saida`; spawns de nomes diferentes no mesmo tile; item 22 só para `porta` (P1 fechada tem saída para piso livre); faixa do par fechado na aresta voltada para a chegada; W027 em `Conteudo.avisos`; `quarto` em parte1–3; P2 fechada antes de parte1. 328 testes; ida e volta pelo Quarto (custo 3), chegada (0,6) olhando para cima, volta (7,2) olhando para baixo, Quarto 5×8. Capturas 26–29 conferidas pelo Orquestrador. Pendências: GDD 15.3.3/14.10.10/14.12.2 (Produto), ADR item 22 e aresta do par fechado (Especialista), rodada final do QA, aprovação das capturas pelo Diretor. Gid placeholder nos 5 tiles novos (padrão aceito).
+
+## 2026-11-08 — Especialista: ajustes do ADR após o motor da P2
+- Item 22 só para `porta` (a P1 fechada aponta para piso livre da Sala hoje); campo novo `origemChegada` (`declarada` ou `formula`) em todo `porta`, gravado pelo conversor, que o motor passa a ler em vez de inferir; faixa do par fechado na aresta do gatilho voltada para a chegada (ao abrir, passa para a aresta entre gatilho e vão); sem fallback G − S (porta sem `saida` válido é erro); W027 em `Conteudo.avisos`. Pendência pequena (depois da rodada final do QA, para não mexer no conteúdo durante o teste): Arte grava `origemChegada` no conversor/golden e o Dev troca a inferência pela leitura do campo. Decidiu: Especialista, aceito pelo Orquestrador.
+
+## 2026-11-08 — Produto: GDD sincronizado com a P2 e o Quarto
+- GDD e backlog atualizados: P2 horizontal (seta direita na Sala em (7,1), seta esquerda no gatilho do Quarto em (0,7), chegada do Quarto (0,6) olhando para cima, volta à Sala em (7,2) olhando para baixo), Quarto 5×8 com 5 tiles novos (1 na Sala, 4 no Quarto), nada tirado; pergunta 30 = A; rotas: parte 1 de 4 a 6 passos (normal), parte 2 de 15 a 17 (2×), parte 3 de 20 a 22 (2×); Escritório 6×8 (Marco 1) e 8×6 (Marco 2). A decisão 17 ("P2 sem indicador") fica superada: a P2 lateral ganha seta (confirmar na captura C20). O Quarto recebe 4 tiles (não 1): sem o corredor ele não liga ao piso. A P2 abre a partir da parte 1 (depois das luzes), como no Marco 1 (P2 fechada). Padrões aceitos (sugestões do Produto); o Diretor confirma pelas capturas. Decidiu: Produto (padrão), Diretor (confirma na captura).
+
+## 2026-11-08 — QA rodada final do Marco 2: aprovado com ressalvas
+- Passou: Quarto ida e volta pela P2 (fechada antes das luzes), paredes do Quarto sem saída, setas de todas as portas e tapete da P8, P1 fechada e Suíte inacessível, fluxo completo das 3 peças com o LoLô, 3 outros sobrinhos até a conquista 1 e o encaixe, 2× e fade, sem erros de console, travamento de 2 px não reproduzido. BUG-M2-05 (seta do Quarto "2 tiles abaixo"): o Orquestrador conferiu a captura 12 e o gatilho (0,7) está adjacente ao Sobrinho em (0,6); o sprite 32×48 passa a impressão (sem defeito). BUG-M2-03 explicado (origem + 3 passos da passagem); M2-04 sem defeito. Não testado: Firefox, Safari, celular, pisca (não pisca no Marco 2), P6 com A, parte 3 nos 3 outros sobrinhos.
+- Decisão do Orquestrador: o campo `origemChegada` (troca técnica, sem efeito visível) fica no backlog para depois da publicação, para não mexer no conteúdo depois do QA.
+
+## 2026-11-08 — Publicação do PT2 (Marco 2)
+- Diretor aprovou as capturas (Sala, Quarto, Escritório, conquista, árvore montada). Publicada a v0.6.0 (Version 7) no mesmo artifact. Itens 048–060 entregues; Suíte fechada (pergunta 30 = A). Decidiu: Diretor.
+
+## 2026-11-08 — Marco 2 aprovado e Marco 3 liberado pelo Diretor
+- "Está bom até aqui. Pode seguir." (PT2, v0.6.0). Marco 2 aprovado; Marco 3 (Nick e dicas: despertar, farejar e tela de dica com imagem) liberado. Produto escreve o escopo primeiro (GDD seção 16 e backlog). Decidiu: Diretor.
+
+## 2026-11-08 — PR do Marco 2 mergeada
+- O Diretor abriu e mergeou a PR nº 3 (`claude/marco-1-orchestration-c3b37a` → `setup/estrutura-de-agentes`). A branch local foi avançada (fast-forward) até o merge; o Marco 3 segue nessa branch e abre outra PR depois do PT3. Decidiu: Diretor.
+
+## 2026-11-08 — Produto: escopo do Marco 3 (Nick e dicas, v0.7.0)
+- GDD seção 16 e backlog 064–078. Padrões do Produto (o Diretor pode trocar no PT3): Nick dorme na Sala (porta e luzes), Cozinha/Lavanderia (parte 1), Quarto (parte 2), Escritório (parte 3), Sala depois da parte 3; nunca no Hall; acordado não bloqueia nem entra em rota; dormindo bloqueia o tile; acompanha a condução 2 passos atrás. Farejar (B ou Esc): seta só para a PORTA a seguir (direita, esquerda ou cima), 5 s, sem cooldown; mesmo cômodo: balão "Au!"; Nick dormindo: "zzz"; peça escondida nunca é alvo; Nick não reage ao entrar no cômodo do item. Dica: tecla H e ícone "?". Barra de exploração com 2 linhas ("Setas: andar  Z: examinar" / "X: farejar  H: dica"). Fumacinha ao dormir de novo.
+- Perguntas ao Diretor: 31 (barra de 2 linhas cobre as linhas 9 e 10 da Sala; chão em (0,9) e (1,9): bloquear só esses 2 tiles? sugestão sim; alternativa: barra de 1 linha), 32 (onde Nick dorme), 33 (fumacinha), 34 (textos novos). Padrões aplicados; o item 073 espera a 31.
+- Em andamento: Especialista (ADR-005) e Arte (sprites do Nick, setas, ícone e tiles de dormir).
+
+## 2026-11-08 — Especialista: ADR-005 (Nick, farejar e dicas) aceito
+- Aceito pelo Orquestrador. Domínio: Nick (dormindo/acordado, tile, direção, fila de 2 passos), Farejo (5 s, sem cooldown), dica sem estado. Conteúdo: campos `nick` e `dica` em content/missions (schema 2, aditivo; obrigatórios nas 4 missões de fase, validações N001–N014). Nick chega JUNTO ao atravessar a porta (semente) e acompanha a condução 2 passos atrás; acordado não bloqueia nem entra em rota; dormindo bloqueia o tile (N009 garante que a rota não passa por ele). Farejar: BFS sobre pares de porta abertos; a seta é a primeira porta do caminho (`porta.saida`); alvo = subárea (Cozinha e Lavanderia = `cozinha`); mesma subárea: "Au!"; dormindo: "zzz"; sem alvo (porta, depois da parte 3): abana com "Au!" se acordado. Dica: H ou "?", só em exploração; fecha com Z, X, Esc, Enter ou Voltar; o mundo congela. Barra de 2 linhas: guarda para `sala.linhas − 2` e `− 1` (pergunta 31 aberta: só a Sala alcança a linha 9). Nick 32×32 como ponto de partida.
+- Pendências do ADR: tiles de dormir de Cozinha, Quarto e Escritório (Arte, item 074); ADR-002 seção 2 e ADR-004 seção 8 item 6 e 11.2 (Especialista, depois); GDD 16.4.4/16.5.2/16.5.6 (Produto). Dev implementa a guarda da barra de 2 linhas como AVISO até a resposta da 31.
+
+## 2026-11-08 — Produto: GDD 16 conciliado com o ADR-005
+- 16.4.2/16.4.4: tile do Nick dormindo é bloqueado (regra única; N009 garante a rota); na troca de área o Nick aparece junto, numa semente vizinha da chegada (lado ou atrás, nunca na frente). 16.5: na fase da porta farejar não se aplica (B mostra "zzz"); alvo = subárea (Cozinha e Lavanderia, um só alvo); seta = primeira porta de uma BFS; depois da parte 3, Nick acordado abana com "Au!", dormindo mostra "zzz", e A acorda sem diálogo. 16.6: Nick dorme em `nick.dorme` da próxima fase (Sala depois da parte 3) com fumacinha de 0,5 s, sem andar. 16.8.5: dica sem estado, só Z, X, Esc, Enter ou Voltar fecham. Nick 32×32 como ponto de partida. Backlog 079 (Especialista): ADR-002 seção 2, ADR-004 item 6 (depende da 31) e 11.2. Decidiu: Produto (padrões), Orquestrador (aceite).
+
+## 2026-11-08 — Especialista: ADR-002 e ADR-004 para o Nick (079)
+- `nick` e `dica` ficam em missions/<id>.json (manifesto sem mudança; schemaVersion 2). ADR-004 item 6: guarda das 2 últimas linhas da tela; L1 (`sala.linhas − 1`) é erro, L2 (`sala.linhas − 2`) é AVISO enquanto a pergunta 31 estiver aberta (conversor E018/E019 só em L1); destino de condução em L1 ou L2 é erro; Nick dormindo bloqueia a rota (N009), acordado não. A direção dos tiles de dormir (parte1–3) fica com a Arte. Suíte: decisão do Diretor já vigente (pergunta 30 = A; Suíte fechada no Marco 2); seções 3 e 9 do ADR-004 em correção.
+
+## 2026-11-08 — Arte: Nick e adereços entregues (067, 068, 074)
+- Nick feito por script a partir da folha do Diretor (`tools-arte/gerar_nick.py`, sem retoque manual): parado 4 direções, andar 4 direções com 4 quadros, dormir, acordar, farejar e feliz (4 quadros); 32×32, escala única; paleta de 28 cores (24 deixava o idle de costas com 15 cores, abaixo do mínimo de 16). Setas de farejar (direita, esquerda, cima), ícone "?", balões (au, zzz, exclamação) e fumaça. `spr_arvore_completa` já mostra as 3 camadas sem enfeite. Tiles de dormir (direção baixo): sala (8,5), cozinha (5,3), quarto (4,3), escritório (6,1); a Cozinha é um corredor e (5,3) é o único tile que passa em todos os critérios. Pergunta: o Nick em 32×32 ao lado da LoLô (32×48) tem o tamanho certo? (padrão: sim).
+- Linhas 9 e 10 da Sala (pergunta 31): não tocadas.
+
+## 2026-11-08 — Diretor: pergunta 31 (Sala sob a barra de 2 linhas)
+- Resposta do Diretor: "Pode mudar a sala". Bloquear os tiles (0,9) e (1,9) da Sala; guarda L2 passa de aviso a erro. Mantida a barra de 2 linhas. Repassado ao Dev (ab877d8885f016a4f). Decidido por: Diretor.
+
+## 2026-11-08 — Dev: Marco 3 entregue (pronto para QA, com bloqueio)
+- Pergunta 31 executada: (0,9) e (1,9) da Sala bloqueados (retangulo id 113 no TMX de jogo), golden atualizado, guarda L2 virou erro. npm test 407 ok, verificar:conteudo, validar:perfil, build:playtest, smoke:playtest ok (conferido pelo Orquestrador). Backlog 066, 069-073, 075 prontos para QA; 077 bloqueado: Como jogar nao cabe em 480x352 (captura confirmada). Abertas: encurtar Como jogar (Diretor); conflito GDD 16.11 x D8 ("Procure a parte de cima", Produto/Diretor); borda 2 px do icone "?" (Arte).
+
+## 2026-11-09 — Diretor: Como jogar e dica da parte 3
+- Resposta "Sim, as duas": (1) encurtar Botao A/B para uma linha e tirar "No celular, em breve" ate o Marco 5; (2) dica da parte 3 sem direcao ("Procure em outro comodo."). Repassado ao Dev; Arte ajusta a borda do icone "?" (1 px, GDD 16.8.1). Proximo: QA 15 min, capturas ao Diretor.
+
+## 2026-11-09 — QA: Marco 3 aprovado (Chromium desktop, teclado)
+- Rodadas 1 a 7; BUG-M3-R4-01 (feliz+Au na chegada) corrigido; BUG-M3-R5-01 fumacinha nao e bug; animacao feliz tinha bug real (tween cortava), corrigido. Nao coberto: celular/toque, Firefox, Safari, TuTu; entrada por codigo da BiBi a conferir no PT3. Aguardando aprovacao das capturas pelo Diretor para publicar v0.7.0.
+
+## 2026-11-09 — Diretor: ajustes do PT3 (Nick e seta)
+- Seta de farejar: 2 animacoes tremulas e fica amarela; Nick mais colado ao sobrinho; na troca de comodo o Nick nasce na posicao do sobrinho, oculto, e so aparece e segue quando o sobrinho atinge o offset (substitui a semente vizinha do ADR-005/GDD 16.4.4, que podia por o Nick a frente). Decidido por: Diretor. Rodada de ajustes v0.7.1 aberta.
+
+## 2026-11-09 — Diretor: pergunta 35 (farejar de novo e seta)
+- Resposta: "siga com a sugestao". (a) B de novo com a seta visivel refaz o farejando (1,2 s), as 2 tremidas e reinicia os 5 s; (b) depois das tremidas a seta fica parada ate sumir, sem sobe e desce. Padrao do Produto confirmado.
+
+## 2026-11-09 — Especialista: ADR-005 revisado para a v0.7.1 (backlog 083)
+- Semente sai da troca de área (GDD 16.17 c). Entra o estado oculto: o Nick fica no tile de chegada, oculto, até o primeiro passo do sobrinho (ADR-005 3.2). Passo de troca de área = primeiro passo para tile andável da área nova que não é gatilho de porta; a chegada não conta como passo. Fila de 1 passo: 2 entradas, `CASAS_ATRAS_DO_NICK = 1` (3.1).
+- Seta de farejar amarela `#f4d35e`, 2 tremidas de 0,4 s (±2 px), sem sobe e desce. B com a seta visível refaz farejando, tremidas e 5 s; o relógio dos 5 s para durante o farejando (4.5). Nick oculto não bloqueia, não é alvo do A e não tem farejando; o balão "Au!" sai sobre o sobrinho (proposta do Especialista, o Produto confirma).
+- Recomendação ao Dev: tirar `semente` de `FilaDoSobrinho` e do `acordar` (sem mudança de comportamento; `alvo()` nunca é lido com menos de 2 entradas). A aparição da troca de área sai hoje como `saltou`; um tipo próprio (`apareceu`) é recomendado.
+- ADR-002: sem mudança pela v0.7.1. ADR-004, seção 11.2: trocar "fila de 2 passos" (linha 349) por "1 tile atrás".
+- Produto: GDD 12 e 16.16 ainda mostram as perguntas 31 e 35 como abertas; sincronizar com este registro.
+- Decidiu: Especialista (definições e revisão). Aceite do Orquestrador pendente (backlog 083, critério 4).
+
+## 2026-11-09 — Diretor: capturas da v0.7.1 aprovadas
+- "Aprovado". Publicacao (Version 9) aguarda o amigo do Diretor terminar o playtest da v0.7.0; fragmento pronto em scratchpad/pt1/playtest-v071.html.
+
+## 2026-11-09 — Marco 4 (v0.8.0): escopo do Produto
+- **Decisão:** caixa de enfeite no Escritório (pergunta 2, padrão do Produto; o Diretor confirma na captura EN2). Caixa aparece depois do diálogo de chegada da parte 3, junto com o Nick indo dormir (GDD 17.2/17.3; antes, aviso "Ainda não!"). Corrigido em 2026-11-09 após o ADR-006. Encaixe de 1,7 s. Nick dorme na Sala (8,5). Exame do estado 3 diz o que falta. `dica.livre` sai de uso. Versão 0.8.0.
+- **Abertas, com padrão aplicado:** 36 (aparência da caixa e dos enfeites) e 37 (créditos abrem sozinhos, opção A).
+- **Quem decidiu:** Produto (padrões); Diretor decide 36 e 37.
+
+## 2026-11-09 — Especialista: ADR-006 (Marco 4, backlog 087; aguarda aceite do Orquestrador)
+- **Decisão:** fase `enfeites` depois de `parte3`. `creditos` sai do enum `Fase` (é tela, fora de `Progresso`). A missão de fim tem `final: true` no **manifesto** (não em `missions/enfeites.json`, como pede o GDD 17.12). A caixa é o objeto `enfeite` (ordem 4, escondida, aviso `aviso.enfeite.antes3`). Estado 4 da árvore = caixa encaixada (`spr_arvore_enfeitada`); a dica nunca mostra o 4. Créditos = tela sem estado. `parte3.depois` e `dica.livre` **saem**; N008 e N014 são reescritos.
+- **Ponto em aberto (conflito interno):** este registro diz "a caixa só aparece depois do encaixe da parte 3"; o GDD 17.2, 17.3 e 17.6 dizem "depois do diálogo de chegada da parte 3", junto com o Nick indo dormir. O ADR segue o GDD. Pergunta ao Diretor levada pelo orquestrador: A (diálogo, GDD) ou B (encaixe). Sugestão do Especialista: A.
+- **Notas de revisão:** ADR-002 (seção 2.4 nova), ADR-004 (seções 6, 8, 9.1, 11.1; item 12 lido como o código: peça da própria fase livre na condução) e ADR-005 (seções 1.4, 2.2, 2.3, 2.4, 2.6, 3.5, 5.1).
+- **Quem decidiu:** Especialista (contrato). Produto ajusta o GDD 17.12 (`final`) e confirma a saída de `depois` e `dica.livre`. Diretor: momento da caixa (pendente).
+
+## 2026-11-09 — ADR-006 aceito (Orquestrador)
+- **Decisão:** ADR-006 aceito. `final: true` fica no manifesto (Produto ajusta GDD 17.12 e backlog 090); `parte3.depois` e `dica.livre` saem; fase `enfeites`; créditos são tela fora de `Progresso`. Caixa aparece depois do diálogo de chegada da parte 3 (opção A, padrão; o Diretor troca na captura EN2).
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite).
+
+## 2026-11-09 — Perguntas 36 e 37 respondidas (Diretor)
+- **36:** siga a sugestão: caixa vermelha com laço dourado, tampa para cima; árvore com bolas vermelhas e douradas, fita verde e estrela dourada no topo.
+- **37:** siga a sugestão: opção A, créditos abrem sozinhos com fade depois do diálogo final.
+- **Quem decidiu:** Diretor. "Captura aprovada": ainda não existe captura do jogo do Marco 4; confirmar a qual imagem ele se refere (ver relatório).
+
+## 2026-11-09 — Marco 4: desvios do Dev aceitos (Orquestrador, padrão)
+- T005 em validarConteudo (T001 a T004 no manifesto); versão "Versão 0.8.0" no canto superior direito dos créditos (não cabe no rodapé; o Diretor pode trocar); "Voltar ao título" em 16 px; `telas.creditos` só no perfil HD; encaixe: a caixa abre por cima do tile do sobrinho (placeholder, confirmar na captura 095). Bug do smoke (troca de cômodo) corrigido pelo Dev.
+- **Quem decidiu:** Orquestrador, seguindo a ordem do Diretor de aplicar as sugestões.
+
+## 2026-11-09 — v0.8.0 publicada (Diretor aprovou as capturas)
+- Artifact Version 10; playtest curto do final registrado como PT4a (não altera a numeração do PT4 do Marco 5).
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — Plot twist na parte 3 (Diretor, retorno do PT4a)
+- **Decisão:** `arvore.chegada.3` ganha 2ª página: a árvore está montada, mas tem algo estranho, falta algo, perdido pela casa. A caixa e o Nick dormindo continuam só depois do fim do diálogo. Versão 0.8.1 (patch).
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Plot twist: X fecha o diálogo (padrão aplicado)
+- **Decisão:** X fecha o diálogo de chegada da parte 3 inteiro, como os demais diálogos; os efeitos (controle, Nick, caixa) valem ao fechar. Entrada bloqueada de 200 ms só ao abrir. O Diretor pode trocar (tornar o plot twist obrigatório).
+- **Quem decidiu:** Produto e QA sugeriram; Orquestrador aplicou.
+
+## 2026-11-09 — Marco 4 aprovado (Diretor, PT4b)
+- **Decisão:** Marco 4 (enfeite, créditos e plot twist, v0.8.1) aprovado ("Está ótimo."). Marco 5 aguarda liberação explícita.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Marcos 3 e 4 commitados; Marco 5 liberado (Diretor)
+- **Decisão:** commits 6ab0907 (documentos) e 0edf562 (código) na branch `claude/marco-1-orchestration-c3b37a`, sem push. Fora do Git: referências, arquivos de teste de sprite, dist-qa, evidências do QA e a planta original. Marco 5 (celular, v0.9.0) liberado ("depois libere o marco 5").
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Produto: escopo do Marco 5 (toque e rotação, v0.9.0)
+- **Decisão:** GDD seção 18 e backlog 097 a 109. Padrões do Produto: cruz digital de 4 teclas, sem analógico; A à direita, B à esquerda do A, cruz à esquerda (layout A quando as faixas livres têm 144 CSS px ou mais); layout B (botões sobre a casa, 60% de opacidade) em celular estreito; alvo mínimo de 48 CSS px; ação ao pressionar; toque fora dos botões não age; botões somem onde não têm ação, na condução e no fade; painel no toque ganha "Fechar"; aviso de rotação só em aparelho com toque, congela o mundo, sem tela cheia nem trava de orientação; tocar para começar sem tela extra (áudio no Marco 6); `comojogar.celular` sai de uso.
+- **Pergunta 38 aberta:** botões por cima da casa em celular estreito (sugestão do Produto: sim). Padrão aplicado: layout B.
+- **Quem decidiu:** Produto (padrões); Diretor (pergunta 38, pendente).
+
+## 2026-11-09 — Especialista: ADR-007 (toque e rotação) proposto
+- **Decisão:** entrada de toque como segunda fonte de `Controles` (mesma API, sem tocar domínio nem aplicação); controles em DOM, alvos dentro do canvas em Phaser; perfil `toque` em CSS px, com os mínimos (48 CSS px e 8 CSS px) impostos pelo validador; detecção de toque por três sinais no boot e de retrato pela área visível; `resolution` = DPR; aviso de rotação congela com `loop.sleep`; textos de toque com sufixo `.toque`; `comojogar.celular` sai do teclado também. Alvo mínimo passa de 44 para 48 CSS px no `style-guide.md`.
+- **Divergências do GDD 18 (seção própria no ADR-007):** V1 cruz de 144 px (braços encostados); V2 ação ao pressionar não é desfeita ao arrastar; V3 barra de 29 caracteres (não 32); V4 "Farejar" quebra em duas linhas se couber; V5 painel de toque em 5 colunas; V6 alvo abaixo de 375 px de altura; V7 letra de A e B é desenho.
+- **Pendente do Diretor:** V1 (cruz) e V5 (painel em 5 colunas), com sugestão sim para as duas. Aceite do ADR-007 pelo Orquestrador.
+- **Quem decidiu:** Especialista (proposta técnica); aceite pendente do Orquestrador.
+
+## 2026-11-09 — ADR-007 aceito (Orquestrador)
+- **Decisão:** ADR-007 aceito (entrada compartilhada por Dev, Arte, QA). Divergências V1 a V7 resolvidas com os padrões do Especialista. Perguntas ao Diretor: 38 (layout B em celular estreito), 39 (cruz com braços encostados, 144 px) e 40 (painel de 5 colunas no toque); padrões aplicados até a resposta.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite); Diretor decide 38 a 40.
+
+## 2026-11-09 — Marco 5: desvios do Dev aceitos (Orquestrador, padrão)
+- (a) `margemCss: 8` entra no bloco `toque` (ADR-007 5.1 e 4.2). (b) Phaser 3.90 não tem `resolution` no Canvas: o canvas fica 1x com `image-rendering: pixelated`; em DPR 2 e 3 os pixels podem ficar de tamanhos desiguais (aceito pelo ADR 3.3); o PT4 em aparelho real mede. (c) Painel de toque 5 × 3: Apagar e Fechar ocupam 2 colunas, OK 1 (pergunta 41 ao Diretor). (d) Defeito de 0.8.1 corrigido: a barra da dica mostrava "[Z ou X: voltar]" por texto no lugar de chave; as capturas de dica mudam em relação à linha de base. (e) Testes de versão atualizados para 0.9.0. (f) `smoke:playtest` roda também `tools/smoke-toque.mjs`.
+- **Quem decidiu:** Orquestrador (padrão), Diretor decide 38 a 41.
+
+## 2026-11-09 — Marco 5: layout B não pode cobrir texto dos menus (Orquestrador)
+- **Decisão:** nas capturas do layout B (667×375) a cruz e os botões A/B cobrem texto e botões do título e do Como jogar. Em layout B, nas telas de menu e de texto, os controles não aparecem ou ficam fora do texto; o toque direto nos itens já funciona. Dev ajusta; a pergunta 38 (layout B sobre a casa a 60%) continua valendo só para a exploração.
+- **Quem decidiu:** Orquestrador, a partir da revisão das capturas; o Diretor vê as capturas antes de publicar.
+
+## 2026-11-09 — PR dos Marcos 3 e 4 mergeada (Diretor)
+- **Decisão:** a PR dos commits 6ab0907 e 0edf562 foi aberta e mergeada pelo Diretor em `setup/estrutura-de-agentes`. O trabalho do Marco 5 segue sem commit na mesma branch local; sincronizar com a base (`sync_with_base_branch`) só depois de commitar o Marco 5, porque a ferramenta recusa mexer com alterações não commitadas.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Perguntas 38 a 41 respondidas (Diretor)
+- **38:** sim, layout B (cruz e A/B sobre a casa a 60%) em celular estreito, só na exploração (menus ficam limpos, decisão do Orquestrador acima). **39:** sim, cruz de braços encostados, 144 px. **40:** sim, painel 5 × 3 só no toque. **41:** sim, Apagar e Fechar em 2 colunas, OK em 1.
+- **Quem decidiu:** Diretor. Os padrões aplicados passam a decisão.
+
+## 2026-11-09 — Marco 5: layout B por tela; textos `.toque.menu`; TQ22 (Produto, regra do Orquestrador)
+- **Decisão:** no layout B (667×375), título, Como jogar, seleção, conquista, dica, créditos e painel não têm cruz nem A/B (o toque vai direto no item). Diálogo e introdução têm A e B, sem cruz, no maior trecho livre das linhas 2 a 8, fora da caixa de texto. Exploração: cruz, A e B a 60%, como antes. Layout A não muda. Nas telas sem botão no layout B, a barra usa `.toque.menu` (até 29 caracteres; chaves em GDD 18.12). Caso TQ22 (sobreposição) incluído.
+- **Perguntas 38 a 41:** sim às quatro (Diretor, 2026-11-09). P12 a P15 decididas.
+- **Pergunta 42 (nova, aberta):** a seleção do layout B não tem botão B, então não há saída por toque para o título. Padrão aplicado: botão "Voltar ao título" de menu, só no layout B. Sugestão do Produto: sim.
+- **Quem decidiu:** Orquestrador (regra por tela, a partir das capturas); Diretor (38 a 41 e a regra confirmada); Produto (textos, TQ22 e padrão da 42).
+
+## 2026-11-09 — BUG-M5-03 não é bug (Orquestrador)
+- **Decisão:** no layout A (844×390) os menus mostram cruz e A/B nas faixas laterais, sem cobrir nada; vale o GDD 18.4. O layout B (667×375) é que esconde os controles nos menus. QA fecha BUG-M5-03 como comportamento esperado.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.0 publicada (Diretor aprovou as capturas)
+- Artifact Version 12. Pergunta 42 (botão "Voltar ao título" na seleção em layout B, opção A) mantida como padrão: o Diretor aprovou a captura da seleção. Marco 5 fechado pelo QA com ressalvas (RM2-d/e jogados de verdade, F8 e F9 sem teste; cobertos pelos Marcos 2 e 3 e por testes). PT4 aguarda o retorno em aparelho real.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — PT4: joystick virtual no lugar da cruz (ajuste 0.10.0, Produto)
+- **Pedido do Diretor (PT4, v0.9.0):** trocar as setas direcionais do celular por controle analógico; depois, "modelo analógico" (base redonda com bolinha que acompanha o polegar). Movimento segue em grade de 4 direções, sem diagonal.
+- **Escopo escrito:** GDD 18.19 (base 120 CSS px, bolinha 48, curso 36, zona morta 12, limiar 20, histerese, eixo dominante, um empurrão = um passo nos menus do layout A, dica sem joystick). Textos: "Setas" sai do toque; "Mover:" entra. Backlog 111 a 119.
+- **Versão:** 0.10.0 (troca de controle é recurso, não correção).
+- **Pergunta 43 aberta:** fixo ou flutuante. Padrão aplicado: fixo, no lugar da cruz (layout B reserva a área; flutuante exigiria a tela inteira como zona de toque, contra a regra 5).
+- **Quem decidiu:** Diretor (pediu o joystick e o modelo analógico); Produto (escopo, padrões e versão 0.10.0, aguardando aceite do Orquestrador).
+
+## 2026-11-09 — Joystick virtual: versão e padrões aceitos (Orquestrador)
+- **Decisão:** versão 0.10.0 (ajuste de recurso); padrões da GDD 18.19 aceitos (grade de 4 direções, base 120 CSS px, zona morta 12 e limiar 20, menus com um empurrão = um passo no layout A; dica e layout B sem joystick, conforme pergunta 38). Pergunta 43 (fixo ou flutuante) ao Diretor, padrão fixo.
+- **Quem decidiu:** Orquestrador (padrões); Diretor decide a 43.
+
+## 2026-11-09 — BUG-M5-04 e comportamento da cruz nos menus (Orquestrador)
+- **Decisão:** bug registrado como BUG-M5-04 (PT4); correção v0.9.1. Regra: num menu, um toque no braço da cruz = um passo; segurar não repete. Repetição ao segurar seria mudança de regra (decide o Diretor). O ADR-007 seção 1.1 ("`apertada` vem só de A e B") fica desatualizado e o Especialista corrige na revisão do joystick.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Revisão 2 do ADR-007 para o joystick (Especialista, proposta; aguarda aceite do Orquestrador)
+- **Decisão:** `docs/ADR-007.md` revisado (backlog 112). (1) `direcaoDoAnalogico` (pura, em `presentation/input/direcaoDoAnalogico.ts`) substitui `pilhaDaCruz`: zona morta ≤ 12, limiar ≥ 20, distância euclidiana, empate mantém a direção anterior. (2) Borda de menu só no engajamento (repouso para direção); trocar de direção sem zona morta não dá passo (contrato de menu, ADR seção 7.1). (3) Base do joystick a 8 CSS px da borda no layout A e no B (x = `margemCss`); A e B não mudam. (4) `cruzCss` e `cursoCss` fora do bloco `toque` (curso derivado = 36). Validação: base de 96 a 120, bolinha ≥ 40, curso ≥ 20, layout A cabe (base + 2 × margem e par de botões ≤ faixa). (5) Setor do joystick em anel na borda (52 a 60 CSS px), só nas direções que a tela aceita, acima da bolinha; corrige o disco do gerador da Arte. (6) Redimensionar não solta o dedo (correção de `soltarTudo` em `ControlesDeToque`). (7) V1 e pergunta 39 viram histórico. Pergunta 43 segue com padrão fixo e não bloqueia 111 a 119. (8) `style-guide.md` atualizado nos pontos de controle e de texto.
+- **Pedidos ao Produto (GDD 18.19):** 18.19.4 (distância euclidiana; `≤ 12` solta, `≥ 20` engaja; empate mantém a anterior), 18.19.7 (setor em anel na borda, só nas direções da tela), 18.19.8 (passo só da zona morta), TQ25 e TQ28 (setor ao engajar e sumir ao voltar à zona morta).
+- **Motivo:** a cruz sai com o PT4 (GDD 18.19); o contrato de menu não estava escrito (BUG-M5-04); o código atual solta o dedo a cada resize; o setor da Arte desenha disco, não borda.
+- **Quem decidiu:** Especialista (proposta). Orquestrador aceita ou ajusta; o Diretor decide só a pergunta 43.
+
+## 2026-11-09 — ADR-007 revisão 2 aceito (Orquestrador)
+- **Decisão:** ADR-007 revisão 2 aceito (joystick: função pura `direcaoDoAnalogico`, contrato de menu M1 a M7, captura do ponteiro, bloco `analogico` sem `cruzCss` nem `cursoCss`, setor em anel nas direções da tela, resize não solta o dedo). Pergunta 43 segue com padrão fixo. Ordem: v0.9.1 (correção) primeiro; Dev implementa a 0.10.0 depois do reteste do QA.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite).
+
+## 2026-11-09 — GDD 18.19 ajustado à revisão 2 do ADR-007 (Produto; backlog 111 a 113)
+- **Decisão:** GDD 18.19.3, 18.19.4, 18.19.6, 18.19.7, 18.19.8, 18.19.13 (TQ25 e TQ28), 18.19.14 e 18.19.16 atualizados conforme P13 a P17 e P19 a P22 do ADR-007. (1) Distância euclidiana. (2) `≤ 12` solta; `≥ 20` engaja só a partir do repouso; histerese até 12. (3) Empate exato mantém a direção anterior, ou nenhuma. (4) Setor em anel de 52 a 60 CSS px, único, ao engajar, só nas direções que a tela aceita. (5) Passo de menu só ao engajar: trocar de direção sem passar por `≤ 12` não dá passo. (6) `cruzCss` e `cursoCss` fora do perfil (`toque.analogico`: base 120, bolinha 48). (7) Redimensionar e `visualViewport` não soltam o dedo. (8) Regra de menu do BUG-M5-04: um empurrão (toque) = um passo; segurar não repete. (9) v0.9.1 (correção) sai antes da 0.10.0, com reteste do QA.
+- **Correção no TQ28:** o texto antigo dizia que a 30 CSS px a bolinha fica presa na borda. Com curso de 36, só a 40 fica presa; a 30 segue o dedo dentro do curso.
+- **Ponto para o Especialista (ADR-007 10.5):** o ADR diz que `soltarTudo` roda na troca de layout. Como o layout é recalculado em cada resize, um resize que cruze a faixa de 144 solta o dedo. O GDD segue o ADR (18.19.6). Se o Orquestrador preferir que resize nunca solte, o ADR muda.
+- **Consequência aceita (ADR P15):** o empate exato (|dx| = |dy|) sem direção anterior não engaja. Com dedos reais, o empate exato é raro.
+- **Status (backlog):** 111 pronto (ajustado); 112 aprovado; 113 em andamento (Arte: falta `cruzCss` fora do perfil, conferir PNGs e captura T7).
+- **Quem decidiu:** Produto (texto, seguindo a revisão 2 do ADR-007 aceita pelo Orquestrador em 2026-11-09).
+
+## 2026-11-09 — Joystick: resize e troca de layout (Orquestrador)
+- **Decisão:** resize ou rolagem do `visualViewport` que NÃO troca de layout não solta o dedo; troca de layout (A ↔ B, ao cruzar a faixa de 144 CSS px, ou giro do aparelho) solta o joystick (ADR-007 10.5 vale). O Especialista ajusta a frase do ADR e o status "aceito" no cabeçalho.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — v0.9.1 publicada (Diretor aprovou as capturas)
+- Artifact Version 13. Próximo: Dev implementa o joystick 0.10.0 (ADR-007 rev. 2). Pergunta 43 segue com padrão fixo.
+- **Quem decidiu:** Diretor ("Aprovado, publicar").
+
+## 2026-11-09 — Commit e PR do Marco 5 só no fim do marco (Diretor)
+- **Decisão:** não commitar agora. Ao finalizar o Marco 5 (joystick 0.10.0 aprovado pelo QA e pelo Diretor): dois commits (documentos e código), push da branch e entrega do link de comparação para a PR (o `gh` não está instalado; o Diretor abre a PR). Depois, sincronizar a branch com a base.
+- **Quem decidiu:** Diretor ("abra a PR quando finalizar o marco 5").
+
+## 2026-11-09 — Aprovação antecipada do joystick e liberação da próxima etapa (Diretor)
+- **Decisão:** o Diretor viu a captura do joystick (prévia da Arte) na conversa do agente. Quando o joystick (0.10.0) passar no QA, o Orquestrador aprova as capturas e publica a v0.10.0 sem nova rodada de aprovação, e segue para a próxima etapa: commit, push e link da PR do Marco 5, e abrir o Marco 6 (áudio, polimento) com o Produto. Se o QA reprovar ou aparecer decisão de visão, volto ao Diretor.
+- **Quem decidiu:** Diretor ("quando passar pelo QA, pode aprovar e seguir para a próxima etapa").
+
+## 2026-11-09 — Joystick 0.10.0: desvios do Dev aceitos (Orquestrador)
+- (1) Engajamento a partir de 12 < distância < 20 em repouso: vale o ADR (a função pura não guarda a última distância); parar em 15 e ir a 25 na mesma direção gera o passo. (2) `gestos.ts`: `preventDefault` do `touchmove` só se `e.cancelable` (sem efeito em aparelho real). (3) Bolinha a 100% de opacidade quando há dono. (4) Sem versão pressionada da base. (6) Multitoque base + A coberto por teste de unidade; o QA cobre emulado. (7) Os 8 `ctl_cruz_*.png` (não rastreados, sem registro) foram removidos. `comparar:capturas` (434 diferenças com `qa/baseline-014`): a linha de base 014 é anterior aos Marcos 3 e 4; não refazer agora, vai ao backlog do Marco 6.
+- **Quem decidiu:** Orquestrador (padrões), com aprovação antecipada do Diretor para o fluxo do joystick.
+
+## 2026-11-09 — v0.10.0 publicada; Marco 5 fechado pelo QA (Orquestrador, por autorização do Diretor)
+- Artifact Version 14. QA: joystick (118) e toque (106) aprovados; teclado (107) aprovado com pendências (F9, "Au!" do F6, F8 em diálogo), levadas ao PT4c e ao Marco 6. Observação de baixa severidade: o gancho `__alvosDeToque` ainda listou a base durante o fade (ferramenta de QA).
+- **Quem decidiu:** Orquestrador, seguindo a autorização do Diretor ("quando passar pelo QA, pode aprovar e seguir").
+
+## 2026-11-09 — Pergunta 43 respondida (Diretor)
+- **Decisão:** o joystick é FIXO (embaixo à esquerda, no lugar da cruz). Padrão confirmado; nada muda no código nem no GDD 18.19.
+- **Quem decidiu:** Diretor ("Joystick é fixo mesmo").
+
+## 2026-11-09 — Marco 6: escopo do Produto aceito (Orquestrador)
+- **Decisão:** versão 0.11.0 no PT5 (áudio e pausa são recursos novos); a tag 1.0.0 só depois do PT5 aprovado pelo Diretor; sem `-rc`. Padrões do GDD 19.11 aceitos ("Quase!" some na primeira tecla; mudo volta ligado ao recarregar; fonte fixa, piso de 12 px; áudio por síntese original, orçamento 160/12/320 KB e HTML ≤ 2,5 MB; arte nova em 1.x). Pergunta 44 (estilo da música) ao Diretor, padrão B. O Marco 5 está aprovado pelo QA e a observação do cartão do DanDan veio de uma captura minha (seleção em 844×390). Pendências 31 a 37 e 42 a 43 fechadas por implicação dos retornos do Diretor (PT3b, PT4a, PT4b e resposta à 43).
+- **Quem decidiu:** Orquestrador; Diretor decide a 44.
+
+## 2026-11-09 — Triagem de bugs do Marco 6 (Orquestrador)
+- **BUG-M12-02 (última linha da Sala andável):** já decidido na pergunta 31 (Diretor, 2026-11-09): só (0,9) e (1,9) ficam bloqueados sob a barra de 2 linhas; o resto da Sala segue como o Diretor aprovou. Fecha como decidido (item 132, QA confirma na captura).
+- **BUG-R15-01 (caixa de diálogo da condução cobre o tile da árvore):** já decidido em 2026-11-08 (diálogo da árvore forçado e no topo, condução automática); fecha, salvo reteste negativo do QA no item 132.
+- **BUG-R13-01, R14-01:** fechados por decisões de 2026-11-08, salvo reteste negativo.
+- **Fila do Dev:** 129 e 130 (P0), 131, BUG-R13-03 e o gancho do fade (P1); BUG-M2-05 só depois de confirmar com a Arte.
+- **Quem decidiu:** Orquestrador, com base nas decisões do Diretor já registradas.
+
+## 2026-11-09 — ADR-008 aceito (Orquestrador)
+- **Decisão:** áudio gerado offline (`tools-arte/gerar_audio.py`, MP3 mono 22.050 Hz, 32 kbps, base64 no HTML único) em vez de síntese no navegador; KB = 1000 bytes; música alvo de 36 s (144.000 bytes), em laço gapless (`loopStart`/`loopEnd`); `content/audio.json` e chave `audio` no manifesto (aditivo, `schemaVersion` 2); pasta `assets/audio/` (supera ADR-002 linha 129 e ADR-003 seção 3, só para áudio); licença por síntese original; ícones de som e de pausa não são controles de jogo (fora de `botoesDaTela`); pausa por cena sobreposta, só onde o "?" abre, com "Voltar ao título" confirmado e "Não" em foco; teste de áudio no iframe do artifact antes do PT5.
+- **Quem decidiu:** Especialista (técnico), Orquestrador (aceite). Pergunta 44 (estilo da música) segue com o padrão B.
+
+## 2026-11-09 — GDD e backlog ajustados ao ADR-008 (Produto)
+- **Decisão:** GDD 18.4 (nota: ícones de som e de pausa não são controles de jogo); 18.14 TQ22 (a) com "controle de jogo" (direções, A, B e "?"); 19.2.1 (alvo de 36 s, 144 000 bytes; música em todas as telas, incluindo diálogo, painel e conquista); 19.2.2 (regras R1 a R8); 19.2.3 (Esc não libera; liberação só por gesto dentro do iframe do artifact; artifact de teste antes do PT5, AU14); 19.2.4 (validação de `content/audio.json`); 19.2.6 (1 KB = 1000 bytes; música 160 000 bytes; aviso, sem reprovar, de HTML sem áudio acima de 2 000 000 bytes); 19.6 (decodificação ≤ 500 ms com CPU 4×); 19.7.3 (pré-requisito do artifact de teste); 19.9 (AU9 com o total dos efeitos; AU10 medido no efetivo; AU11; DS1; AU14 novo); 19.11 (u e v). Backlog: 122 aprovado; 123 a 128, 135 e 136 com os critérios do ADR-008 e as dependências na ordem da seção 12.
+- **Motivo:** o Dev, o QA e a Arte trabalham sobre o mesmo texto. O ADR-008 deixou em aberto as pendências de Produto da seção 15.
+- **Quem decidiu:** Produto (proposta), para validação do Orquestrador. Ponto de atenção: o R8 do ADR-008 listava as telas com música sem diálogo, painel e conquista. O GDD 19.2.1 diz "todas as telas", e foi o texto adotado. Se o Diretor preferir silêncio nessas três telas, muda-se R8 e 19.2.1.
+
+## 2026-11-09 — Faixa de passos da condução ajustada à rota medida (Produto, item 133)
+- **Decisão:** E7 = 13 passos e E20 = 17 passos, ambas em 2×, em GDD 15.3.5, 15.10 e 19.11 (l). A rota não muda. A faixa antiga (15 a 17 e 20 a 22) era estimativa, superada.
+- **Motivo:** QA mediu 10 e 14 trocas de tile nos 4 sobrinhos (`qa/evidencias/marco6-r5-rota.txt`); somados os 3 da passagem (15.3.5), 13 e 17. O QA reconfirma o total ao vivo (PO5) antes de fechar o 133.
+- **Quem decidiu:** Orquestrador (padrão: ajustar o GDD à rota medida); Produto registrou.
+
+## 2026-11-10 — Jingles de conquista e de créditos, versão 0.12.0 (Produto, retorno do PT5)
+- **Decisão:** um jingle por conquista (J01 a J05, 2,5 a 4 s) no lugar do S09 único; a trilha baixa (ducking) em vez de pausar, e volta do mesmo ponto; créditos tocam um jingle de Natal original (JC, 12 a 16 s) uma vez por cima da trilha. Total de 320 000 bytes mantido; previsão ≈ 296 000. Versão 0.12.0 (recurso novo, não patch). GDD 19.2.7, 19.9 (AU15 a AU20), 19.11 (w a y); backlog 143 a 148.
+- **Motivo:** pedido do Diretor no PT5 ("as páginas de conquista podem tocar músicas diferentes?" e "a página de crédito pode tocar um jingle de Natal?"); os áudios "estão legais".
+- **Quem decidiu:** Orquestrador (escopo); Produto (padrões acima). Pergunta aberta ao Diretor: créditos, uma vez ou em laço (19.11 y; padrão: uma vez).
+
+## 2026-11-10 — Marco 7 (GDD 20): imagens de título e fim, modo explorar, enfeites (Produto, pedido do Diretor)
+- **Decisão:** versão 0.13.0 depois da 0.12.0; título com a sala e a árvore, sem pessoas; tela de fim com os 4 sobrinhos (ordem LoLô, BiBi, DanDan, TuTu) antes dos créditos; créditos com "Voltar ao título" ou "Explorar a casa"; modo explorar sem missão, dica nem save; enfeites só no modo. Release: áudio e imagens fora do HTML (ADR-009), HTML gzip ≤ 727 KB.
+- **Motivo:** pedido do Diretor. DS2 mede 3,86 s com gzip (margem de 0,14 s, ~28 KB comprimidos); jingles de 0.12.0 e imagens embutidos estouram esse limite.
+- **Quem decidiu:** Produto (proposta), com o pedido do Diretor. Pendências do Diretor: P1 (publicar os desenhos de Nath e Ítalo no Pages), P2 (áreas do modo explorar), P3 (tela de fim própria ou fundo dos créditos). ADR-009 e ADR-010 são do Especialista.
+- **Texto da tela de fim sem nomes (2026-11-10, regra 034):** `fim.obrigado` = "Obrigado por jogar!" / "A árvore ficou linda." / "Feliz Natal!". Nenhum nome de sobrinho ou da família no texto do jogo, conforme decisão do Diretor sobre os créditos. Chaves `.toque.menu`: 12 existentes + 4 do Marco 7 = 16.
+- **Exceção de melodia de domínio público e tonalidades dos jingles (2026-11-10, Produto, a pedido do Especialista):** GDD 19.2.5 ganha exceção por arquivo. JC usa "We Wish You a Merry Christmas" (pedido literal do Diretor: "Não podemos usar um já conhecido mas adaptado para nossa versão?"), em sol maior. J05 cita 4 notas de "Jingle Bells" (decisão do Orquestrador, sujeita à escuta do Diretor). Tonalidades: J01 dó, J02 sol, J03 fá, J04 ré, J05 dó, JC sol. A trilha segue em dó maior.
+- **Ajustes do Produto aos ADR-009 e ADR-010 (2026-11-10):** vela elétrica examinável com texto próprio de luz piscando (`enfeite.vela`); cortina e pano de prato não respondem ao A; farejar no modo sem seta; interruptor sem ação no modo; pausa abre em explorar, e `podeAbrirPausa` deixa de ser igual a `podeAbrirDica` (a igualdade vale só em história); 0.12.0 na release só depois do ADR-009 e do `vite.audio.ts`; 0.13.0 com imagem de fim na release só depois da P1.
+- **Ajuste ao entregue (Arte, item 143, aceito pelo Orquestrador, 2026-11-10):** J04 3,0 s, J05 3,8 s, JC 15 s; conquistas em 0 dB (regra A6 de mixagem), JC em −2 dB; arquivos `jin_*.mp3`; `sfx_s09_conquista.mp3` sai do catálogo (total 299 998 bytes, não 308 479).
+- **Novo aceite AU21 (iPhone 16 Pro, interruptor de silencioso):** backlog 149; padrão do Produto: o jogo respeita o silencioso do aparelho. Só o Diretor testa, com o artifact de diagnóstico.
+
+## 2026-11-09 — Música em todas as telas (Orquestrador, padrão)
+- **Decisão:** a música de fundo toca em todas as telas (inclusive diálogo, painel e conquista), como no GDD 19.2.1; o ADR-008 R8 não cita essas três, então vale o GDD. O Diretor pode pedir silêncio nelas.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Perguntas 1 a 4 do pipeline de release respondidas (Diretor)
+- **1:** endereço padrão do GitHub Pages (`https://italo-zen.github.io/vila-do-natal/`), sem domínio próprio. **2:** repositório público. **3:** `main` vira o branch padrão do GitHub depois de a `main` receber o código (Diretor altera em Settings > Branches). **4:** sem nomes a acrescentar na lista de bloqueados do build.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-09 — Teste de áudio no artifact (AU14): funcionou (Diretor)
+- **Resultado:** o Diretor ouviu o teste (artifact privado de dois sinos) e o áudio funcionou dentro do artifact. A arquitetura do ADR-008 (liberação no primeiro gesto) é viável no PT5. Texto exato da caixa de estado não informado; aparelho e navegador não informados.
+- **Quem decidiu:** resultado informado pelo Diretor.
+
+## 2026-11-09 — Pergunta 44 respondida (Diretor)
+- **Decisão:** a música de fundo é a opção B: sinos e celesta sintetizados, acústicos e natalinos. Padrão confirmado; a Arte segue no estilo já em produção.
+- **Quem decidiu:** Diretor ("44) B").
+
+## 2026-11-09 — Arte entrega a trilha e os 13 efeitos (itens 123, Marco 6)
+- **Decisão:** áudio final aceito para integração: trilha 144.526 B (limite 160.000), efeitos somados 39.927 B, total 184.453 B (limite 320.000); maior efeito S09 com 8.481 B (limite 12.000). Desvios do ADR-008 aceitos: (1) ganhos de partida alterados em `content/audio.json` para passar A6(a)/(b): S04 -7, S05 -7, S06 -6, S08 0, S11 0, S12 -4, S13 -15, música -15; (2) atraso/preenchimento do MP3 lidos do ffprobe (ffmpeg 7.0.1 não grava na tag LAME); (3) nome do S13 = `sfx_s13_erro` (tabela da seção 5 prevalece sobre a 1.2). Laço da trilha: o meta traz `loopSeAparado` [0, 793800] e `loopSeNaoAparado` [1105, 794905]; o QA confirma por navegador qual vale.
+- **Pendências:** `tools/verificar-tamanho.mjs` reconhece a trilha por prefixo `musica` e deve usar `mus_` (Generalista); item 124 (ícones) é do Dev; aprovação da faixa pelo Diretor (critério 7) depende de ouvir no jogo.
+- **Quem decidiu:** Orquestrador (desvios técnicos pequenos, dentro do ADR); pergunta de volume ao Diretor.
+
+## 2026-11-09 — Volume da música mantido no padrão (Diretor)
+- **Decisão:** a trilha fica 10 dB abaixo da média dos efeitos (padrão AU10, ganho -15 em `content/audio.json`). Só sobe depois de ouvir no jogo, se o Diretor pedir.
+- **Quem decidiu:** Diretor ("Manter padrão").
+
+## 2026-11-09 — Polimento do Marco 6 aprovado (Diretor)
+- **Decisão:** nome do DanDan em 14 px (os outros em 16); rótulos de móveis em 16 px e "Au!" em 12 px (piso de 12 px do item 131). Itens 129, 130, 131, 134 e BUG-R13-03 entregues. As capturas da casa passam a ser a nova referência: o QA refaz `qa/baseline-0100` antes das rodadas.
+- **Quem decidiu:** Diretor ("aprovado").
+
+## 2026-11-09 — Ícones de pausa e som aprovados em creme (Diretor)
+- **Decisão:** item 124 aceito: seis sprites em `assets/hd-480x352/ctl_*` (pausa, som ligado, som desligado, normal e pressionado). Desenho em creme #f4e9c8; pressionado em dourado #f4d35e com desenho #0b1030. Som desligado distinto pelo risco, não só pela cor. Entrada em `botoesDaTela` fica com o Dev no item 126.
+- **Quem decidiu:** Diretor ("Manter").
+
+## 2026-11-09 — Áudio, pausa e ícones integrados; ícone de som do título em y=2 (Diretor)
+- **Decisão:** itens 125, 126, 127 e 128 entregues (826 testes). Ícone de som do título em y=2 (não y=8) para não encostar no nome do jogo. Desvios aceitos do ADR-008: casa dorme (`scene.sleep`/`wake`) na pausa, em vez de `pause`/`resume`; `__estado()` fora da casa devolve objeto com `mapa: null` (roteiros do QA checam `e.mapa`); áudio entra por `virtual:audio`, sem `FonteDeAudio`.
+- **Quem decidiu:** Diretor ("aprovo"); desvios técnicos: Orquestrador.
+
+## 2026-11-09 — Mudo: a música silencia e volta do mesmo ponto (Orquestrador)
+- **Decisão:** vale o código e o GDD 19.2.3: o mudo silencia a música (ela segue rodando sem som). O texto de AU4 no checklist passa a "a música silencia". Padrão aplicado por mim (divergência de spec, P3 do QA).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — PO3 corrigido; DS2 por transferência de rede; build enxuto do Phaser (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** PO3 (P1) corrigido (zona de toque do "Voltar ao título" começa na linha de baixo dos cartões, ≥ 48 CSS px). DS2: o tempo é transferência de rede (Fast 4G emulado: 9,4 s sem gzip, 3,9 s com gzip; decodificação do áudio 16–32 ms, não atrasa o título). Aplicada a sugestão do Dev: build enxuto do Phaser (só os módulos usados) para dar margem antes do PT5. `npm run verificar:audio` criado (AU10 e AU11).
+- **Quem decidiu:** Orquestrador, aplicando a sugestão do Dev como padrão; o Diretor é avisado.
+
+## 2026-11-09 — DS2: build enxuto do Phaser testado e revertido; fica o build atual (Orquestrador)
+- **Decisão:** o núcleo enxuto do Phaser deu HTML 1.411 KB (-26%), gzip 614 KB (-17%), título 3,23 s contra 3,86 s (-16%), abaixo do corte de 20%; revertido. Mantém-se o build atual: com gzip o título sai em 3,86 s (limite 4 s, Fast 4G emulado). Build customizado do Phaser a partir da fonte descartado (manutenção). A medida real fica para o QA no artifact/Pages e o PT5 no aparelho. Experimento guardado no scratchpad (`experimento-phaser-enxuto/`).
+- **Quem decidiu:** Orquestrador (dentro do padrão "siga suas sugestões"; o Diretor é avisado e pode pedir o contrário).
+
+## 2026-11-09 — AC4: pisca medido por ciclos, não por quadros (Orquestrador)
+- **Decisão:** a "caixa que muda 20x/s" do Hall é o bilhete (tween de alfa 1→0,6, ciclo de 1,8 s). O limite do AC4 (≤ 3 ciclos/s) vale para pares de inversões de luminância com variação ≥ 10%, não para quadros que mudam. Períodos dos pulsos em `src/presentation/ui/pisca.ts` (halo 2000, brilho 2000, bilhete 1800, seta 900 ms), teste `pisca-limite`. Aparência inalterada (351 capturas idênticas). Amplitude do bilhete não muda sem decisão do Diretor (GDD 14.4).
+- **Quem decidiu:** Orquestrador, seguindo o Dev.
+
+## 2026-11-09 — P na Sala depois das luzes: por projeto, item 137 sem bug aberto (Orquestrador)
+- **Decisão:** o P3 do QA (P não abre a pausa na Sala depois das luzes) é por projeto (GDD 19.3.1: a pausa só abre na exploração; ~4,7 s de bloqueio por diálogo, conquista e condução, e abre na primeira tentativa livre). Sem bug P0 a P3 aberto no jogo; DS2 (gzip) e o ícone no fade (só no gancho) ficam como observações. Item 137 aceito pelo Orquestrador como fechado no alcance do QA automatizado; escuta (AU13), aparelho real (AC7, DS6) e Firefox/WebKit ficam com o Diretor no PT5.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-09 — Item 136: checagem de rede do release com exceções documentadas (Orquestrador)
+- **Decisão:** aceito o desvio do ADR-008 8.4: `verificarConteudoDoHtml` exige 14 áudios embutidos, nenhum .mp3 como caminho, nenhum `rascunho`, e nenhum http(s) em src/href/url() (exceto w3.org), com exceções só para código de biblioteca (polyfill de pré-carregamento do Vite, 1 XMLHttpRequest do Phaser, `importScripts` como detecção). Zero literal exigiria mexer no build/motor e fica descartado. O passo "Áudio (AU10 e AU11)" entra no release.yml (ffmpeg e numpy do apt); só um `workflow_dispatch` no GitHub prova o passo, o que fica para o release.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.0 publicada para o PT5 (Diretor)
+- **Decisão:** build de playtest 0.11.0 (jogo completo com música, 13 efeitos, pausa e mudo) publicada no artifact do jogo, Version 15 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP). Item 137 fechado no alcance automatizado; escuta (AU13), aparelho real (AC7, DS6) e Firefox/WebKit ficam no PT5.
+- **Quem decidiu:** Diretor ("pode aprovar e publicar").
+
+## 2026-11-10 — Retorno parcial do PT5 (Diretor)
+- **Retorno:** no macbook o som saiu normalmente; no iPhone 16 Pro não saiu nada. Os áudios "estão legais". Pedidos: músicas diferentes nas páginas de conquista; jingle de Natal na página de créditos.
+- **Classificação:** bug P1 (iOS sem som) → Dev, com artifact de diagnóstico para o aparelho; ajustes de áudio (conquistas e créditos) → Produto, depois Arte e Dev. Escuta (AU13) aprovada no macbook.
+- **Quem decidiu:** Orquestrador classificou; Diretor deu o retorno.
+
+## 2026-11-10 — Créditos: o jingle toca uma vez (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** o jingle de Natal dos créditos (JC, 12 a 16 s) toca uma vez por cima da trilha, com ducking de 10 dB, e a trilha volta. Não toca em laço (cansa, e os créditos ficam o tempo que a pessoa quiser). Escopo do ajuste 0.12.0 aceito (backlog 143 a 148); o Diretor é avisado.
+- **Quem decidiu:** Orquestrador, aplicando a sugestão do Produto.
+
+## 2026-11-10 — Bug P1 do iPhone: conserto de decodificação e destrava; diagnóstico publicado (Orquestrador)
+- **Decisão:** causas prováveis (1) decodificação tudo-ou-nada no `Som` (uma falha no WebKit derrubava trilha e efeitos) e (2) chave de silencioso do iPhone silenciando o Web Audio (confirmado: chave ligada, Chrome no iOS = WebKit). Conserto aplicado pelo Dev: decodificação isolada por arquivo com nova tentativa no gesto, `navigator.audioSession.type = 'playback'`, `<audio>` silencioso no caminho de mídia, destrava a cada gesto até "running"; 851 testes. Não validado em aparelho real. Artifact de diagnóstico privado (https://claude.ai/artifact/TjueYFhSdymf4o3vw52Lm4) para o Diretor testar com o silencioso ligado e desligado. Se o truque de mídia não bastar, o próximo passo é aviso de produto ("no iPhone, desligue o silencioso").
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Jingles J01–J05 e JC entregues; cortes de duração aceitos (Orquestrador, padrão "siga suas sugestões")
+- **Decisão:** item 143 entregue (`assets/audio/jin_*.mp3`, `audio-meta.json`, `docs/audio-licencas.md`, `assets/audio/audio-jingles-proposta.json`). Aceitos os cortes para caber em 64.000 B somados: J04 3,0 s (era 3,5), J05 3,8 s (era 4,0), JC 15 s (era 16); ganho das conquistas em 0 dB (GDD 19.2.7 d dizia -2 dB; com -2 dB elas ficavam 3,7–4,2 dB abaixo do S09 e a regra A6 falhava), JC em -2 dB. Áudio total 308.479 B de 320.000. JC é melodia original em 3/4, sem direitos a citar. O GDD 19.2.7 deve ser ajustado a esses valores. Pendências: `verificar-tamanho` precisa reconhecer `mus_`, `jin_j0` e `jin_jc` (Generalista, item 147); schema e integração (Especialista 144, Dev 145). A pré-escuta fica com o Diretor.
+- **Quem decidiu:** Orquestrador, aplicando a sugestão da Arte.
+
+## 2026-11-10 — Jingles: mais distintos e JC com carol tradicional (Diretor)
+- **Decisão:** (1) os cinco jingles de conquista devem ser bem diferentes entre si (tonalidades, ritmos e timbres próprios; a J05 pode citar "Jingle Bells"); (2) o jingle dos créditos usa a melodia tradicional de "We Wish You a Merry Christmas" (domínio público; arranjo nosso original, sem o arranjo de Warrell de 1935). A regra "dó maior" do GDD 19.2.7 deixa de valer para os jingles; o Produto ajusta. Limites de bytes mantidos.
+- **Quem decidiu:** Diretor (retorno do PT5, pedido de 2026-11-10).
+
+## 2026-11-10 — AU21 (silencioso do iPhone): padrão do Produto em aberto, pergunta ao Diretor (Orquestrador)
+- **Situação:** o Produto escreveu em AU21 que "o jogo respeita o silencioso do aparelho". O Dev, porém, aplicou o caminho de mídia (`audioSession='playback'` e `<audio>` silencioso), cuja intenção é tocar mesmo com o silencioso ligado. As duas coisas se contradizem; a decisão é do Diretor. Até a resposta, vale o conserto do Dev e o AU21 fica pendente. Sugestão: respeitar o silencioso (convenção do iOS, evita som em sala de aula e igreja) e, se o Diretor preferir tocar sempre, manter o caminho de mídia.
+- **Quem decidiu:** pendente (Diretor).
+
+## 2026-11-10 — O jogo respeita o silencioso do iPhone (Diretor)
+- **Decisão:** com a chave de silencioso ligada o jogo fica mudo; com ela desligada toca normalmente, sem recarregar. Remove-se o truque de mídia (`audioSession='playback'`, `<audio>` silencioso). Fica a decodificação isolada por arquivo com nova tentativa e a destrava a cada gesto (corrigem falhas reais do WebKit). AU21 vale como o Produto escreveu. O ícone de som continua sendo o mudo do jogo.
+- **Quem decidiu:** Diretor ("respeite o silencioso").
+
+## 2026-11-10 — Jingles refeitos (item 143, revisão a pedido do Diretor); aguardam escuta
+- **Decisão:** J01 dó maior (celesta, caixinha de música), J02 sol maior (tercinas de celesta), J03 fá maior (sinos em quintas), J04 ré maior (sinos com tremolo), J05 dó maior com citação de 4 notas de "Jingle Bells" (domínio público), JC em sol maior com a melodia tradicional de "We Wish You a Merry Christmas" em 3/4 a 128 BPM (arranjo nosso). Durações: J05 3,6 s, JC 15,5 s; J01–J05 somam 62.674 B (limite 63.500), JC 62.502 B, áudio total 309.629 B de 320.000. A melodia do JC foi escrita de memória: a escuta do Diretor confirma se é reconhecível. Integração (item 145) só depois da aprovação.
+- **Quem decidiu:** Orquestrador aceitou; Diretor aprova na escuta.
+
+## 2026-11-10 — ADR-008 rev. 2 aceita; S09 vira família de jingles (Orquestrador)
+- **Decisão:** (1) rev. 2 do ADR-008 aceita, com a decisão "respeite o silencioso" (a falta de som com a chave ligada é comportamento do sistema, não bug); (2) o efeito único `sfx_s09_conquista` sai do embutimento e de `assets/audio/` e do meta quando o Dev integrar os jingles (item 145, critério 7); sem fallback; build 0.12.0 com 19 arquivos embutidos; (3) prefixo `jin_`, durações e ganhos da entrega da Arte; (4) ducking e rampas em constante de código (`presentation/audio/jingle.ts`), não em JSON, e `audio-jingles-proposta.json` não entra em `content/audio.json`; (5) `schemaVersion: 2` aditivo. Generalista ajusta `verificar:tamanho` (item 147) em paralelo; Dev integra (145) só depois da aprovação do Diretor na escuta.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.1: patch do conserto de áudio no iPhone (Diretor)
+- **Decisão:** o diagnóstico no iPhone (silencioso desligado) mostrou decodificação 14/14 e saída pelo Web Audio. Publica-se a v0.11.1 (conserto: decodificação isolada por arquivo, destrava a cada gesto, respeito ao silencioso), sem os jingles (0.12.0). Aprovada pelo Diretor ("sim").
+- **Quem decidiu:** Diretor.
+
+## 2026-11-10 — v0.11.1 publicada (Diretor aprovou)
+- **Decisão:** build de playtest 0.11.1 (conserto de áudio no iPhone, sem jingles) publicada no artifact do jogo, Version 16 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP). 847 testes, 14 áudios embutidos, HTML 1.898,5 KB. As 5 capturas com versão da baseline mudam só pelo texto; o QA as atualiza na próxima rodada.
+- **Quem decidiu:** Diretor ("sim").
+
+## 2026-11-10 — Silêncio no iPhone: bug real do laço achado; build de diagnóstico do jogo publicada (Orquestrador)
+- **Decisão:** o Dev achou um bug real (não explica o silêncio total): o laço da trilha comparava amostras de taxas diferentes e laçava só 18 s (44,1 kHz) ou 16,5 s (48 kHz) de 36 s; agora decide em segundos com a taxa do buffer (`intervaloDoLaco`). Também: música iniciada com o contexto suspenso é refeita quando vira "running"; `retomar()` e os descartes de efeitos deixam rastro em `estado()`. 855 testes. Não confirmado em aparelho: a causa do silêncio total no iPhone segue sem prova. Build de diagnóstico do jogo (flag `__DIAG__`, fora dos builds oficiais) publicada como artifact privado (https://claude.ai/artifact/5Tkxtptk8HTT2pyFLC2gGU) com painel de texto copiável. Versão do jogo segue 0.11.1; as correções entram na 0.11.2 depois do diagnóstico.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — v0.11.2: correções de áudio sem painel, a pedido do Diretor
+- **Decisão:** o build de diagnóstico tocou no iPhone; o Diretor pediu para tirar a caixa de texto e testar. v0.11.2 = correções do laço (segundos, não amostras), música refeita ao virar "running" e rastros de erro, sem painel nem `__DIAG__` nos builds oficiais. Causa exata do silêncio na v0.11.1 não foi isolada (as correções juntas resolveram); o painel de diagnóstico fica como ferramenta de QA fora do release.
+- **Quem decidiu:** Diretor ("pode tirar a caixa de texto para eu testar").
+
+## 2026-11-10 — v0.11.2 publicada sem painel (Diretor pediu para testar)
+- **Decisão:** build de playtest 0.11.2 publicada no artifact do jogo, Version 17 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP): laço da trilha em segundos, música refeita ao virar "running", rastros de erro no `Som`, respeito ao silencioso, sem painel nem `__DIAG__` (conferido em dist-playtest e dist-release). 855 testes, HTML 1.898,5 KB, 14 áudios embutidos, `verificar:release` OK na 0.11.2.
+- **Quem decidiu:** Diretor ("pode tirar a caixa de texto para eu testar").
+
+## 2026-11-10 — v0.11.2 confirmada no iPhone; commits do Marco 6 e PR; novo escopo (Marco 7)
+- **Decisão:** o Diretor confirmou que o som funciona no iPhone com a v0.11.2 ("Deu certo!"). Pediu o link da PR: commits do Marco 6 (docs f94a44a e código edd2f87, v0.11.2) enviados por push; a PR reúne os Marcos 5 e 6 contra `setup/estrutura-de-agentes`. Novo escopo pedido pelo Diretor, Marco 7 (0.13.0): imagem do título só com a árvore, imagem do fim com árvore + Nath + Ítalo + Nick + sobrinhos, modo "Explorar a casa" depois dos créditos com mais enfeites de Natal em todos os cômodos. Imagens do Diretor guardadas fora do Git em `assets/referencia/diretor-2026-11-10/` (ordem permanente: referências não vão ao Git). Os jingles da 0.12.0 seguem à espera da escuta do Diretor.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-10 — Publicação sem aceite prévio; P2 e P3 do Marco 7 (Diretor / Orquestrador)
+- **Decisão (Diretor, literal):** "Quando finalizar, publique novamente, não precisa do meu aceite." Vale para a entrega em curso (jingles 0.12.0 e Marco 7, 0.13.0): quando o trabalho estiver finalizado e passar pelo QA, o Orquestrador publica o artifact sem esperar a aprovação das capturas; o Diretor ouve e joga depois e dá o retorno. As capturas continuam inspecionadas pelo Orquestrador antes de publicar.
+- **Decisão (Orquestrador, padrão "siga suas sugestões"):** P2: o modo explorar cobre só as áreas que já abrem (Hall, Sala, Cozinha, Lavanderia, Quarto, Escritório); P3: a imagem de fim é tela própria antes dos créditos. P1 (publicar no Pages os desenhos de Nath e Ítalo na imagem de fim) fica com o Diretor e é perguntado antes da release 1.0.0, porque o repositório é público; não bloqueia o artifact. ADR-009 (release com áudio e imagens fora do HTML) aceito como direção; o playtest segue em HTML único.
+- **Quem decidiu:** Diretor (publicação); Orquestrador (P2, P3 e direção do ADR-009).
+
+## 2026-11-10 — ADR-009 e ADR-010 aceitos (Orquestrador)
+- **Decisão:** (1) ADR-009: playtest segue HTML único com tudo embutido; a release tem `index.html` só com código, sprites e textos (gzip ≤ 727.000 B) e `audio/` e `imagens/` com nome por hash, carregados depois do título, com 3 tentativas e falha silenciosa; (2) ADR-010: modo `historia`|`explorar` só em memória; enfeites em `content/maps/decoracao/<subarea>.json` fora do conversor, 25 objetos, só visuais; (3) `podeAbrirPausa` deixa de ser igual a `podeAbrirDica`; (4) a release da 0.12.0 espera o ADR-009 e a correção do `vite.audio.ts` (Dev, junto do item 145); a release da 0.13.0 com a imagem de fim espera a resposta P1 do Diretor (publicar no Pages os desenhos de Nath e Ítalo); (5) vela elétrica examinável, farejar sem seta e interruptor sem ação no modo explorar (padrão do Produto); (6) pré-condição: Generalista mede a release com e sem áudio (727 KB do DS2 pode incluir o áudio da 0.11.0). O artifact (HTML único) não é afetado.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Medida de referência do ADR-009 e limite de 727 KB (Orquestrador)
+- **Medida (Generalista, gzip nível 6):** release atual COM áudio (19 arquivos, schema 2 em andamento): 858.478 B; SEM áudio: 568.396 B (áudio = 290.082 B); playtest com 14 áudios: 743.406 B; sem áudio: 565.494 B. Os 727 KB do QA (DS2, 3,86 s) correspondem ao HTML com os 14 áudios da 0.11.x.
+- **Decisão:** mantém-se o ADR-009. O teto de 727.000 B gzip passa a valer para o HTML da release SEM áudio e SEM imagens (hoje ~568 KB, margem de ~159 KB e ~0,8 s no mesmo método); com áudio e imagens fora do HTML o título volta a ~3 s. O artifact (HTML único) fica maior (≈ 860 KB gzip com jingles, mais as imagens): é playtest em rede normal, sem o requisito de 4 s a 1,6 Mbps; o requisito DS2 vale para a release. `verificar:release`/`verificar:tamanho` aplicam 727.000 B só ao HTML de release sem recursos externos (item 159, Generalista + Dev, depois do ADR-009 implementado).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Marco 7: imagens e enfeites entregues pela Arte; título sem véu (Orquestrador)
+- **Decisão:** itens 151 a 153 entregues: `tela_titulo.png` (31.422 B) e `tela_fim.png` (40.646 B), 480×352, 32 cores, derivadas das referências do Diretor por recorte 3:2, reamostragem por área e quantização (não repintadas à mão); 12 sprites de enfeite (3.476 B somados, limite 16.000) e 25 posições em 5 mapas (Hall 4, Sala 8, Cozinha 6, Quarto 4, Escritório 3; a Lavanderia não tem mapa próprio e os 6 enfeites vão na Cozinha). O título volta a ser gerado SEM o véu creme (mancha visível na base da árvore; a ordem é "apenas a árvore"); o contraste das caixas vira contorno escuro de 1 px e fundo opaco no jogo (Dev, item 157). Repintura à mão fica como melhoria futura se o Diretor pedir. Posições passam ao formato do ADR-010.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Item 145 aceito (jingles integrados, 0.12.0); Marco 7 passa ao Dev (Orquestrador)
+- **Decisão:** jingles J01–J05 e JC integrados (schema 2, ducking, cortes, gancho, testes AU15–AU20, 22 testes de jingle), plugin de áudio tratando `variante`/`conquistas`/`creditos`, 19 áudios embutidos, HTML 2.076,7 KB, áudio 301,1 KB de 320, `sfx_s09_conquista.mp3` removido, `audio-jingles-proposta.json` apagado. Números finais pelo meta: J05 3,6 s, J01–J05 62.674 B, JC 15,5 s e 62.502 B; Produto e Especialista atualizam GDD e ADR. `verificar:audio` falha até a Arte atualizar `gerar_audio.py` (não gera mais o S09). Dev segue com os itens 157 e 158 (versão 0.13.0).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Marco 7 implementado (0.13.0); ajustes visuais antes do QA (Orquestrador)
+- **Decisão:** o Dev entregou título com imagem, FimScene (tela própria antes dos créditos, JC tocado ao abrir), créditos com "Voltar ao título" e "Explorar a casa", modo explorar (nasce na Sala (3,7), Nick atrás, sem missão/dica/"?", pausa abre, B fareja sem seta) e 25 enfeites (manifesto `decoracao`, E1–E9), 948 testes, HTML 2.180,3 KB, versão 0.13.0. Inspeção das capturas pediu ajustes: (1) o título cobre quase toda a árvore: nome e botões vão para a metade esquerda e a árvore fica livre; (2) em créditos "Versão 0.13.0" colide com "Créditos"; (3) vários enfeites flutuam no vazio (a parede não é desenhada) e o pano de prato cobre o rótulo "Fogão": todo enfeite passa a ficar sobre tile visível e fora de rótulos. Pendentes: ADR-009 na release (item 159), P1 (rosto de Nath e Ítalo no Pages), EN4, TI2, EX em jogo completo (QA).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Enfeites reposicionados sobre tiles visíveis (Orquestrador)
+- **Decisão:** 25 enfeites só sobre piso ou móvel desenhado, fora de rótulos de móvel de 2+ tiles. Hall (4) e Quarto (4) só com presentes e mini-árvores no piso (sem móvel); Sala (8): mini-árvores, presentes, meias, luz sobre o sofá, guirlanda e vela sobre a estante; Cozinha (6): pano de prato na pia, meias, mini-árvores e presentes; Escritório (3): mini-árvore, luz e meias sobre a cama. Sem uso no mapa: dec_cortina, dec_estrela, dec_bola (ficam no atlas). Atlas dec_* 2.710 B. O GDD 20.6 (tipos por cômodo) deve refletir isso.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-10 — Regra de regressão do QA (Orquestrador, após pergunta do Diretor)
+- **Decisão:** a regressão de marcos antigos roda uma vez por rodada, só com os scripts já existentes (menus e créditos por teclado, fluxo combinado, smoke:*, comparar:capturas), e é registrada como "regressão" no relatório. O tempo manual das rodadas de 15 min vai para o que é novo ou ainda não foi testado. A regra dos 15 min cheios continua. Aplicada a partir da rodada 2 do Marco 7.
+- **Quem decidiu:** Orquestrador (sugestão aceita implicitamente pelo Diretor; pode ser revista).
+
+## 2026-11-10 — v0.13.0 publicada (Marco 7 + jingles); itens 146 e 160 aceitos no alcance automatizado (Orquestrador; publicação sem aceite prévio, ordem do Diretor)
+- **Decisão:** build de playtest 0.13.0 publicada no artifact do jogo, Version 18 (https://claude.ai/artifact/CoeWrzbkQBsnmStFsnBqNP): jingles J01–J05 e JC, tela de fim (imagem com a família), créditos com "Voltar ao título" e "Explorar a casa", modo explorar com 25 enfeites, título com a imagem da árvore. 951 testes, HTML 2.065,4 KB, 19 áudios embutidos (301,1 KB), `verificar:audio` ok. QA: P0 BUG-M7-01 corrigido (fim por toque no layout B) e confirmado; fluxo completo por toque nos dois layouts OK; sem bug aberto. Itens 146 e 160 aceitos no alcance automatizado; sobram: TI2 (depende do ADR-009 na release), exploração de 5 min em 667×375 (feitos 2 min, 0 erros), barra do fim cobre a base dos corpos (FI2, rostos livres: mantido), texto "A ou B: continuar" sem botão B tocável (P3: ajustar o texto numa versão seguinte).
+- **Quem decidiu:** Orquestrador; Diretor autorizou publicar sem aceite.
+
+## 2026-11-12 — P1: desenhos de Nath e Ítalo no GitHub Pages; PT5 aprovado (Diretor)
+- **Decisão (literal):** "o playtest está ótimo e pode publicar os desenhos no github pages". P1 respondida: a imagem de fim, com os desenhos de Nath e Ítalo, entra na release pública (repositório público, GitHub Pages). PT5 aprovado pelo Diretor na v0.13.0. A release 1.0.0 fica liberada depois do item 159 (ADR-009), do commit e da PR do Marco 7, do teste manual do workflow e da conferência de gzip no Pages.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-12 — Item 159 (ADR-009), parte do Dev, aceito; título da release a 3,1 s (Orquestrador)
+- **Decisão:** release com áudio (19 arquivos) e imagens (2) fora do HTML: HTML 1.687.148 B (gzip 574.043 B, limite 727.000), recursos com hash em `audio/` e `imagens/` e `recursos.json`; carregador com fila de 4, 3 tentativas e timeout de 15 s; falhas silenciosas; playtest inalterado; 971 testes. Título desenhado em 3,115 s no método do QA (Fast 4G emulado): aceito, o requisito é ≤ 4 s (a meta de 3,0 s era mole); `smoke:release` reprova só acima de 3,5 s. Melhoria futura (opção a do Dev): desenhar o título antes dos sprites. Generalista adapta `verificar:tamanho`, `verificar:release` e o workflow ao modo externo. A imagem de fim fica na release (P1: sim).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-12 — Item 159 completo (Generalista); exceções da checagem de rede aceitas (Orquestrador)
+- **Decisão:** `verificar:tamanho` e `verificar:release` cobrem os dois modos (release externa e playtest embutido); o workflow publica a pasta `dist-release/` inteira no Pages e um zip na GitHub Release, com o passo "Smoke da release" (`smoke:release`); actions por SHA, disparo só por tag e `workflow_dispatch`. Aceitas as exceções: os dois textos `https://phaser.io` do Phaser (banner e configuração) são aviso, não requisição; no máximo 2 chamadas `fetch(` (polyfill do Vite e carregador do jogo), uma terceira reprova; o atlas dec_* (3.476 B) embutido no HTML com limite de 16.000 B. O smoke depende do Chrome do runner `ubuntu-24.04`; só um `workflow_dispatch` no GitHub confirma (alternativa: `npx playwright-core install --with-deps chromium`). Passo do smoke obrigatório no job de verificação.
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-12 — Commits do Marco 7 e push (Diretor autorizou)
+- **Decisão:** commits `0dd9b89` (documentação) e `d6faf22` (código, v0.13.0) enviados por push na branch `claude/marco-1-orchestration-c3b37a`; a PR cobre os Marcos 5, 6 e 7 contra `setup/estrutura-de-agentes`. Fora do Git, como ordenado: referências e imagens do Diretor, `assets/teste-sprite-hd/`, `dist-*`, `qa/evidencias/`, `qa/baseline-*`, `our-home.tmx`.
+- **Quem decidiu:** Diretor ("sim").
+
+## 2026-11-12 — PR dos Marcos 5, 6 e 7 mergeada (Diretor)
+- **Decisão:** a PR #6 (Marcos 5, 6 e 7, até a v0.13.0) foi mergeada em `setup/estrutura-de-agentes` (merge `8126d2f`). Branch de trabalho sincronizada com a base. Próximo: Pages (Settings → Pages, fonte "GitHub Actions"), `main` como branch padrão, execução manual do workflow, conferência de gzip no Pages e tag v1.0.0.
+- **Quem decidiu:** Diretor ("merged").
+
+## 2026-11-12 — PT5 com criança e adulto confirmado (Diretor)
+- **Decisão:** "aconteceu o jogo com adulto e criança" (literal). Critério 1 do GDD 19.7.2 (criança e adulto jogando juntos) atendido; sem travas nem confusões relatadas. Falta só a triagem final de bugs do QA e os passos do GitHub antes da tag v1.0.0.
+- **Quem decidiu:** Diretor.
+
+## 2026-11-12 — Triagem final do QA: P1 no título do playtest; 1.0.0 segura (Orquestrador)
+- **Decisão:** a triagem de `qa/bugs.md` fechou 25 entradas, marcou 6 como não reproduzidas, 4 como "não é bug", 2 como fechadas por decisão, 3 limitações conhecidas (P3) e 2 P3 abertos; achou 1 P1: no playtest embutido (e no build de QA) da 1.0.0 o título não mostra a imagem da árvore (regressão provável do item 159; a release servida por HTTP mostra). Verifiquei que as imagens estão no HTML (data URL); o defeito é de runtime. A 1.0.0 só sai depois do conserto (nenhum P0/P1 aberto). Os Conhecidos para o CHANGELOG 1.0.0 vêm da triagem. O artifact publicado (v0.13.0, Version 18) não é afetado (build anterior ao item 159).
+- **Quem decidiu:** Orquestrador.
+
+## 2026-11-13 — QA em até 10 minutos e respostas curtas (Diretor)
+- **Decisão (literal):** "Reduza a quantidade de informações que você responde aqui. Mande apenas o realmente necessário. Diminua o tempo de QA para até 10 minutos." Cada rodada de QA passa a ter no máximo 10 min (antes 15); respostas ao Diretor curtas.
+- **Quem decidiu:** Diretor.

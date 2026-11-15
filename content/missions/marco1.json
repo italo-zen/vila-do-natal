@@ -1,0 +1,40 @@
+{
+  "id": "marco1",
+  "inicio": {
+    "mapa": "hall",
+    "spawn": "elevador",
+    "paginas": [
+      "intro.1",
+      "intro.2",
+      "intro.3",
+      "intro.4"
+    ]
+  },
+  "conducao": {
+    "luzes": {
+      "mapa": "sala",
+      "x": 3,
+      "y": 7,
+      "direcao": "baixo"
+    }
+  },
+  "conquistas": {
+    "luzes": "conquista.luzes"
+  },
+  "nick": {
+    "dorme": {
+      "mapa": "sala",
+      "x": 8,
+      "y": 5,
+      "direcao": "baixo"
+    },
+    "alvo": "sala"
+  },
+  "dica": {
+    "porta": "dica.porta",
+    "luzes": {
+      "dormindo": "dica.luzes.dormindo",
+      "acordado": "dica.luzes.acordado"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+// Diagnóstico: fim → créditos → "Explorar a casa" pelo teclado; eventos de áudio (JC) e estado. Só observa.
+import { lancar, novoContexto, abrirJogo, tecla, sleep } from './lib.mjs';
+import { estado } from './lib-rota.mjs';
+import { pathToFileURL, fileURLToPath } from 'node:url';
+import { join, dirname, resolve } from 'node:path';
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const url = pathToFileURL(resolve(RAIZ, 'dist-qa', 'index.html')).href;
+const b = await lancar();
+const c = await novoContexto(b, { url, origem: url, rotulo: 'd2' });
+const p = await abrirJogo(c, url);
+const est = async () => { try { return await estado(p); } catch { return null; } };
+await p.evaluate(() => { window.__partidaConcluida('lolo', false); window.__irPara('Fim', {}); });
+await sleep(3500);
+let a = (await est())?.audio;
+console.log('fim eventos:', (a?.ultimosEventos ?? []).map((e) => e.evento).join(' '), 'jingle', JSON.stringify(a?.jingle).slice(0, 80));
+await tecla(p, 'KeyZ', { ms: 90, pausa: 900 });
+await tecla(p, 'ArrowDown', { ms: 90, pausa: 400 });
+await tecla(p, 'KeyZ', { ms: 90, pausa: 1500 });
+const e = await est();
+console.log('após Explorar: mapa', e?.mapa, 'tile', e?.tileX, e?.tileY, 'nick', e?.nick?.estado, 'dica', e?.dicaAberta);
+await c.close(); await b.close();

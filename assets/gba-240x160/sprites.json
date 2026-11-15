@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "perfil": "gba-240x160",
+  "imagens": [
+    {
+      "arquivo": "spr_arvore_desmontada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_bibi_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bibi_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_bilhete.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_dandan_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_dandan_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_interruptor.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lampada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lolo_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_lolo_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_porta.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_celebrate.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_idle.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_interact.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tutu_walk_down.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_left.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_right.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "spr_tutu_walk_up.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2
+    },
+    {
+      "arquivo": "tiles_casa.png",
+      "tipo": "tileset",
+      "quadro": {
+        "w": 16,
+        "h": 16
+      }
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "titulo.nome": "Natal na Casa do Tio Ítalo e da Tia Nath",
+  "titulo.comecar": "Começar",
+  "titulo.comojogar": "Como jogar",
+  "titulo.versao": "v{versao}",
+  "comojogar.titulo": "Como jogar",
+  "comojogar.mover": "Mover: setas ou WASD",
+  "comojogar.mover.toque": "Mover: controle na tela.",
+  "comojogar.botaoA": "Botão A: Z ou Enter.",
+  "comojogar.botaoA.toque": "Botão A: examinar, avançar.",
+  "comojogar.botaoB": "Botão B: X ou Esc.",
+  "comojogar.botaoB.toque": "Botão B: voltar e fechar.",
+  "comojogar.voltar": "Voltar",
+  "selecao.titulo": "Quem vai jogar?",
+  "intro.1": "Oi, {nome}!",
+  "intro.2": "O tio Ítalo e a tia Nath não estão em casa.",
+  "intro.3": "Eles precisam de ajuda para montar a árvore de Natal.",
+  "intro.4": "A casa está bagunçada. Vamos entrar?",
+  "bilhete.1": "Um bilhete para você.",
+  "porta.pergunta": "Senha",
+  "porta.faltam": "Faltam números.",
+  "porta.erro.1": "Quase! Leia o bilhete de novo.",
+  "porta.erro.2": "Hmm, esse não é. Tente outra vez!",
+  "porta.erro.3": "Sem pressa. Você consegue!",
+  "porta.abriu": "Clique! A porta abriu.",
+  "painel.apagar": "Apagar",
+  "painel.ok": "OK",
+  "painel.fechar": "Fechar",
+  "luz.clique": "Clique!",
+  "arvore.desmontada": "A árvore ainda está desmontada. Ela precisa de 3 partes.",
+  "conquista.luzes": "Parabéns, você conseguiu acender as luzes.",
+  "conquista.continuar": "Continuar",
+  "barra.titulo": "Setas: escolher  Z: confirmar",
+  "barra.titulo.toque": "Mover: escolher  A: confirmar",
+  "barra.comojogar": "Z ou X: voltar",
+  "barra.comojogar.toque": "A ou B: voltar",
+  "barra.selecao1": "Setas: escolher  Z: confirmar",
+  "barra.selecao1.toque": "Mover: escolher  A: confirmar",
+  "barra.selecao2": "X: voltar ao título",
+  "barra.selecao2.toque": "B: voltar ao título",
+  "barra.intro": "Z: avançar  X: voltar",
+  "barra.intro.toque": "A: avançar  B: voltar",
+  "barra.dialogo": "Z: avançar  X: fechar",
+  "barra.dialogo.toque": "A: avançar  B: fechar",
+  "barra.painel1": "Setas: escolher  Z: apertar",
+  "barra.painel1.toque": "Toque nas teclas para digitar",
+  "barra.painel2": "X: apagar  Esc: fechar",
+  "barra.painel2.toque": "Toque em Fechar para sair",
+  "barra.conquista": "Z ou X: continuar",
+  "barra.conquista.toque": "A ou B: continuar",
+  "barra.casa": "Setas: andar  Z: examinar",
+  "barra.casa.toque": "Mover: andar  A: examinar",
+  "orientacao.1": "Vamos montar a árvore de Natal, {nome}!",
+  "orientacao.2": "Abra a porta. Há um bilhete perto dela, com a dica.",
+  "arvore.nascer.1": "A árvore ainda está desmontada.",
+  "arvore.nascer.2": "Ela precisa de 3 partes. Examine a árvore!",
+  "escuro.sala": "Está tudo escuro! Procure o interruptor.",
+  "bilhete.pista": "Dica: os 3 últimos dígitos do ano em que {nome} nasceu.",
+  "porta.fechada": "Essa porta está fechada.\nHoje não dá para entrar.",
+  "cozinha.pia": "A pia está limpinha.\nOs copos já estão secos.",
+  "cozinha.fogao": "O fogão está apagado.\nCheiro de bolo de Natal?",
+  "cozinha.geladeira": "A geladeira está cheia.\nCoisas gostosas para a ceia!",
+  "conquista.parte1": "Parabéns, você conseguiu encontrar a primeira parte da árvore de Natal.",
+  "conquista.parte2": "Parabéns, você conseguiu encontrar a segunda parte da árvore de Natal.",
+  "conquista.parte3": "Parabéns, você conseguiu encontrar a última parte da árvore de Natal!",
+  "arvore.estado.1": "Ela já tem 1 parte. Faltam 2 partes.",
+  "arvore.estado.2": "Ela já tem 2 partes. Falta 1 parte.",
+  "arvore.estado.3": [
+    "A árvore está montada!",
+    "Falta a caixa de enfeites."
+  ],
+  "arvore.chegada.1": "Agora a árvore tem 1 parte. Faltam 2 partes!",
+  "arvore.chegada.2": "Agora a árvore tem 2 partes. Falta 1 parte!",
+  "arvore.chegada.3": [
+    "A árvore está montada! Que linda!",
+    "Mas tem algo estranho... Ainda falta alguma coisa.",
+    "Deve estar perdida pela casa."
+  ],
+  "aviso.peca2.antes1": [
+    "Ainda não!",
+    "Essa é a parte do meio. Encontre a base antes."
+  ],
+  "aviso.peca3.antes1": [
+    "Ainda não!",
+    "Essa é a parte de cima. Encontre as outras antes."
+  ],
+  "aviso.peca3.antes2": [
+    "Ainda não!",
+    "Essa é a parte de cima. Encontre a do meio antes."
+  ],
+  "barra.casa2": "X: farejar  H: dica",
+  "barra.casa2.toque": "B: farejar  ?: dica",
+  "barra.dica": "Z ou X: voltar",
+  "barra.dica.toque": "A ou B: voltar",
+  "comojogar.farejar": "Farejar: X, com o Nick acordado.",
+  "comojogar.farejar.toque": "Farejar: B, com o Nick acordado.",
+  "comojogar.dica": "Dica: H, ou clique no ícone ?",
+  "comojogar.dica.toque": "Dica: toque no ícone ?",
+  "dica.titulo": "Dica",
+  "dica.voltar": "Voltar",
+  "dica.porta": [
+    "Leia o bilhete na parede.",
+    "Ele tem a pista da senha."
+  ],
+  "dica.luzes.dormindo": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "O Nick está dormindo."
+  ],
+  "dica.luzes.acordado": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.luzes.acordado.toque": [
+    "A casa está escura.",
+    "Procure o interruptor.",
+    "Toque em B e o Nick fareja."
+  ],
+  "dica.parte1.dormindo": [
+    "Procure uma parte da árvore.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte1.acordado": [
+    "Procure uma parte da árvore.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte1.acordado.toque": [
+    "Procure uma parte da árvore.",
+    "Toque em B e o Nick fareja."
+  ],
+  "dica.parte2.dormindo": [
+    "Procure a parte do meio.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte2.acordado": [
+    "Procure a parte do meio.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte2.acordado.toque": [
+    "Procure a parte do meio.",
+    "Toque em B e o Nick fareja."
+  ],
+  "dica.parte3.dormindo": [
+    "Procure em outro cômodo.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.parte3.acordado": [
+    "Procure em outro cômodo.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.parte3.acordado.toque": [
+    "Procure em outro cômodo.",
+    "Toque em B e o Nick fareja."
+  ],
+  "nick.acordou": [
+    "O Nick acordou! Ele vai seguir você.",
+    "Aperte X para farejar."
+  ],
+  "nick.acordou.toque": [
+    "O Nick acordou! Ele vai seguir você.",
+    "Toque em B para farejar."
+  ],
+  "nick.latido": "Au!",
+  "conquista.enfeites": "Parabéns, você conseguiu encontrar a caixa de enfeites de Natal!",
+  "aviso.enfeite.antes3": [
+    "Ainda não!",
+    "Essa é a caixa de enfeites. Monte a árvore antes."
+  ],
+  "arvore.chegada.4": [
+    "Agora a árvore está toda enfeitada!",
+    "Feliz Natal para a família!"
+  ],
+  "dica.enfeites.dormindo": [
+    "Procure a caixa de enfeites.",
+    "O Nick ainda está dormindo."
+  ],
+  "dica.enfeites.acordado": [
+    "Procure a caixa de enfeites.",
+    "Aperte X e o Nick fareja."
+  ],
+  "dica.enfeites.acordado.toque": [
+    "Procure a caixa de enfeites.",
+    "Toque em B e o Nick fareja."
+  ],
+  "creditos.titulo": "Créditos",
+  "creditos.jogo": "Natal na Casa do Tio Ítalo e da Tia Nath",
+  "creditos.sobrinho": "Obrigado, {nome}! A árvore ficou linda.",
+  "creditos.nick": "O Nick também ajudou muito!",
+  "creditos.agradecimento": "Feito com carinho para a família.",
+  "creditos.versao": "Versão {versao}",
+  "creditos.voltar": "Voltar ao título",
+  "barra.creditos": "Z ou X: voltar ao título",
+  "barra.creditos.toque": "A ou B: voltar ao título",
+  "rotacao.1": "Gire o celular para o lado.",
+  "rotacao.2": "O jogo fica na horizontal.",
+  "barra.titulo.toque.menu": "Toque para escolher",
+  "barra.comojogar.toque.menu": "Toque em Voltar",
+  "barra.selecao1.toque.menu": "Toque para escolher",
+  "barra.selecao2.toque.menu": "Toque em Voltar ao título",
+  "barra.conquista.toque.menu": "Toque em Continuar",
+  "barra.dica.toque.menu": "Toque em Voltar",
+  "barra.creditos.toque.menu": "Toque em Voltar ao título",
+  "barra.painel1.toque.menu": "Toque nas teclas para digitar",
+  "barra.painel2.toque.menu": "Toque em Fechar",
+  "selecao.voltar.toque": "Voltar ao título",
+  "pausa.titulo": "Pausa",
+  "pausa.continuar": "Continuar",
+  "pausa.som.ligado": "Som: ligado",
+  "pausa.som.desligado": "Som: desligado",
+  "pausa.comojogar": "Como jogar",
+  "pausa.sair": "Voltar ao título",
+  "pausa.sair.pergunta": [
+    "Sair da partida?",
+    "Ela não fica salva."
+  ],
+  "pausa.sair.sim": "Sim",
+  "pausa.sair.nao": "Não",
+  "barra.pausa1": "Setas: escolher  Z: confirmar",
+  "barra.pausa2": "X ou P: continuar",
+  "barra.pausa1.toque": "Mover: escolher  A: confirmar",
+  "barra.pausa2.toque": "B: continuar",
+  "barra.pausa1.toque.menu": "Toque para escolher",
+  "barra.pausa2.toque.menu": "Toque em Continuar",
+  "barra.sair": "Z: sim  X: não",
+  "barra.sair.toque": "A: sim  B: não",
+  "barra.sair.toque.menu": "Toque em Sim ou em Não",
+  "comojogar.pausa": "P: pausa.  M: mudo.",
+  "comojogar.pausa.toque": "No alto: pausa e mudo.",
+  "enfeite.pisca": "Que luzinhas bonitas!\nElas piscam devagarinho.",
+  "enfeite.vela": "Uma vela elétrica! A luz\nfica piscando, sem fogo.",
+  "enfeite.guirlanda": "Uma guirlanda vermelha\npara a porta da festa.",
+  "enfeite.presente": "Tem presente aqui!\nSerá para quem da família?",
+  "enfeite.meias": "Meias de Natal!\nUma para cada um da casa.",
+  "enfeite.arvore": "Uma árvorezinha de Natal,\npara a casa toda.",
+  "fim.obrigado": "Obrigado por jogar!\nA árvore ficou linda.\nFeliz Natal!",
+  "creditos.explorar": "Explorar a casa",
+  "barra.creditos.menu": "Setas: escolher  Z: confirmar",
+  "barra.creditos.menu.toque": "Mover: escolher  A: confirmar",
+  "barra.creditos.menu.toque.menu": "Toque para escolher",
+  "barra.fim": "Z ou X: continuar",
+  "barra.fim.toque": "A ou B: continuar",
+  "barra.fim.toque.menu": "Toque para continuar",
+  "barra.explorar1": "Setas: andar  Z: examinar",
+  "barra.explorar2": "X: farejar  P: pausa",
+  "barra.explorar1.toque": "Mover: andar  A: examinar",
+  "barra.explorar2.toque": "B: farejar  II: pausa",
+  "barra.explorar.toque.menu": "Toque para andar",
+  "barra.explorar2.toque.menu": "Toque em II: pausa"
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 2,
+  "subarea": "hall",
+  "enfeites": [
+    {
+      "id": "hall_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 1,
+      "y": 1,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "hall_presente_vermelho_1",
+      "sprite": "dec_presente_vermelho",
+      "x": 2,
+      "y": 1,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "hall_presente_verde_1",
+      "sprite": "dec_presente_verde",
+      "x": 2,
+      "y": 2,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "hall_arvore_g_1",
+      "sprite": "dec_arvore_g",
+      "x": 3,
+      "y": 2,
+      "pisca": false,
+      "examinar": null
+    }
+  ]
+}

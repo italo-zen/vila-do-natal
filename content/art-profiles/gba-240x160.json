@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "id": "gba-240x160",
+  "nome": "GBA 240×160 (v1)",
+  "tile": 16,
+  "sala": {
+    "colunas": 15,
+    "linhas": 10
+  },
+  "escala": {
+    "minima": 1,
+    "modo": "inteira"
+  },
+  "paleta": {
+    "minimoDeCores": 16,
+    "maximoDeCores": 32
+  },
+  "fonte": {
+    "familia": "Press Start 2P",
+    "grade": 8,
+    "corpo": 8,
+    "titulo": 16,
+    "entrelinhas": 4,
+    "entrelinhasFina": 2
+  },
+  "espaco": {
+    "pequeno": 4,
+    "medio": 8,
+    "grande": 16
+  },
+  "tema": {
+    "fundo": "#0b1030",
+    "texto": "#f4e9c8",
+    "destaque": "#f4d35e",
+    "fraco": "#9aa3c7",
+    "caixa": "#1b2452",
+    "alfaCaixa": 0.94,
+    "alfaBarra": 0.92
+  },
+  "barra": {
+    "margemLateral": 8,
+    "margemInferior": 4,
+    "entreLinhas": 10,
+    "alturaPorLinhas": {
+      "1": 16,
+      "2": 28
+    }
+  },
+  "botao": {
+    "largura": 184,
+    "altura": 24,
+    "recuoMarca": 14,
+    "bordaNormal": 1,
+    "bordaFoco": 2,
+    "bordaPressionada": 2,
+    "bordaFocoTecla": 1,
+    "larguraTecla": 52,
+    "alturaTecla": 14
+  },
+  "dialogo": {
+    "altura": 64,
+    "borda": 1,
+    "seta": {
+      "largura": 8,
+      "altura": 6,
+      "deTopo": 34,
+      "recuo": 8
+    }
+  },
+  "luz": {
+    "tipo": "penumbra-degraus",
+    "raioEmTiles": 3,
+    "passoDegrau": 4,
+    "alfa": 0.85
+  },
+  "objetos": {
+    "brilhoInterruptor": {
+      "raioEmTiles": 0.625,
+      "alfa": 0.28
+    },
+    "halo": {
+      "margem": 4
+    }
+  },
+  "escalaDeExibicao": {
+    "cartao": 2,
+    "conquista": 2
+  },
+  "corpos": {
+    "sobrinho": {
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "pes": {
+        "w": 12,
+        "h": 8
+      },
+      "quadrosDeAndar": 2,
+      "fpsAndar": 6
+    }
+  },
+  "telas": {
+    "titulo": {
+      "nomeY": 18,
+      "versaoTopo": 3,
+      "menuY": [
+        96,
+        120
+      ]
+    },
+    "comoJogar": {
+      "tituloY": 6,
+      "listaX": 10,
+      "listaY": 32,
+      "listaLargura": 220,
+      "espacoEntreItens": 4,
+      "voltarY": 122
+    },
+    "selecao": {
+      "tituloY": 6,
+      "tituloLargura": 232,
+      "cartaoLargura": 52,
+      "cartaoAltura": 80,
+      "cartaoTopo": 52,
+      "espaco": 6,
+      "spriteDeTopo": 8,
+      "nomeDeTopo": 62
+    },
+    "conquista": {
+      "personagem": {
+        "x": 96,
+        "y": 10
+      },
+      "lampada": {
+        "x": 168,
+        "y": 18
+      },
+      "textoY": 72,
+      "textoLargura": 216,
+      "continuarY": 120
+    }
+  },
+  "painel": {
+    "margemTopo": 6,
+    "campos": {
+      "passo": 24,
+      "largura": 20,
+      "altura": 16,
+      "topo": 20,
+      "textoDeTopo": 4
+    },
+    "mensagem": {
+      "x": 12,
+      "y": 42,
+      "largura": 216
+    },
+    "grade": {
+      "colunas": 3,
+      "passoX": 56,
+      "passoY": 16,
+      "topo": 66
+    }
+  },
+  "pasta": "assets/gba-240x160",
+  "sprites": {
+    "sobrinho": {
+      "coresMin": 16
+    }
+  }
+}

@@ -1,0 +1,36 @@
+// Diagnóstico da rodada 3: o A e o H na Sala (toque ligado) não produzem texto no reteste. Só observa.
+import { chromium } from 'playwright-core';
+import { pathToFileURL, fileURLToPath } from 'node:url';
+import { resolve, join, dirname } from 'node:path';
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const url = pathToFileURL(resolve(RAIZ, 'dist-qa', 'index.html')).href;
+const real = (ms) => new Promise((r) => setTimeout(r, ms));
+const INIT = `(() => { window.__textos = []; const ft = CanvasRenderingContext2D.prototype.fillText; CanvasRenderingContext2D.prototype.fillText = function (t, ...r) { window.__textos.push({ t: String(t) }); return ft.call(this, t, ...r); }; })();`;
+const b = await chromium.launch({ channel: 'chrome', headless: true });
+const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+await ctx.addInitScript(INIT);
+const p = await ctx.newPage();
+await p.goto(url); await p.waitForSelector('canvas'); await real(2200);
+const cdp = await ctx.newCDPSession(p);
+const dom = () => p.evaluate(() => window.__alvosDeToque().filter((a) => a.origem === 'dom').map((a) => `${a.nome}@${Math.round(a.x + a.largura / 2)},${Math.round(a.y + a.altura / 2)}`));
+const est = () => p.evaluate(() => { const e = window.__estado(); return e && { mapa: e.mapa, x: e.tileX, y: e.tileY, dir: e.direcao, travado: e.travado, cond: e.emConducao, fase: e.fase }; });
+const txt = () => p.evaluate(() => window.__textos.splice(0).map((x) => x.t).join(' | ').slice(0, 160));
+const z = await p.evaluate(() => window.__alvosDeToque().filter((a) => a.origem === 'canvas' && a.nome === 'Titulo:Zone'));
+await p.touchscreen.tap(z[0].x + z[0].largura / 2, z[0].y + z[0].altura / 2); await real(900);
+const cart = await p.evaluate(() => window.__alvosDeToque().filter((a) => a.origem === 'canvas'));
+await p.touchscreen.tap(cart[0].x + cart[0].largura / 2, cart[0].y + cart[0].altura / 2); await real(900);
+for (let i = 0; i < 12; i++) { const d = await dom(); const a = d.find((x) => x.startsWith('a@')); if (a) { const [x, y] = a.split('@')[1].split(',').map(Number); await p.touchscreen.tap(x, y); } await real(300); }
+console.log('após intro: est', JSON.stringify(await est()), 'dom', (await dom()).join(' '));
+await p.evaluate(() => window.__irParaFase('luzes'));
+await p.evaluate(() => window.__teleportar('sala', 'P8'));
+await real(800);
+console.log('sala: est', JSON.stringify(await est()), 'dom', (await dom()).join(' '));
+const a = (await dom()).find((x) => x.startsWith('a@'));
+const [ax, ay] = a.split('@')[1].split(',').map(Number);
+await p.touchscreen.tap(ax, ay); await real(500);
+console.log('A tocado na Sala: est', JSON.stringify(await est()), 'texto:', await txt());
+await p.keyboard.press('KeyH'); await real(600);
+console.log('H: est', JSON.stringify(await est()), 'texto:', await txt());
+await p.keyboard.press('KeyZ'); await real(500);
+console.log('Z: est', JSON.stringify(await est()), 'texto:', await txt());
+await b.close();

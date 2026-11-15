@@ -1,0 +1,29 @@
+{
+  "id": "enfeites",
+  "conducao": {
+    "enfeites": {
+      "mapa": "sala",
+      "x": 3,
+      "y": 7,
+      "direcao": "baixo"
+    }
+  },
+  "conquistas": {
+    "enfeites": "conquista.enfeites"
+  },
+  "nick": {
+    "dorme": {
+      "mapa": "sala",
+      "x": 8,
+      "y": 5,
+      "direcao": "baixo"
+    },
+    "alvo": "escritorio"
+  },
+  "dica": {
+    "enfeites": {
+      "dormindo": "dica.enfeites.dormindo",
+      "acordado": "dica.enfeites.acordado"
+    }
+  }
+}
