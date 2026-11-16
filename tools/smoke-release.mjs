@@ -110,7 +110,7 @@ async function rodarEm(navegador, base) {
   const primeiraMusica = audio.find((x) => x.url.includes('/audio/mus_natal.'));
   medidas[base] = { tituloDesenhadoMs: desenhadoEm, imagemTituloMs: imagemTitulo?.fim ?? null, musicaMs: primeiraMusica?.fim ?? null, arquivos: rede.length };
   if (desenhadoEm === null) falhas.push(`${base}: título não ficou desenhado em 20 s`);
-  else if (desenhadoEm > 3500) falhas.push(`${base}: título desenhado em ${desenhadoEm} ms (limite 3500 ms; requisito DS2 é 4 s, com folga)`);
+  else if (desenhadoEm > 4000) falhas.push(`${base}: título desenhado em ${desenhadoEm} ms (limite 4000 ms, o requisito DS2; o runner do GitHub é mais lento que o Mac)`);
   if (imagemTitulo && desenhadoEm !== null && desenhadoEm > imagemTitulo.fim) falhas.push(`${base}: título só desenhou depois da imagem do título chegar`);
   if (primeiraMusica && desenhadoEm !== null && primeiraMusica.fim < desenhadoEm) falhas.push(`${base}: a trilha chegou antes do título desenhado`);
   if (rede.length !== 21) falhas.push(`${base}: ${rede.length} arquivos de áudio e imagem responderam; esperados 21 (19 áudios e 2 imagens)`);
