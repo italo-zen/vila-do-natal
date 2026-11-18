@@ -11,6 +11,7 @@ import type { MissaoCarregada } from '../mundo/missoes';
 import { validarDecoracao, type DecoracaoDaSubarea } from '../content/decoracao';
 import type { MapaDoJogo } from '../content/Mapa';
 import { deslocamentoDaSubarea } from '../mundo/subarea';
+import { vizinhosLivresAlcancaveis } from '../content/pontosDePartida';
 
 export class ConteudoInvalidoError extends Error {
   constructor(public readonly erros: string[]) {
@@ -87,6 +88,7 @@ export class CarregarConteudo {
         altura: mapa.altura,
         bloqueado: (x, y) => mapa.colisao[y]?.[x] === true,
         proibido: (x, y) => tilesProibidosDaSubarea(mapa, perfil.sala).has(`${x},${y}`),
+        temVizinhoLivre: (x, y) => vizinhosLivresAlcancaveis(mapa, x, y).length > 0,
         chavesDeTexto: textos.chaves(),
       });
       if (errosDaSubarea.length > 0) throw new ConteudoInvalidoError(errosDaSubarea);

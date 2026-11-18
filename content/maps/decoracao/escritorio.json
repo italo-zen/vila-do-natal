@@ -16,15 +16,17 @@
       "x": 4,
       "y": 0,
       "pisca": true,
-      "examinar": "enfeite.pisca"
+      "examinar": "enfeite.pisca",
+      "elevacao": 14
     },
     {
       "id": "escritorio_meias_1",
       "sprite": "dec_meias",
-      "x": 6,
+      "x": 5,
       "y": 3,
       "pisca": false,
-      "examinar": "enfeite.meias"
+      "examinar": "enfeite.meias",
+      "elevacao": 14
     }
   ]
 }

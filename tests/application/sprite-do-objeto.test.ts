@@ -77,10 +77,33 @@ descreverComConteudoNovo('sprite de objeto ancorado na base do tile (árvore alt
     expect(caixaCabeNaAreaDeJogo({ x: 0, y: 288, w: 32, h: 32 }, tela, 32)).toBe(true);
   });
 
-  it('os outros sprites de objeto (bilhete, interruptor, porta) são 32×32: cabem no próprio tile', () => {
-    for (const arquivo of ['spr_bilhete.png', 'spr_interruptor.png', 'spr_porta.png']) {
-      const { w, h } = tamanhoDoPng(arquivo);
-      expect([w, h], arquivo).toEqual([32, 32]);
+  it('a porta fechada da 1.1.0 (fallback) é 32×32; o bilhete é uma imagem 16×24 presa na parede, com âncora (8, 23)', () => {
+    expect(tamanhoDoPng('spr_porta.png')).toEqual({ w: 32, h: 32 });
+    expect(tamanhoDoPng('spr_bilhete.png')).toEqual({ w: 16, h: 24 });
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; ancora?: { x: number; y: number } }[] };
+    expect(sprites.imagens.find((i) => i.arquivo === 'spr_bilhete.png')?.ancora).toEqual({ x: 8, y: 23 });
+  });
+
+  it('o interruptor é uma folha de 2 quadros 16×24 (0 apagado, 1 aceso) com âncora (8, 23), posto sobre a face norte do tile', () => {
+    const { w, h } = tamanhoDoPng('spr_interruptor.png');
+    expect([w, h]).toEqual([32, 24]);
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; tipo: string; quadro?: { w: number; h: number }; quadros?: number; ancora?: { x: number; y: number } }[] };
+    const img = sprites.imagens.find((i) => i.arquivo === 'spr_interruptor.png')!;
+    expect(img).toMatchObject({ tipo: 'folhas', quadro: { w: 16, h: 24 }, quadros: 2, ancora: { x: 8, y: 23 } });
+    // Posição pela âncora: x = tile × 32 + 16 − 8; y = tile × 32 − 23 (Sala (6, 4) com deslocamento 2 em x).
+    const tx = 6 + 2;
+    const ty = 4;
+    expect({ x: tx * 32 + 16 - img.ancora!.x, y: ty * 32 - img.ancora!.y }).toEqual({ x: 8 * 32 + 8, y: 128 - 23 });
+  });
+
+  it('a árvore e a decoração da árvore têm movel com âncora (0, 56) e posicionam como os móveis', () => {
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; movel?: { pegada: { w: number; h: number }; ancora: { x: number; y: number } } }[] };
+    for (const [arquivo, ancoraY] of [['spr_arvore_desmontada.png', 56], ['spr_arvore_enfeitada.png', 56], ['dec_arvore_g.png', 56], ['dec_arvore_p.png', 40]] as const) {
+      const m = sprites.imagens.find((i) => i.arquivo === arquivo)?.movel;
+      expect(m, arquivo).toBeDefined();
+      expect(m!.ancora).toEqual({ x: 0, y: ancoraY });
+      expect(m!.pegada).toEqual({ w: 1, h: 1 });
     }
+    expect(tamanhoDoPng('spr_arvore_desmontada.png')).toEqual({ w: 38, h: 62 });
   });
 });

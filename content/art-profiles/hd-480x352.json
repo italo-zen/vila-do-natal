@@ -2,8 +2,9 @@
   "barra": {
     "alturaPorLinhas": {
       "1": 32,
-      "2": 56
+      "2": 48
     },
+    "bordaDeCima": 2,
     "entreLinhas": 20,
     "margemInferior": 8,
     "margemLateral": 16
@@ -240,5 +241,22 @@
     "sobrinho": {
       "coresMin": 16
     }
+  },
+  "vista": {
+    "extensaoEmPisoAndavel": 24,
+    "faceNorte": 32,
+    "linhaLateral": 8,
+    "provisorio": {
+      "alfaSombra": 0.25,
+      "face": "#9aa3c7",
+      "linha": "#6f7aa8",
+      "sombra": "#000000"
+    },
+    "recuoMaximo": 16,
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "tipo": "3-4"
   }
 }

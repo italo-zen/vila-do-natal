@@ -31,6 +31,26 @@ export interface CorpoDoNick {
   quadrosDeAndar: number;
 }
 
+/**
+ * Visão 3/4 (ADR-012 seção 2): constantes de desenho de paredes e móveis. Bloco opcional e aditivo: perfil sem `vista` desenha
+ * como na 1.1.0 (vista superior). Nenhum desses números vai para o código; a cena e `vista.ts` leem daqui.
+ */
+export interface VistaDoPerfil {
+  tipo: '3-4';
+  /** Altura da face das paredes ao norte, em px (múltiplo de 8, no máximo o tile). */
+  faceNorte: number;
+  /** Largura das linhas de parede leste, oeste e internas, em px. */
+  linhaLateral: number;
+  /** Deslocamento da sombra projetada (à direita e para baixo), em px. */
+  sombra: { dx: number; dy: number };
+  /** Quanto, no máximo, a área desce para caber a face (no máximo `faceNorte`). */
+  recuoMaximo: number;
+  /** Extensão máxima (E) de móvel com piso andável ao norte: o sobrinho e o Nick não somem atrás (ADR-012 seção 5.3). */
+  extensaoEmPisoAndavel: number;
+  /** Cores provisórias de desenho enquanto o kit de paredes da Arte não existe (opcional). */
+  provisorio?: { face: string; linha: string; sombra: string; alfaSombra: number };
+}
+
 export interface PerfilDeArte {
   schemaVersion: number;
   id: string;
@@ -46,7 +66,7 @@ export interface PerfilDeArte {
   fonte: { familia: string; grade: number; corpo: number; titulo: number; entrelinhas: number; entrelinhasFina: number };
   espaco: { pequeno: number; medio: number; grande: number };
   tema: { fundo: string; texto: string; destaque: string; fraco: string; caixa: string; alfaCaixa: number; alfaBarra: number };
-  barra: { margemLateral: number; margemInferior: number; entreLinhas: number; alturaPorLinhas: Record<'1' | '2', number> };
+  barra: { margemLateral: number; margemInferior: number; entreLinhas: number; alturaPorLinhas: Record<'1' | '2', number>; /** Linha de cima da barra, em px, na visão 3/4 (opcional). */ bordaDeCima?: number };
   botao: {
     largura: number;
     altura: number;
@@ -121,6 +141,8 @@ export interface PerfilDeArte {
    * perfil ativo (validado por `validarToque`); o v1 não tem. O painel está em pixels de jogo.
    */
   toque?: ToqueDoPerfil;
+  /** Visão 3/4 (ADR-012). Ausente = vista superior, como na 1.1.0. */
+  vista?: VistaDoPerfil;
   /** Pasta dos PNG do perfil, relativa à raiz do repositório (ADR-003 seção 3). */
   pasta: string;
 }

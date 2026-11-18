@@ -460,9 +460,9 @@ descreverComConteudoNovo('Marco 2: exame da árvore em cada estado (GDD 15.4; BU
 });
 
 descreverComConteudoNovo('Marco 2: versão e perfil (backlog 057 e 054)', () => {
-  it('package.json está em 1.1.0 (planta nova; antes 1.0.0)', () => {
+  it('package.json está em 1.2.0 (visão 3/4; antes 1.1.0)', () => {
     const pkg = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf-8')) as { version: string };
-    expect(pkg.version).toBe('1.1.0');
+    expect(pkg.version).toBe('1.2.0');
   });
 
   it('o perfil HD tem a posição da tela de conquista da peça (telas.conquista.peca e personagemDaPeca)', () => {

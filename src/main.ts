@@ -3,6 +3,7 @@ import '@fontsource/press-start-2p/400.css';
 import { montarServicos } from './application/Servicos';
 import { CarregarConteudo } from './application/usecases/CarregarConteudo';
 import { validarSprites } from './application/arte/SpritesDoPerfil';
+import { validarVistaDaArte } from './application/arte/VistaDaArte';
 import { criarFonteDoVite } from './infrastructure/content/ViteContentSource';
 import { arquivosDoPerfilAtivo } from './infrastructure/arte/arquivosDoPerfilAtivo';
 import { criarJogo } from './presentation/jogo';
@@ -18,10 +19,12 @@ async function iniciar(): Promise<void> {
     const arquivos = arquivosDoPerfilAtivo();
     const sprites = validarSprites(arquivos.sprites, perfil);
     if (!sprites.ok) throw new Error(`Arte do perfil "${perfil.id}" inválida:\n- ${sprites.erros.join('\n- ')}`);
+    const vista = arquivos.vista === null || arquivos.vista === undefined ? { ok: true as const, vista: undefined } : validarVistaDaArte(arquivos.vista);
+    if (!vista.ok) throw new Error(`vista.json do perfil "${perfil.id}" inválido:\n- ${vista.erros.join('\n- ')}`);
     // A fonte pixel do perfil precisa estar pronta antes de qualquer texto do Phaser (com limite de espera).
     const fonte = `${perfil.fonte.corpo}px "${perfil.fonte.familia}"`;
     await Promise.race([document.fonts.load(fonte), new Promise((r) => setTimeout(r, ESPERA_DA_FONTE_MS))]);
-    const jogo = criarJogo(montarServicos(conteudo, __APP_VERSION__), { sprites: sprites.sprites, urls: arquivos.urls }, pai);
+    const jogo = criarJogo(montarServicos(conteudo, __APP_VERSION__), { sprites: sprites.sprites, urls: arquivos.urls, vista: vista.vista }, pai);
     // Gancho de QA: só no build de QA (flag __QA__ é false nos outros, e o código some do bundle).
     if (__QA__) {
       const { instalarGancho } = await import('./presentation/qa/ganchoQa');

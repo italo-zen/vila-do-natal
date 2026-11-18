@@ -1,0 +1,38 @@
+{
+  "_nota": "dados de arte da visão 3/4 (ADR-012). vidro: arestas `linha_v` desenhadas com a peça de vidro; chave = id da área.",
+  "schemaVersion": 1,
+  "vidro": {
+    "sala": [
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 3
+      },
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 4
+      },
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 5
+      },
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 6
+      },
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 7
+      },
+      {
+        "tipo": "linha_v",
+        "x": 0,
+        "y": 8
+      }
+    ]
+  }
+}

@@ -90,8 +90,14 @@ POSICOES = [
     # Escritório (mesa (4,0)-(6,0), cama (5,2)-(6,3); caixa de enfeite proposta em (5,1); chegadas em (0,4) e (4,4); Nick (4,2))
     ("escritorio", 6, 1, "dec_arvore_p", "chao"),
     ("escritorio", 4, 0, "dec_luz", "movel"),     # sobre a mesa
-    ("escritorio", 6, 3, "dec_meias", "movel"),   # sobre a cama
+    ("escritorio", 5, 3, "dec_meias", "movel"),   # sobre a cama (lida de (4, 3); BUG-120-01: (6, 3) não tinha vizinho livre)
 ]
+
+
+# Elevação (px acima da base do tile) dos enfeites apoiados em móvel na visão 3/4 (ADR-012 5.5). Só vai para o JSON com --com-elevacao,
+# depois que o Dev aceitar a chave `elevacao` no validador (hoje E1 rejeita chave desconhecida). Valores = altura da superfície de apoio.
+ELEVACAO = {("sala", 2, 1): 22, ("sala", 4, 1): 22, ("sala", 5, 1): 22, ("sala", 10, 7): 20,
+            ("escritorio", 4, 0): 14, ("escritorio", 5, 3): 14}
 
 
 def carregar_mapa(subarea):
@@ -188,7 +194,10 @@ def montar():
         if local != "chao" and chave is None and sprite not in ("dec_cortina", "dec_pano", "dec_estrela", "dec_bola"):
             erros.append(f"E6 {sub} ({x},{y}): bloqueado sem texto para {sprite}")
         ident = f"{sub}_{sprite.replace('dec_', '')}_{sum(1 for e in por_sub[sub] if e['sprite'] == sprite) + 1}"
-        por_sub[sub].append({"id": ident, "sprite": sprite, "x": x, "y": y, "pisca": pisca, "examinar": chave})
+        item = {"id": ident, "sprite": sprite, "x": x, "y": y, "pisca": pisca, "examinar": chave}
+        if "--com-elevacao" in sys.argv and (sub, x, y) in ELEVACAO:
+            item["elevacao"] = ELEVACAO[(sub, x, y)]
+        por_sub[sub].append(item)
         usados[sprite] = usados.get(sprite, 0) + 1
     for sub, n in CONTAGEM.items():
         if len(por_sub[sub]) != n:

@@ -4,6 +4,7 @@ import { expect, it } from 'vitest';
 import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { validarDecoracao, SUBAREAS_DA_DECORACAO, TOTAL_DE_ENFEITES } from '../../src/application/content/decoracao';
 import { interpretarSubarea } from '../../src/application/content/interpretarSubarea';
+import { vizinhosLivresAlcancaveis } from '../../src/application/content/pontosDePartida';
 import { tilesProibidosDaSubarea } from '../../src/application/usecases/CarregarConteudo';
 
 /**
@@ -43,6 +44,7 @@ descreverComConteudoNovo('decoração real (ADR-010 8.2)', () => {
         altura: mapa.altura,
         bloqueado: (x, y) => mapa.colisao[y]?.[x] === true,
         proibido: (x, y) => proibidos.has(`${x},${y}`),
+        temVizinhoLivre: (x, y) => vizinhosLivresAlcancaveis(mapa, x, y).length > 0,
         sprites: registroDeSprites,
         chavesDeTexto: Object.keys(textos),
       });

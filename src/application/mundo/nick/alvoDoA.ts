@@ -7,6 +7,12 @@ import { alvoDaInteracao, type Geometria, type ParedeNoTile, type Posicao, type 
  * a porta, a peça nem o examinável. `parede`: aresta de parede entre o sobrinho e o objeto não deixa ler (ADR-011 seção 5.2).
  */
 
+/**
+ * Objetos que respondem ao A (GDD 14.9.2 e ADR-004 seção 6). Porta e bilhete ficam de fora: são lidos por geometria de aresta
+ * (ADR-011). O móvel, inclusive o cacto espinhoso, não responde ao A: só o andar contra ele tem efeito (BUG-120, QA 1.2.0).
+ */
+export const TIPOS_INTERATIVOS: ReadonlySet<string> = new Set(['examinavel', 'interruptor', 'arvore', 'peca', 'enfeite']);
+
 export type AlvoDoA = { tipo: 'objeto'; objeto: ObjetoDoMapa } | { tipo: 'nick' } | undefined;
 
 export function alvoDoA(

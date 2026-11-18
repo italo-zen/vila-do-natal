@@ -59,6 +59,18 @@ export const CHAVE_DA_CONQUISTA_DA_PECA: Readonly<Record<number, string>> = {
 };
 /** Chave do sprite de um móvel (Arte, item 173): `spr_<id>`, origem (0, 0) no canto do móvel, tamanho w×h tiles. */
 export const CHAVE_DO_MOVEL = (id: string): string => `spr_${id}`;
+/**
+ * Portas na visão 3/4 (ADR-012 seção 7): uma folha de 3 quadros por lado. `norte` = lado cima (peça na face), `lado` =
+ * esquerda ou direita (peça sobre a linha), `sul` = baixo (faixa sobre a aresta). Sem a folha, a cena usa as 9 imagens da 1.1.0.
+ */
+export const CHAVE_DA_PORTA_3_4: Readonly<Record<'cima' | 'baixo' | 'esquerda' | 'direita', string>> = {
+  cima: 'spr_porta_norte',
+  esquerda: 'spr_porta_lado',
+  direita: 'spr_porta_lado',
+  baixo: 'spr_porta_sul',
+};
+/** Quadro da folha de porta por estado (ordem fixada pela Arte na E1; os 3 estados têm silhuetas diferentes). */
+export const QUADRO_DA_PORTA: Readonly<Record<'fechada' | 'trancada' | 'aberta', number>> = { fechada: 0, trancada: 1, aberta: 2 };
 export const CHAVE = {
   arvore: 'spr_arvore_desmontada',
   bilhete: 'spr_bilhete',

@@ -59,8 +59,26 @@ describe('E1: schema e chaves', () => {
   it('chave desconhecida no enfeite é erro', () => {
     expect(validarDecoracao(comEnfeite(0, { extra: 1 } as Partial<EnfeiteBruto>), contexto()).join('\n')).toMatch(/E1: .* chave "extra"/);
   });
+  it('elevacao (ADR-012 5.5) é aditiva: aceita de 0 a 32 px e recusa o resto', () => {
+    expect(validarDecoracao(comEnfeite(0, { elevacao: 0 }), contexto())).toEqual([]);
+    expect(validarDecoracao(comEnfeite(0, { elevacao: 32 }), contexto())).toEqual([]);
+    expect(validarDecoracao(comEnfeite(0, { elevacao: 14 }), contexto())).toEqual([]);
+    for (const ruim of [-1, 33, 1.5, '8']) {
+      expect(validarDecoracao(comEnfeite(0, { elevacao: ruim } as unknown as Partial<EnfeiteBruto>), contexto()).join('\n'), String(ruim)).toMatch(/E1: .* elevacao .*inteiro de 0 a 32/);
+    }
+  });
   it('id repetido é erro', () => {
     expect(validarDecoracao(comEnfeite(1, { id: 'h1' }), contexto()).join('\n')).toMatch(/E1: id "h1" repetido/);
+  });
+});
+
+describe('E10: enfeite examinável em tile bloqueado precisa de vizinho livre alcançável (BUG-120-01)', () => {
+  it('sem vizinho livre é erro; com vizinho livre passa; sem o campo no contexto, não confere', () => {
+    // h1 (0, 2) é examinável em tile bloqueado.
+    const sem = validarDecoracao(hall(), { ...contexto(), temVizinhoLivre: () => false });
+    expect(sem.join('\n')).toMatch(/E10: hall\/h1 examinável em \(0, 2\) sem vizinho livre alcançável/);
+    expect(validarDecoracao(hall(), { ...contexto(), temVizinhoLivre: () => true })).toEqual([]);
+    expect(validarDecoracao(hall(), contexto())).toEqual([]);
   });
 });
 

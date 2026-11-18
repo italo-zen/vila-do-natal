@@ -24,6 +24,8 @@ export interface EnfeiteBruto {
   y: number;
   pisca: boolean;
   examinar: string | null;
+  /** Px acima da base do tile (enfeite apoiado em móvel; ADR-012 5.5). Opcional, 0 a 32; ausente = 0. */
+  elevacao?: number;
 }
 
 export interface DecoracaoBruta {
@@ -41,6 +43,8 @@ export interface ContextoDaDecoracao {
   bloqueado(x: number, y: number): boolean;
   /** Tile proibido para enfeite: spawn, porta, interruptor, bilhete, árvore, caixa, peça, passagem, barra, Nick (ADR-010 3.7). */
   proibido(x: number, y: number): boolean;
+  /** Há vizinho livre alcançável (pela aresta aberta) para ler o enfeite com o A? Opcional; sem ele, E10 não confere. */
+  temVizinhoLivre?(x: number, y: number): boolean;
   /** Sprites registrados em `sprites.json`, com `quadros` quando for folha. Sem o registro, E7 não confere a existência. */
   sprites?: Record<string, { quadros?: number }>;
   /** Chaves de texto de `content/texts/pt-BR.json` (E9). */
@@ -52,7 +56,9 @@ export interface DecoracaoDaSubarea {
   enfeites: EnfeiteBruto[];
 }
 
-const CHAVES_DO_ENFEITE = ['id', 'sprite', 'x', 'y', 'pisca', 'examinar'];
+const CHAVES_DO_ENFEITE = ['id', 'sprite', 'x', 'y', 'pisca', 'examinar', 'elevacao'];
+/** Elevação máxima de um enfeite apoiado em móvel, em px (ADR-012 5.5): a altura da face norte do perfil HD. */
+export const ELEVACAO_MAXIMA_PX = 32;
 
 /** Valida uma subárea de decoração (E1 a E7 e E9). Devolve os erros; lista vazia é válido. E8 (peso do atlas) fica no `verificar:conteudo`. */
 export function validarDecoracao(bruta: unknown, ctx: ContextoDaDecoracao): string[] {
@@ -82,6 +88,10 @@ export function validarDecoracao(bruta: unknown, ctx: ContextoDaDecoracao): stri
     if (typeof e.id !== 'string' || !e.id) erros.push(`E1: enfeite sem "id" em ${subarea}.`);
     else if (ids.has(e.id)) erros.push(`E1: id "${e.id}" repetido em ${subarea}.`);
     else ids.add(e.id);
+    // E1: `elevacao`, quando existe, é inteiro de 0 a 32 (ADR-012 5.5; aditiva, schemaVersion segue 2).
+    if (e.elevacao !== undefined && (!Number.isInteger(e.elevacao) || e.elevacao < 0 || e.elevacao > ELEVACAO_MAXIMA_PX)) {
+      erros.push(`E1: ${rotulo} com elevacao ${String(e.elevacao)}; precisa ser inteiro de 0 a ${ELEVACAO_MAXIMA_PX}.`);
+    }
     const { x, y } = e;
     // E4: tile inteiro dentro da caixa e fora dos tiles proibidos.
     if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0 || x >= ctx.largura || y >= ctx.altura) {
@@ -103,6 +113,11 @@ export function validarDecoracao(bruta: unknown, ctx: ContextoDaDecoracao): stri
       // E6: tile bloqueado: examinar é uma das chaves de 3.4 ou null; cortina e pano não respondem.
       if (examinar !== null && !(CHAVES_DE_EXAMINAR as readonly string[]).includes(examinar)) erros.push(`E6: ${rotulo} com examinar "${examinar}", que não está na lista.`);
       if ((SPRITES_SEM_EXAMINAR as readonly string[]).includes(e.sprite) && examinar !== null) erros.push(`E6: ${rotulo} (${e.sprite}) não responde ao A.`);
+    }
+    // E10: enfeite examinável em tile bloqueado precisa de um vizinho livre alcançável de onde o A o leia (BUG-120-01: meias sobre a
+    // cama do Escritório, sem vizinho livre, não respondiam).
+    if (bloqueado && examinar !== null && ctx.temVizinhoLivre && !ctx.temVizinhoLivre(x, y)) {
+      erros.push(`E10: ${rotulo} examinável em (${x}, ${y}) sem vizinho livre alcançável: o A não o alcança.`);
     }
     // E9: a chave de examinar existe no texto da build.
     if (examinar !== null && !ctx.chavesDeTexto.includes(examinar)) erros.push(`E9: chave "${examinar}" não existe em pt-BR.json.`);

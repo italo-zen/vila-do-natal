@@ -35,6 +35,11 @@ export function perfilDeArte(): Plugin {
       this.addWatchFile(arquivoPerfil);
       this.addWatchFile(arquivoSprites);
 
+      // Dados de arte da visão 3/4 (ADR-012; vidro da Sala): `vista.json` é opcional na pasta do perfil.
+      const arquivoVista = join(pasta, 'vista.json');
+      const vista = existsSync(arquivoVista) ? lerJson(arquivoVista) : null;
+      if (vista) this.addWatchFile(arquivoVista);
+
       const imagens = (sprites.imagens as { arquivo: string }[]) ?? [];
       const importacoes: string[] = [];
       const entradas: string[] = [];
@@ -52,6 +57,7 @@ export function perfilDeArte(): Plugin {
         `export const idDoPerfil = ${JSON.stringify(idPerfil)};`,
         `export const perfil = ${JSON.stringify(perfil)};`,
         `export const sprites = ${JSON.stringify(sprites)};`,
+        `export const vista = ${JSON.stringify(vista)};`,
         'export const urls = {',
         ...entradas,
         '};',

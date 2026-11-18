@@ -5,6 +5,19 @@ import { PERSONAGEM_IDS } from '../../domain/personagem/PersonagemId';
 export const TIPOS_DE_IMAGEM = ['tileset', 'folhas', 'imagem'] as const;
 export type TipoDeImagem = (typeof TIPOS_DE_IMAGEM)[number];
 
+/** Pixel do PNG (ADR-012 seção 8). Para móvel, o canto sudoeste da pegada; para peça de parede e porta, o centro da aresta. */
+export interface Ancora {
+  x: number;
+  y: number;
+}
+
+/** Dados de um móvel desenhado em 3/4 (ADR-012 seções 5 e 8). Todos opcionais no `sprites.json`: sem `movel`, desenho de hoje. */
+export interface MovelDoSprite {
+  pegada: Dimensao;
+  ancora: Ancora;
+  sombra: { dx: number; dy: number };
+}
+
 export interface ImagemDoPerfil {
   /** Nome do PNG dentro da pasta do perfil. */
   arquivo: string;
@@ -13,6 +26,10 @@ export interface ImagemDoPerfil {
   quadro?: Dimensao;
   /** Número de quadros de uma folha (folhas). */
   quadros?: number;
+  /** Âncora de peça de parede ou de porta (ADR-012 seção 8). */
+  ancora?: Ancora;
+  /** Móvel em 3/4: pegada, âncora e sombra (ADR-012 seção 8). */
+  movel?: MovelDoSprite;
 }
 
 /** Conteúdo de `assets/<perfil>/sprites.json`: o que cada PNG é, sem depender do nome do arquivo. */
@@ -89,6 +106,15 @@ export function validarSprites(bruto: unknown, perfil: PerfilDeArte): ResultadoS
     if (img.tipo === 'folhas' && !ehInteiroPositivo(img.quadros)) {
       erros.push(`${rotulo} (${img.arquivo}): folhas precisam de "quadros" inteiro positivo.`);
     }
+    // Campos opcionais da visão 3/4 (ADR-012 seção 8): só a forma. As medidas contra o PNG são de `validarMoveisDoPerfil`.
+    const ehAncora = (a: unknown): a is Ancora => typeof a === 'object' && a !== null && Number.isInteger((a as Ancora).x) && Number.isInteger((a as Ancora).y);
+    if (img.ancora !== undefined && !ehAncora(img.ancora)) erros.push(`${rotulo} (${img.arquivo}): ancora precisa ter x e y inteiros.`);
+    if (img.movel !== undefined) {
+      const m = img.movel as Partial<MovelDoSprite>;
+      if (!m.pegada || !ehInteiroPositivo(m.pegada.w) || !ehInteiroPositivo(m.pegada.h)) erros.push(`${rotulo} (${img.arquivo}): movel.pegada precisa de w e h inteiros positivos.`);
+      if (!ehAncora(m.ancora)) erros.push(`${rotulo} (${img.arquivo}): movel.ancora precisa ter x e y inteiros.`);
+      if (!m.sombra || !Number.isInteger(m.sombra.dx) || !Number.isInteger(m.sombra.dy)) erros.push(`${rotulo} (${img.arquivo}): movel.sombra precisa de dx e dy inteiros.`);
+    }
     // Folhas do Sobrinho (spr_<id>_...): o quadro do sprite tem de ser o quadro do corpo do perfil (ADR-003 seção 4).
     const doSobrinho = PERSONAGEM_IDS.some((id) => img.arquivo.startsWith(`spr_${id}_`));
     const corpo = perfil.corpos.sobrinho.quadro;
@@ -100,4 +126,69 @@ export function validarSprites(bruto: unknown, perfil: PerfilDeArte): ResultadoS
   });
 
   return erros.length > 0 ? { ok: false, erros } : { ok: true, sprites: bruto as SpritesDoPerfil };
+}
+
+/** Dimensões e cores reais de um PNG, medidas pelo `validar:perfil` (ou fabricadas num teste). */
+export interface MedidaDoPng {
+  w: number;
+  h: number;
+  cores: number;
+  /** PNG indexado de 8 bits (ADR-012 seção 8). */
+  indexado: boolean;
+}
+
+/** Máximos de cores da visão 3/4 (ADR-012 seção 8): por móvel e por imagem de parede, porta ou outra peça. */
+export const MAX_DE_CORES_POR_MOVEL = 16;
+export const MAX_DE_CORES_POR_IMAGEM_3_4 = 32;
+
+/**
+ * Confere os móveis (e as âncoras) do `sprites.json` contra o PNG, o perfil e o conteúdo (ADR-012 seção 8). Devolve erros e avisos.
+ * - largura do PNG = `w × tile + sombra.dx`; altura ≥ `h × tile + sombra.dy`; `sombra` igual à do perfil;
+ * - âncora dentro da imagem; E = altura − sombra.dy − h × tile ≤ `faceNorte` (erro);
+ * - E acima do limite de piso andável com tile andável ao norte da pegada: aviso;
+ * - ≤ 16 cores por móvel, ≤ 32 por imagem com âncora; PNG indexado;
+ * - `pegada` igual a `w` e `h` do objeto `movel` de mesmo id em `content/maps/casa-real/`.
+ * `moveis` vem do conteúdo: id → { w, h, norteAndavel }.
+ */
+export function validarMoveisDoPerfil(
+  imagens: readonly ImagemDoPerfil[],
+  medidas: Readonly<Record<string, MedidaDoPng>>,
+  perfil: PerfilDeArte,
+  moveis: ReadonlyMap<string, { w: number; h: number; norteAndavel: boolean }>,
+): { erros: string[]; avisos: string[] } {
+  const erros: string[] = [];
+  const avisos: string[] = [];
+  const v = perfil.vista;
+  for (const img of imagens) {
+    const medida = medidas[img.arquivo];
+    if (!medida || (!img.movel && !img.ancora)) continue;
+    const nome = img.arquivo;
+    const ancora = img.movel?.ancora ?? img.ancora!;
+    if (!v) {
+      erros.push(`${nome}: usa movel ou ancora, mas o perfil não tem o bloco vista (ADR-012 seção 2).`);
+      continue;
+    }
+    if (ancora.x < 0 || ancora.y < 0 || ancora.x > medida.w || ancora.y > medida.h) erros.push(`${nome}: ancora (${ancora.x}, ${ancora.y}) fora da imagem ${medida.w}×${medida.h}.`);
+    if (!medida.indexado) erros.push(`${nome}: o PNG da visão 3/4 precisa ser indexado de 8 bits.`);
+    if (medida.cores > MAX_DE_CORES_POR_IMAGEM_3_4) erros.push(`${nome}: ${medida.cores} cores; o máximo por imagem é ${MAX_DE_CORES_POR_IMAGEM_3_4}.`);
+    if (!img.movel) continue;
+    const { pegada, sombra } = img.movel;
+    if (medida.cores > MAX_DE_CORES_POR_MOVEL) erros.push(`${nome}: ${medida.cores} cores; o máximo por móvel é ${MAX_DE_CORES_POR_MOVEL}.`);
+    if (sombra.dx !== v.sombra.dx || sombra.dy !== v.sombra.dy) erros.push(`${nome}: movel.sombra ${sombra.dx}/${sombra.dy} difere de vista.sombra ${v.sombra.dx}/${v.sombra.dy}.`);
+    const larguraEsperada = pegada.w * perfil.tile + v.sombra.dx;
+    if (medida.w !== larguraEsperada) erros.push(`${nome}: largura ${medida.w}; esperado ${larguraEsperada} (w × ${perfil.tile} + sombra.dx).`);
+    const alturaMinima = pegada.h * perfil.tile + v.sombra.dy;
+    if (medida.h < alturaMinima) erros.push(`${nome}: altura ${medida.h}; o mínimo é ${alturaMinima} (h × ${perfil.tile} + sombra.dy).`);
+    const extensao = Math.max(0, medida.h - v.sombra.dy - pegada.h * perfil.tile);
+    if (extensao > v.faceNorte) erros.push(`${nome}: extensão E ${extensao} passa de faceNorte ${v.faceNorte}.`);
+    const id = nome.replace(/^spr_/, '').replace(/\.png$/, '');
+    const doConteudo = moveis.get(id);
+    if (doConteudo) {
+      if (doConteudo.w !== pegada.w || doConteudo.h !== pegada.h) erros.push(`${nome}: pegada ${pegada.w}×${pegada.h} difere do móvel "${id}" do conteúdo (${doConteudo.w}×${doConteudo.h}).`);
+      if (doConteudo.norteAndavel && extensao > Math.min(v.extensaoEmPisoAndavel, v.faceNorte)) {
+        avisos.push(`${nome}: extensão E ${extensao} sobre piso andável ao norte; o limite é ${v.extensaoEmPisoAndavel} (o sobrinho some atrás).`);
+      }
+    }
+  }
+  return { erros, avisos };
 }

@@ -1,0 +1,562 @@
+{
+  "spr_cacto": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_sofa": {
+    "pegada": {
+      "w": 2,
+      "h": 2
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 0
+  },
+  "spr_mesa_de_jantar": {
+    "pegada": {
+      "w": 3,
+      "h": 2
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 0
+  },
+  "spr_rack_da_sala": {
+    "pegada": {
+      "w": 4,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_comoda": {
+    "pegada": {
+      "w": 1,
+      "h": 3
+    },
+    "ancora": {
+      "x": 0,
+      "y": 104
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 104,
+    "E": 8
+  },
+  "spr_geladeira": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_forno": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_fogao": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_armario_da_cozinha": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_pia": {
+    "pegada": {
+      "w": 1,
+      "h": 3
+    },
+    "ancora": {
+      "x": 0,
+      "y": 104
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 104,
+    "E": 8
+  },
+  "spr_armario_da_lavanderia": {
+    "pegada": {
+      "w": 1,
+      "h": 2
+    },
+    "ancora": {
+      "x": 0,
+      "y": 80
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 80,
+    "E": 16
+  },
+  "spr_lava_roupas": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_tanque": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_cama_da_oli": {
+    "pegada": {
+      "w": 1,
+      "h": 2
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 0
+  },
+  "spr_comoda_da_oli": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 40
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 40,
+    "E": 8
+  },
+  "spr_cadeira_de_amamentacao": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_cama_do_casal": {
+    "pegada": {
+      "w": 2,
+      "h": 3
+    },
+    "ancora": {
+      "x": 0,
+      "y": 96
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 96,
+    "E": 0
+  },
+  "spr_armario_do_casal": {
+    "pegada": {
+      "w": 4,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_mesa_do_escritorio": {
+    "pegada": {
+      "w": 3,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 40
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 40,
+    "E": 8
+  },
+  "spr_cama_do_escritorio": {
+    "pegada": {
+      "w": 2,
+      "h": 2
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 0
+  },
+  "spr_box_do_banheiro_1": {
+    "pegada": {
+      "w": 3,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 32
+  },
+  "spr_privada_do_banheiro_1": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_pia_do_banheiro_1": {
+    "pegada": {
+      "w": 3,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_pia_do_banheiro_do_escritorio": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 44
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 44,
+    "E": 12
+  },
+  "spr_privada_do_banheiro_do_escritorio": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_box_do_banheiro_do_escritorio": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 48
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 48,
+    "E": 16
+  },
+  "spr_prateleira": {
+    "pegada": {
+      "w": 3,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_prateleira_pequena": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 64
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 64,
+    "E": 32
+  },
+  "spr_arvore_desmontada": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_arvore_1parte": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_arvore_2partes": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_arvore_completa": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "spr_arvore_enfeitada": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  },
+  "dec_arvore_p": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 40
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 40,
+    "E": 8
+  },
+  "dec_arvore_g": {
+    "pegada": {
+      "w": 1,
+      "h": 1
+    },
+    "ancora": {
+      "x": 0,
+      "y": 56
+    },
+    "sombra": {
+      "dx": 6,
+      "dy": 6
+    },
+    "H": 56,
+    "E": 24
+  }
+}

@@ -26,6 +26,8 @@ interface CasaPorDentro {
   transitando: boolean;
   estado: string;
   geo: { tile: number; quadro: { w: number; h: number }; pes: { dx: number; dy: number; w: number; h: number } };
+  atualizarSprite(time: number): void;
+  time: { now: number };
   sv: {
     sessao: {
       fase: string;
@@ -127,6 +129,28 @@ export function instalarGancho(jogo: Phaser.Game): void {
       nickEstado: { acordado: c.sv.sessao.progresso.nick.estado === 'acordado', dormindo: c.sv.sessao.progresso.nick.estado === 'dormindo' },
     };
   };
+  /**
+   * Põe o sobrinho no tile local (tx, ty) da área atual, com os pés no centro do tile, olhando para `dir` (capturas da visão 3/4,
+   * ADR-012 E3). Não é atalho de jogo: só existe no build de QA. Devolve false fora da casa.
+   */
+  janela.__posicionar = (tx: number, ty: number, dir = 'baixo') => {
+    const c = casa();
+    if (!c) return false;
+    const t = c.geo.tile;
+    c.pos = { x: (tx + c.desl.x) * t + (t - c.geo.quadro.w) / 2, y: (ty + c.desl.y) * t + t / 2 - (c.geo.pes.dy + c.geo.pes.h / 2) };
+    c.dir = dir;
+    return true;
+  };
+  /** Imagens da Casa cuja chave de textura contém `parte` (QA da visão 3/4): chave, quadro, posição e profundidade. */
+  janela.__imagens = (parte: string) => {
+    const cena = jogo.scene.getScene('Casa') as unknown as { children?: { list: { texture?: { key: string }; frame?: { name: string | number }; x: number; y: number; depth: number }[] } } | undefined;
+    return (cena?.children?.list ?? []).filter((o) => o.texture?.key.includes(parte)).map((o) => ({ chave: o.texture!.key, quadro: o.frame?.name ?? null, x: o.x, y: o.y, profundidade: o.depth }));
+  };
+  /** Objetos gráficos (Graphics) da Casa: tipo, posição e profundidade (QA da visão 3/4). */
+  janela.__graficos = () => {
+    const cena = jogo.scene.getScene('Casa') as unknown as { children?: { list: { type: string; x: number; y: number; depth: number; scrollFactorX: number }[] } } | undefined;
+    return (cena?.children?.list ?? []).filter((o) => o.type === 'Graphics').map((o) => ({ x: o.x, y: o.y, profundidade: o.depth, scroll: o.scrollFactorX }));
+  };
   janela.__teleportar = (mapa: string, spawn: string) => {
     const c = casa();
     if (!c) return false;
@@ -158,6 +182,19 @@ export function instalarGancho(jogo: Phaser.Game): void {
     }
     if (explorar) sv.sessao.entrarNoModoExplorar();
     return sv.sessao;
+  };
+  /** Começa uma partida nova (fase `introducao`) com o sobrinho pedido, sem concluir nada (capturas dos estados da casa; build de QA). */
+  janela.__novaPartida = (personagem: string) => {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string): void } };
+    sv.iniciarNovoJogo.executar(personagem);
+    return true;
+  };
+  /** Abre todas as áreas na Casa atual, só para capturar as fechadas (Quarto do casal, banheiros, Quartinho). Build de QA. */
+  janela.__abrirTodasAsAreas = () => {
+    const c = casa() as unknown as { qaAreasAbertas: boolean } | null;
+    if (!c) return false;
+    c.qaAreasAbertas = true;
+    return true;
   };
   /** Troca de cena sem passar pelos menus (build de QA; as capturas dos Marcos 7). */
   janela.__irPara = (cena: string, dados?: unknown) => {
