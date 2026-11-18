@@ -505,3 +505,7 @@ Sem bug confirmado. Observações para o Dev:
 - **P3 (FI2, decisão do Orquestrador):** a barra "Z ou X: continuar" cobre ~9% da altura da imagem de fim (faixa inferior), incluindo a base dos corpos das crianças; os rostos ficam livres.
 - **EN2:** nenhum enfeite sobre porta, interruptor, bilhete, árvore, caixa, peça, spawn ou tile do Nick (dados). Enfeites examináveis sobre móveis: previsto (GDD 20.6, EN4).
 - EX5 667×375 (2 min, não os 5 pedidos): sem erro de console; sem trava confirmada; cobertura das áreas incompleta (Sala e Quarto). Repetir 5 min na próxima rodada.
+
+## 1.1.0, rodada 1
+- Nenhum bug P0 a P3 confirmado. Pendências N/T no `qa/checklist-110.md`.
+- Observação: no "andar contra" a travessia deixa o sobrinho 3 tiles dentro da área nova se a tecla continua apertada (ex.: Hall para Sala chega em (4,5)); é continuação do movimento, não volta.

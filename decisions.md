@@ -752,3 +752,46 @@
 ## 2026-11-13 — QA em até 10 minutos e respostas curtas (Diretor)
 - **Decisão (literal):** "Reduza a quantidade de informações que você responde aqui. Mande apenas o realmente necessário. Diminua o tempo de QA para até 10 minutos." Cada rodada de QA passa a ter no máximo 10 min (antes 15); respostas ao Diretor curtas.
 - **Quem decidiu:** Diretor.
+
+### 2026-11-17: modelo dos agentes
+- **Decisão (Diretor):** a partir de agora, requisições ao Desenvolvedor, Produto e Arte usam Sonnet 5.5 effort Médio, quando necessário. Antes: Haiku 5.5 Médio (Especialista Alto).
+- **Quem decidiu:** Diretor.
+
+## 2026-11-17 — Nova planta e escopo da 1.1.0 (Diretor: "siga as sugestões")
+- **Decisões:** (1) fronteira entre áreas sem muro desenhado é parede, com aviso onde falta o desenho; (2) a metade da Cozinha e Lavanderia com a porta da Sala é a Cozinha (Pia, Fogão, Geladeira, peça 2) e a metade com a porta do Quartinho é a Lavanderia (peça 3); (3) Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho ficam fechados na 1.1.0 (abrir seria 1.2); (4) a Arte propõe a posição de rótulos, interruptor, árvore, peças e móveis, e o Diretor aprova; (5) atravessar a porta aberta é andando contra, como hoje. Muros por aresta (opção A do Produto); novo ADR-011.
+- **Planta:** `home_v2.tmx` (Diretor), 9 áreas, gira 90° no sentido horário no conversor. Nomes: Sala, Quartinho, Cozinha e Lavanderia, Banheiro 1, Banheiro do escritório, Hall, Quarto da Oli, Escritório, Quarto (casal).
+- **Quem decidiu:** Diretor.
+
+## 2026-11-17 — ADR-011 aceito (Orquestrador, sobre as decisões do Diretor)
+- **Decisões:** (1) o conversor emite `porta` nos dois lados das 9 portas; quem decide fechada ou aberta é o motor, por `missions[].maps` (o backlog 166(5) fica superado; `portaFechada`, `saida` e `origemChegada` saem); (2) `CUSTO_DA_PORTA` de 3 para 1 (o Produto confere os destinos de `conducao`, item 174); (3) `bilhete` vira tile livre com `lado` para uma parede (E037); (4) `schemaVersion` 2 → 3, sem migração em tempo de execução (não há save), versão segue 1.1.0; (5) espessura máxima do muro 12 px; (6) `tests/fixtures/colisao-0.12.0.json` vira `colisao-1.1.0.json`.
+- **Quem decidiu:** Orquestrador (ADR proposto pelo Especialista), dentro das decisões do Diretor de 2026-11-17.
+
+## 2026-11-17 — Ajustes do Dev ao ADR-011 e Sala na linha da barra
+- **Decisões (Orquestrador):** (1) epsilon de 0,01 px só no comprimento da caixa sobre a aresta; (2) a travessia dispara no primeiro quadro de contato; (3) reentrada: trava as direções seguradas, menos a direção "para dentro"; (4) chegada por porta centralizada no tile; (5) bilhete e porta saem da lista genérica do A (lidos por geometria de aresta); (6) Sala (0,9) e (1,9) andáveis na linha da barra: a Arte bloqueia esses dois tiles na planta, em vez de afrouxar a guarda do ADR-005 (sugestão do Dev).
+- **Quem decidiu:** Orquestrador, dentro das decisões do Diretor.
+
+## 2026-11-17 — Móveis da Sala e Nick dormindo (padrão aplicado)
+- **Contexto:** o Diretor indicou os móveis da Sala (sofá (3,3)-(4,4), rack colunas 2 a 5 linha 1, cacto (0,3), mesa colunas 6 a 8 linhas 5 e 6, cômoda coluna 10 linhas 5 a 7) e do Quarto da Oli (cama (1,0)-(1,1), cômoda (3,1), cadeira de amamentação cinza (3,3)). A mesa ocupou o tile de dormir do Nick, (8,5) (erro N004).
+- **Decisão (padrão aplicado, sugestão da Arte):** Nick dorme na Sala em (9,5) (marco1 e enfeites), em vez de (8,5). O Dev ajusta `nick.dorme` em `content/missions`.
+- **Também:** os enfeites de luz, vela, guirlanda e meias voltam a responder ao A onde há móvel de apoio (aguarda o Diretor responder sobre o GDD 20.6; sugestão: ajustar o texto).
+- **Quem decidiu:** Orquestrador (padrão aplicado, avisado ao Diretor).
+
+## 2026-11-17 — Escopo da 1.1.0 fechado depois da implementação (Produto)
+- **Decisões (padrão aplicado, sugestões do Produto):** (1) GDD 21 atualizado: Cozinha e Lavanderia 6×5 com 30 tiles, muro entre as linhas 2 e 3, passagem na coluna 4; peças e caixa nas posições entregues; Nick dorme em Sala (9,5), Cozinha (1,1), Quarto da Oli (1,2), Escritório (4,2); 28 móveis bloqueantes; aceite PL1 a PL16. (2) Easter egg do cacto da Sala (0,3), decisão do Diretor, registrado em GDD 21.14 (dispara por andar contra; só o sprite pisca, no máximo 3 ciclos por segundo). (3) GDD 20.6 ajustado ao mapa: enfeites apoiados em móvel respondem ao A; `enfeite.arvore` agora em uso; textos de presente e meias iguais ao `pt-BR.json`. (4) Condução de 16 a 22 passos em 2× confere com GDD 14.11.3 e 21.4: sem mudança (a 4 tiles/s, cerca de 3 s). (5) Conferência dos textos de `content/texts/pt-BR.json`: nenhum cita lugar que mudou; nada corrigido. (6) Pendências 45 a 49 marcadas como decididas (Diretor, "siga as sugestões").
+- **Aberto:** OK do Diretor ao deslocamento do Quartinho em 1 coluna e às capturas (PL12).
+- **Quem decidiu:** Produto, dentro das decisões do Diretor de 2026-11-17.
+
+## 2026-11-18 — Retorno do playtest da 1.1.0 (Diretor) e nova direção de arte
+- **Retorno literal:** "o jogo ficou legal. A passagem entre cozinha e lavanderia está muito apertada. O cacto ficou com a arte ruim, acho que precisamos repensar na arte das paredes e de todos os móveis. Eu queria uma versão isométrica mas que não seja uma visão 100% superior. Pensei em algo no estilo pokemon (FireRed), que conseguíamos ver as paredes ao norte. As paredes leste e oeste víamos apenas uma linha, as paredes sul não víamos para não atrapalhar a visão. Isso dá uma visão um pouco mais completa e simula uma visão 3d. [...] Há até um jogo de sombra. Sobre os móveis, eu posso tirar diversas fotos da casa, com a descrição do que é de onde foi tirada a foto." Referência: assets/referencia/diretor-2026-11-18/firered-visao-3-4.webp (fora do git).
+- **Decisões:** (1) a passagem entre Cozinha e Lavanderia passa de 1 para 2 tiles (colunas 3 e 4) — padrão aplicado; (2) nova direção de arte "visão 3/4": parede norte com face visível, leste e oeste só uma linha, sul não desenhada; móveis em perspectiva 3/4 com sombra; paredes, portas e todos os móveis (inclusive o cacto) a redesenhar; (3) o Diretor fornece fotos da casa com descrição para guiar a arte.
+- **Quem decidiu:** Diretor (1 por padrão aplicado, avisado).
+
+## 2026-11-18 — Visão 3/4: contrato de renderização (proposta do Especialista)
+- **Proposta:** `docs/ADR-012.md` e seção "Visão 3/4" do `style-guide.md`. Colisão, arestas e conteúdo não mudam (prova: `colisao-baseline` sem regenerar). Face norte de 32 px só sobre vazio; leste/oeste e muro interno em linha de 8 px; sul não desenhado; móveis por pegada e âncora, com sombra embutida (6 px, 25%), luz de cima à esquerda; portas em 3 folhas (norte, lado, sul); ordem de desenho pela base em px. Mesmo perfil `hd-480x352` (sem perfil novo). Muda a regra "móveis, paredes e portas giram como imagem" (ADR-004 seção 12): na 3/4 desenha-se já na orientação da tela.
+- **Achado:** a Sala (9 linhas de piso + barra de 56 px = 11 linhas) não tem espaço para a face norte da alcova das portas; as outras 8 áreas têm.
+- **Aberto (PERGUNTAS AO DIRETOR 1 e 2 no ADR-012):** Sala (A: barra de 48 px e Sala 16 px mais baixa, com face recortada na alcova; B: tela 15×12; C: tirar uma linha da Sala) e muro interno Cozinha/Lavanderia só em linha fina. Sugestões: A e sim. Valores em px provisórios até o Diretor aprovar o protótipo (E1 e E3).
+- **Quem decidiu:** pendente (Especialista propõe; Diretor decide).
+
+## 2026-11-18 — Visão 3/4: respostas do Diretor ("siga as sugestões")
+- **Decisões:** (1) Sala: opção A (barra de 48 px, Sala desenhada 16 px mais baixa, face da alcova recortada em 16 px, só na Sala); (2) muro interno da Cozinha/Lavanderia só como linha fina, sem face; (3) a arte 3/4 é a versão 1.2.0, depois de fechar a 1.1.0 (planta nova); (4) ADR-012 aceito; E1 (protótipo na Sala) e E2 (Dev: perfil `vista`, câmera, profundidade) começam; o Diretor fornece fotos dos móveis em assets/referencia/diretor-2026-11-18/moveis/.
+- **Quem decidiu:** Diretor.
