@@ -1,29 +1,21 @@
 #!/usr/bin/env python3
-"""Conversor da planta do Tiled para o conteúdo do jogo (ADR-004, docs/conversor-tmx.md).
+"""Conversor da planta do Tiled para o conteúdo do jogo (ADR-011, docs/conversor-tmx.md).
 
-Lê a cópia de trabalho `maps/casa-real/our-home-jogo.tmx` e grava, por subárea,
-`content/maps/casa-real/<id>.json`, o golden em `tools-arte/golden/casa-real/` e
-(opcional) as entradas do manifesto. Só biblioteca padrão. Não altera src/.
+Lê a cópia de trabalho `maps/casa-real/home-v2-jogo.tmx` e grava, por área,
+`content/maps/casa-real/<id>.json` (schemaVersion 3), as entradas `maps[]` do manifesto e,
+com --atualizar-golden, o golden em `tools-arte/golden/casa-real/`. Só biblioteca padrão.
+Não altera src/.
 
 Uso:
     python3 tools-arte/tmx_para_conteudo.py [--entrada CAMINHO] [--perfil ID]
-        [--verificar | --atualizar-golden] [--atualizar-manifesto]
-        [--girar]
+        [--verificar | --atualizar-golden] [--girar]
 
-    --girar              gira a planta 90° no sentido horário (GDD 14.12.1) em memória, antes de converter.
-                         Só o conversor gira: o TMX de trabalho fica na orientação atual (padrão provisório
-                         do Orquestrador, 2026-11-08).
-    Marca planta: propriedade do mapa no TMX. "atual" = o TMX está na orientação atual: o conversor exige
-    --girar. "girada" = o TMX já está girado: --girar recusa. Sem marca: nenhuma checagem.
-
+    --girar              gira cada área 90° no sentido horário na saída (ADR-011 seção 2.5).
+                         O TMX nunca gira; só a saída.
     --perfil ID          perfil de arte (content/art-profiles/ID.json). Padrão: hd-480x352.
-                         O manifesto ainda aponta para gba-240x160 (tile 16); por isso o padrão
-                         é o HD, que é o perfil da planta (ADR-004 seção 9 e ADR-003 seção 1.1).
-    --verificar          não grava nada; compara com content/ e com o golden; sai com 1 se diferir (E017).
+    --verificar          não grava nada; compara content/, entradas maps[] do manifesto e golden;
+                         sai com 1 se algo diferir (E017).
     --atualizar-golden   grava também o golden (tools-arte/golden/casa-real/).
-    --atualizar-manifesto  grava as entradas maps[] em content/manifest.json. Desligado por padrão:
-                         o validador de manifesto atual (schemaVersion 1) exige `rooms`, e a
-                         entrada nova ainda não tem esse campo (ADR-002, pendente de 026).
 
 Códigos de saída: 0 ok; 1 erro de regra (E0xx); 2 uso incorreto.
 """
@@ -39,33 +31,45 @@ from collections import deque
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-ENTRADA_PADRAO = RAIZ / "maps" / "casa-real" / "our-home-jogo.tmx"
+ENTRADA_PADRAO = RAIZ / "maps" / "casa-real" / "home-v2-jogo.tmx"
 SAIDA_CONTEUDO = RAIZ / "content" / "maps" / "casa-real"
 GOLDEN = RAIZ / "tools-arte" / "golden" / "casa-real"
 MANIFESTO = RAIZ / "content" / "manifest.json"
 PERFIS = RAIZ / "content" / "art-profiles"
 PERFIL_PADRAO = "hd-480x352"
+SCHEMA_VERSION = 3
 
 G_PISOS = "Pisos"
 G_ROTULOS = "Rótulos das subáreas"
 G_PORTAS = "Portas"
+G_MUROS = "muros"
 G_BLOQ = "Objetos da casa bloqueantes"
 G_JOGO = "Objetos de jogo"
-GRUPOS_CONHECIDOS = {G_ROTULOS, G_PORTAS, G_BLOQ, G_JOGO}
-GRUPOS_OBRIGATORIOS = [G_ROTULOS, G_PORTAS, G_BLOQ]
+GRUPOS_CONHECIDOS = {G_ROTULOS, G_PORTAS, G_MUROS, G_BLOQ, G_JOGO}
+GRUPOS_OBRIGATORIOS = [G_ROTULOS, G_PORTAS, G_MUROS]       # G_BLOQ e G_JOGO são opcionais
 CLASSES_JOGO = {"spawn", "interruptor", "bilhete", "arvore", "examinavel", "peca", "enfeite"}
-ESTADOS_PECA = {"visivel", "escondida"}                # ADR-004 seção 6; estado inicial da peça
-ORDEM_DO_ENFEITE = 4                                   # ADR-006 seção 2.2 (fixo: a caixa não é lida do TMX)
-ESTADO_DO_ENFEITE = "escondida"                        # ADR-006 seção 2.4 (fixo: aparece depois da parte 3)
+ESTADOS_PECA = {"visivel", "escondida"}
+ORDEM_DO_ENFEITE = 4                                       # ADR-006 seção 2.2 (fixo)
+ESTADO_DO_ENFEITE = "escondida"                            # ADR-006 seção 2.4 (fixo)
 DIRECOES = {"cima": (0, -1), "baixo": (0, 1), "esquerda": (-1, 0), "direita": (1, 0)}
 NOME_DIRECAO = {v: k for k, v in DIRECOES.items()}
-# Giro de 90° no sentido horário (GDD 14.12.1): o que estava em cima vai para a direita, etc.
+BIT = {"cima": 1, "direita": 2, "baixo": 4, "esquerda": 8}  # ADR-011 seção 2.1
+OPOSTO = {"cima": "baixo", "baixo": "cima", "esquerda": "direita", "direita": "esquerda"}
+# Giro de 90° no sentido horário: cima vira direita, direita vira baixo, baixo vira esquerda, esquerda vira cima.
 ROTACAO_DIRECAO = {"cima": "direita", "direita": "baixo", "baixo": "esquerda", "esquerda": "cima"}
 ID_RE = re.compile(r"^[a-z0-9_]+$")
-MARCA_RE = re.compile(r"^P\d+$")
-AMOSTRAS = 8          # 8 x 8 pontos por tile (ADR-004 seção 4, regra 1)
+ID_PORTA_RE = re.compile(r"^[a-z0-9_]+(-[a-z0-9_]+)*$")
+PROPS_PORTA = {"id", "trancadaAte"}
+AMOSTRAS = 8          # 8 x 8 pontos por tile (regra 7 do conversor, colisão de móveis)
 LIMIAR_PONTOS = 32    # de 64 pontos: pelo menos metade do tile
 MASCARA_FLIP = 0xE0000000
+# Constantes do conversor (ADR-011 seções 2.2 e 3.1): configuração, não do motor.
+ESPESSURA_MAX = 12.0  # px; os dois lados do muro acima disto: E033
+DISTANCIA_GRADE_MAX = 8.0   # px da linha central do muro à linha da grade
+TOLERANCIA_PORTA = 12.0     # px do ponto da porta à aresta
+FOLGA_PORTA = 2.0           # px: a mais próxima tem de vencer a segunda por isto
+ORDEM_TIPOS = {"porta": 0, "spawn": 1, "interruptor": 2, "bilhete": 3, "arvore": 4,
+               "examinavel": 5, "peca": 6, "enfeite": 7, "movel": 8}
 
 
 class Erro(Exception):
@@ -84,7 +88,13 @@ class Coletor:
         self.erros.append(f"ERRO {codigo} {self.arquivo}: {msg}")
 
     def aviso(self, codigo, msg):
-        self.avisos.append(f"AVISO {codigo} {self.arquivo}: {msg}")
+        self.avisos.append((codigo, msg))
+
+    def avisos_ordenados(self):
+        return sorted(set(self.avisos))
+
+    def linhas_de_aviso(self):
+        return [f"AVISO {c} {self.arquivo}: {m}" for c, m in self.avisos_ordenados()]
 
 
 # ---------------------------------------------------------------- leitura do TMX
@@ -99,6 +109,7 @@ class Obj:
         self.w = float(el.get("width", 0))
         self.h = float(el.get("height", 0))
         self.rot = float(el.get("rotation", 0))
+        self.ponto = el.find("point") is not None
         t = el.find("text")
         self.texto = (t.text or "").strip() if t is not None else None
         self.props = {}
@@ -119,7 +130,7 @@ class Obj:
         return (math.floor(self.x / T), math.floor(self.y / T))
 
     def retangulo(self):
-        """Caixa envolvente em px, com rotação em torno do canto superior esquerdo (contrato 3.7)."""
+        """Caixa envolvente em px, com rotação em torno do canto superior esquerdo."""
         if self.rot % 360 == 0:
             return (self.x, self.y, self.x + self.w, self.y + self.h)
         th = math.radians(self.rot)
@@ -129,28 +140,17 @@ class Obj:
         return (min(p[0] for p in ps), min(p[1] for p in ps), max(p[0] for p in ps), max(p[1] for p in ps))
 
 
-def _marca_da_planta(raiz):
-    for p in raiz.findall("properties/property"):
-        if p.get("name") == "planta":
-            return p.get("value")
-    return None
-
-
-def ler_tmx(caminho, perfil, col, girar=False):
+def ler_tmx(caminho, perfil, col):
+    """Lê o TMX na orientação do Diretor (não gira). Retorna (piso, grupos, primeiro_gid) ou None."""
     raiz = ET.parse(caminho).getroot()
     T = perfil["tile"]
-    marca = _marca_da_planta(raiz)
-    if girar and marca == "girada":
-        col.erro("E000", "o TMX está marcado como planta=girada: --girar giraria de novo")
-    if not girar and marca == "atual":
-        col.erro("E000", "o TMX está na planta atual (planta=atual): rode com --girar (GDD 14.12)")
+    # A propriedade de mapa `planta` do TMX do Diretor é ignorada (ADR-011 seção 6).
     if raiz.get("orientation") != "orthogonal":
         col.erro("E000", "orientation deve ser orthogonal")
     tw, th = int(raiz.get("tilewidth", 0)), int(raiz.get("tileheight", 0))
     if tw != T or th != T:
         col.erro("E001", f"tilewidth {tw} / tileheight {th} ≠ perfil.tile {T} ({perfil['id']})")
 
-    # tileset único 'tiles_casa'
     ts_list = raiz.findall("tileset")
     tiles = [t for t in ts_list if t.get("name") == "tiles_casa"]
     if len(tiles) != 1:
@@ -186,62 +186,30 @@ def ler_tmx(caminho, perfil, col, girar=False):
     if blocos:
         for b in blocos:
             cx, cy, cw = int(b.get("x")), int(b.get("y")), int(b.get("width"))
-            valores = [v for v in b.text.replace("\n", "").split(",") if v.strip() != ""]
+            valores = [v for v in (b.text or "").replace("\n", "").split(",") if v.strip() != ""]
             for i, v in enumerate(valores):
                 _guardar_gid(piso, cx + i % cw, cy + i // cw, int(v), primeiro, contagem, col)
     else:
         cw = int(camadas[0].get("width"))
-        valores = [v for v in dados.text.replace("\n", "").split(",") if v.strip() != ""]
+        valores = [v for v in (dados.text or "").replace("\n", "").split(",") if v.strip() != ""]
         for i, v in enumerate(valores):
             _guardar_gid(piso, i % cw, i // cw, int(v), primeiro, contagem, col)
 
     grupos = {}
     for og in raiz.findall("objectgroup"):
         nome = og.get("name")
-        if nome == "Nome das subareas":
-            col.erro("E000", "renomeie o grupo 'Nome das subareas' para 'Rótulos das subáreas'")
-            continue
-        if nome not in GRUPOS_CONHECIDOS and nome != G_PORTAS + " pendentes":
+        if nome not in GRUPOS_CONHECIDOS:
             col.erro("E000", f"grupo de objetos '{nome}' não é previsto (contrato, seção 2.3)")
             continue
         grupos[nome] = [Obj(o) for o in og.findall("object")]
     for nome in GRUPOS_OBRIGATORIOS:
         if nome not in grupos:
             col.erro("E000", f"grupo '{nome}' não encontrado")
-    if G_JOGO not in grupos:
-        col.aviso("W002", f"grupo '{G_JOGO}' ausente: nenhum objeto de jogo")
-        grupos[G_JOGO] = []
+    grupos.setdefault(G_BLOQ, [])
+    grupos.setdefault(G_JOGO, [])
     if not piso:
         col.erro("E016", f"grupo '{G_PISOS}' sem tiles")
-    if girar:
-        piso = {girar_tile(p): g for p, g in piso.items()}
-        for lst in grupos.values():
-            for o in lst:
-                girar_obj(o, col)
-    return piso, grupos
-
-
-# ---------------------------------------------------------------- giro da planta (GDD 14.12)
-
-def girar_tile(p):
-    """Tile (x, y) -> (-y - 1, x): 90° no sentido horário, vista de cima (GDD 14.12.1; equivale à
-    fórmula da subárea (altura − 1 − y, x), com a origem de cada caixa recalculada pelo conversor)."""
-    x, y = p
-    return (-y - 1, x)
-
-
-def girar_px(x, y, w, h):
-    """Retângulo em px (x, y, w, h) -> (-(y + h), x, h, w). Ponto (w = h = 0) cai na mesma fórmula."""
-    return (-(y + h), x, h, w)
-
-
-def girar_obj(o, col):
-    if o.rot % 360 != 0:
-        col.erro("E012", f"objeto {o.id}: --girar não aceita rotação {o.rot:g}°")
-        return
-    o.x, o.y, o.w, o.h = girar_px(o.x, o.y, o.w, o.h)
-    if "direcao" in o.props:
-        o.props["direcao"] = ROTACAO_DIRECAO.get(o.props["direcao"], o.props["direcao"])
+    return piso, grupos, primeiro
 
 
 def _guardar_gid(piso, x, y, gid, primeiro, contagem, col):
@@ -263,22 +231,43 @@ def vizinhos4(p):
     return [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
 
 
-def componentes(piso):
+def somar(p, nome):
+    dx, dy = DIRECOES[nome]
+    return (p[0] + dx, p[1] + dy)
+
+
+def componentes_por_gid(piso):
+    """Componentes 4-conexas de mesmo gid (ADR-011 seção 1). Ordem estável: pelo primeiro tile (y, x)."""
     visto, saida = set(), []
     for p in sorted(piso, key=lambda p: (p[1], p[0])):
         if p in visto:
             continue
+        gid = piso[p]
         fila, mem = deque([p]), []
         visto.add(p)
         while fila:
             q = fila.popleft()
             mem.append(q)
             for n in vizinhos4(q):
-                if n in piso and n not in visto:
+                if n in piso and n not in visto and piso[n] == gid:
                     visto.add(n)
                     fila.append(n)
         saida.append(frozenset(mem))
     return saida
+
+
+# Aresta: ("h", x, y) = linha de grade y entre os tiles (x, y-1) e (x, y);
+#         ("v", x, y) = linha de grade x entre os tiles (x-1, y) e (x, y).
+def aresta_do_lado(t, lado):
+    x, y = t
+    return {"cima": ("h", x, y), "baixo": ("h", x, y + 1),
+            "esquerda": ("v", x, y), "direita": ("v", x + 1, y)}[lado]
+
+
+def tiles_da_aresta(e):
+    """(tile de cima ou da esquerda, tile de baixo ou da direita)."""
+    k, x, y = e
+    return ((x, y - 1), (x, y)) if k == "h" else ((x - 1, y), (x, y))
 
 
 def bloqueio_do_tile(retangulos, tile, T):
@@ -306,31 +295,28 @@ def slug(nome):
     return re.sub(r"[^a-z0-9]+", "_", base).strip("_")
 
 
-def moveis_por_subarea(grupos, T, dono, col):
-    """Móveis nomeados (objeto `movel`, contrato da Arte com o Dev, 2026-11-08): cada retângulo com texto em
-    'Objetos da casa bloqueantes' é um móvel. Mesmo retângulo da colisão (já girado). Tem de estar alinhado à
-    grade e cair em piso de uma única subárea (E020). Retorna {subárea: [(x, y, w, h, nome)]} em tiles do TMX girado."""
+def moveis_por_area(grupos, T, dono, col):
+    """Móveis nomeados: cada retângulo com texto em 'Objetos da casa bloqueantes' (opcional). Alinhado à
+    grade e dentro do piso de uma única área (E020). Retorna {área: [(x, y, w, h, nome)]} em tiles do TMX."""
     saida = {}
     for o in grupos.get(G_BLOQ, []):
         if not o.texto:
-            continue                                   # parede, pilar ou batente: sem móvel
+            continue
         x0, y0, x1, y1 = o.retangulo()
         if any(v % T for v in (x0, y0, x1 - x0, y1 - y0)):
             col.erro("E020", f"móvel '{o.texto}' (id {o.id}): retângulo fora da grade de {T} px")
             continue
         donos = {dono.get(t) for t in tiles_do_retangulo((x0, y0, x1, y1), T)}
         if None in donos or len(donos) != 1:
-            col.erro("E020", f"móvel '{o.texto}' (id {o.id}): tiles fora do piso ou em mais de uma subárea")
+            col.erro("E020", f"móvel '{o.texto}' (id {o.id}): tiles fora do piso ou em mais de uma área")
             continue
         saida.setdefault(donos.pop(), []).append((int(x0 // T), int(y0 // T),
                                                   int((x1 - x0) // T), int((y1 - y0) // T), o.texto))
     return saida
 
 
-# ---------------------------------------------------------------- conversão
-
 def calcular_bloqueio(grupos, T, col):
-    """Retângulos de colisão e conjunto de tiles bloqueados pela união (ADR-004 seção 4)."""
+    """Retângulos de colisão e conjunto de tiles bloqueados pela união (regra 7; grupo opcional)."""
     retangulos = []
     for o in grupos.get(G_BLOQ, []):
         if o.rot % 90 > 1 and o.rot % 90 < 89:
@@ -345,31 +331,200 @@ def calcular_bloqueio(grupos, T, col):
     for t in {t for r in rects for t in tiles_do_retangulo(r, T)}:
         if bloqueio_do_tile(rects, t, T):
             bloqueado.add(t)
-    return rects, bloqueado
+    return bloqueado
 
 
-def converter(caminho, perfil, col, vao_livre=(), girar=False):
-    lido = ler_tmx(caminho, perfil, col, girar)
+# ---------------------------------------------------------------- muros por aresta (ADR-011 seção 2.2)
+
+def muro_para_arestas(o, T, col):
+    """Retorna o conjunto de arestas que o muro bloqueia (cobertura de T/2, linha a até 8 px da grade).
+    Erros E033 (forma, espessura, fora da grade) devolvem None."""
+    rotulo = f"muro {o.id}"
+    if o.rot % 360 != 0:
+        col.erro("E033", f"{rotulo}: rotação {o.rot:g}°; muro rotacionado não é aceito")
+        return None
+    w, h = round(o.w, 2), round(o.h, 2)
+    if w > ESPESSURA_MAX and h > ESPESSURA_MAX:
+        col.erro("E033", f"{rotulo}: {w:g}×{h:g} px; a espessura passa de {ESPESSURA_MAX:g} px nos dois lados")
+        return None
+    if w == h:
+        return set()                                   # menos de 16 px de comprimento: sem aresta (W034)
+    horizontal = w > h
+    ac = (o.y + o.h / 2) if horizontal else (o.x + o.w / 2)       # linha central
+    k = math.floor(ac / T + 0.5)
+    d = abs(ac - k * T)
+    if round(d, 2) > DISTANCIA_GRADE_MAX:
+        col.erro("E033", f"{rotulo}: linha central a {d:.2f} px da grade; o máximo é {DISTANCIA_GRADE_MAX:g} px")
+        return None
+    ini, fim = (o.x, o.x + o.w) if horizontal else (o.y, o.y + o.h)
+    arestas = set()
+    for c in range(math.floor(ini / T), math.ceil(fim / T)):
+        dentro = min(fim, (c + 1) * T) - max(ini, c * T)
+        if round(dentro, 2) >= T / 2:
+            arestas.add(("h", c, k) if horizontal else ("v", k, c))
+    return arestas
+
+
+# ---------------------------------------------------------------- máscara, giro, desenho (funções puras)
+
+def girar_mascara(m):
+    """Rotação de bits de 90° horário: cima vira direita, direita baixo, baixo esquerda, esquerda cima."""
+    return ((m << 1) | (m >> 3)) & 15
+
+
+def girar_area(doc):
+    """Gira o documento de uma área 90° no sentido horário: (x, y) -> (altura − 1 − y, x) (ADR-011 seção 2.5).
+    Gira chao, colisao, paredes, objetos (x, y, lado, direcao, w, h). A tela não gira."""
+    w, h = doc["largura"], doc["altura"]
+    novo = dict(doc)
+    novo["largura"], novo["altura"] = h, w
+
+    def girar_lista(lista, f=lambda v: v):
+        saida = [0] * (w * h)
+        for y in range(h):
+            for x in range(w):
+                saida[x * h + (h - 1 - y)] = f(lista[y * w + x])
+        return saida
+
+    novo["chao"] = girar_lista(doc["chao"])
+    novo["colisao"] = girar_lista(doc["colisao"])
+    novo["paredes"] = girar_lista(doc["paredes"], girar_mascara)
+    objs = []
+    for o in doc["objetos"]:
+        o2 = dict(o)
+        if o["tipo"] == "movel":
+            o2["x"], o2["y"] = h - o["y"] - o["h"], o["x"]
+            o2["w"], o2["h"] = o["h"], o["w"]
+        else:
+            o2["x"], o2["y"] = h - 1 - o["y"], o["x"]
+        for campo in ("lado", "direcao"):
+            if campo in o2:
+                o2[campo] = ROTACAO_DIRECAO[o2[campo]]
+        objs.append(o2)
+    novo["objetos"] = ordenar_objetos(objs)
+    return novo
+
+
+def ordenar_objetos(objs):
+    return sorted(objs, key=lambda o: (ORDEM_TIPOS[o["tipo"]], str(o.get("id") or o.get("nome") or ""), o["y"], o["x"]))
+
+
+def ha_parede(doc, x, y, lado):
+    """Bit do lado em paredes (tile dentro da caixa)."""
+    return bool(doc["paredes"][y * doc["largura"] + x] & BIT[lado])
+
+
+def conexidade(doc):
+    """Partes de tiles livres (chao > 0, colisao 0) ligadas pelas arestas abertas. Retorna lista de listas
+    de tiles, a maior primeiro (E036 quando há mais de uma)."""
+    w, h = doc["largura"], doc["altura"]
+    livre = {(i % w, i // w) for i in range(w * h) if doc["chao"][i] > 0 and doc["colisao"][i] == 0}
+    visto, partes = set(), []
+    for p in sorted(livre, key=lambda p: (p[1], p[0])):
+        if p in visto:
+            continue
+        parte, fila = [], deque([p])
+        visto.add(p)
+        while fila:
+            q = fila.popleft()
+            parte.append(q)
+            for lado in DIRECOES:
+                n = somar(q, lado)
+                if n in livre and n not in visto and not ha_parede(doc, q[0], q[1], lado):
+                    visto.add(n)
+                    fila.append(n)
+        partes.append(sorted(parte, key=lambda p: (p[1], p[0])))
+    partes.sort(key=lambda parte: (-len(parte), parte[0][1], parte[0][0]))
+    return partes
+
+
+def desenhar(doc):
+    """Grade dupla (ADR-011 seção 6): 2·altura+1 linhas por 2·largura+1 colunas. Tiles nas posições ímpares;
+    arestas nas mistas (`-` ou `|` parede, `D` porta, espaço aberta); vértices `+` se alguma aresta encostada
+    é parede ou porta."""
+    w, h = doc["largura"], doc["altura"]
+    simbolo = {"spawn": "S", "interruptor": "I", "bilhete": "B", "arvore": "A", "examinavel": "E", "enfeite": "C"}
+    marcas, portas = {}, []
+    for o in doc["objetos"]:
+        if o["tipo"] == "movel":
+            continue
+        if o["tipo"] == "porta":
+            portas.append(o)
+        elif o["tipo"] == "peca":
+            marcas[(o["x"], o["y"])] = str(o["ordem"])
+        else:
+            marcas[(o["x"], o["y"])] = simbolo[o["tipo"]]
+    g = [[" "] * (2 * w + 1) for _ in range(2 * h + 1)]
+    for y in range(h):
+        for x in range(w):
+            i = y * w + x
+            if (x, y) in marcas:
+                c = marcas[(x, y)]
+            elif doc["chao"][i] == 0:
+                c = " "
+            elif doc["colisao"][i]:
+                c = "#"
+            else:
+                c = "."
+            g[2 * y + 1][2 * x + 1] = c
+            if doc["chao"][i] == 0:
+                continue
+            m = doc["paredes"][i]
+            if m & BIT["cima"]:
+                g[2 * y][2 * x + 1] = "-"
+            if m & BIT["baixo"]:
+                g[2 * y + 2][2 * x + 1] = "-"
+            if m & BIT["esquerda"]:
+                g[2 * y + 1][2 * x] = "|"
+            if m & BIT["direita"]:
+                g[2 * y + 1][2 * x + 2] = "|"
+    for o in portas:
+        x, y = o["x"], o["y"]
+        if o["lado"] == "cima":
+            g[2 * y][2 * x + 1] = "D"
+        elif o["lado"] == "baixo":
+            g[2 * y + 2][2 * x + 1] = "D"
+        elif o["lado"] == "esquerda":
+            g[2 * y + 1][2 * x] = "D"
+        else:
+            g[2 * y + 1][2 * x + 2] = "D"
+    for r in range(0, 2 * h + 1, 2):
+        for c in range(0, 2 * w + 1, 2):
+            viz = []
+            if r > 0:
+                viz.append(g[r - 1][c])
+            if r < 2 * h:
+                viz.append(g[r + 1][c])
+            if c > 0:
+                viz.append(g[r][c - 1])
+            if c < 2 * w:
+                viz.append(g[r][c + 1])
+            if any(v in "-|D" for v in viz):
+                g[r][c] = "+"
+    return ["".join(linha).rstrip() for linha in g]
+
+
+# ---------------------------------------------------------------- conversão
+
+def converter(caminho, perfil, col, girar=False):
+    lido = ler_tmx(caminho, perfil, col)
     if lido is None or col.erros:
         return None
-    piso, grupos = lido
+    piso, grupos, primeiro = lido
     T = perfil["tile"]
     tela_c, tela_l = perfil["sala"]["colunas"], perfil["sala"]["linhas"]
-    comps = componentes(piso)
-    retangulos, bloqueado = calcular_bloqueio(grupos, T, col)
+    bloqueado = calcular_bloqueio(grupos, T, col)
     if col.erros:
         return None
 
-    # 4. rótulos
-    subs = []
-    for m in comps:
-        subs.append({"comp": m, "id": None, "escuro": False, "rotulo": None})
+    # 1. áreas por gid (ADR-011 seção 1) e 2. rótulos
+    comps = componentes_por_gid(piso)
+    subs = [{"comp": m, "id": None, "escuro": False} for m in comps]
     dono = {}
     for i, s in enumerate(subs):
         for p in s["comp"]:
             dono[p] = i
-    rotulos_por_comp = {}
-    ids_vistos = set()
+    rotulos_por_comp, ids_vistos = {}, set()
     for o in grupos.get(G_ROTULOS, []):
         ident = o.props.get("id")
         if not isinstance(ident, str) or not ID_RE.match(ident):
@@ -389,239 +544,243 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
         lst = rotulos_por_comp.get(i, [])
         nomes = sorted(x[0] for x in lst)
         if len(lst) != 1:
-            col.erro("E004", f"componente {i} do piso (tile {min(s['comp'])}): {len(lst)} rótulos ({', '.join(nomes) or 'nenhum'}); esperado 1")
+            col.erro("E004", f"área de gid {piso[min(s['comp'], key=lambda p: (p[1], p[0]))]} com primeiro tile "
+                             f"{min(s['comp'], key=lambda p: (p[1], p[0]))}: {len(lst)} rótulos "
+                             f"({', '.join(nomes) or 'nenhum'}); esperado 1")
             continue
         s["id"], s["escuro"] = lst[0]
     if col.erros:
         return None
+    ids = [s["id"] for s in subs]
 
-    # chegada declarada (ADR-004 seção 13.14; contrato 2.3): spawn com `chegada` no grupo Objetos de jogo.
-    # Lido antes das marcas: o par explícito (chegada nos dois lados) aceita vão de 1 ou mais tiles.
-    declaradas = {}                                    # (subarea, id da porta) -> (tile, direcao)
-    for o in grupos.get(G_JOGO, []):
-        if o.classe == "spawn" and "chegada" in o.props and not o.nome:
-            t_decl = o.tile(T)
-            if t_decl in dono and isinstance(o.props.get("chegada"), str):
-                declaradas[(dono[t_decl], o.props["chegada"])] = (t_decl, o.props.get("direcao"))
+    def borda(t, lado):
+        """True se a aresta do lado de t (tile de piso) é fronteira: o vizinho não é piso da mesma área."""
+        return dono.get(somar(t, lado)) != dono.get(t)
 
-    # 5. marcas de porta
-    marcas = {}
+    # 4. muros -> arestas (seção 2.2)
+    muros = []                                         # (objeto, arestas)
+    for o in grupos.get(G_MUROS, []):
+        if o.ponto or o.texto:
+            col.erro("E033", f"muro {o.id}: o grupo '{G_MUROS}' só aceita retângulos sem texto")
+            continue
+        arestas = muro_para_arestas(o, T, col)
+        if arestas is not None:
+            muros.append((o, arestas))
+    if col.erros:
+        return None
+
+    def classe(e):
+        a, b = tiles_da_aresta(e)
+        if a in dono and b in dono:
+            return "interna" if dono[a] == dono[b] else "fronteira"
+        if a in dono or b in dono:
+            return "exterior"
+        return "vazia"
+
+    arestas_de_muro = set()
+    for o, arestas in muros:
+        arestas_de_muro |= arestas
+        util = [e for e in arestas if classe(e) != "vazia"]
+        if not util:
+            col.aviso("W034", f"muro {o.id} ({o.x:.1f}, {o.y:.1f}, {o.w:.1f}×{o.h:.1f}): "
+                              f"nenhuma aresta de piso bloqueada (curto demais ou só sobre aresta vazia)")
+
+    # 5. portas por ponto (seção 3.1)
+    portas = []        # dicts: id, aresta, a, b, sa, sb, trancada
     for o in grupos.get(G_PORTAS, []):
-        if o.texto is None or o.texto == "":
-            continue                                   # batente: visual (contrato, 3.5)
-        if not MARCA_RE.match(o.texto):
-            col.aviso("W003", f"texto '{o.texto}' em Portas não é Pn: ignorado")
+        if o.texto:
+            col.aviso("W003", f"texto '{o.texto}' em '{G_PORTAS}' ignorado (a porta é um ponto; ADR-011 seção 3.1)")
             continue
-        marcas.setdefault(o.texto, []).append(o)
-
-    def subarea_da_marca(t):
-        donos = {dono[n] for n in [t] + vizinhos4(t) if n in dono}
-        return donos
-
-    portas = []                                        # (nome, subarea, tile, fechada, trancada)
-    saida_porta = {}                                   # (subarea, tile do gatilho) -> saida (campo `saida` do porta)
-    pares = {}
-    saidas_fechadas = {}                               # (subarea, tile) -> saida (cima, baixo, esquerda, direita)
-    for nome in sorted(marcas, key=lambda s: int(s[1:])):
-        lst = marcas[nome]
-        fechadas = [o for o in lst if o.props.get("fechada") is True]
-        if fechadas:
-            if len(lst) != 1:
-                col.erro("E007", f"{nome}: porta fechada exige uma marca só (há {len(lst)})")
+        if not o.ponto:
+            continue                                   # retângulo sem texto: batente visual, ignorado
+        desconhecidas = sorted(set(o.props) - PROPS_PORTA)
+        if desconhecidas:
+            col.erro("E014", f"porta {o.id}: propriedade(s) desconhecida(s) {', '.join(desconhecidas)}")
+            continue
+        tx, ty = math.floor(o.x / T), math.floor(o.y / T)
+        cands = []
+        for lado, dist in (("cima", o.y - ty * T), ("baixo", (ty + 1) * T - o.y),
+                           ("esquerda", o.x - tx * T), ("direita", (tx + 1) * T - o.x)):
+            if round(dist, 2) > TOLERANCIA_PORTA:
                 continue
-            t = lst[0].tile(T)
-            donos = subarea_da_marca(t)
-            if len(donos) != 1:
-                col.erro("E007", f"{nome}: porta fechada em {t} sem subárea vizinha única")
-                continue
-            saida = lst[0].props.get("saida")
-            if saida not in DIRECOES:
-                col.erro("E014", f"{nome}: porta fechada em {t} sem 'saida' válida (cima, baixo, esquerda ou direita)")
-                continue
-            sub = donos.pop()
-            portas.append((nome, sub, t, True, None))
-            saidas_fechadas[(sub, t)] = saida
+            e = aresta_do_lado((tx, ty), lado)
+            a, b = tiles_da_aresta(e)
+            if a in dono and b in dono and dono[a] != dono[b]:
+                cands.append((dist, e))
+        if not cands:
+            col.erro("E030", f"porta {o.id} em ({o.x:.1f}, {o.y:.1f}): nenhuma aresta entre duas áreas a até "
+                             f"{TOLERANCIA_PORTA:g} px")
             continue
-        if len(lst) != 2:
-            col.erro("E007", f"{nome}: {len(lst)} marca(s); par exige 2")
+        cands.sort(key=lambda c: (c[0], c[1]))
+        if len(cands) > 1 and round(cands[1][0] - cands[0][0], 2) < FOLGA_PORTA:
+            col.erro("E030", f"porta {o.id} em ({o.x:.1f}, {o.y:.1f}): ambígua, duas arestas a "
+                             f"{cands[0][0]:.1f} e {cands[1][0]:.1f} px")
             continue
-        pts = [o.tile(T) for o in lst]
-        pares[nome] = pts
-        for t in pts:
-            if t not in dono or t in bloqueado:
-                col.erro("E008", f"{nome}: marca em {t} fora do piso livre")
-        vals = {o.props.get("trancadaAte") for o in lst}
-        if len(vals) > 1:
-            col.erro("E007", f"{nome}: trancadaAte diferente nos dois lados")
+        e = cands[0][1]
+        a, b = tiles_da_aresta(e)
+        sa, sb = dono[a], dono[b]
+        ident = o.props.get("id")
+        if ident is None:
+            ident = "-".join(sorted([ids[sa], ids[sb]]))
+        elif not isinstance(ident, str) or not ID_PORTA_RE.match(ident):
+            col.erro("E014", f"porta {o.id}: id '{ident}' fora do padrão [a-z0-9_]+(-[a-z0-9_]+)*")
             continue
-        trancada = vals.pop()
-        if any(t not in dono or t in bloqueado for t in pts):
+        trancada = o.props.get("trancadaAte")
+        if trancada is not None and (not isinstance(trancada, str) or not trancada):
+            col.erro("E014", f"porta {ident}: trancadaAte vazio")
             continue
-        a, b = pts
-        if dono[a] == dono[b]:
-            col.erro("E008", f"{nome}: os dois lados caem na mesma subárea")
-            continue
-        dx, dy = b[0] - a[0], b[1] - a[1]
-        if not (dx == 0 or dy == 0):
-            col.erro("E008", f"{nome}: marcas {a} e {b} não estão na mesma linha ou coluna")
-            continue
-        dist = max(abs(dx), abs(dy))
-        d = (int(math.copysign(1, dx)) if dx else 0, int(math.copysign(1, dy)) if dy else 0)
-        vao = [(a[0] + d[0] * k, a[1] + d[1] * k) for k in range(1, dist)]
-        explicito = (dono[a], nome) in declaradas and (dono[b], nome) in declaradas
-        if dist < 2:
-            col.erro("E008", f"{nome}: marcas em {a} e {b} sem vão (é preciso ao menos 1 tile entre elas)")
-            continue
-        if dist != 2 and not explicito and nome not in vao_livre:
-            col.erro("E008", f"{nome}: marcas em {a} e {b}; par sem chegada declarada nos dois lados exige vão de 1 tile, há {dist - 1} (ADR-004 seção 13.14, e)")
-            continue
-        if any(v in piso for v in vao):
-            col.erro("E008", f"{nome}: o vão {vao} tem piso")
-            continue
-        if dist != 2 and not explicito:
-            col.aviso("W004", f"{nome}: vão de {dist - 1} tile(s) aceito por --vao-livre")
-        # saída de cada lado (ADR-004 seção 13.14, f): direção do gatilho ao primeiro tile do vão
-        saida_porta[(dono[a], a)] = NOME_DIRECAO[d]
-        saida_porta[(dono[b], b)] = NOME_DIRECAO[(-d[0], -d[1])]
-        portas.append((nome, dono[a], a, False, trancada))
-        portas.append((nome, dono[b], b, False, trancada))
+        portas.append({"id": ident, "aresta": e, "a": a, "b": b, "sa": sa, "sb": sb, "trancada": trancada})
+    vistos_id, vistas_aresta = {}, {}
+    for p in portas:
+        if p["id"] in vistos_id:
+            col.erro("E031", f"id de porta '{p['id']}' repetido; dê a propriedade 'id' a uma das portas")
+        vistos_id[p["id"]] = p
+        if p["aresta"] in vistas_aresta:
+            col.erro("E031", f"duas portas na mesma aresta ({vistas_aresta[p['aresta']]} e {p['id']})")
+        vistas_aresta[p["aresta"]] = p["id"]
+        if p["aresta"] in arestas_de_muro:
+            col.erro("E032", f"porta '{p['id']}': há muro sobre a aresta da porta; ela tem de ficar numa abertura")
+        for t in (p["a"], p["b"]):
+            if t in bloqueado:
+                col.erro("E009", f"porta '{p['id']}': o tile {t} é bloqueado (móvel); a porta pede piso livre")
     if col.erros:
         return None
+    arestas_de_porta = {p["aresta"] for p in portas}
+    portas_por_tile = {}                               # (área, tile) -> [(id, lado)]
+    for p in portas:
+        lado_a = NOME_DIRECAO[(p["b"][0] - p["a"][0], p["b"][1] - p["a"][1])]
+        p["lado_a"], p["lado_b"] = lado_a, OPOSTO[lado_a]
+        portas_por_tile.setdefault((p["sa"], p["a"]), []).append((p["id"], lado_a))
+        portas_por_tile.setdefault((p["sb"], p["b"]), []).append((p["id"], OPOSTO[lado_a]))
+    tiles_de_porta = set(portas_por_tile)
 
-    # 6. caixa de cada subárea (piso da subárea + marcas dela)
-    for nome, sub, t, fechada, trancada in portas:
-        subs[sub].setdefault("marcas", set()).add(t)
-    # Vão de saída para baixo (ADR-004 seção 2; GDD 15.3.4, item 5): o vão entra na caixa de quem sai por ele,
-    # para o tapete ter onde aparecer. Saída = V − G, na planta girada (o vão é o tile entre os dois gatilhos).
-    for nome, pts in pares.items():
-        if len(pts) != 2 or any(t not in dono for t in pts) or dono[pts[0]] == dono[pts[1]]:
-            continue
-        a, b = pts
-        if not (a[0] == b[0] or a[1] == b[1]) or max(abs(b[0] - a[0]), abs(b[1] - a[1])) < 2:
-            continue
-        d = (int(math.copysign(1, b[0] - a[0])) if b[0] != a[0] else 0,
-             int(math.copysign(1, b[1] - a[1])) if b[1] != a[1] else 0)
-        if d == (0, 1):
-            subs[dono[a]].setdefault("marcas", set()).add((a[0], a[1] + 1))
-        if (-d[0], -d[1]) == (0, 1):
-            subs[dono[b]].setdefault("marcas", set()).add((b[0], b[1] + 1))
-    for s in subs:
-        s.setdefault("marcas", set())
+    def parede(t, lado):
+        """Aresta do lado de t é parede: fronteira (outra área ou vazio) ou muro interno."""
+        return borda(t, lado) or aresta_do_lado(t, lado) in arestas_de_muro
+
+    # fronteira sem muro desenhado (seção 2.3): um aviso por par de áreas
+    sem_muro = {}                                      # (id1, id2) -> [(tile da área de menor id, aresta)]
+    por_area_sem_muro = {i: 0 for i in range(len(subs))}
+    for t in sorted(piso, key=lambda p: (p[1], p[0])):
+        for lado in ("direita", "baixo"):
+            n = somar(t, lado)
+            if n not in dono or dono[n] == dono[t]:
+                continue
+            e = aresta_do_lado(t, lado)
+            if e in arestas_de_porta or e in arestas_de_muro:
+                continue
+            par = tuple(sorted([ids[dono[t]], ids[dono[n]]]))
+            sem_muro.setdefault(par, []).append(t)
+            por_area_sem_muro[dono[t]] += 1
+            por_area_sem_muro[dono[n]] += 1
+    for par, lst in sorted(sem_muro.items()):
+        col.aviso("W035", f"fronteira {par[0]}|{par[1]} sem muro desenhado em {len(lst)} aresta(s), primeiro tile "
+                          f"{lst[0]} (TMX); é parede mesmo assim")
+
+    # 3. caixa de cada área (só piso)
     caixas = []
-    for i, s in enumerate(subs):
-        pontos = set(s["comp"]) | s["marcas"]
-        x0 = min(p[0] for p in pontos); x1 = max(p[0] for p in pontos)
-        y0 = min(p[1] for p in pontos); y1 = max(p[1] for p in pontos)
-        w, h = x1 - x0 + 1, y1 - y0 + 1
-        if w > tela_c or h > tela_l:
-            col.erro("E006", f"subárea '{s['id']}': caixa {w}×{h} > tela {tela_c}×{tela_l}")
-        caixas.append((x0, y0, w, h))
-    if col.erros:
-        return None
+    for s in subs:
+        x0 = min(p[0] for p in s["comp"]); x1 = max(p[0] for p in s["comp"])
+        y0 = min(p[1] for p in s["comp"]); y1 = max(p[1] for p in s["comp"])
+        caixas.append((x0, y0, x1 - x0 + 1, y1 - y0 + 1))
 
-    # 7. colisão: calculada no início (calcular_bloqueio); aqui só segue o fluxo
-
-    # 8. objetos de jogo e spawns de chegada
-    gatilhos = {(sub, t) for nome, sub, t, fechada, trancada in portas if not fechada}
-    fechadas_t = {(sub, t) for nome, sub, t, fechada, trancada in portas if fechada}
-    # chegada declarada (ADR-004 seção 13; contrato seção 2.3): spawn com `chegada` no grupo Objetos de jogo.
-    # Substitui a chegada da fórmula do lado de mesmo id (regra 10). Validada depois de bloqueado |= árvores.
-    spawns_chegada = []
-    for nome in sorted(pares, key=lambda s: int(s[1:])):
-        if nome not in pares or any(t not in dono for t in pares[nome]):
-            continue
-        a, b = pares[nome]
-        if dono[a] == dono[b] or not (a[0] == b[0] or a[1] == b[1]) or max(abs(b[0]-a[0]), abs(b[1]-a[1])) < 2:
-            continue
-        d = (int(math.copysign(1, b[0] - a[0])) if b[0] != a[0] else 0,
-             int(math.copysign(1, b[1] - a[1])) if b[1] != a[1] else 0)
-        for lado, alvo, sinal in ((b, b, d), (a, a, (-d[0], -d[1]))):
-            if (dono[alvo], nome) in declaradas:
-                continue                               # a chegada declarada deste lado substitui a fórmula
-            sp = (alvo[0] + sinal[0], alvo[1] + sinal[1])
-            sub = dono.get(sp)
-            if sub is None or sub != dono[alvo] or sp not in piso or sp in bloqueado or (dono[alvo], sp) in gatilhos:
-                col.erro("E009", f"spawn {nome} de chegada em {sp} não é piso livre da subárea de destino")
-                continue
-            spawns_chegada.append((dono[alvo], nome, sp, sinal))
-    if col.erros:
-        return None
-
-    objetos_por_sub = {i: [] for i in range(len(subs))}
+    # 7. objetos de jogo
     jogo = grupos.get(G_JOGO, [])
+    arvores, lidos = set(), []
+    reservados = {}
     nomes_spawn = {}
-    arvores = set()
-    reservados = set()
-    pecas_lidas = []                                   # (ordem, subarea, tile, estadoInicial)
-    enfeites_lidos = []                                # (subarea, tile); a caixa de enfeite (ADR-006 seção 2)
     for o in jogo:
         if o.classe not in CLASSES_JOGO:
             col.erro("E014", f"objeto {o.id} ({o.nome or o.texto}): classe '{o.classe}' desconhecida")
             continue
         t = o.tile(T)
-        if o.classe == "spawn" and "chegada" in o.props:
-            # chegada declarada: nome e chegada juntos, ou direcao inválida, é E014 (contrato 2.3)
-            ident = o.props.get("chegada")
-            direcao = o.props.get("direcao")
-            if o.nome or not isinstance(ident, str) or not ident or direcao not in DIRECOES:
-                col.erro("E014", f"chegada declarada em {t}: exige 'chegada' (id da porta) e 'direcao', e não 'nome'")
-                continue
-            if t not in dono:
-                col.erro("E025", f"chegada '{ident}' em {t} fora do piso da subárea")
-                continue
-            sub = dono[t]
-            if (sub, t) in reservados:
-                col.erro("E025", f"chegada '{ident}' em {t} sobre outro objeto")
-                continue
-            reservados.add((sub, t))
-            objetos_por_sub[sub].append({"tipo": "spawn", "nome": ident, "x": t[0], "y": t[1], "direcao": direcao})
-            nomes_spawn[(sub, ident)] = nomes_spawn.get((sub, ident), 0) + 1
-            continue
         if t not in dono:
-            col.erro("E010", f"{o.classe} {o.nome} em {t}: fora do piso")
+            col.erro("E010", f"{o.classe} {o.nome or o.texto or o.id} em {t}: fora do piso")
             continue
         if o.w > T or o.h > T or (o.w and not (2 <= (o.x + o.w / 2) % T <= T - 2)):
-            col.erro("E013", f"{o.classe} {o.nome}: retângulo maior que um tile ou centro a menos de 2 px da borda")
+            col.erro("E013", f"{o.classe} {o.nome or o.id}: retângulo maior que um tile ou centro a menos de 2 px da borda")
             continue
         sub = dono[t]
-        if (sub, t) in gatilhos or (sub, t) in fechadas_t:
-            col.erro("E010", f"{o.classe} {o.nome} em {t}: sobre gatilho ou porta")
+        if (sub, t) in tiles_de_porta and o.classe != "bilhete":       # o bilhete pode ficar no tile da porta (E037 se o lado for a porta)
+            col.erro("E010", f"{o.classe} {o.nome or o.id} em {t}: sobre o tile de uma porta")
             continue
-        if o.classe == "spawn":
+        if (sub, t) in reservados:
+            col.erro("E015", f"dois objetos no tile {t} de '{ids[sub]}'")
+            continue
+        reservados[(sub, t)] = o.classe
+        lidos.append((o, sub, t))
+    if col.erros:
+        return None
+
+    # tiles que não são "vizinho livre" (ADR-011 seção 5.5): porta, spawn, interruptor, examinável, árvore, peça visível
+    ocupados = set(tiles_de_porta)
+    for o, sub, t in lidos:
+        if o.classe in ("spawn", "interruptor", "examinavel", "arvore"):
+            ocupados.add((sub, t))
+        if o.classe == "peca" and o.props.get("estadoInicial") == "visivel":
+            ocupados.add((sub, t))
+        if o.classe == "arvore":
+            arvores.add(t)
+
+    def livres_alcancaveis(t, sub):
+        r = []
+        for lado in DIRECOES:
+            n = somar(t, lado)
+            if dono.get(n) == sub and n not in bloqueado and n not in arvores and (sub, n) not in ocupados \
+                    and not parede(t, lado):
+                r.append(n)
+        return r
+
+    objetos_por_sub = {i: [] for i in range(len(subs))}
+    pecas_lidas, enfeites_lidos, interruptores = [], [], set()
+    for o, sub, t in lidos:
+        cl = o.classe
+        livre = t not in bloqueado
+        if cl == "spawn":
             direcao = o.props.get("direcao")
             if not o.nome or direcao not in DIRECOES:
-                col.erro("E014", f"spawn '{o.nome}': nome ou direcao inválida")
+                col.erro("E014", f"spawn '{o.nome}' em {t}: nome ou direcao inválida")
                 continue
-            if t not in piso or t in bloqueado:
+            if not livre:
                 col.erro("E010", f"spawn '{o.nome}' em {t} não é piso livre")
                 continue
+            nomes_spawn[(sub, o.nome)] = nomes_spawn.get((sub, o.nome), 0) + 1
             objetos_por_sub[sub].append({"tipo": "spawn", "nome": o.nome, "x": t[0], "y": t[1], "direcao": direcao})
-            nomes_spawn.setdefault((sub, o.nome), 0)
-            nomes_spawn[(sub, o.nome)] += 1
-        elif o.classe == "interruptor":
-            if t in bloqueado:
+        elif cl == "interruptor":
+            if not livre:
                 col.erro("E010", f"interruptor em {t} sobre bloqueio")
                 continue
+            interruptores.add((sub, t))
             objetos_por_sub[sub].append({"tipo": "interruptor", "x": t[0], "y": t[1]})
-        elif o.classe == "bilhete":
-            # Bilhete de parede (GDD 14.10.9, item 040; ADR-004 seção 6): tile bloqueado com vizinho livre, como examinável.
-            if not o.props.get("texto"):
-                col.erro("E014", f"bilhete em {t}: texto ausente")
+        elif cl == "bilhete":
+            if not o.props.get("texto") or "lado" not in o.props:
+                col.erro("E014", f"bilhete em {t}: 'texto' e 'lado' são obrigatórios")
                 continue
-            vizl = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub]
-            if t not in bloqueado or not vizl:
-                col.erro("E010", f"bilhete em {t}: exige tile bloqueado (parede) com vizinho de piso livre")
+            lado = o.props["lado"]
+            if lado not in DIRECOES:
+                col.erro("E037", f"bilhete em {t}: lado '{lado}' inválido")
                 continue
-            objetos_por_sub[sub].append({"tipo": "bilhete", "x": t[0], "y": t[1], "texto": o.props["texto"]})
-        elif o.classe == "arvore":
+            if not livre:
+                col.erro("E037", f"bilhete em {t}: o tile deve ser livre (piso, sem bloqueio)")
+                continue
+            if not parede(t, lado) or aresta_do_lado(t, lado) in arestas_de_porta:
+                col.erro("E037", f"bilhete em {t}: a aresta do lado '{lado}' deve ser parede e não pode ser de porta")
+                continue
+            objetos_por_sub[sub].append({"tipo": "bilhete", "x": t[0], "y": t[1], "lado": lado, "texto": o.props["texto"]})
+        elif cl == "arvore":
             if not o.props.get("estado"):
                 col.erro("E014", "arvore sem 'estado'")
                 continue
-            arvores.add(t)
             objetos_por_sub[sub].append({"tipo": "arvore", "x": t[0], "y": t[1], "estado": o.props["estado"]})
-        elif o.classe == "peca":
-            # Peça da árvore (GDD 15.2; ADR-004 seção 6). Texto = ordem; estadoInicial obrigatório.
-            # O vizinho livre, a interação com o interruptor e a ordem são conferidos depois do laço.
+        elif cl == "examinavel":
+            if not o.props.get("texto"):
+                col.erro("E014", f"examinável em {t} sem 'texto'")
+                continue
+            if livre or not livres_alcancaveis(t, sub):
+                col.erro("E010", f"examinável em {t}: exige tile bloqueado com vizinho livre alcançável pelas arestas abertas")
+                continue
+            objetos_por_sub[sub].append({"tipo": "examinavel", "x": t[0], "y": t[1], "texto": o.props["texto"]})
+        elif cl == "peca":
             try:
                 ordem = int(o.texto)
             except (TypeError, ValueError):
@@ -633,175 +792,106 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
             if estado not in ESTADOS_PECA:
                 col.erro("E014", f"peça {ordem} em {t}: estadoInicial ausente ou fora de visivel/escondida")
                 continue
-            if t in bloqueado:
+            if not livre:
                 col.erro("E010", f"peça {ordem} em {t}: exige piso livre, não bloqueio")
                 continue
             pecas_lidas.append((ordem, sub, t, estado))
-        elif o.classe == "enfeite":
-            # Caixa de enfeite (GDD 17.3; ADR-006 seção 2). Sem propriedades: ordem e estado são fixos (ver topo).
+        elif cl == "enfeite":
             enfeites_lidos.append((sub, t))
-        elif o.classe == "examinavel":
-            if not o.props.get("texto"):
-                col.erro("E014", f"examinável em {t} sem 'texto'")
-                continue
-            vizl = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub]
-            if t not in bloqueado or not vizl:
-                col.erro("E010", f"examinável em {t}: exige tile bloqueado com vizinho livre")
-                continue
-            objetos_por_sub[sub].append({"tipo": "examinavel", "x": t[0], "y": t[1], "texto": o.props["texto"]})
-        if (sub, t) in reservados:
-            col.erro("E015", f"dois objetos no tile {t}")
-        reservados.add((sub, t))
-    for sub, nome, sp, sinal in spawns_chegada:
-        if (sub, nome) in nomes_spawn:
-            col.erro("E015", f"spawn '{nome}' repetido em '{subs[sub]['id']}'")
-        nomes_spawn[(sub, nome)] = nomes_spawn.get((sub, nome), 0) + 1
-        objetos_por_sub[sub].append({"tipo": "spawn", "nome": nome, "x": sp[0], "y": sp[1], "direcao": NOME_DIRECAO[sinal]})
     if col.erros:
         return None
 
-    # peças (ADR-004 seção 8, itens 15 a 17; GDD 15.2.2 e 15.2.5)
-    # Tiles que não podem ser vizinho livre da peça: gatilho, porta fechada, spawn (inclui chegada), interruptor.
-    proibidos_vizinho = {(sub, t) for nome, sub, t, fechada, trancada in portas}
-    interruptores_t = set()
-    for sub_i, lst in objetos_por_sub.items():
-        for o in lst:
-            if o["tipo"] in ("spawn", "interruptor", "portaFechada", "porta"):
-                proibidos_vizinho.add((sub_i, (o["x"], o["y"])))
-            if o["tipo"] == "interruptor":
-                interruptores_t.add((sub_i, (o["x"], o["y"])))
+    vazio = not jogo
+    if vazio:
+        col.aviso("W038", f"grupo '{G_JOGO}' vazio: peças (E021) e caixa de enfeite (E029) não conferidas "
+                          f"(objetos de jogo pendentes, backlog 164)")
     ordens = [p[0] for p in pecas_lidas]
-    for ordem in sorted(set(ordens)):
-        if ordens.count(ordem) > 1:
-            col.erro("E021", f"peça {ordem} aparece {ordens.count(ordem)} vezes")
-    faltam = sorted({1, 2, 3} - set(ordens))
-    if faltam:
-        col.erro("E021", f"peças ausentes: {faltam}; o conteúdo exige 1, 2 e 3 (cada uma uma vez)")
+    if not vazio:
+        for ordem in sorted(set(ordens)):
+            if ordens.count(ordem) > 1:
+                col.erro("E021", f"peça {ordem} aparece {ordens.count(ordem)} vezes")
+        faltam = sorted({1, 2, 3} - set(ordens))
+        if faltam:
+            col.erro("E021", f"peças ausentes: {faltam}; o conteúdo exige 1, 2 e 3 (cada uma uma vez)")
+        if len(enfeites_lidos) != 1:
+            col.erro("E029", f"caixa de enfeite: esperada 1 (classe 'enfeite'), há {len(enfeites_lidos)}")
     for ordem, sub, t, estado in pecas_lidas:
         esperado = "visivel" if ordem == 1 else "escondida"
         if estado != esperado:
             col.erro("E022", f"peça {ordem}: estadoInicial '{estado}', esperado '{esperado}'")
-        if any((sub, n) in interruptores_t for n in [t] + vizinhos4(t)):
-            col.erro("E023", f"peça {ordem} em {t} encosta no interruptor (mesma subárea)")
-        if (sub, t) in proibidos_vizinho:
-            col.erro("E010", f"peça {ordem} em {t} cai em gatilho, porta, spawn ou interruptor")
-            continue
-        vizl = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub
-                and (sub, n) not in proibidos_vizinho]
-        if not vizl:
-            col.erro("E010", f"peça {ordem} em {t}: sem vizinho de piso livre (que não seja gatilho, vão, spawn, chegada, interruptor ou porta)")
+        if any((sub, n) in interruptores for n in [t] + vizinhos4(t)):
+            col.erro("E023", f"peça {ordem} em {t} encosta no interruptor (mesma área)")
+        if not livres_alcancaveis(t, sub):
+            col.erro("E010", f"peça {ordem} em {t}: sem vizinho livre alcançável pelas arestas abertas")
             continue
         objetos_por_sub[sub].append({"tipo": "peca", "id": f"peca{ordem}", "ordem": ordem,
                                      "estadoInicial": estado, "x": t[0], "y": t[1]})
-    # caixa de enfeite (ADR-006 seção 2; GDD 17.3; backlog 089): exatamente uma. Tile de piso livre com ao menos
-    # 2 vizinhos livres, nenhum deles gatilho, porta, spawn, interruptor, peça ou árvore. A regra de tile da
-    # missão (tile de dormir, vizinho da porta do Nick) é de validarConteudo (T007 e T008), não do conversor.
     pecas_t = {(sub, t) for _, sub, t, _ in pecas_lidas}
-    if len(enfeites_lidos) != 1:
-        col.erro("E029", f"caixa de enfeite: esperada 1 (classe 'enfeite'), há {len(enfeites_lidos)}")
     for sub, t in enfeites_lidos:
-        vizl = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub
-                and (sub, n) not in proibidos_vizinho and (sub, n) not in pecas_t and n not in arvores]
+        vizl = [n for n in livres_alcancaveis(t, sub) if (sub, n) not in pecas_t]
         if len(vizl) < 2:
-            col.erro("E010", f"enfeite em {t}: exige piso livre com 2 vizinhos livres (sem gatilho, porta, spawn, interruptor, peça ou árvore); há {len(vizl)}")
+            col.erro("E010", f"enfeite em {t}: exige piso livre com 2 vizinhos livres alcançáveis; há {len(vizl)}")
             continue
         objetos_por_sub[sub].append({"tipo": "enfeite", "id": "enfeite", "ordem": ORDEM_DO_ENFEITE,
                                      "estadoInicial": ESTADO_DO_ENFEITE, "x": t[0], "y": t[1]})
     if col.erros:
         return None
-    moveis = moveis_por_subarea(grupos, T, dono, col)
+    moveis = moveis_por_area(grupos, T, dono, col)
     if col.erros:
         return None
 
-    # portas (pares e fechadas) na saída
-    par_dest = {}
-    for nome, sub, t, fechada, trancada in portas:
-        if not fechada:
-            par_dest.setdefault(nome, {})[sub] = t
-    for nome, sub, t, fechada, trancada in portas:
-        if fechada:
-            livres = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub]
-            if not livres:
-                col.erro("E010", f"portaFechada {nome} em {t}: sem vizinho de piso livre na subárea")
-                continue
-            objetos_por_sub[sub].append({"tipo": "portaFechada", "id": nome, "x": t[0], "y": t[1],
-                                         "texto": "porta.fechada", "saida": saidas_fechadas[(sub, t)]})
-        else:
-            outro = [s for s in par_dest[nome] if s != sub][0]
-            obj = {"tipo": "porta", "id": nome, "x": t[0], "y": t[1], "destino": subs[outro]["id"], "spawnDestino": nome,
-                   "saida": saida_porta[(sub, t)]}
-            if trancada:
-                obj["trancadaAte"] = trancada
+    # portas e spawns de chegada nas duas áreas (seção 3.2)
+    for p in portas:
+        for sub, t, lado, outro, t_outro, lado_outro in ((p["sa"], p["a"], p["lado_a"], p["sb"], p["b"], p["lado_b"]),
+                                                          (p["sb"], p["b"], p["lado_b"], p["sa"], p["a"], p["lado_a"])):
+            obj = {"tipo": "porta", "id": p["id"], "x": t[0], "y": t[1], "lado": lado,
+                   "destino": ids[outro], "spawnDestino": p["id"]}
+            if p["trancada"]:
+                obj["trancadaAte"] = p["trancada"]
             objetos_por_sub[sub].append(obj)
-    # árvore: o tile vira bloqueio
-    bloqueado |= arvores
-
-    # chegadas (ADR-004 seção 13; contrato seção 3, regras 10 e 10b): E024 a E026 valem para a chegada declarada
-    # e para a da fórmula (E026); E025 é só da declarada. E027 vale para gatilho de par com chegada declarada do seu
-    # lado; para gatilho de par com chegada da fórmula, é W027 (aviso), para não quebrar P3, P7 e P8 (ADR-004 13.8).
-    chegadas = [(sub, ident, t_dir[0], True) for (sub, ident), t_dir in declaradas.items()]
-    chegadas += [(sub, nome, sp, False) for sub, nome, sp, sinal in spawns_chegada]
-    for sub, ident, t, declarada in chegadas:
-        rotulo = f"chegada '{ident}' em '{subs[sub]['id']}' {t}"
-        par = pares.get(ident)
-        if not par or any(p not in dono for p in par) or dono[par[0]] == dono[par[1]] \
-                or sub not in (dono[par[0]], dono[par[1]]):
-            col.erro("E024", f"{rotulo}: nenhum gatilho {ident} leva a '{subs[sub]['id']}'")
-            continue
-        if declarada and (t not in piso or t in bloqueado or (sub, t) in gatilhos or (sub, t) in fechadas_t):
-            col.erro("E025", f"{rotulo} sem piso livre (sobre bloqueio, gatilho, vão ou fora do piso)")
-            continue
-        g = par[0] if dono[par[0]] == sub else par[1]
-        if abs(t[0] - g[0]) + abs(t[1] - g[1]) != 1:
-            col.erro("E026", f"{rotulo} não encosta no gatilho {g} de '{subs[sub]['id']}'")
-            continue
-        if declarada:
-            sentido = NOME_DIRECAO[(t[0] - g[0], t[1] - g[1])]
-            dir_decl = declaradas[(sub, ident)][1]
-            if dir_decl != sentido:
-                col.erro("E028", f"{rotulo}: direção '{dir_decl}', esperado '{sentido}' (sentido do gatilho para dentro)")
-    for nome, pts in pares.items():
-        if len(pts) != 2 or any(t not in dono for t in pts) or dono[pts[0]] == dono[pts[1]]:
-            continue
-        for t in pts:
-            sub = dono[t]
-            livres = [n for n in vizinhos4(t) if n in piso and n not in bloqueado and dono.get(n) == sub]
-            if len(livres) == 1:
-                continue
-            msg = f"gatilho {nome} em '{subs[sub]['id']}' {t}: {len(livres)} vizinho(s) de piso livre (esperado 1)"
-            if (sub, nome) in declaradas:
-                col.erro("E027", msg)
-            else:
-                col.aviso("W027", msg + "; par com chegada da fórmula (ADR-004 seção 13.8), não bloqueia")
+            # chegada: quem vem do outro lado aparece no tile da porta daqui, andando para dentro
+            if nomes_spawn.get((sub, p["id"])):
+                col.erro("E015", f"spawn '{p['id']}' repetido em '{ids[sub]}'")
+            nomes_spawn[(sub, p["id"])] = 1
+            objetos_por_sub[sub].append({"tipo": "spawn", "nome": p["id"], "x": t[0], "y": t[1],
+                                         "direcao": OPOSTO[lado]})
     if col.erros:
         return None
+    # árvore: o tile vira bloqueio
+    bloqueado = bloqueado | arvores
 
-    # 9. montagem
-    x0m = min(p[0] for p in piso)
-    y0m = min(p[1] for p in piso)
-    resultado = {"subareas": [], "origemDaCasa": [x0m, y0m], "avisos": [], "rotacao": 90 if girar else 0}
+    # montagem (orientação do TMX)
+    docs = []
     for i, s in enumerate(subs):
         bx, by, w, h = caixas[i]
-        chao, colisao = [], []
+        chao, colisao, paredes = [], [], []
         contagem = {"piso": 0, "livres": 0, "bloqueadosComPiso": 0, "semPiso": 0}
-        mapa_linhas = []
+        outras = 0
+        primeira_outra = None
         for j in range(h):
-            linha = []
             for k in range(w):
                 p = (bx + k, by + j)
-                tem = p in piso and dono.get(p) == i
+                tem = dono.get(p) == i
                 if p in piso and not tem:
-                    resultado["avisos"].append(f"W001 {s['id']}: piso de outra subárea em {p} vira sem piso nesta caixa")
+                    outras += 1
+                    primeira_outra = primeira_outra or p
                 if tem:
-                    chao.append(piso[p]); contagem["piso"] += 1
+                    chao.append(piso[p] - primeiro + 1); contagem["piso"] += 1
                     if p in bloqueado:
                         colisao.append(1); contagem["bloqueadosComPiso"] += 1
                     else:
                         colisao.append(0); contagem["livres"] += 1
+                    m = 0
+                    for lado in DIRECOES:
+                        if parede(p, lado):
+                            m |= BIT[lado]
+                    paredes.append(m)
                 else:
-                    chao.append(0); colisao.append(1); contagem["semPiso"] += 1
-                linha.append(p)
-            mapa_linhas.append(linha)
+                    chao.append(0); colisao.append(1); paredes.append(0)
+                    contagem["semPiso"] += 1
+        if outras:
+            col.aviso("W001", f"{s['id']}: {outras} tile(s) de piso de outra área dentro da caixa (viram sem piso); "
+                              f"primeiro em {primeira_outra} (TMX)")
         objs = []
         for o in objetos_por_sub[i]:
             o2 = dict(o)
@@ -814,69 +904,94 @@ def converter(caminho, perfil, col, vao_livre=(), girar=False):
             ident = base if usados[base] == 1 else f"{base}_{usados[base]}"
             objs.append({"tipo": "movel", "id": ident, "nome": nome,
                          "x": mx - bx, "y": my - by, "w": mw, "h": mh})
-        ordem = {"porta": 0, "portaFechada": 1, "spawn": 2, "interruptor": 3, "bilhete": 4, "arvore": 5,
-                 "examinavel": 6, "peca": 7, "enfeite": 8, "movel": 9}
-        objs.sort(key=lambda o: (ordem[o["tipo"]], str(o.get("id") or o.get("nome") or ""), o["y"], o["x"]))
-        contagem["objetos"] = {}
-        for o in objs:
-            contagem["objetos"][o["tipo"]] = contagem["objetos"].get(o["tipo"], 0) + 1
         doc = {"altura": h, "chao": chao, "colisao": colisao, "escuro": s["escuro"], "id": s["id"],
-               "largura": w, "objetos": objs, "tile": T}
+               "largura": w, "objetos": ordenar_objetos(objs), "paredes": paredes,
+               "schemaVersion": SCHEMA_VERSION, "tile": T}
+        # E036 (a conexidade não muda com o giro)
+        partes = conexidade(doc)
+        if len(partes) > 1:
+            iso = partes[1]
+            col.erro("E036", f"área '{s['id']}' não é conexa pelas arestas abertas: {len(partes)} partes; "
+                             f"a parte isolada começa em {(iso[0][0] + bx, iso[0][1] + by)} (TMX), {len(iso)} tile(s)")
+        docs.append((doc, contagem, (bx, by)))
+    if col.erros:
+        return None
+
+    # 9. giro (só na saída) e conferências sobre a área já girada
+    x0m = min(p[0] for p in piso); y0m = min(p[1] for p in piso)
+    resultado = {"subareas": [], "rotacao": 90 if girar else 0}
+    if girar:
+        resultado["origemDaCasa"] = [-max(p[1] for p in piso) - 1, x0m]
+    else:
+        resultado["origemDaCasa"] = [x0m, y0m]
+    for i, (doc, contagem, (bx, by)) in enumerate(docs):
+        s = subs[i]
+        w0, h0 = doc["largura"], doc["altura"]
+        if girar:
+            doc = girar_area(doc)
+            desloc = [-(by + h0 - 1) - 1, bx]
+        else:
+            desloc = [bx, by]
+        w, h = doc["largura"], doc["altura"]
+        if w > tela_c or h > tela_l:
+            col.erro("E006", f"área '{s['id']}': caixa {w}×{h} > tela {tela_c}×{tela_l}")
+            continue
         texto = json.dumps(doc, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
-        piso_local = {p for p in piso if dono.get(p) == i}
-        grade = desenhar(mapa_linhas, piso_local, bloqueado, objs, bx, by)
+        contagem = dict(contagem)
+        contagem["objetos"] = {}
+        for o in doc["objetos"]:
+            contagem["objetos"][o["tipo"]] = contagem["objetos"].get(o["tipo"], 0) + 1
+        internas = fronteiras = 0
+        for y in range(h):
+            for x in range(w):
+                i_ = y * w + x
+                if doc["chao"][i_] == 0:
+                    continue
+                m = doc["paredes"][i_]
+                for lado in ("direita", "baixo"):
+                    nx, ny = somar((x, y), lado)
+                    viz_piso = 0 <= nx < w and 0 <= ny < h and doc["chao"][ny * w + nx] > 0
+                    if viz_piso and m & BIT[lado]:
+                        internas += 1
+                for lado in DIRECOES:
+                    nx, ny = somar((x, y), lado)
+                    viz_piso = 0 <= nx < w and 0 <= ny < h and doc["chao"][ny * w + nx] > 0
+                    if not viz_piso and m & BIT[lado]:
+                        fronteiras += 1
+        contagem["arestasInternas"] = internas
+        contagem["arestasDeFronteira"] = fronteiras
+        contagem["fronteirasSemMuro"] = por_area_sem_muro[i]
         resultado["subareas"].append({
-            "id": s["id"], "doc": doc, "texto": texto, "grade": grade,
-            "deslocamento": [bx, by], "largura": w, "altura": h,
+            "id": s["id"], "doc": doc, "texto": texto, "grade": desenhar(doc),
+            "deslocamento": desloc, "largura": w, "altura": h,
             "deslocamentoNaTela": [(tela_c - w) // 2, (tela_l - h) // 2],
             "escuro": s["escuro"], "contagens": contagem,
+            "portas": [{"id": o["id"], "tile": [o["x"], o["y"]], "lado": o["lado"], "destino": o["destino"]}
+                       for o in doc["objetos"] if o["tipo"] == "porta"],
             "sha256": hashlib.sha256(texto.encode("utf-8")).hexdigest(),
         })
-    # 11. Linha da barra (ADR-004 seção 8, item 6): a última linha da tela não pode ter chão andável nem objeto.
+    if col.erros:
+        return None
+    # linha da barra (item 6 do ADR-004 seção 8; E018/E019), sobre a área já girada
     for s in resultado["subareas"]:
         ls = tela_l - 1 - s["deslocamentoNaTela"][1]
         if not (0 <= ls < s["altura"]):
             continue
         for k in range(s["largura"]):
-            i = ls * s["largura"] + k
-            if s["doc"]["chao"][i] != 0 and s["doc"]["colisao"][i] == 0:
-                col.erro("E018", f"subárea '{s['id']}': chão andável em ({k}, {ls}), linha {tela_l - 1} da tela; a barra cobre essa linha")
+            i_ = ls * s["largura"] + k
+            if s["doc"]["chao"][i_] != 0 and s["doc"]["colisao"][i_] == 0:
+                col.erro("E018", f"área '{s['id']}': chão andável em ({k}, {ls}), linha {tela_l - 1} da tela; a barra cobre essa linha")
         for o in s["doc"]["objetos"]:
             if o["y"] == ls:
-                col.erro("E019", f"subárea '{s['id']}': {o['tipo']} em ({o['x']}, {ls}), linha {tela_l - 1} da tela; a barra cobre essa linha")
+                col.erro("E019", f"área '{s['id']}': {o['tipo']} em ({o['x']}, {ls}), linha {tela_l - 1} da tela; a barra cobre essa linha")
     if col.erros:
         return None
     resultado["subareas"].sort(key=lambda s: s["id"])
-    resultado["avisos"] = sorted(set(resultado["avisos"]))
+    resultado["avisos"] = [f"{c} {m}" for c, m in col.avisos_ordenados()]
     return resultado
 
 
-def desenhar(mapa_linhas, piso, bloqueado, objs, bx, by):
-    simbolo = {"porta": "G", "portaFechada": "F", "spawn": "S", "interruptor": "I",
-               "bilhete": "B", "arvore": "A", "examinavel": "E", "enfeite": "C"}
-    marcas = {}
-    for o in objs:
-        if o["tipo"] == "movel":
-            continue                                   # móvel é bloqueio (já aparece como '#')
-        if o["tipo"] == "peca":
-            marcas[(o["x"], o["y"])] = str(o["ordem"])  # contrato 5: dígito da ordem
-            continue
-        marcas[(o["x"], o["y"])] = simbolo[o["tipo"]]
-    linhas = []
-    for j, linha in enumerate(mapa_linhas):
-        s = ""
-        for k, p in enumerate(linha):
-            if (k, j) in marcas:
-                s += marcas[(k, j)]
-            elif p not in piso:
-                s += " "
-            elif p in bloqueado:
-                s += "#"
-            else:
-                s += "."
-        linhas.append(s.rstrip())
-    return linhas
-
+# ---------------------------------------------------------------- saída
 
 def carregar_perfil(identificador):
     caminho = PERFIS / f"{identificador}.json"
@@ -885,64 +1000,101 @@ def carregar_perfil(identificador):
     return json.loads(caminho.read_text(encoding="utf-8"))
 
 
-def gravar_ou_comparar(resultado, verificar, golden, manifesto_atualizado):
+def texto_do_resumo(resultado):
+    resumo = {
+        "origemDaCasa": resultado["origemDaCasa"],
+        "rotacao": resultado["rotacao"],
+        "subareas": [{k: v for k, v in s.items() if k in ("id", "deslocamento", "largura", "altura",
+                                                           "deslocamentoNaTela", "escuro", "contagens",
+                                                           "portas", "sha256")}
+                     for s in resultado["subareas"]],
+        "avisos": resultado["avisos"],
+    }
+    return json.dumps(resumo, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+
+
+def texto_do_manifesto(resultado, manifesto=MANIFESTO):
+    """Só `maps[]`, só entradas cujo file começa com maps/casa-real/ (ADR-011 seção 4). As existentes mantêm a
+    posição e as chaves extras (ex.: `decoracao`); as novas vão ao fim, por id; as que sumiram saem."""
+    m = json.loads(manifesto.read_text(encoding="utf-8"))
+    ids = {s["id"] for s in resultado["subareas"]}
+    novos = []
+    existentes = set()
+    for e in m.get("maps", []):
+        if e["file"].startswith("maps/casa-real/"):
+            if e["id"] not in ids:
+                continue
+            existentes.add(e["id"])
+            e = dict(e)
+            e.update({"file": f"maps/casa-real/{e['id']}.json", "tileset": "tiles_casa"})
+        novos.append(e)
+    for i in sorted(ids - existentes):
+        novos.append({"id": i, "file": f"maps/casa-real/{i}.json", "tileset": "tiles_casa"})
+    m["maps"] = novos
+    return json.dumps(m, indent=2, ensure_ascii=False) + "\n"
+
+
+def gravar_ou_comparar(resultado, verificar, golden, saida=SAIDA_CONTEUDO, pasta_golden=GOLDEN, manifesto=MANIFESTO):
     diffs = []
+    gerados = {f"{s['id']}.json" for s in resultado["subareas"]}
+    sobras = sorted(p for p in saida.glob("*.json") if p.name not in gerados) if saida.exists() else []
+    manifesto_novo = texto_do_manifesto(resultado, manifesto) if manifesto.exists() else None
     for s in resultado["subareas"]:
-        arq = SAIDA_CONTEUDO / f"{s['id']}.json"
+        arq = saida / f"{s['id']}.json"
         if verificar:
             atual = arq.read_text(encoding="utf-8") if arq.exists() else None
             if atual != s["texto"]:
                 diffs.append(f"ERRO E017 {arq}: difere do gerado")
         else:
-            SAIDA_CONTEUDO.mkdir(parents=True, exist_ok=True)
+            saida.mkdir(parents=True, exist_ok=True)
             arq.write_text(s["texto"], encoding="utf-8")
-    if golden:
-        resumo = {
-            "origemDaCasa": resultado["origemDaCasa"],
-            "rotacao": resultado["rotacao"],
-            "subareas": [{k: v for k, v in s.items() if k in ("id", "deslocamento", "largura", "altura",
-                                                               "deslocamentoNaTela", "escuro", "contagens", "sha256")}
-                         for s in resultado["subareas"]],
-            "avisos": resultado["avisos"],
-        }
-        texto_resumo = json.dumps(resumo, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    for arq in sobras:
         if verificar:
-            atual = (GOLDEN / "resumo.json").read_text(encoding="utf-8") if (GOLDEN / "resumo.json").exists() else None
-            if atual != texto_resumo:
-                diffs.append(f"ERRO E017 {GOLDEN / 'resumo.json'}: difere do golden")
-            for s in resultado["subareas"]:
-                arq = GOLDEN / f"{s['id']}.txt"
-                txt = "\n".join(s["grade"]) + "\n"
-                if not arq.exists() or arq.read_text(encoding="utf-8") != txt:
-                    diffs.append(f"ERRO E017 {arq}: difere do golden")
+            diffs.append(f"ERRO E017 {arq}: não corresponde a nenhuma área da planta")
         else:
-            GOLDEN.mkdir(parents=True, exist_ok=True)
-            (GOLDEN / "resumo.json").write_text(texto_resumo, encoding="utf-8")
+            print(f"AVISO removido {arq}: não corresponde a nenhuma área da planta")
+            arq.unlink()
+    if manifesto_novo is not None:
+        if verificar:
+            if manifesto.read_text(encoding="utf-8") != manifesto_novo:
+                diffs.append(f"ERRO E017 {manifesto}: maps[] difere do gerado")
+        else:
+            manifesto.write_text(manifesto_novo, encoding="utf-8")
+    if verificar or golden:
+        txt_resumo = texto_do_resumo(resultado)
+        if verificar:
+            arq = pasta_golden / "resumo.json"
+            if not arq.exists() or arq.read_text(encoding="utf-8") != txt_resumo:
+                diffs.append(f"ERRO E017 {arq}: difere do golden")
             for s in resultado["subareas"]:
-                (GOLDEN / f"{s['id']}.txt").write_text("\n".join(s["grade"]) + "\n", encoding="utf-8")
-    if manifesto_atualizado and not verificar:
-        m = json.loads(MANIFESTO.read_text(encoding="utf-8"))
-        existentes = {e["id"]: e for e in m.get("maps", [])}
-        for s in resultado["subareas"]:
-            entrada = {"id": s["id"], "file": f"maps/casa-real/{s['id']}.json", "tileset": "tiles_casa"}
-            if s["id"] in existentes:
-                existentes[s["id"]].update(entrada)
-            else:
-                m.setdefault("maps", []).append(entrada)
-        MANIFESTO.write_text(json.dumps(m, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+                arq = pasta_golden / f"{s['id']}.txt"
+                if not arq.exists() or arq.read_text(encoding="utf-8") != "\n".join(s["grade"]) + "\n":
+                    diffs.append(f"ERRO E017 {arq}: difere do golden")
+            esperados = {f"{s['id']}.txt" for s in resultado["subareas"]} | {"resumo.json"}
+            for arq in sorted(pasta_golden.glob("*")) if pasta_golden.exists() else []:
+                if arq.name not in esperados:
+                    diffs.append(f"ERRO E017 {arq}: sobra no golden")
+        else:
+            pasta_golden.mkdir(parents=True, exist_ok=True)
+            (pasta_golden / "resumo.json").write_text(txt_resumo, encoding="utf-8")
+            for s in resultado["subareas"]:
+                (pasta_golden / f"{s['id']}.txt").write_text("\n".join(s["grade"]) + "\n", encoding="utf-8")
+            esperados = {f"{s['id']}.txt" for s in resultado["subareas"]} | {"resumo.json"}
+            for arq in sorted(pasta_golden.glob("*")):
+                if arq.name not in esperados:
+                    arq.unlink()
     return diffs
 
 
 def main(argv):
-    ap = argparse.ArgumentParser(description="Converte a planta do Tiled em conteúdo (ADR-004).")
+    ap = argparse.ArgumentParser(description="Converte a planta do Tiled em conteúdo (ADR-011).")
     ap.add_argument("--entrada", default=str(ENTRADA_PADRAO))
     ap.add_argument("--perfil", default=PERFIL_PADRAO)
-    ap.add_argument("--vao-livre", default="", help="ids de par cujo vão pode ter mais de 1 tile (ex.: P1). Vai para o golden.")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--verificar", action="store_true")
     g.add_argument("--atualizar-golden", action="store_true")
-    ap.add_argument("--atualizar-manifesto", action="store_true")
-    ap.add_argument("--girar", action="store_true", help="gira a planta 90° horário antes de converter (GDD 14.12)")
+    ap.add_argument("--atualizar-manifesto", action="store_true", help="(sem efeito: o manifesto sempre é atualizado ao gravar)")
+    ap.add_argument("--girar", action="store_true", help="gira cada área 90° horário na saída (ADR-011 seção 2.5)")
     try:
         a = ap.parse_args(argv)
     except SystemExit:
@@ -953,20 +1105,20 @@ def main(argv):
     col = Coletor(str(entrada.relative_to(RAIZ)) if entrada.is_relative_to(RAIZ) else str(entrada))
     try:
         perfil = carregar_perfil(a.perfil)
+        res = converter(entrada, perfil, col, a.girar)
     except Erro as e:
         print(f"ERRO {e.codigo} {e.msg}", file=sys.stderr)
         return 1
-    vao_livre = tuple(x for x in a.vao_livre.split(",") if x)
-    res = converter(entrada, perfil, col, vao_livre, a.girar)
-    for av in col.avisos:
+    except (ET.ParseError, OSError) as e:
+        print(f"ERRO E000 {col.arquivo}: não foi possível ler o TMX ({e})", file=sys.stderr)
+        return 1
+    for av in col.linhas_de_aviso():
         print(av)
     if res is None:
         for e in col.erros:
             print(e, file=sys.stderr)
         return 1
-    for av in res["avisos"]:
-        print(av)
-    diffs = gravar_ou_comparar(res, a.verificar, a.atualizar_golden, a.atualizar_manifesto)
+    diffs = gravar_ou_comparar(res, a.verificar, a.atualizar_golden)
     if diffs:
         for d in diffs:
             print(d, file=sys.stderr)

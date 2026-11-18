@@ -7,10 +7,10 @@ import type { Direcao } from '../shared/Direcao';
 export interface PortaASeguir {
   /** Cômodo onde está a porta (a subárea atual). */
   readonly mapa: string;
-  /** Id da porta, ex.: 'P8'. */
+  /** Id da porta, ex.: 'hall-sala' (ADR-011 seção 3.1). */
   readonly id: string;
-  /** Tile do gatilho (local da subárea). */
-  readonly gatilho: { readonly x: number; readonly y: number };
-  /** Lado para onde a seta aponta (`porta.saida` do conteúdo). */
-  readonly saida: Direcao;
+  /** Tile da porta (local da área). */
+  readonly tile: { readonly x: number; readonly y: number };
+  /** Lado para onde a seta aponta (`porta.lado` do conteúdo). */
+  readonly lado: Direcao;
 }

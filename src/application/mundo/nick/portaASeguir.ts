@@ -3,8 +3,7 @@ import type { MapaDoJogo } from '../../content/Mapa';
 import { ladoDaPorta } from '../subarea';
 
 /**
- * Porta a seguir (ADR-005 seção 4.2, GDD 16.5.3): BFS sobre as subáreas abertas, pelos gatilhos `porta` (não
- * `portaFechada`). Trancada conta como passável (ADR-004 seção 11.2). A ordem dos vizinhos é a da lista de objetos da
+ * Porta a seguir (ADR-005 seção 4.2, GDD 16.5.3): BFS sobre as subáreas abertas, por todo objeto `porta` cujo destino está aberto. Trancada conta como passável (ADR-004 seção 11.2). A ordem dos vizinhos é a da lista de objetos da
  * subárea de origem, então o resultado é igual em toda execução. Devolve a primeira porta do caminho, que é a única que
  * a seta mostra. Sem caminho: undefined (N012 garante que não acontece).
  */
@@ -26,10 +25,10 @@ export function portaASeguir(
       if (g.tipo !== 'porta') continue;
       const destino = String(g.dados.destino);
       if (!aberta(destino) || visitados.has(destino)) continue;
-      const saida = ladoDaPorta(g);
-      if (!saida) continue;
+      const lado = ladoDaPorta(g);
+      if (!lado) continue;
       visitados.add(destino);
-      const porta: PortaASeguir = primeiraPorta.get(n) ?? { mapa: origem, id: String(g.dados.id), gatilho: { x: g.x, y: g.y }, saida };
+      const porta: PortaASeguir = primeiraPorta.get(n) ?? { mapa: origem, id: String(g.dados.id), tile: { x: g.x, y: g.y }, lado };
       primeiraPorta.set(destino, porta);
       if (destino === alvo) return porta;
       fila.push(destino);

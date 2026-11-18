@@ -7,7 +7,7 @@ import { repeticoesDoTremor, SETA_FADE_MS, SETA_TREMIDAS, SETA_TREMOR_MEIO_CICLO
 const PROFUNDIDADE_SETA = 850;
 
 /**
- * Seta dourada sobre o gatilho da porta a seguir (GDD 16.5.3; ADR-005 seção 4.5). Só desenho: quem decide se a seta
+ * Seta dourada sobre o tile da porta a seguir (GDD 16.5.3; ADR-005 seção 4.5). Só desenho: quem decide se a seta
  * existe é o Farejo, na sessão. A cena passa a porta e o deslocamento da subárea.
  */
 export class SetaDeFarejar {
@@ -18,12 +18,12 @@ export class SetaDeFarejar {
 
   /** Mostra (ou troca) a seta da porta. `desl`: deslocamento da subárea na tela, em tiles. `tile`: lado do tile em px. */
   mostrar(porta: PortaASeguir, desl: { x: number; y: number }, tile: number): void {
-    const chave = CHAVE_SETA_FAREJAR(porta.saida);
+    const chave = CHAVE_SETA_FAREJAR(porta.lado);
     if (!this.cena.textures.exists(chave)) return;
     if (this.imagem && this.imagem.texture.key === chave) return;
     this.apagar();
-    const x = (desl.x + porta.gatilho.x) * tile;
-    const y = (desl.y + porta.gatilho.y) * tile;
+    const x = (desl.x + porta.tile.x) * tile;
+    const y = (desl.y + porta.tile.y) * tile;
     this.imagem = this.cena.add.image(x, y, chave).setOrigin(0, 0).setDepth(PROFUNDIDADE_SETA);
     // Duas tremidas (PT3) e depois fixa: o tween termina e a seta fica amarela, parada, até acabar o tempo.
     this.oscilacao = this.cena.tweens.add({

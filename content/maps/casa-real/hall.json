@@ -3,21 +3,21 @@
   "chao": [
     0,
     0,
-    533,
-    537,
-    274,
-    258,
-    19,
-    3,
+    34,
+    34,
+    34,
+    34,
+    34,
+    34,
     0,
     0,
-    20,
-    4
+    34,
+    34
   ],
   "colisao": [
     1,
     1,
-    1,
+    0,
     0,
     0,
     0,
@@ -34,20 +34,13 @@
   "objetos": [
     {
       "destino": "sala",
-      "id": "P8",
-      "saida": "cima",
-      "spawnDestino": "P8",
+      "id": "hall-sala",
+      "lado": "cima",
+      "spawnDestino": "hall-sala",
       "tipo": "porta",
       "trancadaAte": "porta",
       "x": 3,
       "y": 0
-    },
-    {
-      "direcao": "baixo",
-      "nome": "P8",
-      "tipo": "spawn",
-      "x": 3,
-      "y": 1
     },
     {
       "direcao": "direita",
@@ -57,11 +50,34 @@
       "y": 1
     },
     {
+      "direcao": "baixo",
+      "nome": "hall-sala",
+      "tipo": "spawn",
+      "x": 3,
+      "y": 0
+    },
+    {
+      "lado": "cima",
       "texto": "bilhete.pista",
       "tipo": "bilhete",
       "x": 2,
       "y": 0
     }
   ],
+  "paredes": [
+    0,
+    0,
+    9,
+    3,
+    13,
+    5,
+    0,
+    2,
+    0,
+    0,
+    12,
+    6
+  ],
+  "schemaVersion": 3,
   "tile": 32
 }

@@ -5,16 +5,8 @@
     {
       "id": "sala_arvore_p_1",
       "sprite": "dec_arvore_p",
-      "x": 0,
-      "y": 0,
-      "pisca": false,
-      "examinar": null
-    },
-    {
-      "id": "sala_arvore_g_1",
-      "sprite": "dec_arvore_g",
-      "x": 0,
-      "y": 4,
+      "x": 1,
+      "y": 3,
       "pisca": false,
       "examinar": null
     },
@@ -35,36 +27,44 @@
       "examinar": null
     },
     {
-      "id": "sala_meias_1",
-      "sprite": "dec_meias",
+      "id": "sala_guirlanda_1",
+      "sprite": "dec_guirlanda",
       "x": 2,
-      "y": 3,
+      "y": 1,
       "pisca": false,
-      "examinar": null
+      "examinar": "enfeite.guirlanda"
     },
     {
       "id": "sala_luz_1",
       "sprite": "dec_luz",
-      "x": 3,
-      "y": 3,
+      "x": 4,
+      "y": 1,
       "pisca": true,
       "examinar": "enfeite.pisca"
     },
     {
-      "id": "sala_guirlanda_1",
-      "sprite": "dec_guirlanda",
-      "x": 10,
-      "y": 6,
+      "id": "sala_meias_1",
+      "sprite": "dec_meias",
+      "x": 5,
+      "y": 1,
       "pisca": false,
-      "examinar": "enfeite.guirlanda"
+      "examinar": "enfeite.meias"
     },
     {
       "id": "sala_vela_1",
       "sprite": "dec_vela",
       "x": 10,
-      "y": 7,
+      "y": 6,
       "pisca": true,
       "examinar": "enfeite.vela"
+    },
+    {
+      "id": "sala_arvore_g_1",
+      "sprite": "dec_arvore_g",
+      "x": 10,
+      "y": 7,
+      "pisca": false,
+      "examinar": "enfeite.arvore"
     }
   ]
 }

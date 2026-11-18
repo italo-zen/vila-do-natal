@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { itComConteudoNovo } from '../helpers/conteudoNovo';
 import { caixaYDoDialogo } from '../../src/presentation/ui/posicaoDoDialogo';
 import { deslocamentoDaSubarea } from '../../src/application/mundo/subarea';
 import type { MapaDoJogo } from '../../src/application/content/Mapa';
@@ -26,7 +27,7 @@ describe('posição da caixa de diálogo (BUG-R15-01, opção b)', () => {
     expect(caixaYDoDialogo(ALTURA_TELA, ALTURA_CAIXA, 'topo')).toBe(0);
   });
 
-  it('na chegada, a caixa de baixo cobre a árvore (era o bug) e a do topo não cobre árvore, sobrinho nem halo', () => {
+  itComConteudoNovo('na chegada, a caixa de baixo cobre a árvore (era o bug) e a do topo não cobre árvore, sobrinho nem halo', () => {
     const d = deslocamentoDaSubarea(sala, perfil.sala);
     const arvore = sala.objetos.find((o) => o.tipo === 'arvore')!;
     // Tile do destino da condução: 1 acima da árvore (GDD 14.11.1). Sobrinho em (3, 7) da Sala.

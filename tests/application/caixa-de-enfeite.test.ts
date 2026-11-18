@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { carregarConteudoReal } from '../helpers/conteudoReal';
 import { montarServicos, type Servicos } from '../../src/application/Servicos';
 import type { Conteudo } from '../../src/application/usecases/CarregarConteudo';
@@ -52,17 +53,17 @@ function concluirAtual(s: Servicos): void {
   s.sessao.definir(r.valor.progresso);
 }
 
-describe('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 seção 2.4)', () => {
+descreverComConteudoNovo('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 seção 2.4)', () => {
   it('antes do diálogo de chegada da parte 3, a caixa está escondida e não bloqueia o tile', async () => {
     const { s, c: x } = await novaPartida();
     avancarAte(s, 'parte3');
     const escritorio = x.todosOsMapas.get('escritorio')!;
     const ctx = contextoDaPartida(x.missoes, concluida(s), { caixaLiberada: s.sessao.progresso.caixaLiberada });
     expect(ctx.estadoDoEnfeite()).toBe('escondida');
-    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[2][5]).toBe(false);
+    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[1][5]).toBe(false);
   });
 
-  it('o DevolverControle da parte 3 libera a caixa: visível e bloqueia o tile (5, 2) do Escritório', async () => {
+  it('o DevolverControle da parte 3 libera a caixa: visível e bloqueia o tile (5, 1) do Escritório', async () => {
     const { s, c: x } = await novaPartida();
     avancarAte(s, 'parte3');
     concluirAtual(s);
@@ -72,15 +73,15 @@ describe('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 s
     const escritorio = x.todosOsMapas.get('escritorio')!;
     const ctx = contextoDaPartida(x.missoes, concluida(s), { caixaLiberada: s.sessao.progresso.caixaLiberada });
     expect(ctx.estadoDoEnfeite()).toBe('visivel');
-    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[2][5]).toBe(true);
+    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[1][5]).toBe(true);
   });
 
-  it('o DevolverControle da parte 3 põe o Nick para dormir na Sala, (8, 5) (GDD 17.6)', async () => {
+  it('o DevolverControle da parte 3 põe o Nick para dormir na Sala, (9, 5) (GDD 17.6)', async () => {
     const { s } = await novaPartida();
     avancarAte(s, 'parte3');
     concluirAtual(s);
     s.devolverControle.executar();
-    expect(s.sessao.progresso.nick.tile).toEqual({ mapa: 'sala', x: 8, y: 5 });
+    expect(s.sessao.progresso.nick.tile).toEqual({ mapa: 'sala', x: 9, y: 5 });
     expect(s.sessao.progresso.nick.dormindo).toBe(true);
   });
 
@@ -98,11 +99,11 @@ describe('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 s
     const escritorio = x.todosOsMapas.get('escritorio')!;
     const ctxAntes = contextoDaPartida(x.missoes, concluida(s), { caixaLiberada: s.sessao.progresso.caixaLiberada });
     expect(ctxAntes.estadoDoEnfeite()).toBe('escondida');
-    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctxAntes)[2][5]).toBe(false);
+    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctxAntes)[1][5]).toBe(false);
     // Fim do diálogo, depois da página 3 (a cena chama o DevolverControle no aoFim da última página): aí sim.
     s.devolverControle.executar();
     expect(s.sessao.progresso.caixaLiberada).toBe(true);
-    expect(s.sessao.progresso.nick.tile).toEqual({ mapa: 'sala', x: 8, y: 5 });
+    expect(s.sessao.progresso.nick.tile).toEqual({ mapa: 'sala', x: 9, y: 5 });
     expect(s.sessao.progresso.nick.dormindo).toBe(true);
   });
 
@@ -115,7 +116,7 @@ describe('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 s
     const escritorio = x.todosOsMapas.get('escritorio')!;
     const ctx = contextoDaPartida(x.missoes, concluida(s), { caixaLiberada: true });
     expect(ctx.estadoDoEnfeite()).toBe('encaixada');
-    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[2][5]).toBe(false);
+    expect(bloqueiosDaSubarea(escritorio, concluida(s), ctx)[1][5]).toBe(false);
   });
 
   it('a condução da caixa tira a caixa do chão: encaixada durante o trajeto (ADR-006 seção 2.6)', async () => {
@@ -141,7 +142,7 @@ describe('caixa de enfeite: escondida, liberada e encaixada (GDD 17.3; ADR-006 s
   });
 });
 
-describe('retirada na condução (ADR-006 seção 2.6)', () => {
+descreverComConteudoNovo('retirada na condução (ADR-006 seção 2.6)', () => {
   it('pecaRetiradaNaConducao devolve a caixa em enfeites; as partes, a sua peça; luzes e porta, nada', () => {
     expect(pecaRetiradaNaConducao('enfeites')).toEqual({ tipo: 'enfeite' });
     expect(pecaRetiradaNaConducao('parte1')).toEqual({ tipo: 'peca', ordem: 1 });
@@ -152,26 +153,26 @@ describe('retirada na condução (ADR-006 seção 2.6)', () => {
   });
 });
 
-describe('ponto de partida e rota da caixa (ADR-006 seção 2.5)', () => {
+descreverComConteudoNovo('ponto de partida e rota da caixa (ADR-006 seção 2.5)', () => {
   it('a condução da caixa parte dos vizinhos livres dela, no Escritório', async () => {
     const { c: x } = await novaPartida();
     const pontos = pontosDaCaixa(x.todosOsMapas);
     expect(pontos.length).toBeGreaterThanOrEqual(2);
     expect(pontos.every((p) => p.mapa === 'escritorio')).toBe(true);
-    expect(pontos.map((p) => `${p.x},${p.y}`).sort()).toEqual(['5,1', '5,3']);
+    expect(pontos.map((p) => `${p.x},${p.y}`).sort()).toEqual(['4,1', '6,1']);
   });
 
-  it('a missão de enfeites conduz à Sala, (3, 7), de frente para a árvore; o Nick dorme em (8, 5) e farejar aponta ao Escritório', async () => {
+  it('a missão de enfeites conduz à Sala, (2, 7), de frente para a árvore; o Nick dorme em (9, 5) e farejar aponta ao Escritório', async () => {
     const { c: x } = await novaPartida();
     const m = x.missoes.find((z) => z.id === 'enfeites')!;
-    expect(m.missao.conducao.enfeites).toEqual({ mapa: 'sala', x: 3, y: 7, direcao: 'baixo' });
+    expect(m.missao.conducao.enfeites).toEqual({ mapa: 'sala', x: 2, y: 7, direcao: 'baixo' });
     expect(m.missao.conquistas.enfeites).toBe('conquista.enfeites');
-    expect(m.missao.nick).toEqual({ dorme: { mapa: 'sala', x: 8, y: 5, direcao: 'baixo' }, alvo: 'escritorio' });
+    expect(m.missao.nick).toEqual({ dorme: { mapa: 'sala', x: 9, y: 5, direcao: 'baixo' }, alvo: 'escritorio' });
     expect(m.missao.dica).toEqual({ enfeites: { dormindo: 'dica.enfeites.dormindo', acordado: 'dica.enfeites.acordado' } });
   });
 });
 
-describe('fim do jogo: missão final e destino do Nick (ADR-006 seções 1.4 e 5)', () => {
+descreverComConteudoNovo('fim do jogo: missão final e destino do Nick (ADR-006 seções 1.4 e 5)', () => {
   it('a missão final é enfeites; jogoTerminou é falso antes da caixa e verdadeiro depois', async () => {
     const { s, c: x } = await novaPartida();
     avancarAte(s, 'enfeites');
@@ -181,12 +182,12 @@ describe('fim do jogo: missão final e destino do Nick (ADR-006 seções 1.4 e 5
     expect(jogoTerminou(x.missoes, concluida(s))).toBe(true);
   });
 
-  it('depois da parte 3, a missão ativa é enfeites, e o Nick vai ao seu dorme (Sala, (8, 5))', async () => {
+  it('depois da parte 3, a missão ativa é enfeites, e o Nick vai ao seu dorme (Sala, (9, 5))', async () => {
     const { s, c: x } = await novaPartida();
     avancarAte(s, 'parte3');
     concluirAtual(s);
     expect(missaoAtiva(x.missoes, concluida(s)).id).toBe('enfeites');
-    expect(destinoDoNick(x.missoes, concluida(s))).toEqual({ mapa: 'sala', x: 8, y: 5, direcao: 'baixo' });
+    expect(destinoDoNick(x.missoes, concluida(s))).toEqual({ mapa: 'sala', x: 9, y: 5, direcao: 'baixo' });
   });
 
   it('depois da missão final, não há destino: o Nick não se move', async () => {
@@ -201,7 +202,7 @@ describe('fim do jogo: missão final e destino do Nick (ADR-006 seções 1.4 e 5
   });
 });
 
-describe('dica e farejar na fase enfeites (GDD 17.10; ADR-006 seções 3.3, 5 e 6)', () => {
+descreverComConteudoNovo('dica e farejar na fase enfeites (GDD 17.10; ADR-006 seções 3.3, 5 e 6)', () => {
   it('a dica da fase enfeites usa a chave própria, por estado, e nunca `livre`', async () => {
     const { c: x } = await novaPartida();
     expect(chaveDaDica(x.missoes, 'enfeites', true)).toBe('dica.enfeites.dormindo');
@@ -223,7 +224,7 @@ describe('dica e farejar na fase enfeites (GDD 17.10; ADR-006 seções 3.3, 5 e 
   });
 });
 
-describe('textos da caixa e do aviso (GDD 17.8; ADR-006 seção 8.5)', () => {
+descreverComConteudoNovo('textos da caixa e do aviso (GDD 17.8; ADR-006 seção 8.5)', () => {
   it('o aviso da caixa é aviso.enfeite.antes3, com duas páginas, e o texto de conquista existe', async () => {
     const dir = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'content', 'texts', 'pt-BR.json');
     const t = interpretarTextos(JSON.parse(readFileSync(dir, 'utf-8')));

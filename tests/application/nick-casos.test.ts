@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { carregarConteudoReal } from '../helpers/conteudoReal';
 import { montarServicos, type Servicos } from '../../src/application/Servicos';
 import type { Conteudo } from '../../src/application/usecases/CarregarConteudo';
@@ -35,12 +36,12 @@ function concluirEnfeites(s: Servicos): void {
 
 const concluida = (s: Servicos) => (f: Parameters<Servicos['sessao']['faseConcluida']>[0]) => s.sessao.faseConcluida(f);
 
-describe('Nick no conteúdo real (ADR-005 seções 2.3 e 3.7)', () => {
+descreverComConteudoNovo('Nick no conteúdo real (ADR-005 seções 2.3 e 3.7)', () => {
   it('começa dormindo na Sala, no tile de marco1.nick.dorme, sem ter acordado', async () => {
     const { s } = await novaPartida();
     const n = s.sessao.progresso.nick;
     expect(n.dormindo).toBe(true);
-    expect(n.tile).toEqual(tile('sala', 8, 5));
+    expect(n.tile).toEqual(tile('sala', 9, 5));
     expect(n.jaAcordouNestaPartida).toBe(false);
   });
 
@@ -66,43 +67,43 @@ describe('Nick no conteúdo real (ADR-005 seções 2.3 e 3.7)', () => {
     const { s, c } = await novaPartida();
     avancarAte(s, 'parte1');
     const r1 = s.devolverControle.executar();
-    expect(r1?.destino).toEqual(tile('cozinha', 5, 3));
+    expect(r1?.destino).toEqual(tile('cozinha', 1, 1));
     avancarAte(s, 'parte2');
-    expect(s.devolverControle.executar()?.destino).toEqual(tile('quarto', 4, 3));
+    expect(s.devolverControle.executar()?.destino).toEqual(tile('quarto', 1, 2));
     avancarAte(s, 'parte3');
-    expect(s.devolverControle.executar()?.destino).toEqual(tile('escritorio', 6, 1));
+    expect(s.devolverControle.executar()?.destino).toEqual(tile('escritorio', 4, 2));
     avancarAte(s, 'enfeites');
-    expect(s.devolverControle.executar()?.destino).toEqual(tile('sala', 8, 5));
+    expect(s.devolverControle.executar()?.destino).toEqual(tile('sala', 9, 5));
     void c;
   });
 });
 
-describe('portaASeguir (ADR-005 seção 4.2; GDD 16.5.3 e F4)', () => {
+descreverComConteudoNovo('portaASeguir (ADR-005 seção 4.2; GDD 16.5.3 e F4)', () => {
   const abertasDaParte1 = (id: string) => ['hall', 'sala', 'cozinha', 'quarto', 'escritorio'].includes(id);
 
-  it('Quarto com alvo na Sala: seta para a esquerda sobre a P2 (exemplo do GDD)', async () => {
+  it('Quarto com alvo na Sala: seta para baixo sobre a quarto-sala', async () => {
     const c = await carregarConteudoReal();
-    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'quarto', 'sala')).toMatchObject({ mapa: 'quarto', id: 'P2', saida: 'esquerda' });
+    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'quarto', 'sala')).toMatchObject({ mapa: 'quarto', id: 'quarto-sala', lado: 'baixo' });
   });
 
-  it('Cozinha com alvo na Sala: seta para a esquerda sobre a P7', async () => {
+  it('Cozinha com alvo na Sala: seta para a esquerda sobre a cozinha-sala', async () => {
     const c = await carregarConteudoReal();
-    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'cozinha', 'sala')).toMatchObject({ id: 'P7', saida: 'esquerda' });
+    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'cozinha', 'sala')).toMatchObject({ id: 'cozinha-sala', lado: 'esquerda' });
   });
 
-  it('Sala com alvo na Cozinha: seta para a direita sobre a P7', async () => {
+  it('Sala com alvo na Cozinha: seta para a direita sobre a cozinha-sala', async () => {
     const c = await carregarConteudoReal();
-    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'sala', 'cozinha')).toMatchObject({ id: 'P7', saida: 'direita' });
+    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'sala', 'cozinha')).toMatchObject({ id: 'cozinha-sala', lado: 'direita' });
   });
 
-  it('Hall com alvo na Sala: seta para cima sobre a P8', async () => {
+  it('Hall com alvo na Sala: seta para cima sobre a hall-sala', async () => {
     const c = await carregarConteudoReal();
-    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'hall', 'sala')).toMatchObject({ id: 'P8', saida: 'cima' });
+    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'hall', 'sala')).toMatchObject({ id: 'hall-sala', lado: 'cima' });
   });
 
-  it('Escritório com alvo na Sala: seta para a esquerda sobre a P3', async () => {
+  it('Escritório com alvo na Sala: seta para a esquerda sobre a escritorio-sala', async () => {
     const c = await carregarConteudoReal();
-    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'escritorio', 'sala')).toMatchObject({ id: 'P3', saida: 'esquerda' });
+    expect(portaASeguir(c.todosOsMapas, abertasDaParte1, 'escritorio', 'sala')).toMatchObject({ id: 'escritorio-sala', lado: 'esquerda' });
   });
 
   it('mesmo cômodo não tem porta; sem caminho, undefined; e a mesma entrada dá sempre a mesma porta', async () => {
@@ -114,7 +115,7 @@ describe('portaASeguir (ADR-005 seção 4.2; GDD 16.5.3 e F4)', () => {
   });
 });
 
-describe('FarejarComNick (ADR-005 seção 4.1)', () => {
+descreverComConteudoNovo('FarejarComNick (ADR-005 seção 4.1)', () => {
   it('dormindo: zzz; acordado no mesmo cômodo: Au!; em outro cômodo: porta, que vira seta de 5 s', async () => {
     const { s } = await novaPartida();
     avancarAte(s, 'luzes');
@@ -122,7 +123,7 @@ describe('FarejarComNick (ADR-005 seção 4.1)', () => {
     s.acordarNick.executar(tile('sala', 7, 5));
     expect(s.farejarComNick.executar('sala')).toEqual({ tipo: 'mesmoComodo' });
     const longe = s.farejarComNick.executar('cozinha');
-    expect(longe).toMatchObject({ tipo: 'porta', porta: { id: 'P7', saida: 'esquerda' } });
+    expect(longe).toMatchObject({ tipo: 'porta', porta: { id: 'cozinha-sala', lado: 'esquerda' } });
     expect(s.sessao.farejo.ativo).toBe(true);
     expect(s.sessao.farejo.restanteMs).toBe(5000);
   });
@@ -134,15 +135,15 @@ describe('FarejarComNick (ADR-005 seção 4.1)', () => {
     s.farejarComNick.executar('cozinha');
     s.sessao.farejo.avancar(3000);
     const segundo = s.farejarComNick.executar('cozinha');
-    expect(segundo).toMatchObject({ tipo: 'porta', porta: { id: 'P7' } });
+    expect(segundo).toMatchObject({ tipo: 'porta', porta: { id: 'cozinha-sala' } });
     expect(s.sessao.farejo.restanteMs).toBe(5000);
   });
 
-  it('na fase enfeites, acordado: a seta da Sala aponta para a P3, rumo ao Escritório (GDD 17.6)', async () => {
+  it('na fase enfeites, acordado: a seta da Sala aponta para a escritorio-sala, rumo ao Escritório (GDD 17.6)', async () => {
     const { s } = await novaPartida();
     avancarAte(s, 'enfeites');
     s.acordarNick.executar(tile('sala', 7, 5));
-    expect(s.farejarComNick.executar('sala')).toMatchObject({ tipo: 'porta', porta: { id: 'P3' } });
+    expect(s.farejarComNick.executar('sala')).toMatchObject({ tipo: 'porta', porta: { id: 'escritorio-sala' } });
     expect(s.sessao.farejo.ativo).toBe(true);
   });
 
@@ -156,7 +157,7 @@ describe('FarejarComNick (ADR-005 seção 4.1)', () => {
   });
 });
 
-describe('AcordarNick (ADR-005 seção 3.6)', () => {
+descreverComConteudoNovo('AcordarNick (ADR-005 seção 3.6)', () => {
   it('acorda uma vez com primeiraVez, e depois só abana', async () => {
     const { s } = await novaPartida();
     expect(s.acordarNick.executar(tile('sala', 7, 5))).toEqual({ tipo: 'acordou', primeiraVez: true });
@@ -164,7 +165,7 @@ describe('AcordarNick (ADR-005 seção 3.6)', () => {
   });
 });
 
-describe('dica e modo da tela (ADR-005 seções 5 e 1.4)', () => {
+descreverComConteudoNovo('dica e modo da tela (ADR-005 seções 5 e 1.4)', () => {
   it('chave da dica por fase e estado; a fase enfeites tem a sua dica, e não há `livre` (ADR-006 seção 6)', async () => {
     const c = await carregarConteudoReal();
     expect(chaveDaDica(c.missoes, 'porta', true)).toBe('dica.porta');

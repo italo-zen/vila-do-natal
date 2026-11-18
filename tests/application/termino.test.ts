@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { carregarConteudoReal } from '../helpers/conteudoReal';
 import { validarManifesto } from '../../src/application/content/validarManifesto';
 import { validarConteudo } from '../../src/application/content/validarConteudo';
@@ -20,7 +21,7 @@ const carregar = async () => {
 /** Validação completa de um conteúdo alterado (validarConteudo inclui N001 a N014). */
 const errosDe = (e: Parameters<typeof validarConteudo>[0]) => validarConteudo(e);
 
-describe('conteúdo real (ADR-006 seção 9)', () => {
+descreverComConteudoNovo('conteúdo real (ADR-006 seção 9)', () => {
   it('o conteúdo real passa em validarManifesto e em validarConteudo, sem erro T', async () => {
     const x = await carregar();
     expect(validarManifesto(manifestoDe(x))).toMatchObject({ ok: true });
@@ -39,7 +40,7 @@ describe('conteúdo real (ADR-006 seção 9)', () => {
   });
 });
 
-describe('validarManifesto: missão final (T001 a T004)', () => {
+descreverComConteudoNovo('validarManifesto: missão final (T001 a T004)', () => {
   it('T001: duas missões com final: true (só T001)', async () => {
     const x = await carregar();
     const v = validarManifesto(entradaComManifesto(x, (m) => (m.missions.find((z) => z.id === 'parte3') as unknown as Record<string, unknown>).final = true).manifesto);
@@ -87,7 +88,7 @@ describe('validarManifesto: missão final (T001 a T004)', () => {
   });
 });
 
-describe('validarConteudo: término e caixa (T005 a T009)', () => {
+descreverComConteudoNovo('validarConteudo: término e caixa (T005 a T009)', () => {
   it('T005: a fase da missão final não é a última de FASES (parte3 como final; só T005)', async () => {
     const x = await carregar();
     const e = entradaComMissoes(x, (ms) => {
@@ -119,14 +120,15 @@ describe('validarConteudo: término e caixa (T005 a T009)', () => {
 
   it('T007: caixa com uma chegada (spawn) como vizinho livre (só T007)', async () => {
     const x = await carregar();
-    // Fechar vizinhos quebraria a rota da caixa e o tile de dormir (N009, N007). Por isso a caixa vai para (1, 4), onde o
-    // único vizinho livre que não é piso comum é o spawn da P3 em (1, 5): o vizinho (2, 4) é livre e a conta de 2 passa.
+    // Fechar vizinhos quebraria a rota da caixa e o tile de dormir (N009, N007). Por isso a caixa vai para (1, 4), onde um
+    // dos dois vizinhos é o tile da porta `escritorio-sala` em (0, 4) (chegada e porta não contam como vizinho livre, ADR-011
+    // seção 5.5): sobra só o (2, 4), e a conta de 2 falha.
     const e = entradaComSubarea(x, 'escritorio', (mp) => {
       mp.objetos = mp.objetos.filter((o) => o.tipo !== 'enfeite');
       mp.objetos.push({ tipo: 'enfeite', x: 1, y: 4, dados: { estadoInicial: 'escondida', id: 'enfeite', ordem: 4 } });
     });
     expect(codigosDeRegra(errosDe(e))).toEqual(['T007']);
-    expect(errosDe(e).some((er) => er.startsWith('T007') && er.includes('gatilho, vão, chegada'))).toBe(true);
+    expect(errosDe(e).some((er) => er.startsWith('T007') && er.includes('alcançável'))).toBe(true);
   });
 
   it('T008: a caixa fora da subárea alvo do farejar. Vem sempre com N011: alvo sem caixa e caixa fora do alvo são a mesma falha', async () => {
@@ -159,12 +161,12 @@ describe('validarConteudo: término e caixa (T005 a T009)', () => {
   });
 });
 
-describe('validarNick da caixa e do fim (N007, N008, N011, N014; ADR-006 seção 6 e 9)', () => {
+descreverComConteudoNovo('validarNick da caixa e do fim (N007, N008, N011, N014; ADR-006 seção 6 e 9)', () => {
   it('N007: o tile de dormir da fase enfeites encosta na caixa (só N007)', async () => {
     const x = await carregar();
-    // Dorme em (5, 1), encostado na caixa (5, 2). O outro vizinho livre da caixa, (5, 3), segue na rota: N009 não dispara.
+    // Dorme em (6, 1), encostado na caixa (5, 1). O outro vizinho livre da caixa, (4, 1), segue na rota: N009 não dispara.
     const e = entradaComMissao(x, 'enfeites', (m) => {
-      m.nick.dorme = { mapa: 'escritorio', x: 5, y: 1, direcao: 'baixo' };
+      m.nick.dorme = { mapa: 'escritorio', x: 6, y: 1, direcao: 'baixo' };
     });
     const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes: e.missoes, textos: x.textos, perfil: x.perfil });
     expect(codigosDeRegra(erros)).toEqual(['N007']);

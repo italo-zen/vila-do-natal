@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" orientation="orthogonal" width="4" height="2" tilewidth="32" tileheight="32" infinite="1" nextlayerid="9" nextobjectid="999">
+ <tileset firstgid="1" name="tiles_casa" tilewidth="32" tileheight="32" tilecount="544" columns="32"><image source="x.png" width="1024" height="544"/></tileset>
+ <layer id="1" name="Pisos" width="4" height="2"><data encoding="csv"><chunk x="0" y="0" width="4" height="2">
+34,34,34,38,
+34,34,34,38
+</chunk></data></layer>
+ <objectgroup id="2" name="Rótulos das subáreas">
+  <object id="1" x="4" y="4" width="24" height="24"><properties><property name="id" value="aa"/><property name="escuro" type="bool" value="false"/></properties><text>aa</text></object>
+  <object id="2" x="100" y="4" width="24" height="24"><properties><property name="id" value="bb"/><property name="escuro" type="bool" value="false"/></properties><text>bb</text></object>
+ </objectgroup>
+ <objectgroup id="3" name="muros">
+  <object id="3" x="30" y="0" width="4" height="32"/>
+ </objectgroup>
+ <objectgroup id="4" name="Portas">
+  <object id="4" x="96" y="16"><point/></object>
+ </objectgroup>
+ <objectgroup id="6" name="Objetos de jogo">
+ </objectgroup>
+</map>

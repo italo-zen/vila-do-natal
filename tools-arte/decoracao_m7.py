@@ -58,36 +58,39 @@ PISCA = {"dec_luz", "dec_vela"}
 # "Cozinha e Lavanderia" = subárea cozinha (ADR-010 6; GDD 15.3). Nick dorme: sala (8,5), cozinha (5,3), quarto (4,3),
 # escritório (6,1); nenhum enfeite nesses tiles.
 POSICOES = [
-    # Hall (sem móvel: só piso)
-    ("hall", 1, 1, "dec_arvore_p", "chao"),
-    ("hall", 2, 1, "dec_presente_vermelho", "chao"),
-    ("hall", 2, 2, "dec_presente_verde", "chao"),
+    # Planta nova (ADR-011; backlog 175; coordenadas do conteúdo já girado). A planta nova não tem sofá, estante nem cama:
+    # luz, vela e guirlanda ficam em piso andável (só visual; E5). Pano de prato continua sobre a pia (único móvel com texto nulo).
+    # Hall (bilhete em (2,0), elevador em (0,1), porta em (3,0): ficam livres)
+    ("hall", 1, 1, "dec_presente_verde", "chao"),
+    ("hall", 2, 2, "dec_presente_vermelho", "chao"),
+    ("hall", 3, 1, "dec_arvore_p", "chao"),
     ("hall", 3, 2, "dec_arvore_g", "chao"),
-    # Sala (rótulos de Mesa e Rack TV ficam livres)
-    ("sala", 0, 0, "dec_arvore_p", "chao"),
-    ("sala", 0, 4, "dec_arvore_g", "chao"),
+    # Sala (móveis do Diretor, 2026-11-17: sofá (3,3)-(4,4), rack (2,1)-(5,1), cacto (0,3), mesa (6,5)-(8,6), cômoda (10,5)-(10,7);
+    # interruptor (6,4), árvore (2,8), peça 1 (0,5), portas e chegadas livres; linhas 9 e 10 são da barra)
+    ("sala", 1, 3, "dec_arvore_p", "chao"),
     ("sala", 0, 8, "dec_presente_vermelho", "chao"),
     ("sala", 1, 8, "dec_presente_verde", "chao"),
-    ("sala", 2, 3, "dec_meias", "chao"),
-    ("sala", 3, 3, "dec_luz", "movel"),
-    ("sala", 10, 6, "dec_guirlanda", "movel"),
-    ("sala", 10, 7, "dec_vela", "movel"),
-    # Cozinha e Lavanderia (rótulos de Fogão, Forno e Geladeira ficam livres)
-    ("cozinha", 5, 0, "dec_pano", "movel"),
-    ("cozinha", 2, 1, "dec_meias", "chao"),
-    ("cozinha", 3, 1, "dec_arvore_p", "chao"),
-    ("cozinha", 3, 3, "dec_presente_vermelho", "chao"),
-    ("cozinha", 4, 3, "dec_presente_verde", "chao"),
-    ("cozinha", 2, 4, "dec_arvore_g", "chao"),
-    # Quarto (sem móvel: só piso)
-    ("quarto", 2, 3, "dec_presente_vermelho", "chao"),
-    ("quarto", 3, 3, "dec_arvore_p", "chao"),
-    ("quarto", 1, 4, "dec_presente_verde", "chao"),
-    ("quarto", 4, 4, "dec_arvore_g", "chao"),
-    # Escritório (rótulo da Mesa fica livre)
-    ("escritorio", 5, 1, "dec_arvore_p", "chao"),
-    ("escritorio", 6, 2, "dec_luz", "movel"),
-    ("escritorio", 6, 3, "dec_meias", "movel"),
+    ("sala", 2, 1, "dec_guirlanda", "movel"),     # sobre o rack
+    ("sala", 4, 1, "dec_luz", "movel"),           # sobre o rack
+    ("sala", 5, 1, "dec_meias", "movel"),         # sobre o rack
+    ("sala", 10, 6, "dec_vela", "movel"),         # sobre a cômoda
+    ("sala", 10, 7, "dec_arvore_g", "movel"),     # sobre a cômoda
+    # Cozinha (3 linhas) e Lavanderia (2 linhas): móveis do Diretor (2026-11-17); peças em (3,2) e (5,3); Nick (1,1) proposto
+    ("cozinha", 5, 0, "dec_pano", "movel"),       # sobre a pia (coluna 5, linhas 0 a 2); o examinável da Pia fica em (5,1)
+    ("cozinha", 0, 1, "dec_meias", "chao"),
+    ("cozinha", 3, 0, "dec_arvore_p", "chao"),
+    ("cozinha", 2, 3, "dec_arvore_g", "chao"),
+    ("cozinha", 1, 4, "dec_presente_vermelho", "chao"),
+    ("cozinha", 2, 4, "dec_presente_verde", "chao"),
+    # Quarto da Oli (cama (1,0)-(1,1), cômoda (3,1), cadeira (3,3); portas e chegadas em (0,3); Nick (3,2))
+    ("quarto", 3, 0, "dec_arvore_p", "chao"),
+    ("quarto", 2, 0, "dec_arvore_g", "chao"),
+    ("quarto", 1, 0, "dec_presente_vermelho", "movel"),   # sobre a cama
+    ("quarto", 2, 3, "dec_presente_verde", "chao"),
+    # Escritório (mesa (4,0)-(6,0), cama (5,2)-(6,3); caixa de enfeite proposta em (5,1); chegadas em (0,4) e (4,4); Nick (4,2))
+    ("escritorio", 6, 1, "dec_arvore_p", "chao"),
+    ("escritorio", 4, 0, "dec_luz", "movel"),     # sobre a mesa
+    ("escritorio", 6, 3, "dec_meias", "movel"),   # sobre a cama
 ]
 
 
@@ -154,7 +157,8 @@ def montar():
             erros.append(f"E4 {sub} ({x},{y}): tile de passagem")
         proibidos = [t for t in m["objetos"].get(xy, []) if t in TIPOS_PROIBIDOS or t != "movel"]
         if local == "movel":
-            proibidos = [t for t in proibidos if t != "movel"]
+            # pano de prato sobre a pia (planta nova): o examinável do móvel continua sendo o que responde ao A
+            proibidos = [t for t in proibidos if t not in ("movel", "examinavel")]
         if proibidos:
             erros.append(f"E4 {sub} ({x},{y}): tile ocupado por {proibidos}")
         if xy in dormir.get(sub, set()):
@@ -169,8 +173,7 @@ def montar():
         if local == "movel":
             if xy not in m["moveis_area"]:
                 erros.append(f"E6 {sub} ({x},{y}): 'movel' fora da área de um móvel")
-            elif m["moveis_area"][xy] >= 2:
-                erros.append(f"E6 {sub} ({x},{y}): tile do rótulo de móvel de {m['moveis_area'][xy]} tiles")
+            # (sem regra de rótulo: os móveis passaram a ter sprite spr_<id>, sem texto no meio)
         if arq not in registro:
             erros.append(f"E7 {arq}: não está em sprites.json")
             continue

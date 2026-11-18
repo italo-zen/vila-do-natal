@@ -1,20 +1,71 @@
 {
   "altura": 2,
   "chao": [
-    310,
-    310,
-    310,
-    310
+    34,
+    34,
+    34,
+    34
   ],
   "colisao": [
     0,
     1,
-    0,
-    0
+    1,
+    1
   ],
   "escuro": false,
   "id": "banheiro_escritorio",
   "largura": 2,
-  "objetos": [],
+  "objetos": [
+    {
+      "destino": "escritorio",
+      "id": "banheiro_escritorio-escritorio",
+      "lado": "esquerda",
+      "spawnDestino": "banheiro_escritorio-escritorio",
+      "tipo": "porta",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "direcao": "direita",
+      "nome": "banheiro_escritorio-escritorio",
+      "tipo": "spawn",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "h": 1,
+      "id": "box_do_banheiro_do_escritorio",
+      "nome": "Box do banheiro do escritório",
+      "tipo": "movel",
+      "w": 1,
+      "x": 1,
+      "y": 1
+    },
+    {
+      "h": 1,
+      "id": "pia_do_banheiro_do_escritorio",
+      "nome": "Pia do banheiro do escritório",
+      "tipo": "movel",
+      "w": 1,
+      "x": 1,
+      "y": 0
+    },
+    {
+      "h": 1,
+      "id": "privada_do_banheiro_do_escritorio",
+      "nome": "Privada do banheiro do escritório",
+      "tipo": "movel",
+      "w": 1,
+      "x": 0,
+      "y": 1
+    }
+  ],
+  "paredes": [
+    9,
+    3,
+    12,
+    6
+  ],
+  "schemaVersion": 3,
   "tile": 32
 }

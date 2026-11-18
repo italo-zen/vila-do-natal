@@ -32,7 +32,7 @@ interface CasaPorDentro {
       modo: ModoDeSessao;
       faseConcluida(f: string): boolean;
       progresso: { nick: { estado: string; tile: { mapa: string; x: number; y: number }; oculto: boolean; direcao: string; fila: { entradas: unknown[] } }; concluir(f: string): { ok: boolean; valor: { progresso: unknown } } };
-      farejo: { ativo: boolean; restanteMs: number; porta: { id: string; saida: string; mapa: string } | undefined };
+      farejo: { ativo: boolean; restanteMs: number; porta: { id: string; saida: string; lado: string; mapa: string } | undefined };
       definir(p: unknown): void;
     };
     devolverControle: { executar(): unknown };
@@ -103,7 +103,7 @@ export function instalarGancho(jogo: Phaser.Game): void {
       /** Farejo (ADR-005 seção 4.5): seta visível, tempo restante e porta a seguir (id e saída). */
       farejo: (() => {
         const f = c.sv.sessao.farejo;
-        return { ativo: f.ativo, restanteMs: f.restanteMs, porta: f.porta ? { id: f.porta.id, saida: f.porta.saida, mapa: f.porta.mapa } : null };
+        return { ativo: f.ativo, restanteMs: f.restanteMs, porta: f.porta ? { id: f.porta.id, saida: f.porta.lado, lado: f.porta.lado, mapa: f.porta.mapa } : null };
       })(),
       /** Animação ativa do sprite do Nick (ex.: nick-feliz) e se está tocando (BUG-M3-R5 e pedido de 2026-11-09). */
       // Tolerante: com a cena em troca (Conquista, reinício), o Phaser já destruiu o sprite do Nick e `anims` não existe.

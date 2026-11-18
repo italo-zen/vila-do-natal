@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "contentVersion": "1.0.0",
+  "schemaVersion": 3,
+  "contentVersion": "1.1.0",
   "locale": "pt-BR",
   "artProfile": "hd-480x352",
   "maps": [
@@ -40,13 +40,18 @@
       "decoracao": "maps/decoracao/quarto.json"
     },
     {
-      "id": "banheiro_casal",
-      "file": "maps/casa-real/banheiro_casal.json",
+      "id": "banheiro1",
+      "file": "maps/casa-real/banheiro1.json",
       "tileset": "tiles_casa"
     },
     {
-      "id": "suite_casal",
-      "file": "maps/casa-real/suite_casal.json",
+      "id": "quartinho",
+      "file": "maps/casa-real/quartinho.json",
+      "tileset": "tiles_casa"
+    },
+    {
+      "id": "quarto_casal",
+      "file": "maps/casa-real/quarto_casal.json",
       "tileset": "tiles_casa"
     }
   ],

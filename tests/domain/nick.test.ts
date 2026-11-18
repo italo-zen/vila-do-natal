@@ -151,7 +151,7 @@ describe('entrada numa área pela porta (PT3, 2026-11-09: sem semente vizinha)',
 });
 
 describe('Farejo (ADR-005 seção 4.5; GDD 16.5.3)', () => {
-  const porta = { mapa: S, id: 'P8', gatilho: { x: 6, y: 7 }, saida: 'cima' as const };
+  const porta = { mapa: S, id: 'P8', tile: { x: 6, y: 7 }, lado: 'cima' as const };
 
   it('dura 5 s; passa o tempo e some', () => {
     const f = new Farejo();

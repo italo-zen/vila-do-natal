@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { validarDecoracao, SUBAREAS_DA_DECORACAO, TOTAL_DE_ENFEITES } from '../../src/application/content/decoracao';
 import { interpretarSubarea } from '../../src/application/content/interpretarSubarea';
 import { tilesProibidosDaSubarea } from '../../src/application/usecases/CarregarConteudo';
@@ -18,7 +19,7 @@ const sprites = (JSON.parse(readFileSync(join(RAIZ, 'assets', 'hd-480x352', 'spr
 const registroDeSprites = Object.fromEntries(sprites.map((i) => [i.arquivo.replace(/\.png$/, ''), { quadros: i.quadros }]));
 const missaoEnfeites = manifesto.missions.find((m: { id: string }) => m.id === 'enfeites');
 
-describe('decoração real (ADR-010 8.2)', () => {
+descreverComConteudoNovo('decoração real (ADR-010 8.2)', () => {
   it('a missão enfeites existe e é a final (ADR-006)', () => {
     expect(missaoEnfeites).toBeDefined();
     expect(missaoEnfeites.final).toBe(true);

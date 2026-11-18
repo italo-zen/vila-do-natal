@@ -13,7 +13,7 @@
     {
       "id": "cozinha_meias_1",
       "sprite": "dec_meias",
-      "x": 2,
+      "x": 0,
       "y": 1,
       "pisca": false,
       "examinar": null
@@ -22,29 +22,29 @@
       "id": "cozinha_arvore_p_1",
       "sprite": "dec_arvore_p",
       "x": 3,
-      "y": 1,
-      "pisca": false,
-      "examinar": null
-    },
-    {
-      "id": "cozinha_presente_vermelho_1",
-      "sprite": "dec_presente_vermelho",
-      "x": 3,
-      "y": 3,
-      "pisca": false,
-      "examinar": null
-    },
-    {
-      "id": "cozinha_presente_verde_1",
-      "sprite": "dec_presente_verde",
-      "x": 4,
-      "y": 3,
+      "y": 0,
       "pisca": false,
       "examinar": null
     },
     {
       "id": "cozinha_arvore_g_1",
       "sprite": "dec_arvore_g",
+      "x": 2,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "cozinha_presente_vermelho_1",
+      "sprite": "dec_presente_vermelho",
+      "x": 1,
+      "y": 4,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "cozinha_presente_verde_1",
+      "sprite": "dec_presente_verde",
       "x": 2,
       "y": 4,
       "pisca": false,

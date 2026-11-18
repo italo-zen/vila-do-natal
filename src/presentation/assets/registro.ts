@@ -57,12 +57,20 @@ export const CHAVE_DA_CONQUISTA_DA_PECA: Readonly<Record<number, string>> = {
   2: 'spr_conquista_parte2',
   3: 'spr_conquista_parte3',
 };
+/** Chave do sprite de um móvel (Arte, item 173): `spr_<id>`, origem (0, 0) no canto do móvel, tamanho w×h tiles. */
+export const CHAVE_DO_MOVEL = (id: string): string => `spr_${id}`;
 export const CHAVE = {
   arvore: 'spr_arvore_desmontada',
   bilhete: 'spr_bilhete',
   interruptor: 'spr_interruptor',
   porta: 'spr_porta',
   portaVertical: 'spr_porta_vertical',
+  portaAberta: 'spr_porta_aberta',
+  portaAbertaVertical: 'spr_porta_aberta_vertical',
+  portaCodigo: 'spr_porta_codigo',
+  portaCodigoVertical: 'spr_porta_codigo_vertical',
+  paredeH: 'spr_parede_h',
+  paredeV: 'spr_parede_v',
   lampada: 'spr_lampada',
   indicadorSetaDireita: 'spr_indicador_seta_direita',
   indicadorSetaEsquerda: 'spr_indicador_seta_esquerda',

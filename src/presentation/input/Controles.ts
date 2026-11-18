@@ -3,6 +3,7 @@ import type { Acao } from './mapaDeTeclas';
 import { FonteTeclado } from './FonteTeclado';
 import type { FonteDeToque } from './FonteDeToque';
 import { toqueDaCena } from '../ui/toque/toqueDaCena';
+import { TravaDeEntrada } from './TravaDeEntrada';
 
 export type { Acao };
 
@@ -19,6 +20,8 @@ export class Controles {
   /** Tecla P (pausa, ADR-008 6.1): fora do mapa de ações, lida só por `atalhoApertado('pausa')`. */
   private readonly teclaPausa: Phaser.Input.Keyboard.Key | null;
   private pausaApertada = false;
+  /** Direções travadas depois de uma porta (ADR-011 seção 3.4): valem como soltas até soltar de verdade. */
+  private readonly trava = new TravaDeEntrada<Acao>();
 
   constructor(cena: Phaser.Scene) {
     this.teclado = new FonteTeclado(cena);
@@ -40,7 +43,22 @@ export class Controles {
   }
 
   segurada(acao: Acao): boolean {
+    return this.trava.filtrar(acao, this.seguradaDeVerdade(acao));
+  }
+
+  private seguradaDeVerdade(acao: Acao): boolean {
     return this.teclado.segurada(acao) || (this.toque?.segurada(acao) ?? false);
+  }
+
+  /**
+   * Fim do fade de uma porta (ADR-011 seção 3.4): o estado de direção e do A passa a valer como solto até soltar de verdade,
+   * e as bordas pendentes são descartadas. Voltar pela porta exige soltar e pressionar de novo. `paraDentro` é a direção em
+   * que o sobrinho olha ao chegar: quem a segurou na travessia continua andando para dentro da área nova, sem voltar.
+   */
+  exigirSoltar(paraDentro?: Acao): void {
+    const acoes: Acao[] = ['cima', 'baixo', 'esquerda', 'direita', 'a'];
+    this.trava.travar(acoes.filter((a) => a !== paraDentro && this.seguradaDeVerdade(a)));
+    this.descartarEntradas();
   }
 
   apertada(acao: Acao): boolean {

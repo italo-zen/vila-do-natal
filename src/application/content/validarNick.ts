@@ -3,8 +3,8 @@ import type { Textos } from './Textos';
 import type { PerfilDeArte } from '../arte/PerfilDeArte';
 import type { MissaoCarregada } from '../mundo/missoes';
 import { ordemDaFase } from '../mundo/pecas';
-import { deslocamentoDaSubarea, ladoDaPorta, vaoDaPorta } from '../mundo/subarea';
-import { livreNoMapa, rotaDaFaseExiste } from './pontosDePartida';
+import { deslocamentoDaSubarea } from '../mundo/subarea';
+import { livreNoMapa, rotaDaFaseExiste, vizinhosLivresAlcancaveis } from './pontosDePartida';
 import type { Fase } from '../../domain/progresso/Fase';
 import { ehDirecao } from '../../domain/shared/Direcao';
 import { FASE_DO_ENFEITE } from '../mundo/enfeite';
@@ -39,17 +39,6 @@ function itensDaFase(fase: string): { interruptor?: true; ordemDaPeca?: number; 
   if (fase === FASE_DO_ENFEITE) return { caixa: true };
   const ordem = ordemDaFase(fase as Fase);
   return ordem !== undefined ? { ordemDaPeca: ordem } : {};
-}
-
-/** Vãos de passagem da subárea (ADR-004 seção 3): o tile fora de cada gatilho, no lado de saída. */
-function vaosDo(mapa: MapaDoJogo): { x: number; y: number }[] {
-  const vaos: { x: number; y: number }[] = [];
-  for (const o of mapa.objetos) {
-    if (o.tipo !== 'porta') continue;
-    const lado = ladoDaPorta(o);
-    if (lado) vaos.push(vaoDaPorta(o, lado));
-  }
-  return vaos;
 }
 
 /** Subáreas alcançáveis a partir de `inicio` por pares de porta, só entre as abertas (ADR-005 seção 2.6, N012). */
@@ -198,22 +187,22 @@ function checarTile(erros: string[], p: ParamTile): void {
     erros.push(`N004 ${pre}: ${rotulo} em (${x}, ${y}) sem piso livre`);
     return;
   }
-  // N005: o tile não pode ter objeto (inclusive móvel), gatilho, vão, nem ser o destino de condução da missão.
+  // N005: o tile não pode ter objeto (inclusive móvel e tile de porta), nem ser o destino de condução da missão (ADR-011 seção 5.4).
   const rotuloObjeto = (o: ObjetoDoMapa) => `${o.tipo}${o.dados.id ? ` ${String(o.dados.id)}` : ''}`;
   const emCima = mapa.objetos.find((o) => o.tipo !== 'movel' && o.x === x && o.y === y);
   const movel = mapa.objetos.find((o) => o.tipo === 'movel' && x >= o.x && y >= o.y && x < o.x + Number(o.dados.w) && y < o.y + Number(o.dados.h));
-  const vao = vaosDo(mapa).some((v) => v.x === x && v.y === y);
   const destinoDaConducao = Object.values(m.missao.conducao).some((d) => d.mapa === mapaId && d.x === x && d.y === y);
-  if (emCima || movel || vao || destinoDaConducao) {
-    const quem = emCima ? rotuloObjeto(emCima) : movel ? 'móvel' : vao ? 'vão de passagem' : 'destino de condução';
+  if (emCima || movel || destinoDaConducao) {
+    const quem = emCima ? rotuloObjeto(emCima) : movel ? 'móvel' : 'destino de condução';
     erros.push(`N005 ${pre}: ${rotulo} sobre ${quem} (${x}, ${y})`);
   }
   // N006: nenhuma linha da barra da tela (as duas últimas, ADR-005 seção 6).
   const desl = deslocamentoDaSubarea(mapa, tela);
   if (y + desl.y >= tela.linhas - 2) erros.push(`N006 ${pre}: ${rotulo} na linha da barra`);
-  // N007: pelo menos 2 vizinhos livres, e nenhum vizinho é peça ou caixa de enfeite (ADR-006 seção 9).
+  // N007: pelo menos 2 vizinhos livres alcançáveis pelas arestas abertas (ADR-011 seção 5.5), e nenhum vizinho é peça ou
+  // caixa de enfeite (ADR-006 seção 9).
   const vizinhos = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => ({ x: x + dx, y: y + dy }));
-  const livres = vizinhos.filter((v) => livreNoMapa(mapa, v.x, v.y)).length;
+  const livres = vizinhosLivresAlcancaveis(mapa, x, y).length;
   if (livres < 2) erros.push(`N007 ${pre}: ${rotulo} em (${x}, ${y}) com ${livres} vizinho livre (mínimo 2)`);
   const pecaVizinha = mapa.objetos.some((o) => (o.tipo === 'peca' || o.tipo === 'enfeite') && vizinhos.some((v) => v.x === o.x && v.y === o.y));
   if (pecaVizinha) erros.push(`N007 ${pre}: ${rotulo} em (${x}, ${y}) encostado em peça`);

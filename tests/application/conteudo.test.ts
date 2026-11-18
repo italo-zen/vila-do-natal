@@ -1,7 +1,9 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo, ConteudoInvalidoError } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { validarManifesto } from '../../src/application/content/validarManifesto';
@@ -16,22 +18,9 @@ import type { PerfilDeArte } from '../../src/application/arte/PerfilDeArte';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(AQUI, '..', '..');
-const CONTENT = join(RAIZ, 'content');
 const FIXTURES = join(RAIZ, 'tests', 'fixtures');
 
-/** Lê todos os JSON de content/ do disco (mesmo formato que o Vite embute na build). */
-function lerConteudo(): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const varrer = (dir: string) => {
-    for (const nome of readdirSync(dir)) {
-      const cam = join(dir, nome);
-      if (statSync(cam).isDirectory()) varrer(cam);
-      else if (nome.endsWith('.json')) out[relative(CONTENT, cam).split('\\').join('/')] = JSON.parse(readFileSync(cam, 'utf-8'));
-    }
-  };
-  varrer(CONTENT);
-  return out;
-}
+const lerConteudo = lerConteudoDoDisco;
 
 const copia = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 const carregar = (arquivos: Record<string, unknown>) => new CarregarConteudo(new ContentSourceDeArquivos(arquivos)).executar();
@@ -61,14 +50,15 @@ function comOnzeLinhas(s: Record<string, any>): void { // eslint-disable-line @t
   s.altura = 11;
   s.chao.push(...Array(s.largura).fill(0));
   s.colisao.push(...Array(s.largura).fill(1));
+  s.paredes.push(...Array(s.largura).fill(0));
 }
 
-describe('conteúdo real em content/ (ADR-002 schema 2, ADR-004)', () => {
-  it('o manifesto real é válido (schema 2, oito subáreas, missão marco1 abre três)', () => {
+descreverComConteudoNovo('conteúdo real em content/ (ADR-002 schema 3, ADR-011)', () => {
+  it('o manifesto real é válido (schema 3, nove áreas, missão marco1 abre três)', () => {
     const v = validarManifesto(lerConteudo()['manifest.json']);
     expect(v.ok).toBe(true);
     if (v.ok) {
-      expect(v.manifesto.maps.map((m) => m.id)).toEqual(['hall', 'sala', 'cozinha', 'escritorio', 'banheiro_escritorio', 'quarto', 'banheiro_casal', 'suite_casal']);
+      expect(v.manifesto.maps.map((m) => m.id)).toEqual(['hall', 'sala', 'cozinha', 'escritorio', 'banheiro_escritorio', 'quarto', 'banheiro1', 'quartinho', 'quarto_casal']);
       expect(v.manifesto.missions[0].maps).toEqual(['hall', 'sala', 'cozinha']);
     }
   });
@@ -77,9 +67,9 @@ describe('conteúdo real em content/ (ADR-002 schema 2, ADR-004)', () => {
     const c = await carregar(lerConteudo());
     expect(c.perfil.id).toBe('hd-480x352');
     expect(c.missoes[0].maps).toEqual(['hall', 'sala', 'cozinha']);
-    expect(c.todosOsMapas.size).toBe(8);
+    expect(c.todosOsMapas.size).toBe(9);
     expect(c.inicio).toEqual({ mapa: 'hall', spawn: 'elevador', paginas: ['intro.1', 'intro.2', 'intro.3', 'intro.4'] });
-    expect(c.missao.conducao.luzes).toEqual({ mapa: 'sala', x: 3, y: 7, direcao: 'baixo' });
+    expect(c.missao.conducao.luzes).toEqual({ mapa: 'sala', x: 2, y: 7, direcao: 'baixo' });
     expect(c.missao.conquistas.luzes).toBe('conquista.luzes');
   });
 
@@ -92,21 +82,22 @@ describe('conteúdo real em content/ (ADR-002 schema 2, ADR-004)', () => {
     expect(c.todosOsMapas.get('sala')!.altura).toBeLessThanOrEqual(c.perfil.sala.linhas);
   });
 
-  it('a Sala girada tem 10 linhas: a última linha da caixa é a linha 9 da tela, bloqueada desde a pergunta 31 (ADR-005 seção 6)', async () => {
+  it('a Sala girada tem 10 linhas: a linha 9 da tela (guarda de 2 linhas, ADR-005 seção 6) não tem chão andável', async () => {
     const c = await carregar(lerConteudo());
     const sala = c.todosOsMapas.get('sala')!;
     expect([sala.largura, sala.altura]).toEqual([11, 10]);
-    expect(sala.colisao[9][0]).toBe(true);
-    expect(sala.chao[9][0]).not.toBe(0);
+    for (let x = 0; x < sala.largura; x++) expect(sala.chao[9][x] !== 0 && !sala.colisao[9][x], `(${x}, 9)`).toBe(false);
   });
 
-  it('bilhete do Hall é tile bloqueado com vizinho livre (GDD 14.10.9, item 040): (2, 0) bloqueado; (2, 1) livre', async () => {
+  it('bilhete do Hall é de parede (ADR-011 seção 3.2): tile livre (2, 0), `lado` para uma aresta de parede', async () => {
     const c = await carregar(lerConteudo());
     const hall = c.todosOsMapas.get('hall')!;
-    expect(hall.objetos.find((o) => o.tipo === 'bilhete')).toMatchObject({ x: 2, y: 0 });
-    expect(hall.colisao[0][2]).toBe(true);
-    expect(hall.colisao[1][2]).toBe(false);
-    expect(hall.chao[1][2]).not.toBe(0);
+    const bilhete = hall.objetos.find((o) => o.tipo === 'bilhete')!;
+    expect(bilhete).toMatchObject({ x: 2, y: 0 });
+    expect(hall.colisao[0][2]).toBe(false);
+    expect(hall.chao[0][2]).not.toBe(0);
+    const bit = { cima: 1, direita: 2, baixo: 4, esquerda: 8 }[String(bilhete.dados.lado) as 'cima'];
+    expect(hall.paredes[0][2] & bit).toBe(bit);
   });
 
   it('validarConteudo aceita o conteúdo real', async () => {
@@ -136,7 +127,7 @@ describe('conteúdo real em content/ (ADR-002 schema 2, ADR-004)', () => {
   });
 });
 
-describe('novo mapa entra só pelo manifesto (ADR-002, item 013)', () => {
+descreverComConteudoNovo('novo mapa entra só pelo manifesto (ADR-002, item 013)', () => {
   it('uma subárea de teste adicionada ao manifesto carrega sem alterar o motor, mas fica fechada', async () => {
     const arquivos = lerConteudo();
     const manifesto = copia(arquivos['manifest.json']) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -158,7 +149,7 @@ describe('novo mapa entra só pelo manifesto (ADR-002, item 013)', () => {
   });
 });
 
-describe('validação do manifesto (schema 2)', () => {
+describe('validação do manifesto (schema 3)', () => {
   const base = () => copia(lerConteudo()['manifest.json']) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   it('recusa schema 1 com mensagem de não suportado (sem migração, ADR-002 seção 2.1)', () => {
@@ -167,6 +158,20 @@ describe('validação do manifesto (schema 2)', () => {
     const v = validarManifesto(m);
     expect(v.ok).toBe(false);
     if (!v.ok) expect(v.erros.join(' ')).toMatch(/schemaVersion 1 não é mais suportada/);
+  });
+
+  it('recusa schema 2 (conteúdo de planta antiga) e schema mais novo que o suportado (ADR-011 seção 4)', () => {
+    const antiga = base();
+    antiga.schemaVersion = 2;
+    const v2 = validarManifesto(antiga);
+    expect(v2.ok).toBe(false);
+    if (!v2.ok) expect(v2.erros.join(' ')).toMatch(/schemaVersion 2 não é mais suportada.*planta antiga/);
+    const nova = base();
+    nova.schemaVersion = 4;
+    const v4 = validarManifesto(nova);
+    expect(v4.ok).toBe(false);
+    if (!v4.ok) expect(v4.erros.join(' ')).toMatch(/schemaVersion 4 é mais nova/);
+    expect(validarManifesto(base()).ok).toBe(true);
   });
 
   it('recusa startMap, que saiu do schema 2', () => {
@@ -201,39 +206,39 @@ describe('validação do manifesto (schema 2)', () => {
   });
 });
 
-describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sobre o conteúdo real', () => {
-  it('porta sem par é erro', async () => {
+descreverComConteudoNovo('regras de validarConteudo (ADR-004 seção 8), com casos negativos sobre o conteúdo real', () => {
+  it('porta sem a simétrica na outra área é erro (item 4′)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      s.objetos = s.objetos.filter((o: { id?: string; tipo: string }) => !(o.tipo === 'porta' && o.id === 'P8'));
+      s.objetos = s.objetos.filter((o: { id?: string; tipo: string }) => !(o.tipo === 'porta' && o.id === 'hall-sala'));
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/Porta P8: 1 gatilho\(s\)/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/Porta hall-sala \(hall\): não há porta de mesmo id em "sala"/);
   });
 
-  it('par com destino fechado nesta missão é permitido (ADR-004 seção 3): o conteúdo real carrega, e a P3 age como porta fechada no Marco 1', async () => {
-    // O conteúdo real já tem esse caso: P3 (Sala) leva ao Escritório, que só abre no Marco 2.
+  it('porta para área fechada nesta missão é permitida (ADR-011 seção 3.3): o conteúdo real carrega, e a escritorio-sala age como porta fechada no Marco 1', async () => {
     const c = await carregar(lerConteudo());
     expect(c.missoes[0].maps.includes('escritorio')).toBe(false);
-    const p3 = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'P3')!;
+    const p3 = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'escritorio-sala')!;
     const ctx = contextoDaPartida(c.missoes, () => false);
     expect(resolverPorta(p3, () => false, ctx)).toEqual({ tipo: 'fechada' });
+    // A porta não bloqueia tile; a aresta é parede.
     const grade = bloqueiosDaSubarea(c.todosOsMapas.get('sala')!, () => false, ctx);
-    expect(grade[p3.y][p3.x]).toBe(true);
+    expect(grade[p3.y][p3.x]).toBe(false);
   });
 
   it('spawn de chegada que não existe no destino é erro', async () => {
     const arquivos = alterarSubarea('cozinha', (s) => {
-      s.objetos = s.objetos.filter((o: { tipo: string; nome?: string }) => !(o.tipo === 'spawn' && o.nome === 'P7'));
+      s.objetos = s.objetos.filter((o: { tipo: string; nome?: string }) => !(o.tipo === 'spawn' && o.nome === 'cozinha-sala'));
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/spawnDestino "P7" não existe em "cozinha"|porta P7/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/spawnDestino "cozinha-sala" não existe em "cozinha"/);
   });
 
-  it('interruptor a menos de 3 tiles de um spawn da Sala é erro (regra 11)', async () => {
+  it('interruptor a menos de 3 tiles do spawn hall-sala da Sala é erro (regra 11)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
       const i = s.objetos.find((o: { tipo: string }) => o.tipo === 'interruptor');
-      i.x = 6;
-      i.y = 4;
+      i.x = 4;
+      i.y = 6;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/interruptor em \(6, 4\)/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/interruptor em \(4, 6\)/);
   });
 
   it('objeto na última linha da tela é erro (regra 6)', async () => {
@@ -265,6 +270,7 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
       s.largura = 16;
       s.chao = Array(16 * s.altura).fill(1);
       s.colisao = Array(16 * s.altura).fill(0);
+      s.paredes = Array(16 * s.altura).fill(0);
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/maior que a tela/);
   });
@@ -279,7 +285,7 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
 
   it('texto citado que não existe é erro', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      const p = s.objetos.find((o: { id?: string }) => o.id === 'P1');
+      const p = s.objetos.find((o: { tipo: string }) => o.tipo === 'interruptor');
       p.texto = 'chave.fantasma';
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/chave\.fantasma/);
@@ -292,11 +298,11 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
     expect((await errosDe(arquivos)).join(' ')).toMatch(/trancadaAte "nenhuma" não é uma fase/);
   });
 
-  it('linha 9 da Sala (tela) está bloqueada na cópia de trabalho: (0, 9) e (1, 9) bloqueados (pergunta 31, Diretor)', async () => {
+  it('linha 9 da Sala (tela) não tem chão andável em (0, 9) e (1, 9) (pergunta 31, Diretor)', async () => {
     const c = await carregar(lerConteudo());
     const sala = c.todosOsMapas.get('sala')!;
-    expect(sala.colisao[9][0]).toBe(true);
-    expect(sala.colisao[9][1]).toBe(true);
+    expect(sala.colisao[9][0] || sala.chao[9][0] === 0).toBe(true);
+    expect(sala.colisao[9][1] || sala.chao[9][1] === 0).toBe(true);
   });
 
   it('linha da barra com chão andável é erro com a mensagem do ADR (regra 6a)', async () => {
@@ -315,54 +321,43 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
     expect((await errosDe(arquivos)).join(' ')).toMatch(/subárea 'sala': bilhete em \(4, 10\) na linha da barra \(tela y 10\)/);
   });
 
-  it('bilhete em piso livre é erro: o bilhete é tile bloqueado com vizinho livre (regra 5, item 040)', async () => {
-    const arquivos = alterarSubarea('hall', (s) => {
-      s.colisao[0 * s.largura + 2] = 0;
+  it('bilhete: o lado precisa apontar para uma aresta de parede, e o tile é livre (item 27)', async () => {
+    const semParede = alterarSubarea('hall', (s) => {
+      s.objetos.find((o: { tipo: string }) => o.tipo === 'bilhete').lado = 'baixo';
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/bilhete em \(2, 0\) precisa estar em tile bloqueado com vizinho livre/);
+    expect((await errosDe(semParede)).join(' ')).toMatch(/bilhete em \(2, 0\) com lado "baixo" para uma aresta sem parede/);
+    const bloqueado = alterarSubarea('hall', (s) => {
+      s.colisao[0 * s.largura + 2] = 1;
+    });
+    expect((await errosDe(bloqueado)).join(' ')).toMatch(/bilhete.*precisa estar em piso livre/);
   });
 
-  it('bilhete sem vizinho livre é erro (regra 5, item 040)', async () => {
-    const arquivos = alterarSubarea('hall', (s) => {
-      // (2, 0) cercado: (2, 1) e (3, 0) bloqueados; (1, 0) já não tem piso.
-      s.colisao[1 * s.largura + 2] = 1;
-      s.colisao[0 * s.largura + 3] = 1;
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/bilhete em \(2, 0\) precisa estar em tile bloqueado com vizinho livre/);
-  });
-
-  it('P1 duplicado (dois portaFechada com o mesmo id) é erro (regra 14, item 044)', async () => {
+  it('um id de porta repetido na mesma área é erro (item 26)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      // (7, 6) é bloqueado, com vizinho livre (6, 6): é uma segunda marca válida para P1.
-      s.objetos.push({ tipo: 'portaFechada', id: 'P1', texto: 'porta.fechada', x: 7, y: 6 });
+      const p = s.objetos.find((o: { tipo: string; id?: string }) => o.tipo === 'porta' && o.id === 'cozinha-sala');
+      s.objetos.push({ ...p, lado: 'cima' });
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/subárea 'sala': portaFechada P1 aparece 2 vezes/);
-  });
-
-  it('um id de porta fechada que também é gatilho de porta é erro (regra 14)', async () => {
-    const arquivos = alterarSubarea('sala', (s) => {
-      s.objetos.push({ tipo: 'portaFechada', id: 'P8', texto: 'porta.fechada', x: 7, y: 6 });
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/Porta P8: existe como portaFechada e como porta/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/id de porta "cozinha-sala" repetido/);
   });
 
   it('destino da condução bloqueado é erro (regra 12)', async () => {
     const arquivos = lerConteudo();
     const missao = copia(arquivos['missions/marco1.json']) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-    missao.conducao.luzes.x = 7;
-    missao.conducao.luzes.y = 6;
+    // (0, 0) da Sala é vazio (sem piso, bloqueado): destino que não é tile andável.
+    missao.conducao.luzes.x = 0;
+    missao.conducao.luzes.y = 0;
     arquivos['missions/marco1.json'] = missao;
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.luzes: destino sala \(7, 6\) não é tile andável/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.luzes: destino sala \(0, 0\) não é tile andável/);
   });
 
   it('destino da condução sem rota a partir do início é erro (regra 12)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      // (3, 7) cercado: vizinhos (2,7), (4,7) e (3,6) bloqueados; o de baixo é a árvore (3, 8).
-      s.colisao[7 * s.largura + 2] = 1;
-      s.colisao[7 * s.largura + 4] = 1;
-      s.colisao[6 * s.largura + 3] = 1;
+      // (2, 7) cercado: vizinhos (1,7), (3,7) e (2,6) bloqueados; o de baixo é a árvore (2, 8).
+      s.colisao[7 * s.largura + 1] = 1;
+      s.colisao[7 * s.largura + 3] = 1;
+      s.colisao[6 * s.largura + 2] = 1;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.luzes: destino sala \(3, 7\) sem rota a partir do início \(hall, elevador\)/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.luzes: destino sala \(2, 7\) sem rota a partir do início \(hall, elevador\)/);
   });
 
   it('chave de conducao que não é fase é erro (regra 13)', async () => {
@@ -395,91 +390,65 @@ describe('regras de validarConteudo (ADR-004 seção 8), com casos negativos sob
   });
 });
 
-describe('chegada explícita e saída do par (ADR-004 seção 13; itens 20 a 22 da seção 8)', () => {
-  it('a P2 leva ao Quarto com saída do conteúdo: Sala para a direita, Quarto para a esquerda; chegadas (7, 2) e (0, 6)', async () => {
+descreverComConteudoNovo('chegada e lado da porta (ADR-011 seções 3.2 e 7; item 4′ e 26)', () => {
+  it('a quarto-sala liga a Sala ao Quarto: lados cima (Sala) e baixo (Quarto); chegadas nos tiles das portas (7, 0) e (0, 3)', async () => {
     const c = await carregar(lerConteudo());
-    const gSala = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'P2')!;
-    const gQuarto = c.todosOsMapas.get('quarto')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'P2')!;
-    expect(gSala).toMatchObject({ x: 7, y: 1, dados: { destino: 'quarto', saida: 'direita', spawnDestino: 'P2' } });
-    expect(gQuarto).toMatchObject({ x: 0, y: 7, dados: { destino: 'sala', saida: 'esquerda', spawnDestino: 'P2' } });
-    const chegadaSala = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'spawn' && o.dados.nome === 'P2')!;
-    const chegadaQuarto = c.todosOsMapas.get('quarto')!.objetos.find((o) => o.tipo === 'spawn' && o.dados.nome === 'P2')!;
-    expect([chegadaSala.x, chegadaSala.y, chegadaSala.dados.direcao]).toEqual([7, 2, 'baixo']);
-    expect([chegadaQuarto.x, chegadaQuarto.y, chegadaQuarto.dados.direcao]).toEqual([0, 6, 'cima']);
+    const gSala = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'quarto-sala')!;
+    const gQuarto = c.todosOsMapas.get('quarto')!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'quarto-sala')!;
+    expect(gSala).toMatchObject({ x: 7, y: 0, dados: { destino: 'quarto', lado: 'cima', spawnDestino: 'quarto-sala' } });
+    expect(gQuarto).toMatchObject({ x: 0, y: 3, dados: { destino: 'sala', lado: 'baixo', spawnDestino: 'quarto-sala' } });
+    const chegadaSala = c.todosOsMapas.get('sala')!.objetos.find((o) => o.tipo === 'spawn' && o.dados.nome === 'quarto-sala')!;
+    const chegadaQuarto = c.todosOsMapas.get('quarto')!.objetos.find((o) => o.tipo === 'spawn' && o.dados.nome === 'quarto-sala')!;
+    expect([chegadaSala.x, chegadaSala.y, chegadaSala.dados.direcao]).toEqual([7, 0, 'baixo']);
+    expect([chegadaQuarto.x, chegadaQuarto.y, chegadaQuarto.dados.direcao]).toEqual([0, 3, 'cima']);
   });
 
-  it('o conteúdo real passa sem erro; os avisos são só os W027 de pares de fórmula', async () => {
+  it('o conteúdo real passa sem erro e sem avisos (o W027 de pares de fórmula não existe mais)', async () => {
     const c = await carregar(lerConteudo());
-    expect(c.avisos.length).toBeGreaterThan(0);
-    for (const aviso of c.avisos) expect(aviso).toMatch(/^W027 /);
-    expect(avisosDeConteudo({ manifesto: c.manifesto, todos: c.todosOsMapas, missoes: c.missoes, textos: c.textos, perfil: c.perfil })).toEqual(c.avisos);
+    expect(c.avisos).toEqual([]);
+    expect(avisosDeConteudo({ manifesto: c.manifesto, todos: c.todosOsMapas, missoes: c.missoes, textos: c.textos, perfil: c.perfil })).toEqual([]);
   });
 
-  it('spawns de nomes diferentes no mesmo tile são aceitos (P2 e P3 em (7, 2), ADR-004 seção 13.9, item 6)', async () => {
+  it('spawns de nomes diferentes no mesmo tile são aceitos (quarto-sala e escritorio-sala em (7, 0))', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      s.objetos.push({ tipo: 'spawn', x: 7, y: 2, nome: 'TESTE', direcao: 'baixo' });
+      s.objetos.push({ tipo: 'spawn', x: 7, y: 0, nome: 'TESTE', direcao: 'baixo' });
     });
     expect(await errosDe(arquivos)).toEqual([]);
   });
 
-  it('dois spawns de mesmo nome na mesma subárea continuam erro (spawn repetido)', async () => {
+  it('dois spawns de mesmo nome na mesma área continuam erro (spawn repetido)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      s.objetos.push({ tipo: 'spawn', x: 7, y: 2, nome: 'P2', direcao: 'baixo' });
+      s.objetos.push({ tipo: 'spawn', x: 7, y: 0, nome: 'quarto-sala', direcao: 'baixo' });
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/spawn "P2" repetido/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/spawn "quarto-sala" repetido/);
   });
 
-  it('spawn e objeto de outro tipo no mesmo tile continuam erro (E015)', async () => {
+  it('spawn e objeto de outro tipo (que não é porta) no mesmo tile continuam erro (E015)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      s.objetos.push({ tipo: 'examinavel', x: 7, y: 2, id: 'X', texto: 'x' });
+      s.objetos.push({ tipo: 'examinavel', x: 7, y: 0, id: 'X', texto: 'x' });
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/ocupam o mesmo tile/);
   });
 
-  it('item 20: chegada a 2 tiles do gatilho é erro (a passagem deixaria de custar 3 passos)', async () => {
+  it('item 4′: chegada fora do tile da porta do outro lado é erro', async () => {
     const arquivos = alterarSubarea('quarto', (s) => {
-      const sp = s.objetos.find((o: { tipo: string; nome?: string }) => o.tipo === 'spawn' && o.nome === 'P2');
-      sp.y = 5; // (0, 5) é piso livre, mas está a 2 tiles de (0, 7)
+      const sp = s.objetos.find((o: { tipo: string; nome?: string }) => o.tipo === 'spawn' && o.nome === 'quarto-sala');
+      sp.y = 2;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P2 com chegada fora do lado do gatilho/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/Porta quarto-sala: a chegada "quarto-sala" em "quarto" \(0, 2\) precisa estar no tile da porta/);
   });
 
-  it('item 20 (E028): direção da chegada que não aponta para dentro é erro', async () => {
+  it('item 4′: direção da chegada que não olha para dentro é erro', async () => {
     const arquivos = alterarSubarea('quarto', (s) => {
-      s.objetos.find((o: { tipo: string; nome?: string }) => o.tipo === 'spawn' && o.nome === 'P2').direcao = 'baixo';
+      s.objetos.find((o: { tipo: string; nome?: string }) => o.tipo === 'spawn' && o.nome === 'quarto-sala').direcao = 'baixo';
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P2: chegada \(0, 6\) com direção "baixo", deveria ser "cima".*E028/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/a chegada "quarto-sala" em "quarto" olha para "baixo", deveria olhar para "cima"/);
   });
 
-  it('item 21 (E027): gatilho com 2 vizinhos livres, lado com chegada declarada, é erro', async () => {
+  it('item 26: porta sem lado válido é erro (o motor não deriva o lado da chegada)', async () => {
     const arquivos = alterarSubarea('quarto', (s) => {
-      s.chao[7 * s.largura + 1] = 1; // (1, 7) vira piso livre: o gatilho (0, 7) passa a ter dois vizinhos livres
-      s.colisao[7 * s.largura + 1] = 0;
+      delete s.objetos.find((o: { tipo: string; id?: string }) => o.tipo === 'porta' && o.id === 'quarto-sala').lado;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P2 \(quarto, \(0, 7\)\): 2 vizinhos livres \(esperado 1\) \(E027/);
-  });
-
-  it('item 21 (W027): gatilho de par de fórmula com 2 vizinhos livres só gera aviso, não erro (P7 da Sala)', async () => {
-    const c = await carregar(lerConteudo());
-    expect(c.avisos.some((a) => a.includes('porta P7 (sala'))).toBe(true);
-    const arquivos = lerConteudo();
-    // A P7 da Sala continua de fórmula: nada muda no conteúdo real, e o carregamento segue sem erro.
-    expect(await errosDe(arquivos)).toEqual([]);
-  });
-
-  it('item 22: saída que aponta para piso livre da própria subárea é erro (porta)', async () => {
-    const arquivos = alterarSubarea('sala', (s) => {
-      s.chao[1 * s.largura + 8] = 1; // (8, 1), o vão da P2, vira piso livre
-      s.colisao[1 * s.largura + 8] = 0;
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P2 \(sala, \(7, 1\)\): saída 'direita' aponta para piso livre \(8, 1\) \(ADR-004 seção 8, item 22\)/);
-  });
-
-  it('item 22: porta sem saída válida é erro (o motor não deriva a saída da chegada)', async () => {
-    const arquivos = alterarSubarea('quarto', (s) => {
-      delete s.objetos.find((o: { tipo: string; id?: string }) => o.tipo === 'porta' && o.id === 'P2').saida;
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P2 em \(0, 7\) sem saída válida/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta quarto-sala em \(0, 3\) sem lado válido/);
   });
 });
-

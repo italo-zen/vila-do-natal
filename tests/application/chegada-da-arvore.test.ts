@@ -1,7 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { expect, it } from 'vitest';
+import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { AcenderLuzes } from '../../src/application/usecases/AcenderLuzes';
@@ -18,19 +17,7 @@ import { missoesReais } from '../helpers/missoesReais';
  * A do jogador na frente da árvore (o diálogo automático não conta como exame).
  */
 
-const CONTENT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'content');
-function lerConteudo(): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const varrer = (dir: string) => {
-    for (const nome of readdirSync(dir)) {
-      const cam = join(dir, nome);
-      if (statSync(cam).isDirectory()) varrer(cam);
-      else if (nome.endsWith('.json')) out[relative(CONTENT, cam).split('\\').join('/')] = JSON.parse(readFileSync(cam, 'utf-8'));
-    }
-  };
-  varrer(CONTENT);
-  return out;
-}
+const lerConteudo = lerConteudoDoDisco;
 const carregar = () => new CarregarConteudo(new ContentSourceDeArquivos(lerConteudo())).executar();
 
 /** Partida até as luzes acesas (fase "luzes"), como o jogador chega à condução. */
@@ -43,7 +30,7 @@ function partidaComLuzes(): SessaoDeJogo {
   return sessao;
 }
 
-describe('chegada à árvore: diálogo automático (GDD 14.9.3; D11, D12)', () => {
+descreverComConteudoNovo('chegada à árvore: diálogo automático (GDD 14.9.3; D11, D12)', () => {
   it('são duas páginas exatas, as de 14.9.3', async () => {
     const c = await carregar();
     expect(CHAVES_DA_CHEGADA).toEqual(['arvore.nascer.1', 'arvore.nascer.2']);
@@ -66,7 +53,7 @@ describe('chegada à árvore: diálogo automático (GDD 14.9.3; D11, D12)', () =
   });
 });
 
-describe('chegada à árvore: uma vez por partida (D14)', () => {
+descreverComConteudoNovo('chegada à árvore: uma vez por partida (D14)', () => {
   it('o diálogo automático abre na primeira chegada e não abre de novo na mesma partida', () => {
     const sessao = partidaComLuzes();
     expect(deveAbrirChegada(sessao)).toBe(true);
@@ -85,7 +72,7 @@ describe('chegada à árvore: uma vez por partida (D14)', () => {
   });
 });
 
-describe('chegada à árvore: halo (GDD 14.9.3, "Para"; D13)', () => {
+descreverComConteudoNovo('chegada à árvore: halo (GDD 14.9.3, "Para"; D13)', () => {
   it('não pisca antes das luzes', () => {
     const sessao = new SessaoDeJogo();
     new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');

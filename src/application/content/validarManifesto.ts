@@ -9,8 +9,8 @@ function duplicados(ids: string[]): string[] {
 }
 
 /**
- * Valida o manifesto (schema 2): formato, ids únicos e referências entre maps, missions e texts.
- * Sem migração do schema 1 (ADR-002 seção 2.1): ele é recusado com mensagem clara.
+ * Valida o manifesto (schema 3): formato, ids únicos e referências entre maps, missions e texts.
+ * Sem migração (ADR-002 seção 2.1, ADR-011 seção 4): o schema 2 (planta antiga) e o 1 são recusados com mensagem clara.
  * As regras que dependem do conteúdo das subáreas (portas, spawns, missão) são de `validarConteudo`.
  */
 export function validarManifesto(bruto: unknown): ResultadoValidacao {
@@ -25,7 +25,7 @@ export function validarManifesto(bruto: unknown): ResultadoValidacao {
   } else if ((m.schemaVersion as number) > SCHEMA_VERSION_SUPORTADA) {
     erros.push(`schemaVersion ${String(m.schemaVersion)} é mais nova que a suportada (${SCHEMA_VERSION_SUPORTADA}). Atualize o jogo.`);
   } else if ((m.schemaVersion as number) < SCHEMA_VERSION_SUPORTADA) {
-    erros.push(`schemaVersion ${String(m.schemaVersion)} não é mais suportada: o motor lê a ${SCHEMA_VERSION_SUPORTADA} (ADR-002 seção 2.1).`);
+    erros.push(`schemaVersion ${String(m.schemaVersion)} não é mais suportada (conteúdo de planta antiga): o motor lê a ${SCHEMA_VERSION_SUPORTADA} (ADR-002 seção 2.1, ADR-011 seção 4).`);
   }
   if ('startMap' in m) erros.push('startMap foi removido no schema 2: o início da partida fica em missions/<id>.json (campo inicio).');
   if (!ehTexto(m.contentVersion)) erros.push('contentVersion ausente.');

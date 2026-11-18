@@ -1,5 +1,6 @@
 import type { PerfilDeArte, Dimensao } from '../arte/PerfilDeArte';
 import type { ObjetoDoMapa } from '../content/Mapa';
+import { paredeNoTile } from './arestas';
 
 // Direção vive no domínio (ADR-005 seção 1.2); reexportada aqui para os imports existentes.
 export type { Direcao } from '../../domain/shared/Direcao';
@@ -10,6 +11,11 @@ export interface Posicao {
   y: number;
 }
 export type Bloqueado = (tx: number, ty: number) => boolean;
+/**
+ * O tile (tx, ty) tem parede no `lado` (bit de `paredes`, ADR-011 seção 2.1)? Opcional: sem ela, só vale a colisão por tile.
+ * Tile fora da caixa deve devolver true.
+ */
+export type ParedeNoTile = (tx: number, ty: number, lado: Direcao) => boolean;
 
 /**
  * Geometria que o movimento lê do perfil de arte (ADR-003 seções 4 e 5). Todas as medidas em px,
@@ -52,6 +58,14 @@ export function posicaoDoTile(tx: number, ty: number, g: Geometria): Posicao {
   return { x: tx * g.tile, y: (ty + 1) * g.tile - (g.pes.dy + g.pes.h) };
 }
 
+/**
+ * Posição do sprite com o centro dos pés no centro do tile (chegada por porta, ADR-011 seção 3.4): os pés ficam a
+ * `(tile − altura dos pés) / 2` de cada linha do tile, 8 px no perfil HD.
+ */
+export function posicaoCentralizadaNoTile(tx: number, ty: number, g: Geometria): Posicao {
+  return { x: tx * g.tile + (g.tile - g.quadro.w) / 2, y: ty * g.tile + g.tile / 2 - (g.pes.dy + g.pes.h / 2) };
+}
+
 /** Centro dos pés: usado para cômodo atual, luz e interação. */
 export function centroDosPes(p: Posicao, g: Geometria): { x: number; y: number } {
   return { x: p.x + g.quadro.w / 2, y: p.y + g.pes.dy + g.pes.h / 2 };
@@ -74,7 +88,7 @@ export function profundidadeDoQuadro(p: Posicao, g: Geometria): number {
  */
 const SOBREPOSICAO_MINIMA_PX = 1;
 
-function caixaBateEmParede(p: Posicao, bloqueado: Bloqueado, g: Geometria): boolean {
+function caixaBateEmParede(p: Posicao, bloqueado: Bloqueado, g: Geometria, parede?: ParedeNoTile): boolean {
   const x0 = p.x + g.pes.dx;
   const y0 = p.y + g.pes.dy;
   const x1 = x0 + g.pes.w;
@@ -89,21 +103,55 @@ function caixaBateEmParede(p: Posicao, bloqueado: Bloqueado, g: Geometria): bool
       if (bloqueado(tx, ty)) return true;
     }
   }
+  return parede ? caixaCruzaAresta(x0, y0, x1, y1, t, parede) : false;
+}
+
+/**
+ * Tolerância de ponto flutuante, em px, no comprimento da caixa sobre um segmento de aresta (BUG-M12-03: 0,002 px de ruído
+ * não pode bloquear o movimento de lado). Não é folga de jogo: na direção em que a caixa cruza a linha a regra é estrita.
+ */
+const EPSILON_DA_ARESTA_PX = 0.01;
+
+/**
+ * Colisão por aresta (ADR-011 seção 5.1). Cada bit ligado é um segmento de grade de espessura zero e comprimento `t`. A
+ * caixa dos pés não pode cruzar o interior de um segmento: vertical em X = c, de ya a yb, bloqueia se x0 < c < x1 e a caixa
+ * cobre [ya, yb] por mais que o epsilon; o horizontal é análogo. Encostar (x1 = c) não bloqueia. Uma aresta é parede se um dos
+ * dois tiles que a dividem tem o bit ligado.
+ */
+export function caixaCruzaAresta(x0: number, y0: number, x1: number, y1: number, t: number, parede: ParedeNoTile): boolean {
+  // Linhas verticais da grade estritamente dentro da caixa: x = k·t, x0 < k·t < x1.
+  for (let k = Math.floor(x0 / t) + 1; k * t < x1; k++) {
+    if (k * t <= x0) continue;
+    for (let ty = Math.floor(y0 / t); ty * t < y1; ty++) {
+      const sobre = Math.min(y1, (ty + 1) * t) - Math.max(y0, ty * t);
+      if (sobre <= EPSILON_DA_ARESTA_PX) continue;
+      if (parede(k - 1, ty, 'direita') || parede(k, ty, 'esquerda')) return true;
+    }
+  }
+  // Linhas horizontais: y = k·t, y0 < k·t < y1.
+  for (let k = Math.floor(y0 / t) + 1; k * t < y1; k++) {
+    if (k * t <= y0) continue;
+    for (let tx = Math.floor(x0 / t); tx * t < x1; tx++) {
+      const sobre = Math.min(x1, (tx + 1) * t) - Math.max(x0, tx * t);
+      if (sobre <= EPSILON_DA_ARESTA_PX) continue;
+      if (parede(tx, k - 1, 'baixo') || parede(tx, k, 'cima')) return true;
+    }
+  }
   return false;
 }
 
 /**
- * Move em uma direção (sem diagonal), pixel a pixel, parando na primeira parede.
+ * Move em uma direção (sem diagonal), pixel a pixel, parando na primeira parede (de tile ou de aresta).
  * Nunca atravessa parede e nunca fica preso: se não há colisão, anda a distância toda.
  */
-export function mover(p: Posicao, direcao: Direcao, distancia: number, bloqueado: Bloqueado, g: Geometria): Posicao {
+export function mover(p: Posicao, direcao: Direcao, distancia: number, bloqueado: Bloqueado, g: Geometria, parede?: ParedeNoTile): Posicao {
   const { dx, dy } = VETOR[direcao];
   let atual = { ...p };
   let restante = distancia;
   while (restante > 0) {
     const passo = Math.min(1, restante);
     const candidato = { x: atual.x + dx * passo, y: atual.y + dy * passo };
-    if (caixaBateEmParede(candidato, bloqueado, g)) break;
+    if (caixaBateEmParede(candidato, bloqueado, g, parede)) break;
     atual = candidato;
     restante -= passo;
   }
@@ -123,7 +171,14 @@ export function alvoDaInteracao(
   p: Posicao,
   direcao: Direcao,
   g: Geometria,
+  parede?: ParedeNoTile,
 ): ObjetoDoMapa | undefined {
+  // Parede entre o tile do sobrinho e o do objeto: não lê (ADR-011 seção 5.2).
+  if (parede) {
+    const c0 = centroDosPes(p, g);
+    const tp = { x: Math.floor(c0.x / g.tile), y: Math.floor(c0.y / g.tile) };
+    objetos = objetos.filter((o) => ligadoPorAresta(tp, o, parede));
+  }
   // Cada objeto de jogo ocupa 1 tile (ADR-004 seção 6); a árvore também é um tile.
   const emPx = objetos.map((o) => ({ o, x: o.x * g.tile, y: o.y * g.tile, w: g.tile, h: g.tile }));
   const c = centroDosPes(p, g);
@@ -158,6 +213,30 @@ export function alvoDaInteracao(
   return escolherMenor(encostados, (e) => e.folga)?.o;
 }
 
+/**
+ * O objeto no tile `o` é alcançável a partir do tile `de` sem cruzar parede? Mesmo tile: sim. Vizinho: se a aresta está
+ * aberta. Diagonal: se um dos dois caminhos de duas arestas está aberto. Mais longe: sim (o quadrado de interação nunca
+ * chega lá, a regra de proximidade já decide).
+ */
+function ligadoPorAresta(de: { x: number; y: number }, o: { x: number; y: number }, parede: ParedeNoTile): boolean {
+  const dx = o.x - de.x;
+  const dy = o.y - de.y;
+  const aberta = (x: number, y: number, lado: Direcao): boolean => {
+    const v = VETOR[lado];
+    return !parede(x, y, lado) && !parede(x + v.dx, y + v.dy, OPOSTO[lado]);
+  };
+  if (dx === 0 && dy === 0) return true;
+  if (Math.abs(dx) + Math.abs(dy) === 1) return aberta(de.x, de.y, dx === 1 ? 'direita' : dx === -1 ? 'esquerda' : dy === 1 ? 'baixo' : 'cima');
+  if (Math.abs(dx) === 1 && Math.abs(dy) === 1) {
+    const lx: Direcao = dx > 0 ? 'direita' : 'esquerda';
+    const ly: Direcao = dy > 0 ? 'baixo' : 'cima';
+    return (aberta(de.x, de.y, lx) && aberta(de.x + dx, de.y, ly)) || (aberta(de.x, de.y, ly) && aberta(de.x, de.y + dy, lx));
+  }
+  return true;
+}
+
+const OPOSTO: Record<Direcao, Direcao> = { cima: 'baixo', baixo: 'cima', esquerda: 'direita', direita: 'esquerda' };
+
 /** Menor valor; em empate, o primeiro da lista (Array.prototype.sort é estável). */
 function escolherMenor<T>(itens: readonly T[], valor: (t: T) => number): T | undefined {
   let melhor: T | undefined;
@@ -175,9 +254,17 @@ function escolherMenor<T>(itens: readonly T[], valor: (t: T) => number): T | und
 /** Grade de colisão em tiles, com tiles liberáveis (ex.: a porta, depois de aberta). */
 export class ColisaoDoMapa {
   private readonly grade: boolean[][];
-  constructor(grade: boolean[][]) {
+  private readonly paredes: readonly (readonly number[])[];
+  /** `paredes`: máscara por aresta (ADR-011 seção 2.1); sem ela, só há colisão por tile. */
+  constructor(grade: boolean[][], paredes: readonly (readonly number[])[] = []) {
     this.grade = grade.map((linha) => [...linha]);
+    this.paredes = paredes;
   }
+  /** O tile tem parede no lado? Sem máscara, nunca; tile fora da caixa, sempre (a colisão por tile já barra). */
+  parede = (tx: number, ty: number, lado: Direcao): boolean => {
+    if (this.paredes.length === 0) return false;
+    return paredeNoTile(this.paredes, tx, ty, lado);
+  };
   bloqueado = (tx: number, ty: number): boolean => {
     const linha = this.grade[ty];
     if (!linha || tx < 0 || tx >= linha.length) return true;

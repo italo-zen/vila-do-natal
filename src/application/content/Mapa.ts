@@ -3,7 +3,7 @@ export type ValorDeObjeto = string | number | boolean;
 
 /**
  * Objeto de jogo de uma subárea, em tiles locais (ADR-004 seção 6). `tipo` é o da tabela de objetos
- * (porta, portaFechada, spawn, interruptor, bilhete, arvore, examinavel). Os demais campos ficam em `dados`.
+ * (porta, spawn, interruptor, bilhete, arvore, examinavel, movel, peca, enfeite). Os demais campos ficam em `dados`.
  */
 export interface ObjetoDoMapa {
   tipo: string;
@@ -13,7 +13,7 @@ export interface ObjetoDoMapa {
 }
 
 /**
- * Uma subárea (ADR-004 seção 2): caixa de tiles com piso, colisão e objetos. `chao` tem o índice do tileset
+ * Uma área (ADR-004 seção 2 e ADR-011 seção 1): caixa de tiles com piso, colisão e objetos. `chao` tem o índice do tileset
  * (1 a N) ou 0 para sem piso; `colisao` é true para bloqueado. Coordenadas locais à caixa.
  */
 export interface MapaDoJogo {
@@ -27,6 +27,11 @@ export interface MapaDoJogo {
   escuro: boolean;
   chao: number[][];
   colisao: boolean[][];
+  /**
+   * Máscara de paredes por aresta (ADR-011 seção 2.1), mesma forma de `chao` (`paredes[y][x]`). Bits: 1 cima, 2 direita,
+   * 4 baixo, 8 esquerda. Completa: inclui muros, toda fronteira e as arestas das portas.
+   */
+  paredes: number[][];
   objetos: ObjetoDoMapa[];
 }
 

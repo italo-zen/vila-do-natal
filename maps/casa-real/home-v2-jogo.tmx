@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="1" nextlayerid="14" nextobjectid="219">
+ <properties>
+  <property name="planta" value="atual"/>
+ </properties>
+ <tileset firstgid="1" name="tiles_casa" tilewidth="32" tileheight="32" tilecount="544" columns="32">
+  <image source="mapa-para-tiled/tiles_casa.png" width="1024" height="544"/>
+ </tileset>
+ <layer id="1" name="Pisos" width="30" height="20">
+  <data encoding="csv">
+   <chunk x="-16" y="-16" width="16" height="16">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,38,38,38,38,38,4,
+0,0,0,0,0,0,0,0,0,0,38,38,38,38,38,4,
+0,0,258,258,258,258,34,34,0,0,38,38,38,38,38,4,
+0,0,258,258,258,258,34,34,0,0,38,38,38,38,38,0,
+0,0,258,258,258,258,258,0,0,0,38,38,38,38,38,0,
+0,0,0,0,0,0,258,0,0,0,38,38,38,38,38,0,
+0,0,34,34,34,34,258,0,0,0,358,358,358,358,0,0,
+0,0,34,34,34,34,258,0,0,0,358,358,358,358,0,0,
+0,0,34,34,34,34,258,0,0,0,358,358,358,358,0,0,
+0,0,38,38,38,34,358,358,358,358,358,358,358,358,0,0,
+0,0,38,38,38,0,358,0,0,0,358,358,358,358,0,0
+</chunk>
+   <chunk x="0" y="-16" width="16" height="16">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="-16" y="0" width="16" height="16">
+0,0,38,38,38,258,258,358,358,358,358,358,358,358,0,0,
+0,0,38,38,38,258,258,358,358,358,358,358,358,358,358,34,
+0,0,258,258,258,258,258,358,358,358,358,358,358,358,358,34,
+0,0,258,258,258,258,258,358,358,358,358,358,358,358,358,0,
+0,0,258,258,258,258,258,0,0,358,358,358,358,358,358,358,
+0,0,258,258,258,258,258,0,0,358,358,358,358,358,358,358,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="0" y="0" width="16" height="16">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+34,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+34,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</chunk>
+  </data>
+ </layer>
+ <objectgroup id="9" name="muros">
+  <object id="154" x="-158.057" y="-164.225" width="93.2922" height="7.7101"/>
+  <object id="155" x="-99.072" y="-256.358" width="6.16808" height="91.362"/>
+  <object id="156" x="-98.301" y="-350.81" width="5.39707" height="32.3824"/>
+  <object id="157" x="-35.8489" y="-350.81" width="6.93909" height="62.4518"/>
+  <object id="158" x="-323.824" y="-286.816" width="6.16808" height="63.2228"/>
+  <object id="159" x="-323.053" y="-158.828" width="5.39707" height="93.2922"/>
+  <object id="160" x="-446.415" y="-65.5359" width="93.2922" height="3.85505"/>
+  <object id="161" x="-289.9" y="2.31303" width="4.62606" height="188.897"/>
+  <object id="162" x="-447.186" y="61.6808" width="29.2984" height="5.39707"/>
+  <object id="163" x="-382.421" y="61.6808" width="30.0694" height="6.16808"/>
+  <object id="164" x="-355.436" y="-29.2984" width="5.39707" height="91.7502"/>
+  <object id="165" x="-35.4665" y="65.5359" width="5.39707" height="29.2984"/>
+  <object id="166" x="-4.62606" y="129.53" width="6.93909" height="29.2984"/>
+ </objectgroup>
+ <objectgroup id="10" name="Portas">
+  <object id="145" x="-177.332" y="-151.118">
+   <point/>
+  </object>
+  <object id="146" x="-303.007" y="-57.0547">
+   <point/>
+  </object>
+  <object id="147" x="-321.511" y="-37.0085">
+   <point/>
+  </object>
+  <object id="148" x="-353.123" y="-39.3215">
+   <point/>
+  </object>
+  <object id="149" x="-305.32" y="9.25212">
+   <point/>
+  </object>
+  <object id="150" x="-33.1534" y="59.3678">
+   <properties>
+    <property name="trancadaAte" value="porta"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="151" x="-400.925" y="73.246">
+   <point/>
+  </object>
+  <object id="152" x="-303.778" y="-214.341">
+   <point/>
+  </object>
+  <object id="153" x="-33.5359" y="-262.914">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="11" name="Rótulos das subáreas">
+  <object id="167" x="-448" y="-25.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="banheiro1"/>
+   </properties>
+   <text wrap="1">Banheiro 1</text>
+  </object>
+  <object id="168" x="-352" y="-281.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="banheiro_escritorio"/>
+   </properties>
+   <text wrap="1">Banheiro do escritório</text>
+  </object>
+  <object id="169" x="-192" y="-281.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="true"/>
+    <property name="id" value="cozinha"/>
+   </properties>
+   <text wrap="1">Cozinha e Lavanderia</text>
+  </object>
+  <object id="170" x="-416" y="-217.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="escritorio"/>
+   </properties>
+   <text wrap="1">Escritório</text>
+  </object>
+  <object id="171" x="-32" y="70.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="hall"/>
+   </properties>
+   <text wrap="1">Hall</text>
+  </object>
+  <object id="172" x="-64.0" y="-313.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="quartinho"/>
+   </properties>
+   <text wrap="1">Quartinho</text>
+  </object>
+  <object id="173" x="-416" y="-121.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="quarto"/>
+   </properties>
+   <text wrap="1">Quarto da Oli</text>
+  </object>
+  <object id="174" x="-416" y="102.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="false"/>
+    <property name="id" value="quarto_casal"/>
+   </properties>
+   <text wrap="1">Quarto (casal)</text>
+  </object>
+  <object id="175" x="-192" y="38.5" width="96" height="19">
+   <properties>
+    <property name="escuro" type="bool" value="true"/>
+    <property name="id" value="sala"/>
+   </properties>
+   <text wrap="1">Sala</text>
+  </object>
+ </objectgroup>
+ <objectgroup id="13" name="Objetos da casa bloqueantes">
+  <object id="176" name="barra2_sala" x="-32" y="128" width="32" height="64"/>
+  <object id="191" x="-224" y="32" width="64" height="64">
+   <text wrap="1" halign="center">Sofá</text>
+  </object>
+  <object id="192" x="-288" y="0" width="32" height="128">
+   <text wrap="1" halign="center">Rack da sala</text>
+  </object>
+  <object id="193" x="-224" y="160" width="32" height="32">
+   <text wrap="1" halign="center">Cacto</text>
+  </object>
+  <object id="194" x="-160" y="-96" width="64" height="96">
+   <text wrap="1" halign="center">Mesa de jantar</text>
+  </object>
+  <object id="195" x="-160" y="-160" width="96" height="32">
+   <text wrap="1" halign="center">Cômoda</text>
+  </object>
+  <object id="196" x="-128" y="-192" width="32" height="32">
+   <text wrap="1" halign="center">Armário da cozinha</text>
+  </object>
+  <object id="197" x="-128" y="-224" width="32" height="32">
+   <text wrap="1" halign="center">Forno</text>
+  </object>
+  <object id="198" x="-128" y="-256" width="32" height="32">
+   <text wrap="1" halign="center">Geladeira</text>
+  </object>
+  <object id="199" x="-192" y="-320" width="32" height="32">
+   <text wrap="1" halign="center">Fogão</text>
+  </object>
+  <object id="200" x="-192" y="-352" width="96" height="32">
+   <text wrap="1" halign="center">Pia</text>
+  </object>
+  <object id="201" x="-96" y="-192" width="64" height="32">
+   <text wrap="1" halign="center">Armário da lavanderia</text>
+  </object>
+  <object id="202" x="-64" y="-320" width="32" height="32">
+   <text wrap="1" halign="center">Lava-roupas</text>
+  </object>
+  <object id="203" x="-64" y="-352" width="32" height="32">
+   <text wrap="1" halign="center">Tanque</text>
+  </object>
+  <object id="204" x="-448" y="-96" width="64" height="32">
+   <text wrap="1" halign="center">Cama da Oli</text>
+  </object>
+  <object id="205" x="-416" y="-160" width="32" height="32">
+   <text wrap="1" halign="center">Cômoda da Oli</text>
+  </object>
+  <object id="206" x="-352" y="-160" width="32" height="32">
+   <text wrap="1" halign="center">Cadeira de amamentação</text>
+  </object>
+  <object id="207" x="-448" y="96" width="96" height="64">
+   <text wrap="1" halign="center">Cama do casal</text>
+  </object>
+  <object id="208" x="-320" y="64" width="32" height="128">
+   <text wrap="1" halign="center">Armário do casal</text>
+  </object>
+  <object id="209" x="-448" y="-288" width="32" height="96">
+   <text wrap="1" halign="center">Mesa do escritório</text>
+  </object>
+  <object id="210" x="-384" y="-288" width="64" height="64">
+   <text wrap="1" halign="center">Cama do escritório</text>
+  </object>
+  <object id="211" x="-448" y="-32" width="32" height="96">
+   <text wrap="1" halign="center">Box do banheiro 1</text>
+  </object>
+  <object id="212" x="-448" y="-64" width="32" height="32">
+   <text wrap="1" halign="center">Privada do banheiro 1</text>
+  </object>
+  <object id="213" x="-384" y="-32" width="32" height="96">
+   <text wrap="1" halign="center">Pia do banheiro 1</text>
+  </object>
+  <object id="214" x="-320" y="-288" width="32" height="32">
+   <text wrap="1" halign="center">Pia do banheiro do escritório</text>
+  </object>
+  <object id="215" x="-288" y="-256" width="32" height="32">
+   <text wrap="1" halign="center">Privada do banheiro do escritório</text>
+  </object>
+  <object id="216" x="-288" y="-288" width="32" height="32">
+   <text wrap="1" halign="center">Box do banheiro do escritório</text>
+  </object>
+  <object id="217" x="0" y="-352" width="32" height="96">
+   <text wrap="1" halign="center">Prateleira</text>
+  </object>
+  <object id="218" x="-32" y="-352" width="32" height="32">
+   <text wrap="1" halign="center">Prateleira pequena</text>
+  </object>
+ </objectgroup>
+ <objectgroup id="12" name="Objetos de jogo">
+  <object id="180" name="elevador" class="spawn" x="0" y="128" width="32" height="32"><properties><property name="direcao" value="cima"/></properties></object>
+  <object id="181" class="bilhete" x="-32" y="64" width="32" height="32"><properties><property name="lado" value="esquerda"/><property name="texto" value="bilhete.pista"/></properties></object>
+  <object id="182" class="interruptor" x="-192" y="-32" width="32" height="32"/>
+  <object id="183" class="arvore" x="-64" y="96" width="32" height="32"><properties><property name="estado" value="desmontada"/></properties></object>
+  <object id="184" class="peca" x="-160" y="160" width="32" height="32"><properties><property name="estadoInicial" value="visivel"/></properties><text wrap="1" halign="center">1</text></object>
+  <object id="185" class="peca" x="-160" y="-288" width="32" height="32"><properties><property name="estadoInicial" value="escondida"/></properties><text wrap="1" halign="center">2</text></object>
+  <object id="186" class="peca" x="-96" y="-352" width="32" height="32"><properties><property name="estadoInicial" value="escondida"/></properties><text wrap="1" halign="center">3</text></object>
+  <object id="187" name="pia" class="examinavel" x="-160" y="-352" width="32" height="32"><properties><property name="texto" value="cozinha.pia"/></properties></object>
+  <object id="188" name="fogao" class="examinavel" x="-192" y="-320" width="32" height="32"><properties><property name="texto" value="cozinha.fogao"/></properties></object>
+  <object id="189" name="geladeira" class="examinavel" x="-128" y="-256" width="32" height="32"><properties><property name="texto" value="cozinha.geladeira"/></properties></object>
+  <object id="190" class="enfeite" x="-416" y="-256" width="32" height="32"/>
+ </objectgroup>
+</map>

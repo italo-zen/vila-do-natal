@@ -138,6 +138,18 @@
       "quadros": 2
     },
     {
+      "arquivo": "spr_armario_da_cozinha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_armario_da_lavanderia.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_armario_do_casal.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_arvore_1parte.png",
       "tipo": "imagem"
     },
@@ -222,6 +234,42 @@
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_box_do_banheiro_1.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_box_do_banheiro_do_escritorio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_cacto.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_cadeira_de_amamentacao.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_cama_da_oli.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_cama_do_casal.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_cama_do_escritorio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_comoda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_comoda_da_oli.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_conquista_enfeites.png",
       "tipo": "imagem"
     },
@@ -303,6 +351,10 @@
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_forno.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_fumaca_dormir.png",
       "tipo": "folhas",
       "quadro": {
@@ -341,6 +393,10 @@
     },
     {
       "arquivo": "spr_lampada.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lava_roupas.png",
       "tipo": "imagem"
     },
     {
@@ -390,6 +446,14 @@
         "h": 48
       },
       "quadros": 2
+    },
+    {
+      "arquivo": "spr_mesa_de_jantar.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_mesa_do_escritorio.png",
+      "tipo": "imagem"
     },
     {
       "arquivo": "spr_nick_happy.png",
@@ -480,6 +544,14 @@
       "quadros": 4
     },
     {
+      "arquivo": "spr_parede_h.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_v.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_peca_1.png",
       "tipo": "imagem"
     },
@@ -496,11 +568,55 @@
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_pia_do_banheiro_1.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_pia_do_banheiro_do_escritorio.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_porta.png",
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_porta_aberta.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_aberta_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_codigo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_codigo_vertical.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_porta_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_prateleira.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_prateleira_pequena.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_privada_do_banheiro_1.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_privada_do_banheiro_do_escritorio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_rack_da_sala.png",
       "tipo": "imagem"
     },
     {
@@ -513,6 +629,14 @@
     },
     {
       "arquivo": "spr_seta_farejar_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_sofa.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_tanque.png",
       "tipo": "imagem"
     },
     {
