@@ -6,6 +6,30 @@ Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelo
 
 - Nada por enquanto. As próximas versões entram aqui.
 
+## [1.2.0] - 2026-11-19
+
+O jogo ganhou uma nova visão, inspirada nos jogos de aventura em pixel art como Pokémon FireRed: a casa é vista "de três quartos", com paredes e móveis que têm frente, topo e sombra. As missões, as regras e os textos continuam os mesmos.
+
+### Adicionado
+- Visão 3/4: paredes com face ao norte e linhas finas a leste e a oeste. O lado sul de cada cômodo não é desenhado, para não atrapalhar a visão.
+- Móveis em perspectiva, com sombra de contato no chão, desenhados a partir de fotos da casa real.
+- Parede de vidro na Sala, à esquerda.
+- Interruptor de parede: aparece sobre a parede e acende quando as luzes ligam.
+- Árvore de Natal nova, em cada um dos estados (desmontada, com 1 parte, com 2 partes, completa e enfeitada).
+- O cacto da Sala agora é reconhecível como cacto.
+
+### Mudou
+- A barra de comandos ficou com 48 px de altura, com fundo e uma linha na borda de cima.
+- A Sala é desenhada 16 px mais baixa, para a parede da alcova das portas caber na tela (nessa alcova a parede aparece cortada).
+- A Cozinha e a Lavanderia têm uma passagem de 2 tiles entre elas. As fotos dos móveis dessa parte ainda estão pendentes.
+- O mapa, a colisão, as portas, as missões, o Nick e os textos não mudaram.
+
+### Conhecidos
+- Na tela de fim, o texto "A ou B: continuar" aparece, mas o botão B não existe na tela do celular. Segue como na 1.0.0.
+- Na tela de fim, a barra de comandos cobre a base do corpo dos personagens. Segue como na 1.0.0.
+- A porta de baixo da Sala (a do Hall) fica colada na barra de comandos e aparece pela metade.
+- No celular em 667×375, o joystick cobre parte da Sala.
+
 ## [1.1.0] - 2026-11-17
 
 A casa ganhou uma planta nova, mais fiel à casa real, desenhada pelo Diretor. Nenhuma missão, regra de jogo ou texto mudou: continua sendo o mesmo jogo, numa casa maior e mais bonita.
