@@ -550,3 +550,8 @@ Sem bug confirmado. Observações para o Dev:
 - 16 partidas rodadas (`v130-pl27.mjs`, 4 sobrinhos, sementes 500..576, 1000..1037, 2000..2037, 3000..3037, 4000..4037): 0 erros de página, `__irAPeca` sempre devolveu um vizinho alcançável; peças em Escritório, Quarto da Oli, Cozinha, Quarto do casal; nenhuma na Sala, Hall, banheiros ou Quartinho. Sementes 500, 513, 526, 539 dão planos variados.
 - Condução: 33 leituras de passos, mín. 13, máx. 23, todas com `dobro` (2×). 15 leituras ficaram nulas por polling do script (a fase seguiu normalmente): falha de script, não do jogo.
 - Não cobertas: fase enfeites e créditos nestas partidas (só partes 1 a 3).
+
+## 1.3.1, rodada 1
+- Nenhum bug P0 a P3. 4 sobrinhos: caminhada em 4 quadros (0>1>2>3>0, sem salto de ordem) e parado nas 4 direções, sem corte, sem erro de console; seleção e tela de fim com os rostos novos sem cor errada.
+- Observação P3: DanDan e TuTu (cabelo cacheado, loiro-claro x castanho) ficam parecidos na Sala em escala pequena; a roupa (laranja x azul-marinho) ajuda. Decisão do Diretor.
+- `v110-portas.mjs` dá 3 "FALHA" em `fechada ...` (quarto_casal-sala, banheiro1-quarto, banheiro_escritorio-escritorio): é expectativa antiga do script; essas portas abrem desde a 1.3.0. Usar `v130-portas.mjs`.

@@ -6,6 +6,17 @@ Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelo
 
 - Nada por enquanto. As próximas versões entram aqui.
 
+## [1.3.1] - 2026-11-20
+
+Acabamento dos personagens. Nenhuma missão, regra, mapa ou texto mudou.
+
+### Mudou
+- Os quatro sobrinhos e o Nick têm o acabamento da visão 3/4: contorno marrom, luz de cima à esquerda e sombra de contato sob os pés.
+- Rostos mais expressivos: brilho nos olhos, bochechas, boca e sobrancelhas; o Nick ganhou brilho nos olhos e no focinho.
+- A caminhada dos sobrinhos agora tem 4 quadros (parado, passo, parado, passo), a 8 quadros por segundo.
+- O jogo ficou menos pesado (imagens dos personagens com menos cores).
+- Para quem mantém o conteúdo: o mínimo de cores por sprite (`sprites.sobrinho.coresMin` e `sprites.nick.coresMin`) caiu de 16 para 8, porque o máximo de 16 cores da visão 3/4 (ADR-012) contradizia o mínimo de 16.
+
 ## [1.3.0] - 2026-11-20
 
 Três cômodos novos para explorar, peças da árvore e Nick em lugares diferentes a cada partida, e vários ajustes de conforto. Nenhuma missão ou texto mudou.

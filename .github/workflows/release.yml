@@ -84,8 +84,16 @@ jobs:
       - name: Áudio (AU10 e AU11; sem escrever arquivos)
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg python3-numpy
+          # Os espelhos do apt do runner às vezes respondem 503: tenta até 4 vezes, com pausa, antes de falhar.
+          for tentativa in 1 2 3 4; do
+            if sudo apt-get update -o Acquire::Retries=5 && \
+               sudo apt-get install -y --no-install-recommends --fix-missing -o Acquire::Retries=5 ffmpeg python3-numpy; then
+              break
+            fi
+            if [ "$tentativa" = "4" ]; then echo "apt falhou 4 vezes"; exit 1; fi
+            echo "apt falhou (tentativa $tentativa); aguardando antes de tentar de novo"
+            sleep $((tentativa * 20))
+          done
           npm run verificar:audio
 
       - name: Build de release
