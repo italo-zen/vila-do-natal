@@ -252,11 +252,17 @@
       "linha": "#6f7aa8",
       "sombra": "#000000"
     },
+    "quinaMaximaPx": 8,
     "recuoMaximo": 16,
     "sombra": {
       "dx": 6,
       "dy": 6
     },
-    "tipo": "3-4"
+    "tipo": "3-4",
+    "transparenciaDeMovelAlto": {
+      "alfa": 0.45,
+      "extensaoMinima": 16,
+      "transicaoMs": 120
+    }
   }
 }

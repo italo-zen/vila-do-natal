@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 2,
+  "subarea": "banheiro1",
+  "enfeites": [
+    {
+      "id": "banheiro1_vela_1",
+      "sprite": "dec_vela",
+      "x": 1,
+      "y": 2,
+      "pisca": true,
+      "examinar": "enfeite.vela",
+      "elevacao": 32
+    },
+    {
+      "id": "banheiro1_pano_1",
+      "sprite": "dec_pano",
+      "x": 2,
+      "y": 2,
+      "pisca": false,
+      "examinar": null,
+      "elevacao": 32
+    },
+    {
+      "id": "banheiro1_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 1,
+      "y": 1,
+      "pisca": false,
+      "examinar": null
+    }
+  ]
+}

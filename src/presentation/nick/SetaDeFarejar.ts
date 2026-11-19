@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { PortaASeguir } from '../../domain/nick/PortaASeguir';
-import { CHAVE_SETA_FAREJAR } from '../assets/registro';
+import { SETA_FAREJAR_DO_LADO } from '../assets/registro';
 import { repeticoesDoTremor, SETA_FADE_MS, SETA_TREMIDAS, SETA_TREMOR_MEIO_CICLO_MS, SETA_TREMOR_PX } from './temporizacao';
 
 /** Profundidade da seta: acima da penumbra (800), porque a porta já é conhecida (GDD 16.5.3). */
@@ -18,13 +18,13 @@ export class SetaDeFarejar {
 
   /** Mostra (ou troca) a seta da porta. `desl`: deslocamento da subárea na tela, em tiles. `tile`: lado do tile em px. */
   mostrar(porta: PortaASeguir, desl: { x: number; y: number }, tile: number): void {
-    const chave = CHAVE_SETA_FAREJAR(porta.lado);
+    const { chave, flipY } = SETA_FAREJAR_DO_LADO(porta.lado);
     if (!this.cena.textures.exists(chave)) return;
     if (this.imagem && this.imagem.texture.key === chave) return;
     this.apagar();
     const x = (desl.x + porta.tile.x) * tile;
     const y = (desl.y + porta.tile.y) * tile;
-    this.imagem = this.cena.add.image(x, y, chave).setOrigin(0, 0).setDepth(PROFUNDIDADE_SETA);
+    this.imagem = this.cena.add.image(x, y, chave).setOrigin(0, 0).setDepth(PROFUNDIDADE_SETA).setFlipY(flipY);
     // Duas tremidas (PT3) e depois fixa: o tween termina e a seta fica amarela, parada, até acabar o tempo.
     this.oscilacao = this.cena.tweens.add({
       targets: this.imagem,

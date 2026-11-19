@@ -48,6 +48,13 @@ export interface VistaDoPerfil {
   /** Extensão máxima (E) de móvel com piso andável ao norte: o sobrinho e o Nick não somem atrás (ADR-012 seção 5.3). */
   extensaoEmPisoAndavel: number;
   /** Cores provisórias de desenho enquanto o kit de paredes da Arte não existe (opcional). */
+  /**
+   * Transparência de móvel alto (1.3.0): o móvel com extensão E ≥ `extensaoMinima` fica com `alfa` enquanto uma caixa de personagem
+   * atrás dele sobrepõe a parte do sprite acima da pegada, com transição de `transicaoMs`. Valores do perfil, nada no código.
+   */
+  transparenciaDeMovelAlto?: { extensaoMinima: number; alfa: number; transicaoMs: number };
+  /** Assistência de quina: até quantos px o movimento barrado por uma quina desliza para o lado livre (0 = desligada). */
+  quinaMaximaPx?: number;
   provisorio?: { face: string; linha: string; sombra: string; alfaSombra: number };
 }
 

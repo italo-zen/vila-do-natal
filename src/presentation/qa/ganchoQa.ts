@@ -2,6 +2,8 @@ import type Phaser from 'phaser';
 import { centroDosPes } from '../../application/mundo/movimento';
 import { podeAbrirDica } from '../../application/mundo/nick/modoDaTela';
 import type { ModoDeSessao } from '../../application/sessao/modoDeSessao';
+import { vizinhosLivresAlcancaveis } from '../../application/content/pontosDePartida';
+import type { MapaDoJogo } from '../../application/content/Mapa';
 import { FASES } from '../../domain/progresso/Fase';
 
 /**
@@ -17,6 +19,23 @@ import { FASES } from '../../domain/progresso/Fase';
  *   pela P8 também mostra (texto de primeira entrada, GDD 14.1). Um Z fecha esse diálogo; não é perda de tecla.
  */
 
+/** Posições de referência (as de antes do sorteio, 1.2.x): peça 1 na Sala, 2 e 3 na Cozinha; Nick como no conteúdo antigo. */
+const PLANO_DE_REFERENCIA = {
+  semente: 0,
+  pecas: [
+    { ordem: 1, area: 'sala', comodo: 'sala', mapa: 'sala', x: 0, y: 5 },
+    { ordem: 2, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 3, y: 1 },
+    { ordem: 3, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 5, y: 3 },
+  ],
+  nick: {
+    marco1: { missao: 'marco1', mapa: 'sala', x: 9, y: 5, direcao: 'baixo', alvo: 'sala' },
+    parte1: { missao: 'parte1', mapa: 'cozinha', x: 1, y: 1, direcao: 'baixo', alvo: 'sala' },
+    parte2: { missao: 'parte2', mapa: 'quarto', x: 1, y: 2, direcao: 'baixo', alvo: 'cozinha' },
+    parte3: { missao: 'parte3', mapa: 'escritorio', x: 4, y: 2, direcao: 'baixo', alvo: 'cozinha' },
+    enfeites: { missao: 'enfeites', mapa: 'sala', x: 9, y: 5, direcao: 'baixo', alvo: 'escritorio' },
+  },
+};
+
 /** Campos internos da CasaScene que o gancho lê (sem alterar a cena). */
 interface CasaPorDentro {
   mapa: { id: string } | undefined;
@@ -27,6 +46,11 @@ interface CasaPorDentro {
   estado: string;
   geo: { tile: number; quadro: { w: number; h: number }; pes: { dx: number; dy: number; w: number; h: number } };
   atualizarSprite(time: number): void;
+  interagir(time: number): void;
+  rota: unknown[];
+  fatorConducao: number;
+  passosDaConducao: number;
+  faseDaConducao: string;
   time: { now: number };
   sv: {
     sessao: {
@@ -146,6 +170,15 @@ export function instalarGancho(jogo: Phaser.Game): void {
     const cena = jogo.scene.getScene('Casa') as unknown as { children?: { list: { texture?: { key: string }; frame?: { name: string | number }; x: number; y: number; depth: number }[] } } | undefined;
     return (cena?.children?.list ?? []).filter((o) => o.texture?.key.includes(parte)).map((o) => ({ chave: o.texture!.key, quadro: o.frame?.name ?? null, x: o.x, y: o.y, profundidade: o.depth }));
   };
+  /** Liga a seta de farejar numa porta da área atual (capturas, build de QA): como se o Nick tivesse farejado por ela. */
+  janela.__seta = (idDaPorta: string) => {
+    const c = casa() as unknown as { mapa: { id: string; objetos: { tipo: string; x: number; y: number; dados: Record<string, unknown> }[] }; sv: { sessao: { farejo: { mostrar(p: unknown): void } } } } | null;
+    if (!c) return false;
+    const o = c.mapa.objetos.find((x) => x.tipo === 'porta' && x.dados.id === idDaPorta);
+    if (!o) return false;
+    c.sv.sessao.farejo.mostrar({ mapa: c.mapa.id, id: idDaPorta, tile: { x: o.x, y: o.y }, lado: o.dados.lado });
+    return true;
+  };
   /** Objetos gráficos (Graphics) da Casa: tipo, posição e profundidade (QA da visão 3/4). */
   janela.__graficos = () => {
     const cena = jogo.scene.getScene('Casa') as unknown as { children?: { list: { type: string; x: number; y: number; depth: number; scrollFactorX: number }[] } } | undefined;
@@ -172,9 +205,9 @@ export function instalarGancho(jogo: Phaser.Game): void {
    * Atalho de QA (ADR-010 9, capturas do modo explorar): começa uma partida nova com o sobrinho pedido, conclui todas as
    * fases pelas regras de domínio e, se `explorar`, entra no modo explorar. Não é atalho de jogo: só existe no build de QA.
    */
-  janela.__partidaConcluida = (personagem: string, explorar: boolean) => {
-    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string): void }; sessao: { progresso: { concluir(f: string): { ok: boolean; valor: { progresso: unknown } } }; definir(p: unknown): void; entrarNoModoExplorar(): void } };
-    sv.iniciarNovoJogo.executar(personagem);
+  janela.__partidaConcluida = (personagem: string, explorar: boolean, semente?: number) => {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string, semente?: number): void }; sessao: { progresso: { concluir(f: string): { ok: boolean; valor: { progresso: unknown } } }; definir(p: unknown): void; entrarNoModoExplorar(): void } };
+    sv.iniciarNovoJogo.executar(personagem, semente);
     for (const fase of FASES) {
       const r = sv.sessao.progresso.concluir(fase);
       if (!r.ok) break;
@@ -184,10 +217,70 @@ export function instalarGancho(jogo: Phaser.Game): void {
     return sv.sessao;
   };
   /** Começa uma partida nova (fase `introducao`) com o sobrinho pedido, sem concluir nada (capturas dos estados da casa; build de QA). */
-  janela.__novaPartida = (personagem: string) => {
-    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string): void } };
-    sv.iniciarNovoJogo.executar(personagem);
+  janela.__novaPartida = (personagem: string, semente?: number) => {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { executar(id: string, semente?: number): void } };
+    sv.iniciarNovoJogo.executar(personagem, semente);
     return true;
+  };
+  /** Fixa a semente da PRÓXIMA partida (zera ao iniciar); sem chamar, a partida usa a semente nova da entropia (ADR-013 seção 8). */
+  janela.__semente = (n: number) => {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { sementeDaProxima: number | undefined } };
+    sv.iniciarNovoJogo.sementeDaProxima = n >>> 0;
+    return n >>> 0;
+  };
+  // `?plano=referencia` na URL: as posições fixas de antes do sorteio (peças e Nick), para o smoke com passos escritos à mão.
+  // Só no build de QA (ADR-013 seção 8: o sorteio some do playtest e da release só quando o jogo roda de verdade; aqui é fixture).
+  if (new URLSearchParams(window.location.search).get('plano') === 'referencia') {
+    const sv = jogo.registry.get('servicos') as { iniciarNovoJogo: { planoFixo: unknown } };
+    sv.iniciarNovoJogo.planoFixo = PLANO_DE_REFERENCIA;
+  }
+  // `?semente=N` na URL: fixa a semente da primeira partida (só sob `__QA__`; ADR-013 seção 8).
+  const daUrl = new URLSearchParams(window.location.search).get('semente');
+  if (daUrl !== null && /^\d+$/.test(daUrl)) (janela.__semente as (n: number) => number)(Number(daUrl));
+  /**
+   * PL27 (passos robustos para jogar uma partida inteira sem coordenadas escritas à mão; build de QA): leva o sobrinho ao vizinho livre
+   * alcançável da peça `n` do plano, virado para ela, e abre a área da peça se preciso. Devolve onde ficou, ou null se não deu.
+   */
+  janela.__irAPeca = (n: number) => {
+    const c = casa();
+    const sv = jogo.registry.get('servicos') as { sessao: { plano: { pecas: { ordem: number; mapa: string; x: number; y: number }[] }; mapas: Map<string, MapaDoJogo> } };
+    const peca = sv.sessao.plano.pecas.find((p) => p.ordem === n);
+    if (!c || !peca) return null;
+    const mapa = sv.sessao.mapas.get(peca.mapa);
+    if (!mapa) return null;
+    const v = vizinhosLivresAlcancaveis(mapa, peca.x, peca.y)[0];
+    if (!v) return null;
+    const spawn = mapa.objetos.find((o) => o.tipo === 'spawn');
+    if (c.mapa?.id !== peca.mapa) {
+      if (!spawn) return null;
+      c.transitando = false;
+      c.estado = 'livre';
+      c.carregarSubarea(peca.mapa, String(spawn.dados.nome));
+    }
+    const dir = v.x < peca.x ? 'direita' : v.x > peca.x ? 'esquerda' : v.y < peca.y ? 'baixo' : 'cima';
+    (janela.__posicionar as (x: number, y: number, d: string) => boolean)(v.x, v.y, dir);
+    return { mapa: peca.mapa, x: v.x, y: v.y, dir, peca: { x: peca.x, y: peca.y } };
+  };
+  /** Aperta o A como no jogo, de onde o sobrinho está (depois de `__irAPeca`, coleta a peça). Build de QA. */
+  janela.__coletarPeca = () => {
+    const c = casa();
+    if (!c) return false;
+    c.interagir(c.time.now);
+    return true;
+  };
+  /**
+   * Última condução começada: `{ fase, passos, fator, dobro, emAndamento }` (`dobro` é true quando passa de 10 passos), ou null se
+   * ainda não houve. Lê a cena direto (fica certo mesmo entre a conquista e a Casa), sem depender de pegar a condução a tempo. Build de QA.
+   */
+  janela.__passosDaConducao = () => {
+    const cena = jogo.scene.getScene('Casa') as unknown as CasaPorDentro | undefined;
+    if (!cena || !cena.passosDaConducao) return null;
+    return { fase: cena.faseDaConducao, passos: cena.passosDaConducao, fator: cena.fatorConducao, dobro: cena.fatorConducao > 1, emAndamento: cena.estado === 'conducao' };
+  };
+  /** Plano da partida atual como dado simples: semente, 3 peças (área, cômodo, mapa, tile) e Nick por missão (mapa, tile, alvo). Nunca vai à tela. */
+  janela.__plano = () => {
+    const sv = jogo.registry.get('servicos') as { sessao: { temPartida: boolean; plano: unknown } };
+    return sv.sessao.temPartida ? JSON.parse(JSON.stringify(sv.sessao.plano)) : null;
   };
   /** Abre todas as áreas na Casa atual, só para capturar as fechadas (Quarto do casal, banheiros, Quartinho). Build de QA. */
   janela.__abrirTodasAsAreas = () => {

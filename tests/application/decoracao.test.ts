@@ -45,10 +45,10 @@ describe('decoração: caso válido (ADR-010 8.2)', () => {
     expect(validarDecoracao(hall(), contexto())).toEqual([]);
   });
 
-  it('a contagem exigida por subárea está na tabela de 20.6 (total 25)', () => {
+  it('a contagem exigida por subárea está na tabela de 20.6 (total 36 na 1.3.0)', () => {
     const soma = Object.values(QUANTIDADE_DE_ENFEITES).reduce((s, n) => s + n, 0);
-    expect(soma).toBe(25);
-    expect(QUANTIDADE_DE_ENFEITES).toEqual({ hall: 4, sala: 8, cozinha: 6, quarto: 4, escritorio: 3 });
+    expect(soma).toBe(36);
+    expect(QUANTIDADE_DE_ENFEITES).toEqual({ hall: 4, sala: 8, cozinha: 6, quarto: 4, escritorio: 3, quarto_casal: 5, banheiro1: 3, banheiro_escritorio: 3 });
   });
 });
 

@@ -5,14 +5,13 @@ import { fatorDaConducao } from '../../src/domain/progresso/Conducao';
 import { CarregarConteudo } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { AcenderLuzes } from '../../src/application/usecases/AcenderLuzes';
-import { IniciarNovoJogo } from '../../src/application/usecases/IniciarNovoJogo';
 import { ConcluirFase } from '../../src/application/usecases/ConcluirFase';
 import { SessaoDeJogo } from '../../src/application/SessaoDeJogo';
 import { TentarCodigoDaPorta } from '../../src/application/usecases/TentarCodigoDaPorta';
 import type { MapaDoJogo } from '../../src/application/content/Mapa';
-import { missoesReais } from '../helpers/missoesReais';
 import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { chegada, mapaDeTexto, porta } from '../helpers/mapasDeArestas';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 
 /** Mapa de teste: corredor horizontal de `n` tiles de piso livre, com objetos extras opcionais. */
 function corredor(id: string, n: number, objetos: MapaDoJogo['objetos'] = []): MapaDoJogo {
@@ -62,7 +61,7 @@ describe('condução entre áreas: porta com fade (ADR-011 seções 3.4 e 5.3)',
 describe('condução uma vez por partida (GDD 14.11.3, "Uma vez por partida")', () => {
   it('a luz (e portanto a condução que a segue) só acontece uma vez por partida', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     new TentarCodigoDaPorta(sessao).executar('017');
     const acender = new AcenderLuzes(sessao);
@@ -72,11 +71,11 @@ describe('condução uma vez por partida (GDD 14.11.3, "Uma vez por partida")', 
 
   it('nova partida ("Começar") pode ter a condução de novo', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     new TentarCodigoDaPorta(sessao).executar('017');
     new AcenderLuzes(sessao).executar();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     expect(sessao.luzesAcesas()).toBe(false);
   });
 });

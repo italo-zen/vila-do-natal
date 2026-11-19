@@ -1,19 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { SessaoDeJogo } from '../../src/application/SessaoDeJogo';
-import { IniciarNovoJogo } from '../../src/application/usecases/IniciarNovoJogo';
 import { podeAbrirDica } from '../../src/application/mundo/nick/modoDaTela';
 import { FASES } from '../../src/domain/progresso/Fase';
 import { Nick } from '../../src/domain/nick/Nick';
 import { tile } from '../../src/domain/shared/Tile';
-import { missoesReais } from '../helpers/missoesReais';
 import { podeAbrirPausa } from '../../src/presentation/ui/pausa/podeAbrirPausa';
 import type { ModoDaTela } from '../../src/application/mundo/nick/modoDaTela';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 
 /** ADR-010 1 (modo de sessão), 2 (dica e pausa) e 9 (testes de domínio). */
 
 function partidaConcluida(): SessaoDeJogo {
   const s = new SessaoDeJogo();
-  new IniciarNovoJogo(s, missoesReais()).executar('lolo');
+  iniciarComReferencia(s).executar('lolo');
   for (const fase of FASES) {
     const r = s.progresso.concluir(fase);
     if (!r.ok) break;
@@ -25,13 +24,13 @@ function partidaConcluida(): SessaoDeJogo {
 describe('modo de sessão (ADR-010 1.1 e 1.2)', () => {
   it('começa em historia e só em memória', () => {
     const s = new SessaoDeJogo();
-    new IniciarNovoJogo(s, missoesReais()).executar('lolo');
+    iniciarComReferencia(s).executar('lolo');
     expect(s.modo).toBe('historia');
   });
 
   it('entrar no modo explorar sem partida concluída falha (pré-condição, ADR-010 1.2)', () => {
     const s = new SessaoDeJogo();
-    new IniciarNovoJogo(s, missoesReais()).executar('lolo');
+    iniciarComReferencia(s).executar('lolo');
     expect(() => s.entrarNoModoExplorar()).toThrow(/depois da partida concluída/);
     expect(s.modo).toBe('historia');
   });
@@ -52,7 +51,7 @@ describe('modo de sessão (ADR-010 1.1 e 1.2)', () => {
   it('uma nova partida volta a historia (o modo não passa de uma partida para outra)', () => {
     const s = partidaConcluida();
     s.entrarNoModoExplorar();
-    new IniciarNovoJogo(s, missoesReais()).executar('bibi');
+    iniciarComReferencia(s).executar('bibi');
     expect(s.modo).toBe('historia');
   });
 });

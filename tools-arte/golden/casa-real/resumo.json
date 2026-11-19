@@ -112,7 +112,6 @@
         "objetos": {
           "examinavel": 3,
           "movel": 8,
-          "peca": 2,
           "porta": 2,
           "spawn": 2
         },
@@ -150,7 +149,7 @@
           ]
         }
       ],
-      "sha256": "6aa9d9236a8e3055bd56bea13bf8a4f18a33d16bd28932decc050e9a17d8f925"
+      "sha256": "b8b5c2037cb879f9f25e09996555ff34b1c14e96cb61705ca7a4b9e8d796ce14"
     },
     {
       "altura": 5,
@@ -392,7 +391,6 @@
           "arvore": 1,
           "interruptor": 1,
           "movel": 5,
-          "peca": 1,
           "porta": 5,
           "spawn": 5
         },
@@ -457,7 +455,7 @@
           ]
         }
       ],
-      "sha256": "0e2803da57ba4da96e9638f92b5a2f1035e5f35fb55f69304f88b5ed5f73669c"
+      "sha256": "afce8d97c8267b2e784febddcd32f1b360196770364931cf8ac2e814f2b281c6"
     }
   ]
 }

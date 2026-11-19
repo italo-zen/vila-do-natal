@@ -1,4 +1,4 @@
-// Gera tests/fixtures/colisao-1.1.0.json: sha256 de cada content/maps/**/*.json (exceto decoracao/) da planta nova
+// Gera tests/fixtures/colisao-1.3.0.json: sha256 de cada content/maps/**/*.json (exceto decoracao/) da planta nova
 // (ADR-011 seção 8, V4). Cada arquivo traz colisão, `paredes`, portas, spawns e objetos. Rode só quando o Diretor aprovar
 // uma mudança de mapa (decisions.md): a linha de base é o que o EN1 (ADR-010) compara.
 // Uso: node tools/gerar-linha-de-base.mjs
@@ -27,5 +27,5 @@ const saida = {
     'sha256 de cada content/maps/**/*.json (exceto decoracao/) da planta por áreas (schema 3): colisão, paredes por aresta, portas, spawns e objetos (ADR-011 seção 8, V4; ADR-010 9, EN1). Qualquer mudança em um mapa reprova.',
   mapas,
 };
-writeFileSync(join(RAIZ, 'tests', 'fixtures', 'colisao-1.1.0.json'), `${JSON.stringify(saida, null, 2)}\n`);
-console.log(`colisao-1.1.0.json: ${Object.keys(mapas).length} mapas`);
+writeFileSync(join(RAIZ, 'tests', 'fixtures', 'colisao-1.3.0.json'), `${JSON.stringify(saida, null, 2)}\n`);
+console.log(`colisao-1.3.0.json: ${Object.keys(mapas).length} mapas`);

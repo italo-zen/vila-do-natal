@@ -7,8 +7,8 @@ import { ehVizinho, tile } from '../../src/domain/shared/Tile';
 import { portaASeguir } from '../../src/application/mundo/nick/portaASeguir';
 import { alvoDaInteracao, geometriaDoSobrinho, posicaoCentralizadaNoTile } from '../../src/application/mundo/movimento';
 import { CONTEXTO_PADRAO, type ContextoDeArea } from '../../src/application/mundo/subarea';
-import { validarNick } from '../../src/application/content/validarNick';
-import { Textos } from '../../src/application/content/Textos';
+import { candidatosDoNick } from '../../src/application/plano/candidatos';
+import { tilesDoNick } from '../../src/application/plano/sortearPlano';
 import type { MissaoCarregada } from '../../src/application/mundo/missoes';
 import type { MapaDoJogo } from '../../src/application/content/Mapa';
 import { entradaReal } from '../helpers/areasReais';
@@ -163,44 +163,36 @@ describe('M8: o Nick (ADR-011 seção 5.4)', () => {
     expect(nick.tile).toEqual(tile('b', 1, 0));
   });
 
-  describe('N005, N007 e N009 com arestas', () => {
-    const base = (dorme: { x: number; y: number }, mapa: MapaDoJogo): string[] => {
-      const missao: MissaoCarregada = {
-        id: 'm',
-        requires: [],
-        maps: ['a'],
-        final: false,
-        missao: {
-          id: 'm',
-          inicio: { mapa: 'a', spawn: 'in', paginas: [] },
-          conducao: { luzes: { mapa: 'a', x: 1, y: 1, direcao: 'baixo' } },
-          conquistas: { luzes: 'x' },
-          nick: { dorme: { mapa: 'a', ...dorme, direcao: 'baixo' }, alvo: 'a' },
-          dica: {},
-        },
-      };
-      return validarNick({ todos: mapasDe(mapa), missoes: [missao], textos: new Textos({}), perfil: entradaReal().perfil });
-    };
+  // N005, N007 e N009 viraram regras do candidato do Nick (ADR-013 seção 6): `candidatosDoNick` (N005, N007) e `tilesDoNick` (N009).
+  describe('candidatos do Nick com arestas (N005, N007 e N009)', () => {
+    const base = (mapa: MapaDoJogo) => candidatosDoNick(mapa, { linhasDaTela: 11, pecas: [] }).map((t) => `${t.x},${t.y}`);
     const com = (grade: string[], objs: MapaDoJogo['objetos'] = []) => mapaDeTexto('a', grade, [objeto('spawn', 0, 0, { nome: 'in', direcao: 'direita' }), ...objs]);
 
-    it('N005: o tile de dormir não pode ser tile de porta', () => {
-      const m = com(['+-+-+-+', '|. . .D', '+-+-+-+'], [porta('a-b', 2, 0, 'direita', 'b')]);
-      expect(base({ x: 2, y: 0 }, m).join('\n')).toMatch(/N005.*sobre porta/);
+    it('N005: tile de porta nunca é candidato (nem o vizinho dele)', () => {
+      const m = com(['+-+-+-+-+', '|. . . .D', '+-+-+-+-+'], [porta('a-b', 3, 0, 'direita', 'b')]);
+      const t = base(m);
+      expect(t).not.toContain('3,0');
+      expect(t).not.toContain('2,0');
     });
 
     it('N007: dois vizinhos livres só valem se a aresta está aberta', () => {
-      // 3×2: o tile (1,1) tem 3 vizinhos livres; com parede dos dois lados, sobra o de cima.
       const aberto = com(['+-+-+-+', '|. . .|', '+ + + +', '|. . .|', '+-+-+-+']);
-      expect(base({ x: 1, y: 1 }, aberto).join('\n')).not.toMatch(/N007/);
+      expect(base(aberto)).toContain('1,1');
       const fechado = com(['+-+-+-+', '|. . .|', '+ + + +', '|.|.|.|', '+-+-+-+']);
-      expect(base({ x: 1, y: 1 }, fechado).join('\n')).toMatch(/N007.*com 1 vizinho livre/);
+      expect(base(fechado)).not.toContain('1,1');
     });
 
     it('N009: dormir num tile que é a única passagem corta a rota (aresta, não só tile)', () => {
-      // 2×2 com parede entre (0,0) e (1,0): o único caminho de (0,0) a (1,1) passa por (0,1). Dormir em (0,1) corta.
-      const m = com(['+-+-+', '|.|.|', '+ + +', '|. .|', '+-+-+']);
-      expect(base({ x: 0, y: 1 }, m).join('\n')).toMatch(/N009.*dormir em \(0, 1\) corta a rota/);
-      expect(base({ x: 1, y: 0 }, m).join('\n')).not.toMatch(/N009/);
+      // 3×2 com parede entre (0,0) e (1,0): o único caminho de (0,0) a (2,0) é (0,1), (1,1), e subir. Dormir em (1,1) corta.
+      const m = com(['+-+-+-+', '|.|. .|', '+ + + +', '|. . .|', '+-+-+-+']);
+      expect(base(m)).toContain('1,1'); // pela forma é candidato
+      const missao: MissaoCarregada = {
+        id: 'm', requires: [], maps: ['a'], final: false,
+        missao: { id: 'm', inicio: { mapa: 'a', spawn: 'in', paginas: [] }, conducao: { luzes: { mapa: 'a', x: 2, y: 0, direcao: 'baixo' } }, conquistas: { luzes: 'x' }, dica: {} },
+      };
+      const regra = { areas: ['a'], direcao: 'baixo' as const };
+      const e = { sorteio: { schemaVersion: 1, pecas: { quantidade: 3, areas: [] }, nick: { m: regra } }, todos: mapasDe(m), missoes: [missao], perfil: entradaReal().perfil };
+      expect(tilesDoNick(e, 'm', regra, 'a', []).map((t) => `${t.x},${t.y}`)).not.toContain('1,1');
     });
   });
 });

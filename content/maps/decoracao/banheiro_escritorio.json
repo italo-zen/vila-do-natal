@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "subarea": "banheiro_escritorio",
+  "enfeites": [
+    {
+      "id": "banheiro_escritorio_vela_1",
+      "sprite": "dec_vela",
+      "x": 1,
+      "y": 0,
+      "pisca": true,
+      "examinar": null,
+      "elevacao": 32
+    },
+    {
+      "id": "banheiro_escritorio_guirlanda_1",
+      "sprite": "dec_guirlanda",
+      "x": 1,
+      "y": 1,
+      "pisca": false,
+      "examinar": null,
+      "elevacao": 32
+    },
+    {
+      "id": "banheiro_escritorio_pano_1",
+      "sprite": "dec_pano",
+      "x": 0,
+      "y": 1,
+      "pisca": false,
+      "examinar": null,
+      "elevacao": 32
+    }
+  ]
+}

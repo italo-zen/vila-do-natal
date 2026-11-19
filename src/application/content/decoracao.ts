@@ -4,11 +4,12 @@
  */
 
 /** Subáreas do modo explorar, na ordem da tabela de 20.6. A Lavanderia é tile da cozinha (GDD 15.3). */
-export const SUBAREAS_DA_DECORACAO = ['hall', 'sala', 'cozinha', 'quarto', 'escritorio'] as const;
+export const SUBAREAS_DA_DECORACAO = ['hall', 'sala', 'cozinha', 'quarto', 'escritorio', 'quarto_casal', 'banheiro1', 'banheiro_escritorio'] as const;
 
-/** Contagem exata por subárea (GDD 20.6; ADR-010 3.6). Total 25. */
-export const QUANTIDADE_DE_ENFEITES: Record<string, number> = { hall: 4, sala: 8, cozinha: 6, quarto: 4, escritorio: 3 };
-export const TOTAL_DE_ENFEITES = 25;
+/** Contagem exata por subárea (GDD 20.6; ADR-010 3.6). Total 36 na 1.3.0 (era 25). */
+/** 1.3.0: o Quarto do casal e os dois banheiros abriram; a Arte pôs 5, 3 e 3 enfeites (total 36). */
+export const QUANTIDADE_DE_ENFEITES: Record<string, number> = { hall: 4, sala: 8, cozinha: 6, quarto: 4, escritorio: 3, quarto_casal: 5, banheiro1: 3, banheiro_escritorio: 3 };
+export const TOTAL_DE_ENFEITES = 36;
 
 /** Chaves de examinar permitidas (ADR-010 3.4; GDD 20.8). Cortina e pano não respondem ao A. */
 export const CHAVES_DE_EXAMINAR = ['enfeite.pisca', 'enfeite.vela', 'enfeite.guirlanda', 'enfeite.presente', 'enfeite.meias', 'enfeite.arvore'] as const;

@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CarregarConteudo, ConteudoInvalidoError, type Conteudo } from '../../src/application/usecases/CarregarConteudo';
+import { mapasComPlano } from '../../src/application/plano/mapasComPlano';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 
 /** Todo o content/ do disco, com as chaves relativas a content/ (mesma forma que a build embute). */
@@ -46,7 +47,22 @@ export function lerConteudoDoDisco(): Record<string, unknown> {
   return out;
 }
 
-/** Conteúdo real já carregado e validado (CarregarConteudo, como a build). */
-export async function carregarConteudoReal(): Promise<Conteudo> {
+/** Conteúdo real já carregado e validado (CarregarConteudo, como a build), sem objetos `peca` nos mapas (o plano as injeta). */
+export async function carregarConteudoPuro(): Promise<Conteudo> {
   return new CarregarConteudo(new ContentSourceDeArquivos(lerConteudoDoDisco())).executar();
+}
+
+/**
+ * Conteúdo real com as peças nas posições de referência (as de antes do sorteio) injetadas em `todosOsMapas`, para os testes antigos
+ * que leem a peça no mapa. Os testes do sorteio usam `carregarConteudoPuro`.
+ */
+export async function carregarConteudoReal(): Promise<Conteudo> {
+  return comReferencia(await carregarConteudoPuro());
+}
+
+/** Injeta as peças de referência (as de antes do sorteio) em `todosOsMapas` de um conteúdo já carregado. */
+export async function comReferencia(c: Conteudo): Promise<Conteudo> {
+  const { PLANO_DE_REFERENCIA } = await import('./planoDeReferencia');
+  for (const [id, m] of mapasComPlano(c.todosOsMapas, PLANO_DE_REFERENCIA)) c.todosOsMapas.set(id, m);
+  return c;
 }

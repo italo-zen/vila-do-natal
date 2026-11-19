@@ -32,6 +32,85 @@
         "tipo": "linha_v",
         "x": 0,
         "y": 8
+      },
+      {
+        "tipo": "face_norte",
+        "x": 0,
+        "y": 3
+      },
+      {
+        "tipo": "face_norte",
+        "x": 1,
+        "y": 3
+      }
+    ],
+    "cozinha": [
+      {
+        "tipo": "linha_v",
+        "x": 6,
+        "y": 0
+      },
+      {
+        "tipo": "linha_v",
+        "x": 6,
+        "y": 1
+      },
+      {
+        "tipo": "linha_v",
+        "x": 6,
+        "y": 2
+      }
+    ]
+  },
+  "arteDeParede": {
+    "sala": [
+      {
+        "sprite": "spr_mural_de_fotos",
+        "x": 9,
+        "y": 4,
+        "lado": "cima"
+      }
+    ],
+    "quarto": [
+      {
+        "sprite": "spr_oli_face",
+        "x": 1,
+        "y": 0,
+        "lado": "cima"
+      },
+      {
+        "sprite": "spr_oli_face",
+        "x": 2,
+        "y": 0,
+        "lado": "cima"
+      },
+      {
+        "sprite": "spr_oli_face_margaridas",
+        "x": 3,
+        "y": 0,
+        "lado": "cima"
+      }
+    ],
+    "quarto_casal": [
+      {
+        "sprite": "spr_quadro_paisagem",
+        "x": 1,
+        "y": 0,
+        "lado": "cima"
+      },
+      {
+        "sprite": "spr_quadro_letras",
+        "x": 2,
+        "y": 0,
+        "lado": "cima"
+      }
+    ],
+    "escritorio": [
+      {
+        "sprite": "spr_quadro_grade",
+        "x": 6,
+        "y": 0,
+        "lado": "cima"
       }
     ]
   }

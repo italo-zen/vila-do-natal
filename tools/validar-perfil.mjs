@@ -170,15 +170,33 @@ if (existsSync(arquivoVista) && existsSync(arquivoSprites)) {
       const mapa = motor.subarea.interpretarSubarea(lerJson(join(RAIZ, 'content', decl.file), 'Subárea'), decl);
       const arestas = motor.vista.classificarArestas(mapa);
       for (const v of lista) {
-        const a = arestas.find((x) => x.tipo === 'linha_v' && x.x === v.x && x.y === v.y);
+        const a = arestas.find((x) => x.tipo === v.tipo && x.x === v.x && x.y === v.y);
         if (!a) {
-          erros.push(`vista.json: vidro ${area} (${v.x}, ${v.y}) não é uma aresta vertical desenhada.`);
+          erros.push(`vista.json: vidro ${area} (${v.x}, ${v.y}) não é uma aresta (${v.tipo}) desenhada.`);
           continue;
         }
         const chave = motor.vista.chaveDoVidro(a);
         if (!nomes.has(`${chave}.png`)) avisos.push(`AVISO vista.json: falta ${chave}.png para o vidro ${area} (${v.x}, ${v.y}); a cena usa a peça normal.`);
       }
       avisos.push(`vidro: ${lista.length} arestas em "${area}"`);
+    }
+  }
+  if (vj.ok && vj.vista.arteDeParede && (manifesto.artProfile ?? 'gba-240x160') === idEsperado) {
+    const spritesJson = lerJson(arquivoSprites, 'sprites.json').imagens;
+    for (const [area, lista] of Object.entries(vj.vista.arteDeParede)) {
+      const decl = manifesto.maps.find((m) => m.id === area);
+      if (!decl) {
+        erros.push(`vista.json: arteDeParede da área "${area}", que não existe no manifesto.`);
+        continue;
+      }
+      const mapa = motor.subarea.interpretarSubarea(lerJson(join(RAIZ, 'content', decl.file), 'Subárea'), decl);
+      for (const a of lista) {
+        if (a.x >= mapa.largura || a.y >= mapa.altura || mapa.chao[a.y][a.x] === 0) erros.push(`vista.json: arteDeParede ${a.sprite} em ${area} (${a.x}, ${a.y}) fora do piso.`);
+        const img = spritesJson.find((i) => i.arquivo === `${a.sprite}.png`);
+        if (!img) erros.push(`vista.json: arteDeParede usa ${a.sprite}, que não está no sprites.json.`);
+        else if (!img.ancora) erros.push(`vista.json: ${a.sprite} precisa de ancora no sprites.json.`);
+      }
+      avisos.push(`arteDeParede: ${lista.length} em "${area}"`);
     }
   }
 }

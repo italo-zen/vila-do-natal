@@ -810,9 +810,10 @@ def converter(caminho, perfil, col, girar=False):
         for ordem in sorted(set(ordens)):
             if ordens.count(ordem) > 1:
                 col.erro("E021", f"peça {ordem} aparece {ordens.count(ordem)} vezes")
+        # 1.3.0 (ADR-013): as peças são sorteadas pelo motor a cada partida; o TMX pode ter zero peças. Com alguma, têm de ser as 3.
         faltam = sorted({1, 2, 3} - set(ordens))
-        if faltam:
-            col.erro("E021", f"peças ausentes: {faltam}; o conteúdo exige 1, 2 e 3 (cada uma uma vez)")
+        if ordens and faltam:
+            col.erro("E021", f"peças ausentes: {faltam}; ou nenhuma peça (sorteio do motor, ADR-013) ou 1, 2 e 3 (cada uma uma vez)")
         if len(enfeites_lidos) != 1:
             col.erro("E029", f"caixa de enfeite: esperada 1 (classe 'enfeite'), há {len(enfeites_lidos)}")
     for ordem, sub, t, estado in pecas_lidas:

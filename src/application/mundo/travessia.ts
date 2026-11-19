@@ -79,11 +79,11 @@ export function distanciaDosPesAteAPorta(p: Posicao, porta: PortaDeTile, g: Geom
 
 /**
  * A de frente: `direcao` igual ao `lado`, centro dos pés no tile da porta e distância dos pés até a linha dentro da
- * tolerância de interação (GDD 14.9.2). De costas ou de lado, não.
+ * tolerância de interação (GDD 14.9.2; `toleranciaEmTiles` permite alargar, como no interruptor de parede). De costas ou de lado, não.
  */
-export function portaDeFrente<T extends PortaDeTile>(p: Posicao, direcao: Direcao, portas: readonly T[], g: Geometria): T | undefined {
+export function portaDeFrente<T extends PortaDeTile>(p: Posicao, direcao: Direcao, portas: readonly T[], g: Geometria, toleranciaEmTiles = TOLERANCIA_EM_TILES): T | undefined {
   const t = tileDosPes(p, g);
-  const tolerancia = g.tile * TOLERANCIA_EM_TILES;
+  const tolerancia = g.tile * toleranciaEmTiles;
   return portas.find((porta) => {
     if (porta.lado !== direcao || porta.x !== t.x || porta.y !== t.y) return false;
     const d = distanciaDosPesAteAPorta(p, porta, g);

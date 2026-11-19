@@ -183,6 +183,13 @@ export function validarVista(v: unknown, tile: number): string[] {
   }
   if (face !== undefined && recuo !== undefined && recuo > face) erros.push('vista.recuoMaximo não pode passar de vista.faceNorte.');
   if (face !== undefined && extensao !== undefined && extensao > face) erros.push('vista.extensaoEmPisoAndavel não pode passar de vista.faceNorte.');
+  if (v.transparenciaDeMovelAlto !== undefined) {
+    const t = v.transparenciaDeMovelAlto;
+    if (!ehObjeto(t) || !ehInteiro(t.extensaoMinima) || t.extensaoMinima < 0 || typeof t.alfa !== 'number' || t.alfa < 0 || t.alfa > 1 || !ehInteiro(t.transicaoMs) || t.transicaoMs < 0) {
+      erros.push('vista.transparenciaDeMovelAlto precisa de extensaoMinima (inteiro ≥ 0), alfa (0 a 1) e transicaoMs (inteiro ≥ 0).');
+    }
+  }
+  if (v.quinaMaximaPx !== undefined && (!ehInteiro(v.quinaMaximaPx) || v.quinaMaximaPx < 0 || v.quinaMaximaPx > 16)) erros.push('vista.quinaMaximaPx precisa ser inteiro de 0 a 16.');
   if (v.provisorio !== undefined) {
     const pr = v.provisorio;
     if (!ehObjeto(pr) || ![pr.face, pr.linha, pr.sombra].every((c) => typeof c === 'string' && COR.test(c)) || typeof pr.alfaSombra !== 'number' || pr.alfaSombra < 0 || pr.alfaSombra > 1) {

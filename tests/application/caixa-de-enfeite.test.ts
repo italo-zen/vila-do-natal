@@ -16,6 +16,7 @@ import { interpretarTextos } from '../../src/application/content/Textos';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 
 /**
  * A caixa de enfeite e o fim do jogo na aplicação, com o conteúdo real (GDD 17; ADR-006 seções 2, 4, 5 e 6). Sem Phaser:
@@ -30,7 +31,8 @@ const carregar = async () => {
 
 async function novaPartida(): Promise<{ s: Servicos; c: Conteudo }> {
   const x = await carregar();
-  const s = montarServicos(x, 'teste');
+  const s = montarServicos(x, 'teste', { nova: () => 0 });
+  s.iniciarNovoJogo = iniciarComReferencia(s.sessao);
   s.iniciarNovoJogo.executar('lolo');
   return { s, c: x };
 }
@@ -162,12 +164,13 @@ descreverComConteudoNovo('ponto de partida e rota da caixa (ADR-006 seção 2.5)
     expect(pontos.map((p) => `${p.x},${p.y}`).sort()).toEqual(['4,1', '6,1']);
   });
 
-  it('a missão de enfeites conduz à Sala, (2, 7), de frente para a árvore; o Nick dorme em (9, 5) e farejar aponta ao Escritório', async () => {
-    const { c: x } = await novaPartida();
+  it('a missão de enfeites conduz à Sala, (2, 7), de frente para a árvore; o Nick e o alvo do farejar vêm do plano (ADR-013)', async () => {
+    const { s, c: x } = await novaPartida();
     const m = x.missoes.find((z) => z.id === 'enfeites')!;
     expect(m.missao.conducao.enfeites).toEqual({ mapa: 'sala', x: 2, y: 7, direcao: 'baixo' });
     expect(m.missao.conquistas.enfeites).toBe('conquista.enfeites');
-    expect(m.missao.nick).toEqual({ dorme: { mapa: 'sala', x: 9, y: 5, direcao: 'baixo' }, alvo: 'escritorio' });
+    expect((m.missao as { nick?: unknown }).nick).toBeUndefined(); // N015: `nick` saiu das missões; o plano sorteia
+    expect(s.sessao.plano.nick.enfeites.alvo).toBe('escritorio'); // o mapa da caixa
     expect(m.missao.dica).toEqual({ enfeites: { dormindo: 'dica.enfeites.dormindo', acordado: 'dica.enfeites.acordado' } });
   });
 });
@@ -187,14 +190,14 @@ descreverComConteudoNovo('fim do jogo: missão final e destino do Nick (ADR-006 
     avancarAte(s, 'parte3');
     concluirAtual(s);
     expect(missaoAtiva(x.missoes, concluida(s)).id).toBe('enfeites');
-    expect(destinoDoNick(x.missoes, concluida(s))).toEqual({ mapa: 'sala', x: 9, y: 5, direcao: 'baixo' });
+    expect(destinoDoNick(x.missoes, concluida(s), s.sessao.plano)).toEqual({ mapa: 'sala', x: 9, y: 5, direcao: 'baixo' });
   });
 
   it('depois da missão final, não há destino: o Nick não se move', async () => {
     const { s, c: x } = await novaPartida();
     avancarAte(s, 'enfeites');
     concluirAtual(s);
-    expect(destinoDoNick(x.missoes, concluida(s))).toBeUndefined();
+    expect(destinoDoNick(x.missoes, concluida(s), s.sessao.plano)).toBeUndefined();
   });
 
   it('o diálogo final é arvore.chegada.4 (duas páginas, Z e X)', () => {

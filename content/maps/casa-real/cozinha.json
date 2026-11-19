@@ -119,22 +119,6 @@
       "y": 2
     },
     {
-      "estadoInicial": "escondida",
-      "id": "peca2",
-      "ordem": 2,
-      "tipo": "peca",
-      "x": 3,
-      "y": 1
-    },
-    {
-      "estadoInicial": "escondida",
-      "id": "peca3",
-      "ordem": 3,
-      "tipo": "peca",
-      "x": 5,
-      "y": 3
-    },
-    {
       "h": 1,
       "id": "armario_da_cozinha",
       "nome": "Armário da cozinha",

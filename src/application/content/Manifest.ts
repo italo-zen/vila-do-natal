@@ -30,7 +30,9 @@ export interface Manifest {
   maps: ManifestoMapa[];
   missions: ManifestoMissao[];
   texts: ManifestoTexto[];
+  /** Arquivo do sorteio de peças e do Nick (`content/sorteio.json`, ADR-013 seção 1). Obrigatório no schema 4. */
+  sorteio: string;
 }
 
-/** Única schemaVersion do manifesto e das áreas que este motor lê (ADR-011 seção 4: 3 = planta por áreas, `paredes`, `porta.lado`). */
-export const SCHEMA_VERSION_SUPORTADA = 3;
+/** Única schemaVersion do manifesto e das áreas que este motor lê (ADR-011 seção 4: 3 = planta por áreas, `paredes`, `porta.lado`; 4 = sorteio de peças e do Nick, ADR-013: `sorteio` no manifesto, sem `nick` nas missões). */
+export const SCHEMA_VERSION_SUPORTADA = 4;

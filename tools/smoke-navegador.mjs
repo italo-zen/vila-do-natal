@@ -12,7 +12,8 @@ const [, , arquivoArg, saidaArg] = process.argv;
 const arquivo = arquivoArg ?? 'dist-playtest/index.html';
 const saida = saidaArg ?? 'dist-playtest/capturas';
 mkdirSync(saida, { recursive: true });
-const url = pathToFileURL(resolve(arquivo)).href;
+// `?plano=referencia`: o gancho de QA usa as posições fixas de antes do sorteio (passos escritos à mão). Só existe no build de QA.
+const url = pathToFileURL(resolve(arquivo)).href + '?plano=referencia';
 const real = (ms) => new Promise((r) => setTimeout(r, ms));
 /** Página atual: o tempo do jogo só anda por `esperar`, dentro da página (relógio virtual abaixo). */
 let pagina = null;
@@ -129,6 +130,8 @@ const TELA = perfil.sala;
 const VELOCIDADE_TILES_S = 4;
 const PX_POR_QUADRO = (VELOCIDADE_TILES_S * T * 16) / 1000;
 const subareas = Object.fromEntries(manifesto.maps.map((m) => [m.id, lerJson(`content/${m.file}`)]));
+// Os mapas não têm mais `peca` (ADR-013): o smoke usa as posições de `?plano=referencia` (as de antes do sorteio), como o gancho de QA.
+for (const [mapa, ordem, x, y] of [['sala', 1, 0, 5], ['cozinha', 2, 3, 1], ['cozinha', 3, 5, 3]]) subareas[mapa].objetos.push({ tipo: 'peca', ordem, x, y });
 const missao = lerJson('content/missions/marco1.json');
 const deslocamentoDe = (s) => ({ x: Math.floor((TELA.colunas - s.largura) / 2), y: Math.floor((TELA.linhas - s.altura) / 2) });
 const BLOQUEANTES = new Set(['arvore', 'examinavel']);

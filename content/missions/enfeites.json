@@ -11,15 +11,6 @@
   "conquistas": {
     "enfeites": "conquista.enfeites"
   },
-  "nick": {
-    "dorme": {
-      "mapa": "sala",
-      "x": 9,
-      "y": 5,
-      "direcao": "baixo"
-    },
-    "alvo": "escritorio"
-  },
   "dica": {
     "enfeites": {
       "dormindo": "dica.enfeites.dormindo",

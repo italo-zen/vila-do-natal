@@ -18,7 +18,7 @@ export class DevolverControle {
 
   executar(): { anterior: Tile; destino: Tile; direcao: Direcao } | undefined {
     this.sessao.definir(this.sessao.progresso.liberarCaixa());
-    const d = destinoDoNick(this.missoes, (f) => this.sessao.faseConcluida(f));
+    const d = destinoDoNick(this.missoes, (f) => this.sessao.faseConcluida(f), this.sessao.plano);
     if (!d || !ehDirecao(d.direcao)) return undefined;
     const nick = this.sessao.progresso.nick;
     const anterior = nick.tile;

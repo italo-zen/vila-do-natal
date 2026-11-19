@@ -24,7 +24,7 @@ function par(): [MapaDoJogo, MapaDoJogo] {
 
 function entrada(areas: MapaDoJogo[], missoes: MissaoCarregada[] = []): EntradaDeConteudo {
   return {
-    manifesto: { schemaVersion: 3, contentVersion: 'teste', locale: 'pt-BR', maps: areas.map((m) => ({ id: m.id, file: `${m.id}.json`, tileset: 'tiles_casa' })), missions: [], texts: [] },
+    manifesto: { schemaVersion: 4, contentVersion: 'teste', locale: 'pt-BR', sorteio: 'sorteio.json', maps: areas.map((m) => ({ id: m.id, file: `${m.id}.json`, tileset: 'tiles_casa' })), missions: [], texts: [] },
     todos: new Map(areas.map((m) => [m.id, m])),
     missoes,
     textos: new Textos({ x: 'texto de teste' }),

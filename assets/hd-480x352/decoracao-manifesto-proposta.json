@@ -20,6 +20,18 @@
     {
       "id": "escritorio",
       "decoracao": "maps/decoracao/escritorio.json"
+    },
+    {
+      "id": "quarto_casal",
+      "decoracao": "maps/decoracao/quarto_casal.json"
+    },
+    {
+      "id": "banheiro1",
+      "decoracao": "maps/decoracao/banheiro1.json"
+    },
+    {
+      "id": "banheiro_escritorio",
+      "decoracao": "maps/decoracao/banheiro_escritorio.json"
     }
   ]
 }

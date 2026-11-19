@@ -58,14 +58,25 @@ PALETA = {
     "tampo_vidro": "#dfe3e0", "tampo_sombra": "#b9c0bd", "mel": "#c8913f", "mel_escuro": "#8f5f26", "pe_preto": "#1f1d1a",
     "cortica": "#c89c5c", "cortica_escura": "#a07a40", "foto": "#f7f3ea", "pino_azul": "#3f7fc0", "pino_amarelo": "#e8c43a",
     "praia_mar": "#4fb3c9", "praia_areia": "#f1d79a", "caixa_verde": "#4f9a62", "caixa_verde_escura": "#2f6a40",
+    # cozinha 1.2.2 (bancada chocolate)
+    "chocolate": "#4a2c22", "chocolate_luz": "#6e4538",
     # base
     "preto_sombra": "#000000", "branco": "#ffffff",
 }
 ALFA_SOMBRA = 64   # 25% (um único valor)
 
 
+# Nomes que reutilizam a cor de outro para manter a paleta-mestre em <= 64 cores (1.2.1: creme, travertino, mel e cortiça vieram das fotos)
+ALIAS = {"inox": "metal", "inox_claro": "branco_sombra", "grelha": "tv_preto", "carvalho": "madeira_realce", "carvalho_escuro": "madeira_clara", "veludo": "metal", "veludo_escuro": "metal_escuro", "veludo_claro": "branco_sombra",
+         "bege_parede": "parede", "bege_parede_escura": "parede_escura", "quadro_preto": "tv_preto", "creme_luz": "coroa", "creme_escuro": "coroa_sombra", "creme_sombra": "parede_escura", "pedra": "parede", "pedra_veio": "coroa_sombra",
+         "tampo_vidro": "branco_frio", "tampo_sombra": "branco_sombra", "mel": "madeira_clara", "mel_escuro": "madeira",
+         "tapete_escuro": "coroa_sombra", "caixa_verde": "verde_claro", "caixa_verde_escura": "verde", "pino_amarelo": "vela_dourado",
+         "cortica": "madeira_clara", "cortica_escura": "madeira", "foto": "prato", "pe_preto": "tv_preto", "creme_contorno": "linha_sombra",
+         "almofada": "verde_claro", "espinho": "prato"}
+
+
 def cor(nome, alfa=255):
-    h = PALETA[nome].lstrip("#")
+    h = PALETA[ALIAS.get(nome, nome)].lstrip("#")
     return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), alfa)
 
 
@@ -447,15 +458,16 @@ def armario_lavanderia(t, hn):
 
 # ---- Eletros vistos pelas COSTAS (frente para o norte) -----------------------------------------------------------------------
 def geladeira_costas(t, hn):
+    # 1x1, H = 44 (E = 12): painel traseiro com grade de ventilação, serpentina e cabo
     t.pes = [(1, 30, hn - 1)]
     _topo_e_frente(t, 32, hn, 8, "branco_sombra", "branco_frio", "branco_sombra", "branco_frio")
-    for y in range(11, 21, 3):
+    for y in (10, 13, 16):
         t.r(5, y, 26, y, "metal_escuro")
-    t.r(6, 28, 25, 46, "metal_escuro")
-    for y in (31, 35, 39, 43):
+    t.r(6, 22, 25, 36, "metal_escuro")
+    for y in (24, 27, 30, 33):
         t.r(8, y, 23, y, "metal")
-    t.r(8, 31, 8, 43, "metal"); t.r(23, 31, 23, 43, "metal")
-    t.r(27, 22, 28, 47, "tv_preto"); t.r(24, 47, 28, 48, "tv_preto")
+    t.r(8, 24, 8, 33, "metal"); t.r(23, 24, 23, 33, "metal")
+    t.r(27, 18, 28, 38, "tv_preto"); t.r(24, 38, 28, 39, "tv_preto")
     t.r(3, hn - 3, 6, hn - 2, "metal_escuro"); t.r(25, hn - 3, 28, hn - 2, "metal_escuro")
     t.contorno_interno("contorno")
 
@@ -483,27 +495,29 @@ def armario_cozinha_costas(t, hn):
 
 
 def tanque_costas(t, hn):
+    # 1x1, H = 40 (E = 8): tanque por trás: borda de cima, saídas de água (azul e vermelha) e mangueira
     t.pes = [(1, 30, hn - 1)]
-    t.r(0, 0, 31, 12, "metal"); t.r(0, 0, 31, 1, "branco_frio"); t.r(0, 0, 1, 12, "branco_frio")
+    t.r(0, 0, 31, 10, "metal"); t.r(0, 0, 31, 1, "branco_frio"); t.r(0, 0, 1, 10, "branco_frio")
     t.r(3, 3, 28, 6, "metal_escuro")
-    t.r(0, 13, 31, hn - 1, "branco_sombra"); t.r(0, 13, 1, hn - 1, "branco_frio")
-    t.r(7, 14, 10, 30, "tecido"); t.r(7, 14, 8, 30, "tecido_claro")
-    t.r(21, 14, 24, 30, "toalha"); t.r(21, 14, 22, 30, "toalha_escura")
-    t.r(6, 30, 11, 32, "metal"); t.r(20, 30, 25, 32, "metal")
-    t.r(14, 24, 17, 38, "metal_escuro"); t.r(14, 38, 20, 39, "metal_escuro")
+    t.r(0, 11, 31, hn - 1, "branco_sombra"); t.r(0, 11, 1, hn - 1, "branco_frio")
+    t.r(7, 12, 10, 25, "tecido"); t.r(7, 12, 8, 25, "tecido_claro")
+    t.r(21, 12, 24, 25, "toalha"); t.r(21, 12, 22, 25, "toalha_escura")
+    t.r(6, 25, 11, 27, "metal"); t.r(20, 25, 25, 27, "metal")
+    t.r(14, 20, 17, 33, "metal_escuro"); t.r(14, 33, 20, 34, "metal_escuro")
     t.contorno_interno("contorno")
 
 
 def lava_roupas_costas(t, hn):
+    # 1x1, H = 40 (E = 8): máquina por trás: tampa de cima, mangueiras, cabo e grade traseira
     t.pes = [(1, 30, hn - 1)]
-    t.r(0, 0, 31, 10, "branco_sombra"); t.r(0, 0, 31, 1, "branco_frio"); t.r(0, 0, 1, 10, "branco_frio")
-    t.r(3, 3, 28, 8, "branco_frio"); t.r(3, 8, 28, 8, "metal")
-    t.r(0, 11, 31, hn - 1, "branco_frio"); t.r(0, 11, 1, hn - 1, "branco_sombra")
-    t.r(5, 12, 8, 28, "tecido"); t.r(5, 12, 6, 28, "tecido_claro"); t.r(5, 28, 10, 30, "tecido")
-    t.r(14, 12, 17, 26, "metal_escuro"); t.r(14, 26, 21, 28, "metal_escuro")
-    t.r(7, 32, 24, 42, "branco_sombra"); t.r(9, 34, 22, 36, "metal"); t.r(9, 38, 22, 40, "metal")
-    t.r(26, 14, 27, 40, "tv_preto")
-    for x, y in ((3, 14), (28, 14), (3, 44), (28, 44)):
+    t.r(0, 0, 31, 9, "branco_sombra"); t.r(0, 0, 31, 1, "branco_frio"); t.r(0, 0, 1, 9, "branco_frio")
+    t.r(3, 3, 28, 7, "branco_frio"); t.r(3, 7, 28, 7, "metal")
+    t.r(0, 10, 31, hn - 1, "branco_frio"); t.r(0, 10, 1, hn - 1, "branco_sombra")
+    t.r(5, 11, 8, 23, "tecido"); t.r(5, 11, 6, 23, "tecido_claro"); t.r(5, 23, 10, 25, "tecido")
+    t.r(14, 11, 17, 21, "metal_escuro"); t.r(14, 21, 21, 23, "metal_escuro")
+    t.r(7, 27, 24, 35, "branco_sombra"); t.r(9, 29, 22, 30, "metal"); t.r(9, 33, 22, 34, "metal")
+    t.r(26, 12, 27, 34, "tv_preto")
+    for x, y in ((3, 12), (28, 12), (3, 36), (28, 36)):
         t.p(x, y, "metal")
     t.contorno_interno("contorno")
 
@@ -622,6 +636,7 @@ def privada_frente(t, hn):
 
 def pia_banheiro_costas(w):
     def desenhar(t, hn):
+        # H = 40 (E = 8): pia(s) vista(s) por trás: tampo com cubas, costas do gabinete, canos e sifão
         W = w * 32
         t.pes = [(2, W - 3, hn - 1)]
         t.r(0, 0, W - 1, 11, "branco_frio"); t.r(0, 0, W - 1, 1, "prato"); t.r(0, 0, 1, 11, "prato")
@@ -630,8 +645,8 @@ def pia_banheiro_costas(w):
             t.r(i * 32 + 14, 0, i * 32 + 17, 2, "metal_escuro")
         t.r(0, 12, W - 1, hn - 1, "branco_sombra"); t.r(0, 12, 1, hn - 1, "branco_frio")
         for i in range(w):
-            t.r(i * 32 + 14, 14, i * 32 + 17, 32, "metal"); t.r(i * 32 + 14, 14, i * 32 + 14, 32, "branco_frio")
-            t.r(i * 32 + 10, 32, i * 32 + 21, 34, "metal_escuro")
+            t.r(i * 32 + 14, 13, i * 32 + 17, 27, "metal"); t.r(i * 32 + 14, 13, i * 32 + 14, 27, "branco_frio")
+            t.r(i * 32 + 10, 27, i * 32 + 21, 29, "metal_escuro")
         t.contorno_interno("contorno")
     return desenhar
 
@@ -646,26 +661,28 @@ def pia_banheiro_frente(t, hn):
 
 
 def privada_costas(t, hn):
+    # 1x1, H = 40 (E = 8): vista por trás: tampa da caixa, costas, cano de entrada e base
     t.pes = [(6, 25, hn - 1)]
-    t.r(6, 0, 25, 8, "branco_frio"); t.r(6, 0, 25, 1, "prato"); t.r(6, 0, 7, 8, "prato")
-    t.r(6, 9, 25, 26, "branco_sombra"); t.r(6, 9, 7, 26, "branco_frio")
-    t.r(10, 12, 12, 13, "metal"); t.r(19, 12, 21, 13, "metal")
-    t.r(21, 22, 24, 40, "metal"); t.r(21, 22, 21, 40, "branco_frio")
-    t.poly([(7, 27), (24, 27), (21, 44), (10, 44)], "branco_frio")
-    t.r(10, 44, 21, hn - 1, "branco_sombra")
-    t.r(9, 28, 22, 30, "metal_escuro")
+    t.r(6, 0, 25, 7, "branco_frio"); t.r(6, 0, 25, 1, "prato"); t.r(6, 0, 7, 7, "prato")
+    t.r(6, 8, 25, 21, "branco_sombra"); t.r(6, 8, 7, 21, "branco_frio")
+    t.r(10, 11, 12, 12, "metal"); t.r(19, 11, 21, 12, "metal")
+    t.r(21, 17, 24, 33, "metal"); t.r(21, 17, 21, 33, "branco_frio")
+    t.poly([(7, 22), (24, 22), (21, 35), (10, 35)], "branco_frio")
+    t.r(10, 35, 21, hn - 1, "branco_sombra")
+    t.r(9, 23, 22, 25, "metal_escuro")
     t.contorno_interno("contorno")
 
 
 def box_costas(t, hn):
+    # 1x1, H = 40 (E = 8): box por trás: painel de azulejo, cano do chuveiro e misturador
     t.pes = [(1, 30, hn - 1)]
     t.r(0, 0, 31, 7, "metal"); t.r(0, 0, 31, 1, "branco_frio"); t.r(0, 0, 1, 7, "branco_frio")
     t.r(0, 8, 31, hn - 1, "tecido_claro"); t.r(0, 8, 1, hn - 1, "branco_frio")
     for x in (10, 21):
         t.r(x, 8, x, hn - 1, "tecido")
-    for y in (18, 28, 38):
+    for y in (16, 24, 32):
         t.r(1, y, 31, y, "tecido")
-    t.r(14, 8, 17, 30, "metal"); t.r(14, 8, 14, 30, "branco_frio"); t.r(10, 30, 21, 33, "metal_escuro")
+    t.r(14, 8, 17, 24, "metal"); t.r(14, 8, 14, 24, "branco_frio"); t.r(10, 24, 21, 27, "metal_escuro")
     t.contorno_interno("contorno")
 
 
@@ -817,6 +834,21 @@ def bilhete_parede():
     return t.im
 
 
+def mural_de_fotos():
+    """28x24: quadro de cortiça com moldura clara cheio de fotos instantâneas presas com pinos coloridos; âncora (14,23) = centro da aresta
+    (o quadro fica 8 a 24 px acima dela, na altura da parede)."""
+    t = Tela(28, 24)
+    t.r(2, 0, 25, 15, "madeira_realce"); t.r(2, 0, 25, 1, "branco"); t.r(2, 0, 3, 15, "branco")
+    t.r(4, 2, 23, 13, "cortica"); t.r(4, 2, 23, 2, "cortica_escura"); t.r(4, 2, 4, 13, "cortica_escura")
+    fotos = [(5, 3), (10, 3), (15, 4), (20, 3), (6, 8), (11, 8), (16, 9), (21, 8)]
+    for i, (x, y) in enumerate(fotos):
+        t.r(x, y, x + 3, y + 4, "foto"); t.r(x, y + 4, x + 3, y + 4, "prato_sombra")
+        t.r(x + 1, y + 1, x + 2, y + 2, ("tecido_escuro", "verde", "madeira", "toalha_escura")[i % 4])
+        t.p(x + 1, y, ("toalha", "pino_azul", "pino_amarelo")[i % 3])
+    t.contorno_interno("contorno")
+    return t.im
+
+
 def interruptor_parede(aceso):
     t = Tela(16, 24)
     if aceso:
@@ -866,6 +898,31 @@ def _vidro_v(altura, antes, depois, sombra):
     return im
 
 
+def _vidro_face(esq, dir_, sombra):
+    """Face norte de vidro (32x38, como as faces): vidro translúcido azulado entre moldura clara fina, reflexo diagonal e sombra de base
+    de 6 px (variante `_sombra`). `esq`/`dir_`: ponta da fileira (montante de moldura de 4 px no lado)."""
+    t = Tela(T, 32)
+    d = t.d
+    t.r(0, 0, 31, 0, "tecido_contorno"); t.r(0, 1, 31, 3, "moldura_vidro"); t.r(0, 4, 31, 4, "moldura_vidro_sombra")     # travessa de cima
+    for y in range(5, 27):
+        d.rectangle([0, y, 31, y], fill=cor("vidro", 150))                                                              # vidro
+    t.r(0, 27, 31, 28, "moldura_vidro_sombra"); t.r(0, 27, 31, 27, "moldura_vidro"); t.r(0, 29, 31, 31, "moldura_vidro")   # peitoril
+    t.r(0, 31, 31, 31, "tecido_contorno")
+    for x0 in (4, 18):                                                                                                  # reflexos diagonais
+        for k in range(8):
+            d.point((x0 + k, 8 + k), fill=cor("reflexo", 200)); d.point((x0 + k + 1, 8 + k), fill=cor("reflexo", 120))
+    for x, ativo in ((0, esq), (T - 1, dir_)):
+        if ativo:
+            t.r(x if x == 0 else x - 3, 0, x + 3 if x == 0 else x, 31, "moldura_vidro"); t.r(x if x == 0 else x - 3, 0, x if x == 0 else x, 31, "tecido_contorno")
+    im = Image.new("RGBA", (T, 38), (0, 0, 0, 0))
+    im.alpha_composite(t.im, (0, 0))
+    if sombra:
+        for y in range(32, 38):
+            for x in range(T):
+                im.putpixel((x, y), (0, 0, 0, ALFA_SOMBRA))
+    return im
+
+
 def pecas_de_vidro():
     p = {}
     for sombra in (False, True):
@@ -875,6 +932,8 @@ def pecas_de_vidro():
         p["vidro_ilha" + suf] = _vidro_v(32, False, False, sombra)
         p["vidro_topo" + suf] = _vidro_v(32, False, True, sombra)
         p["vidro_topo_com_face" + suf] = _vidro_v(64, False, True, sombra)
+        for pos, (e, d_) in {"meio": (False, False), "esquerda": (True, False), "direita": (False, True), "ilha": (True, True)}.items():
+            p["vidro_face_" + pos + suf] = _vidro_face(e, d_, sombra)
     return p
 
 
@@ -973,7 +1032,16 @@ def pecas_de_parede():
 VISTA_JSON = {
     "_nota": "dados de arte da visão 3/4 (ADR-012). vidro: arestas `linha_v` desenhadas com a peça de vidro; chave = id da área.",
     "schemaVersion": 1,
-    "vidro": {"sala": [{"tipo": "linha_v", "x": 0, "y": y} for y in range(3, 9)]},
+    # Sala: parede oeste de vidro; Cozinha: janela de alumínio branco na parede leste, acima da pia (vidro com moldura clara)
+    "vidro": {"sala": [{"tipo": "linha_v", "x": 0, "y": y} for y in range(3, 9)] + [{"tipo": "face_norte", "x": 0, "y": 3}, {"tipo": "face_norte", "x": 1, "y": 3}],
+              "cozinha": [{"tipo": "linha_v", "x": 6, "y": y} for y in range(0, 3)]},
+    # (a Sala também leva a face norte do canto do cacto em vidro: arestas horizontais no topo dos tiles (0,3) e (1,3))
+    # arte presa na face norte (só desenho, sem colisão nem interação): imagem com `ancora` no centro da aresta norte do tile (x, y)
+    "arteDeParede": {"sala": [{"sprite": "spr_mural_de_fotos", "x": 9, "y": 4, "lado": "cima"}],
+                     "quarto": [{"sprite": "spr_oli_face", "x": 1, "y": 0, "lado": "cima"}, {"sprite": "spr_oli_face", "x": 2, "y": 0, "lado": "cima"},
+                                {"sprite": "spr_oli_face_margaridas", "x": 3, "y": 0, "lado": "cima"}],
+                     "quarto_casal": [{"sprite": "spr_quadro_paisagem", "x": 1, "y": 0, "lado": "cima"}, {"sprite": "spr_quadro_letras", "x": 2, "y": 0, "lado": "cima"}],
+                     "escritorio": [{"sprite": "spr_quadro_grade", "x": 6, "y": 0, "lado": "cima"}]},
 }
 
 
@@ -999,6 +1067,9 @@ def gerar_assets(moveis_im, moveis_meta):
         im = peca_3_4(o)
         salvar_indexado(im, ASSETS / f"spr_peca_{o}.png", 32)
         salvar_indexado(im.resize((96, 96), Image.NEAREST), ASSETS / f"spr_conquista_parte{o}.png", 32)
+    for nome, (fn, anc) in ARTE_DE_PAREDE.items():
+        salvar_indexado(fn(), ASSETS / f"{nome}.png", 32)
+        novos[f"{nome}.png"] = {"arquivo": f"{nome}.png", "tipo": "imagem", "ancora": {"x": anc[0], "y": anc[1]}}
     salvar_indexado(bilhete_parede(), ASSETS / "spr_bilhete.png", 32)
     novos["spr_bilhete.png"] = {"arquivo": "spr_bilhete.png", "tipo": "imagem", "ancora": {"x": 8, "y": 23}}
     folha_i = Image.new("RGBA", (32, 24), (0, 0, 0, 0))
@@ -1194,7 +1265,7 @@ def compor_sala(estados_portas=None):
     return tela
 
 
-def compor_area(ident, gid, recuo, estados, personagens, moveis_im, moveis_meta):
+def compor_area(ident, gid, recuo, estados, personagens, moveis_im, moveis_meta, explorar=False):
     """Composição de uma área com o KIT REAL (17 peças de parede + vidro + 3 folhas de porta + móveis), 480x352, barra de 48 px.
     Mesma classificação de arestas do Dev (chaveDaPeca): face_norte_*, linha_h_*, linha_v_* (+ vidro de `VISTA_JSON`)."""
     d = json.loads((CONTEUDO / f"{ident}.json").read_text(encoding="utf-8"))
@@ -1219,7 +1290,8 @@ def compor_area(ident, gid, recuo, estados, personagens, moveis_im, moveis_meta)
     lado_porta = {(o["x"], o["y"], o["lado"]): o["id"] for o in portas}
     kit = pecas_de_parede()
     kit.update(pecas_de_vidro())
-    vidro = {(e["x"], e["y"]) for e in VISTA_JSON["vidro"].get(ident, [])}
+    vidro = {(e["x"], e["y"]) for e in VISTA_JSON["vidro"].get(ident, []) if e["tipo"] == "linha_v"}
+    vidro_f = {(e["x"], e["y"]) for e in VISTA_JSON["vidro"].get(ident, []) if e["tipo"] == "face_norte"}
     tela = Image.new("RGBA", (480, 352), hex_rgb(FUNDO) + (255,))
     ts = carregar("tiles_casa")
     pg = gid - 1
@@ -1235,7 +1307,8 @@ def compor_area(ident, gid, recuo, estados, personagens, moveis_im, moveis_meta)
     port_n = {(o["x"], o["y"]) for o in portas if o["lado"] == "cima"}
     for (x, y) in sorted(F):
         a, dd = (x - 1, y) in F, (x + 1, y) in F
-        im = kit["face_norte_" + ("meio" if a and dd else "direita" if a else "esquerda" if dd else "ilha")]
+        posf = "meio" if a and dd else "direita" if a else "esquerda" if dd else "ilha"
+        im = kit[("vidro_face_" + posf + "_sombra") if (x, y) in vidro_f else "face_norte_" + posf]
         if (x, y) in port_n:
             im = folhas["norte"][estados.get(lado_porta[(x, y, "cima")], 0)]
         itens.append((OY + y * T + 4, 0, im, OX + x * T, OY + y * T - 32))
@@ -1269,6 +1342,21 @@ def compor_area(ident, gid, recuo, estados, personagens, moveis_im, moveis_meta)
             itens.append((OY + o["y"] * T + 5, 0, bilhete_parede(), OX + o["x"] * T + 16 - 8, OY + o["y"] * T - 23))
         if o["tipo"] == "interruptor":
             itens.append((OY + o["y"] * T + 5, 0, interruptor_parede(False), OX + o["x"] * T + 16 - 8, OY + o["y"] * T - 23))
+    if explorar:
+        dec = json.loads((RAIZ / "content" / "maps" / "decoracao" / f"{ident}.json").read_text(encoding="utf-8"))
+        for e in dec["enfeites"]:
+            nome = e["sprite"]
+            if nome in moveis_im:
+                im = moveis_im[nome]; anc = moveis_meta[nome]["ancora"]
+                itens.append((OY + (e["y"] + 1) * T + 1, 1, im, OX + e["x"] * T - anc["x"], OY + (e["y"] + 1) * T - anc["y"] - e.get("elevacao", 0)))
+            else:
+                im = carregar(nome)
+                if im.width == 64:
+                    im = im.crop((0, 0, 32, 32))
+                itens.append((OY + (e["y"] + 1) * T + 1, 1, im, OX + e["x"] * T, OY + (e["y"] + 1) * T - im.height - e.get("elevacao", 0)))
+    for e in VISTA_JSON.get("arteDeParede", {}).get(ident, []):
+        fn, anc = ARTE_DE_PAREDE[e["sprite"]]
+        itens.append((OY + e["y"] * T + 5, 0, fn(), OX + e["x"] * T + 16 - anc[0], OY + e["y"] * T - anc[1]))
     for nome, tx, ty in personagens:
         im = carregar(nome)
         itens.append((OY + (ty + 1) * T + 0.01, 2, im, OX + tx * T, OY + (ty + 1) * T - im.height))
@@ -1393,12 +1481,284 @@ def painel_oclusao():
     return full
 
 
+# ---- 1.2.2: Quarto da Oli, Quarto do casal e Escritório a partir das fotos do Diretor (sem apetrechos em cima) -------------------------
+def cama_casal(t, hn):
+    # 2x3, H = 96: cama de casal branca, edredom volumoso, travesseiros e almofadas ao norte, saia branca até o chão
+    t.sem_contorno_auto = True
+    t.pes = [(2, 61, hn - 1)]
+    t.r(2, 2, 61, 22, "prato"); t.r(2, 2, 61, 3, "branco")                                 # travesseiros (fileira de trás)
+    for x0 in (5, 34):
+        t.r(x0, 5, x0 + 24, 18, "branco"); t.r(x0, 17, x0 + 24, 18, "prato_sombra"); t.r(x0, 5, x0 + 1, 18, "prato")
+    t.r(8, 15, 20, 24, "tecido_escuro"); t.r(8, 15, 20, 16, "tecido")                      # almofada listrada
+    for y in (18, 21):
+        t.r(8, y, 20, y, "branco")
+    t.r(24, 16, 36, 25, "metal"); t.r(24, 16, 36, 17, "branco_sombra")                    # almofada cinza-esverdeada
+    t.r(40, 15, 54, 24, "rosa"); t.r(40, 15, 54, 16, "prato")                              # almofada rosa
+    t.poly([(2, 26), (61, 26), (63, 80), (0, 80)], "branco")                               # edredom volumoso
+    t.poly([(2, 26), (12, 26), (8, 80), (0, 80)], "prato")                                 # luz à esquerda
+    t.poly([(54, 26), (61, 26), (63, 80), (56, 80)], "prato_sombra")                       # sombra à direita
+    for pts in (((8, 36), (26, 42)), ((34, 34), (56, 46)), ((6, 56), (30, 60)), ((36, 62), (58, 68))):
+        t.d.line(pts, fill=cor("prato_sombra"), width=2)                                   # dobras
+    t.r(0, 81, 63, 94, "prato"); t.r(0, 81, 63, 83, "prato_sombra"); t.r(0, 92, 63, 95, "prato_sombra")   # saia
+    a = t.im.load()
+    for y in range(t.h):
+        for x in range(t.w):
+            if a[x, y][3] == 0:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if nx < 0 or ny < 0 or nx >= t.w or ny >= t.h or a[nx, ny][3] == 0:
+                    a[x, y] = cor("creme_contorno"); break
+
+
+def armario_casal_costas(t, hn):
+    # 4x1, H = 56 (E = 24): cômoda creme de gavetas vista por trás (frente ao norte): tampo, painel liso em 4 módulos
+    t.pes = [(2, 125, hn - 1)]
+    t.r(0, 0, 127, 9, "creme"); t.r(0, 0, 127, 1, "creme_luz"); t.r(0, 0, 1, 9, "creme_luz")
+    t.r(0, 10, 127, 11, "creme_sombra")
+    t.r(1, 12, 126, hn - 1, "creme"); t.r(1, 12, 3, hn - 1, "creme_luz")
+    for x in (31, 63, 95):
+        t.r(x, 12, x + 1, hn - 3, "creme_sombra")
+    t.r(1, hn - 7, 126, hn - 1, "creme_sombra")
+    t.r(2, 14, 125, 14, "creme_luz")
+    t.contorno_interno("creme_contorno")
+
+
+def cama_oli(t, hn):
+    # 1x2, H = 64: cama baixa de pinho tipo Montessori: grade de ripas em volta e colchão claro
+    t.sem_contorno_auto = True
+    t.pes = [(0, 31, hn - 1)]
+    t.r(0, 0, 31, 63, "madeira_realce")
+    t.r(5, 8, 26, 50, "prato"); t.r(5, 8, 26, 9, "branco"); t.r(5, 8, 6, 50, "branco")          # colchão claro
+    t.r(5, 50, 26, 50, "prato_sombra")
+    for y in range(2, 52, 4):
+        t.r(0, y, 4, y + 2, "madeira_clara"); t.r(27, y, 31, y + 2, "madeira_clara")          # ripas das grades laterais
+    t.r(0, 0, 31, 5, "madeira_clara"); t.r(0, 0, 31, 1, "madeira_realce")                      # cabeceira (grade)
+    for x in range(2, 30, 5):
+        t.r(x, 2, x + 1, 6, "madeira_realce")
+    t.r(0, 51, 31, 63, "madeira_realce"); t.r(0, 51, 31, 52, "madeira_clara")                  # pé da cama (frente em ripas)
+    for x in range(2, 31, 4):
+        t.r(x, 54, x + 1, 62, "madeira_clara")
+    t.r(0, 62, 31, 63, "madeira_clara")
+    a = t.im.load()
+    for y in range(t.h):
+        for x in range(t.w):
+            if a[x, y][3] == 0:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if nx < 0 or ny < 0 or nx >= t.w or ny >= t.h or a[nx, ny][3] == 0:
+                    a[x, y] = cor("contorno"); break
+
+
+def comoda_oli(t, hn):
+    # 1x1, H = 40 (E = 8): cômoda de carvalho claro, 6 gavetas em 2 colunas (frente a oeste), pés finos
+    t.pes = [(2, 5, hn - 1), (26, 29, hn - 1)]; t.vaos = [(6, hn - 4, 25, hn - 1)]
+    t.r(0, 8, 31, 22, "carvalho"); t.r(0, 8, 31, 9, "coroa"); t.r(0, 8, 2, 22, "coroa")
+    for y in (11, 15, 19):
+        t.r(3, y, 5, y + 1, "carvalho_escuro")                                            # gavetas (puxadores vistos na borda oeste)
+    t.r(0, 23, 31, 34, "carvalho_escuro"); t.r(0, 23, 31, 24, "carvalho")
+    t.r(15, 25, 16, 33, "madeira"); t.r(4, 28, 12, 28, "madeira"); t.r(19, 28, 27, 28, "madeira")   # 2 colunas x 3 gavetas
+    t.r(2, 35, 4, hn - 1, "madeira"); t.r(27, 35, 29, hn - 1, "madeira")
+    t.contorno_interno("contorno")
+
+
+def cadeira_amamentacao(t, hn):
+    # 1x1, H = 48 (E = 16): poltrona de veludo cinza com botões e almofada branca, braços baixos (frente a oeste)
+    t.pes = [(3, 8, hn - 1), (23, 28, hn - 1)]
+    t.r(19, 2, 30, 40, "veludo"); t.r(19, 2, 30, 4, "veludo_claro"); t.r(19, 2, 21, 40, "veludo_claro")
+    for y in (10, 18, 26):
+        t.r(24, y, 25, y + 1, "veludo_escuro")                                           # botões do encosto
+    t.r(3, 28, 22, 40, "veludo"); t.r(3, 28, 22, 30, "veludo_claro")
+    t.r(7, 22, 17, 30, "branco"); t.r(7, 22, 17, 23, "prato"); t.r(16, 24, 17, 30, "prato_sombra")   # almofada branca
+    t.r(3, 31, 24, 38, "veludo_escuro"); t.r(3, 31, 24, 32, "veludo")                       # braço baixo
+    t.r(4, 41, 8, hn - 1, "madeira_escura"); t.r(23, 41, 27, hn - 1, "madeira_escura")
+    t.contorno_interno("contorno")
+
+
+def mesa_escritorio(t, hn):
+    # 3x1, H = 56 (E = 24; atrás há a face norte): bancada branca contínua, monitor preto e cadeira de couro creme de costas com base estrela
+    t.pes = [(2, 93, hn - 1), (41, 57, hn - 1)]
+    t.r(0, 22, 95, 36, "branco"); t.r(0, 22, 95, 23, "branco"); t.r(0, 22, 2, 36, "branco")
+    t.r(0, 36, 95, 37, "branco_sombra")                                                    # tampo (borda)
+    t.r(2, 38, 93, hn - 1, "branco_frio"); t.r(2, 38, 4, hn - 1, "branco"); t.r(90, 38, 93, hn - 1, "branco_sombra")
+    t.r(30, 38, 31, hn - 1, "branco_sombra"); t.r(64, 38, 65, hn - 1, "branco_sombra")    # divisões dos armários
+    t.r(60, 40, 63, 41, "metal"); t.r(32, 40, 35, 41, "metal")
+    t.r(14, 3, 38, 20, "tv_preto"); t.r(15, 4, 37, 17, "tv_tela"); t.r(16, 5, 24, 6, "tv_brilho")    # monitor
+    t.r(24, 20, 28, 23, "tv_preto")
+    t.r(62, 16, 80, 22, "metal"); t.r(62, 16, 80, 17, "branco_frio")                        # notebook fechado
+    # cadeira de escritório (de costas): encosto creme, assento e base estrela cromada
+    t.r(42, 10, 56, 30, "creme"); t.r(42, 10, 56, 11, "creme_luz"); t.r(42, 10, 43, 30, "creme_luz")
+    t.r(44, 31, 54, 36, "creme_sombra")
+    t.r(48, 37, 50, 44, "metal")
+    t.r(41, 45, 57, 46, "metal"); t.r(41, 47, 43, hn - 1, "metal_escuro"); t.r(55, 47, 57, hn - 1, "metal_escuro"); t.r(48, 47, 50, hn - 1, "metal_escuro")
+    t.contorno_interno("contorno")
+
+
+def cama_escritorio(t, hn):
+    # 2x2, H = 64: cama com colcha matelassê bege (losangos), cabeceira a leste, travesseiro branco, saia clara
+    t.sem_contorno_auto = True
+    t.pes = [(2, 61, hn - 1)]
+    t.r(0, 0, 63, 50, "parede_escura")
+    t.r(56, 0, 63, 50, "madeira_clara"); t.r(56, 0, 57, 50, "madeira_realce")                  # cabeceira a leste
+    t.r(40, 6, 55, 40, "branco"); t.r(40, 6, 55, 7, "prato"); t.r(54, 6, 55, 40, "prato_sombra")   # travesseiro
+    t.r(0, 4, 38, 50, "parede"); t.r(0, 4, 38, 6, "coroa"); t.r(0, 4, 1, 50, "coroa")          # colcha matelassê
+    for x in range(4, 38, 8):
+        t.d.line([(x, 6), (x + 12, 48)], fill=cor("parede_escura"), width=1)
+        t.d.line([(x + 12, 6), (x, 48)], fill=cor("parede_escura"), width=1)
+    t.r(0, 51, 63, 62, "parede_escura"); t.r(0, 51, 63, 52, "parede"); t.r(0, 61, 63, 63, "coroa_sombra")   # saia
+    a = t.im.load()
+    for y in range(t.h):
+        for x in range(t.w):
+            if a[x, y][3] == 0:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if nx < 0 or ny < 0 or nx >= t.w or ny >= t.h or a[nx, ny][3] == 0:
+                    a[x, y] = cor("creme_contorno"); break
+
+
+# ---- Arte de parede da 1.2.2: face do Quarto da Oli (boiserie), quadros do casal e quadro de grade do escritório --------------------
+def oli_face(margaridas=False):
+    """32x38 (substitui a face norte de um tile do Quarto da Oli): parede bege com boiserie branca na metade de baixo e, opcional,
+    margaridas brancas de miolo dourado. Âncora (16,32) = centro da aresta."""
+    t = Tela(T, 32)
+    t.r(0, 6, 31, 25, "parede"); t.r(0, 6, 31, 8, "parede_escura")
+    t.r(0, 0, 31, 0, "contorno"); t.r(0, 1, 31, 4, "coroa"); t.r(0, 5, 31, 5, "coroa_sombra")
+    t.r(0, 16, 31, 31, "branco")                                                             # boiserie (metade de baixo)
+    t.r(0, 16, 31, 17, "prato_sombra"); t.r(0, 18, 31, 18, "branco")                         # friso
+    t.r(3, 21, 28, 28, "branco"); t.r(3, 21, 28, 21, "prato_sombra"); t.r(3, 21, 3, 28, "prato_sombra"); t.r(3, 28, 28, 28, "prato")   # moldura
+    t.r(0, 29, 31, 31, "branco_frio"); t.r(0, 31, 31, 31, "contorno")                       # rodapé
+    if margaridas:
+        for (x, y) in ((5, 8), (14, 12), (24, 8), (9, 14), (27, 13)):
+            for dx, dy in ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)):
+                t.p(x + dx, y + dy, "branco")
+            t.p(x, y, "vela_dourado")
+    im = Image.new("RGBA", (T, 38), (0, 0, 0, 0))
+    im.alpha_composite(t.im, (0, 0))
+    for y in range(32, 38):
+        for x in range(T):
+            im.putpixel((x, y), (0, 0, 0, ALFA_SOMBRA))
+    return im
+
+
+def quadro_paisagem():
+    t = Tela(16, 26)
+    t.r(1, 0, 14, 17, "quadro_preto"); t.r(2, 1, 13, 16, "prato"); t.r(3, 2, 12, 15, "branco")
+    t.d.polygon([(3, 15), (6, 8), (9, 12), (12, 6), (12, 15)], fill=cor("metal_escuro")); t.r(3, 2, 12, 5, "branco_sombra")
+    t.contorno_interno("contorno") if False else None
+    return t.im
+
+
+def quadro_letras():
+    t = Tela(16, 26)
+    t.r(1, 0, 14, 17, "quadro_preto"); t.r(2, 1, 13, 16, "branco")
+    for y in (4, 7, 10, 13):
+        t.r(4, y, 11, y + 1, "quadro_preto")
+    return t.im
+
+
+def quadro_grade():
+    t = Tela(22, 24)
+    t.r(0, 0, 17, 15, "quadro_preto"); t.r(1, 1, 16, 14, "madeira") if False else None
+    t.r(1, 1, 16, 14, "prato_sombra") if False else None
+    for x in range(2, 17, 3):
+        t.r(x, 1, x, 14, "tv_tela")
+    for y in range(2, 15, 3):
+        t.r(1, y, 16, y, "tv_tela")
+    for x, y in ((4, 4), (10, 4), (7, 9), (12, 10)):
+        t.r(x, y, x + 2, y + 3, "prato")
+        t.p(x + 1, y + 1, "tecido_escuro")
+    return t.im
+
+
+ARTE_DE_PAREDE = {"spr_mural_de_fotos": (lambda: mural_de_fotos(), (14, 23)), "spr_oli_face": (lambda: oli_face(False), (16, 32)),
+                  "spr_oli_face_margaridas": (lambda: oli_face(True), (16, 32)), "spr_quadro_paisagem": (quadro_paisagem, (8, 25)),
+                  "spr_quadro_letras": (quadro_letras, (8, 25)), "spr_quadro_grade": (quadro_grade, (9, 23))}
+
+
+# ---- 1.2.2: Cozinha (bancada chocolate, armários creme fosco, inox) -------------------------------------------------------------
+def fogao(t, hn):
+    # 1x1, H = 48 (E = 16): cooktop de inox com 5 bocas e grelhas pretas na bancada chocolate, coifa de inox baixa (recortada) na parede
+    # acima e armário creme com gavetas e puxadores metálicos na frente
+    t.sem_contorno_auto = True
+    t.pes = [(1, 30, hn - 1)]
+    t.r(12, 0, 19, 2, "inox"); t.r(12, 0, 13, 2, "inox_claro")                                                   # topo da chaminé (cortado)
+    t.poly([(5, 8), (26, 8), (30, 3), (1, 3)], "inox_claro"); t.r(0, 8, 31, 9, "inox"); t.r(0, 9, 31, 9, "metal_escuro")   # coifa baixa
+    t.r(0, 10, 31, 17, "chocolate"); t.r(0, 10, 31, 10, "chocolate_luz")                                         # rodabancada
+    t.r(0, 18, 31, 27, "chocolate_luz"); t.r(0, 26, 31, 27, "chocolate")                                         # tampo
+    t.r(4, 19, 27, 26, "inox"); t.r(4, 19, 27, 19, "inox_claro")                                                  # cooktop de inox
+    for cx, cy in ((9, 21), (22, 21), (9, 24), (22, 24), (16, 22)):
+        t.r(cx - 2, cy - 1, cx + 2, cy + 1, "grelha"); t.p(cx, cy, "inox_claro")                                  # 5 bocas com grelha
+    t.r(0, 28, 31, 44, "creme"); t.r(0, 28, 31, 29, "creme_luz"); t.r(0, 28, 1, 44, "creme_luz")                 # armário creme fosco
+    t.r(2, 36, 29, 36, "creme_sombra")                                                                            # junta das gavetas
+    t.r(6, 31, 25, 31, "metal"); t.r(6, 39, 25, 39, "metal")                                                      # puxadores horizontais
+    t.r(0, 45, 31, 47, "chocolate")                                                                               # rodapé
+    a = t.im.load()
+    for y in range(t.h):
+        for x in range(t.w):
+            if a[x, y][3] == 0:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if nx < 0 or ny < 0 or nx >= t.w or ny >= t.h or a[nx, ny][3] == 0:
+                    a[x, y] = cor("contorno"); break
+
+
+def pia_cozinha(t, hn):
+    # 1x3, H = 104 (E = 8): bancada chocolate com cuba dupla de inox e torneira alta, junto à janela (parede leste); frente para oeste
+    t.pes = [(1, 30, hn - 1)]
+    t.r(0, 0, 31, 86, "chocolate"); t.r(0, 0, 31, 1, "chocolate_luz"); t.r(0, 0, 2, 86, "chocolate_luz")
+    for y0 in (12, 40):
+        t.r(5, y0, 24, y0 + 22, "inox"); t.r(6, y0 + 1, 23, y0 + 21, "inox_claro"); t.r(5, y0, 24, y0, "metal_escuro"); t.r(5, y0, 5, y0 + 22, "metal_escuro")
+        t.r(13, y0 + 11, 16, y0 + 13, "metal_escuro")                                                            # ralos
+    t.r(25, 30, 29, 34, "inox"); t.r(26, 22, 28, 33, "inox_claro"); t.r(22, 22, 28, 24, "inox")                  # torneira alta
+    t.r(0, 87, 31, hn - 1, "creme"); t.r(0, 87, 31, 88, "creme_luz")
+    t.r(4, 91, 27, 91, "metal"); t.r(4, 97, 27, 97, "metal")                                                      # puxadores
+    t.r(0, 99, 31, hn - 1, "chocolate")
+    t.contorno_interno("contorno")
+
+
+def armario_cozinha_costas(t, hn):
+    # 1x1, H = 44 (E = 12): armário baixo visto por trás: tampo chocolate liso e painel traseiro off-white fosco
+    t.pes = [(1, 30, hn - 1)]
+    t.r(0, 0, 31, 8, "chocolate"); t.r(0, 0, 31, 1, "chocolate_luz"); t.r(0, 0, 1, 8, "chocolate_luz")
+    t.r(0, 9, 31, 10, "creme_sombra")
+    t.r(1, 11, 30, hn - 1, "creme"); t.r(1, 11, 2, hn - 1, "creme_luz")
+    t.r(15, 11, 16, hn - 3, "creme_sombra")
+    t.contorno_interno("contorno")
+
+
+def forno_costas(t, hn):
+    # 1x1, H = 40 (E = 8): forno embutido no armário: tampo chocolate e costas com ventilação
+    t.pes = [(1, 30, hn - 1)]
+    t.r(0, 0, 31, 8, "chocolate"); t.r(0, 0, 31, 1, "chocolate_luz"); t.r(0, 0, 1, 8, "chocolate_luz")
+    t.r(0, 9, 31, 10, "creme_sombra")
+    t.r(1, 11, 30, hn - 1, "creme"); t.r(1, 11, 2, hn - 1, "creme_luz")
+    for y in (14, 17, 20):
+        t.r(7, y, 24, y + 1, "grelha")
+    t.r(10, 26, 21, 31, "metal"); t.r(11, 27, 20, 30, "metal_escuro")
+    t.r(26, 22, 27, 36, "grelha")
+    t.contorno_interno("contorno")
+
+
+def armario_lavanderia(t, hn):
+    # 1x2, H = 72 (E = 8): armário creme fosco junto à parede oeste, tampo chocolate, puxadores metálicos horizontais (frente a leste)
+    t.pes = [(1, 30, hn - 1)]
+    t.r(0, 0, 31, 48, "chocolate"); t.r(0, 0, 31, 1, "chocolate_luz"); t.r(0, 0, 2, 48, "chocolate_luz")
+    for y in (12, 26, 38):
+        t.r(24, y, 29, y, "metal")
+    t.r(0, 49, 31, hn - 1, "creme"); t.r(0, 49, 31, 50, "creme_luz"); t.r(0, 49, 2, hn - 1, "creme_luz")
+    t.r(4, 57, 27, 57, "metal"); t.r(4, 65, 27, 65, "metal")
+    t.contorno_interno("contorno")
+
+
 def main():
     PASTA.mkdir(parents=True, exist_ok=True)
     PREVIEW.mkdir(parents=True, exist_ok=True)
     (RAIZ / "tools-arte" / "paleta-casa-3-4.json").write_text(
         json.dumps({"_nota": "paleta-mestre da casa, visão 3/4 (ADR-012, E1); <= 64 cores; cada PNG usa <= 16 dela; sombra = preto 25%",
-                    "cores": PALETA, "sombra": {"rgb": "#000000", "alfa": ALFA_SOMBRA}}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+                    "cores": {k: v for k, v in PALETA.items() if k not in ALIAS}, "sombra": {"rgb": "#000000", "alfa": ALFA_SOMBRA}}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     movel = {}
     relatorio = {}
     imagens_movel = {}
@@ -1407,20 +1767,20 @@ def main():
         "spr_cacto": (1, 1, 48, cacto), "spr_sofa": (2, 2, 64, sofa), "spr_mesa_de_jantar": (3, 2, 64, mesa),
         "spr_rack_da_sala": (4, 1, 48, rack), "spr_comoda": (1, 3, 104, comoda),
         # Cozinha e Lavanderia (lote 2); geladeira, forno, armário, tanque e lava-roupas vistos pelas costas
-        "spr_geladeira": (1, 1, 56, geladeira_costas), "spr_forno": (1, 1, 44, forno_costas), "spr_fogao": (1, 1, 44, fogao),
-        "spr_armario_da_cozinha": (1, 1, 44, armario_cozinha_costas), "spr_pia": (1, 3, 104, pia_cozinha),
-        "spr_armario_da_lavanderia": (1, 2, 80, armario_lavanderia), "spr_lava_roupas": (1, 1, 48, lava_roupas_costas),
-        "spr_tanque": (1, 1, 44, tanque_costas),
+        "spr_geladeira": (1, 1, 44, geladeira_costas), "spr_forno": (1, 1, 40, forno_costas), "spr_fogao": (1, 1, 48, fogao),
+        "spr_armario_da_cozinha": (1, 1, 40, armario_cozinha_costas), "spr_pia": (1, 3, 104, pia_cozinha),
+        "spr_armario_da_lavanderia": (1, 2, 72, armario_lavanderia), "spr_lava_roupas": (1, 1, 40, lava_roupas_costas),
+        "spr_tanque": (1, 1, 40, tanque_costas),
         # lote 3
         "spr_cama_da_oli": (1, 2, 64, cama_oli), "spr_comoda_da_oli": (1, 1, 40, comoda_oli),
         "spr_cadeira_de_amamentacao": (1, 1, 48, cadeira_amamentacao), "spr_cama_do_casal": (2, 3, 96, cama_casal),
-        "spr_armario_do_casal": (4, 1, 56, armario_casal_costas), "spr_mesa_do_escritorio": (3, 1, 40, mesa_escritorio),
+        "spr_armario_do_casal": (4, 1, 40, armario_casal_costas), "spr_mesa_do_escritorio": (3, 1, 56, mesa_escritorio),
         "spr_cama_do_escritorio": (2, 2, 64, cama_escritorio),
         # lote 4: banheiros e Quartinho
         "spr_box_do_banheiro_1": (3, 1, 64, box_frente), "spr_privada_do_banheiro_1": (1, 1, 48, privada_frente),
-        "spr_pia_do_banheiro_1": (3, 1, 44, pia_banheiro_costas(3)),
+        "spr_pia_do_banheiro_1": (3, 1, 40, pia_banheiro_costas(3)),
         "spr_pia_do_banheiro_do_escritorio": (1, 1, 44, pia_banheiro_frente),
-        "spr_privada_do_banheiro_do_escritorio": (1, 1, 48, privada_costas), "spr_box_do_banheiro_do_escritorio": (1, 1, 48, box_costas),
+        "spr_privada_do_banheiro_do_escritorio": (1, 1, 40, privada_costas), "spr_box_do_banheiro_do_escritorio": (1, 1, 40, box_costas),
         "spr_prateleira": (3, 1, 56, prateleira_costas), "spr_prateleira_pequena": (1, 1, 64, prateleira_frente),
         # árvore de Natal (5 estados, 1x1, H = 56, E = 24) e mini-árvores dos enfeites
         "spr_arvore_desmontada": (1, 1, 56, arvore_estado("desmontada")), "spr_arvore_1parte": (1, 1, 56, arvore_estado("1parte")),
@@ -1461,13 +1821,16 @@ def main():
         im = compor_area(ident, gid, 0, {}, pers, imagens_movel, movel)
         im.convert("RGB").save(PREVIEW / f"prototipo-3-4-{ident}.png")
         im.resize((960, 704), Image.NEAREST).convert("RGB").save(PREVIEW / f"prototipo-3-4-{ident}@2x.png")
+    for ident, gid, pers in (("quarto_casal", 258, [("spr_lolo_idle", 3, 3)]), ("banheiro1", 38, [("spr_lolo_idle", 1, 1)]), ("banheiro_escritorio", 34, [])):
+        im = compor_area(ident, gid, 0, {}, pers, imagens_movel, movel, explorar=True)
+        im.resize((960, 704), Image.NEAREST).convert("RGB").save(PREVIEW / f"prototipo-3-4-{ident}-explorar@2x.png")
     painel_arvores(imagens_movel).convert("RGB").save(PREVIEW / "prototipo-3-4-arvores.png")
     painel_portas().convert("RGB").save(PREVIEW / "prototipo-3-4-portas.png")
     painel_oclusao().convert("RGB").save(PREVIEW / "prototipo-3-4-oclusao.png")
     if "--assets" in sys.argv:
         print("kit gravado em assets:", len(gerar_assets(imagens_movel, movel)), "arquivos")
     print("cores por PNG:", relatorio)
-    print("paleta-mestre:", len(PALETA), "cores")
+    print("paleta-mestre:", len({k for k in PALETA if k not in ALIAS}), "cores")
 
 
 if __name__ == "__main__":

@@ -8,6 +8,8 @@ import { PERFIL_PADRAO_ID, type PerfilDeArte } from '../arte/PerfilDeArte';
 import { validarPerfilDeArte } from '../arte/validarPerfilDeArte';
 import type { ContentSource } from '../ports/ContentSource';
 import type { MissaoCarregada } from '../mundo/missoes';
+import { validarSorteio } from '../content/validarSorteio';
+import { interpretarSorteio, type Sorteio } from '../content/Sorteio';
 import { validarDecoracao, type DecoracaoDaSubarea } from '../content/decoracao';
 import type { MapaDoJogo } from '../content/Mapa';
 import { deslocamentoDaSubarea } from '../mundo/subarea';
@@ -37,9 +39,17 @@ export interface Conteudo {
   textos: Textos;
   /** Enfeites do modo explorar por subárea (ADR-010 3). Só as subáreas que têm a chave `decoracao` no manifesto. */
   decoracao: Map<string, DecoracaoDaSubarea>;
+  /** Regras do sorteio das peças e do Nick (ADR-013). Os mapas de `todosOsMapas` vêm sem objetos `peca`: o plano as injeta. */
+  sorteio: Sorteio;
 }
 
-/** Lê o manifesto (schema 3), o perfil de arte, todas as subáreas e todas as missões, e valida o conjunto. */
+/**
+ * Enquanto o conteúdo gerado ainda traz `peca` nos mapas (a Arte regera sem elas), S008 vira aviso. Trocar para `false` quando os mapas
+ * saírem sem peça: então S008 é erro (ADR-013 seção 6).
+ */
+const PECA_FIXA_E_AVISO = false;
+
+/** Lê o manifesto (schema 4), o perfil de arte, todas as subáreas e todas as missões, e valida o conjunto. */
 export class CarregarConteudo {
   constructor(private readonly fonte: ContentSource) {}
 
@@ -71,7 +81,13 @@ export class CarregarConteudo {
     const missao = missoes.find((m) => m.id === iniciais[0].id)!.missao;
     const textos = interpretarTextos(await this.fonte.textos(manifesto.locale));
 
-    const erros = validarConteudo({ manifesto, todos, missoes, textos, perfil });
+    // Sorteio (ADR-013): S001 a S008. Enquanto a Arte não regera os mapas sem `peca`, a peça fixa é aviso (S008) e é ignorada.
+    const rs = validarSorteio({ bruto: await this.fonte.sorteio(), manifesto, todos, missoes, perfil, pecaFixaEAviso: PECA_FIXA_E_AVISO });
+    if (rs.erros.some((e) => e.startsWith('S001'))) throw new ConteudoInvalidoError(rs.erros);
+    const sorteio = interpretarSorteio(await this.fonte.sorteio());
+    for (const [id, m] of todos) if (m.objetos.some((o) => o.tipo === 'peca')) todos.set(id, { ...m, objetos: m.objetos.filter((o) => o.tipo !== 'peca') });
+
+    const erros = [...rs.erros, ...validarConteudo({ manifesto, todos, missoes, textos, perfil, sorteio })];
     if (erros.length > 0) throw new ConteudoInvalidoError(erros);
 
     // Decoração (ADR-010 8.2): E1 a E7 e E9 por subárea. E8 (peso do atlas) é do verificar:conteudo.
@@ -95,8 +111,8 @@ export class CarregarConteudo {
       decoracao.set(decl.id, bruta as DecoracaoDaSubarea);
     }
 
-    const avisos = avisosDeConteudo({ manifesto, todos, missoes, textos, perfil });
-    return { manifesto, perfil, todosOsMapas: todos, missoes, missao, inicio: missao.inicio!, textos, avisos, decoracao };
+    const avisos = [...avisosDeConteudo({ manifesto, todos, missoes, textos, perfil, sorteio }), ...rs.avisos];
+    return { manifesto, perfil, todosOsMapas: todos, missoes, missao, inicio: missao.inicio!, textos, avisos, decoracao, sorteio };
   }
 }
 

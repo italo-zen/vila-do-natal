@@ -21,15 +21,6 @@
   "conquistas": {
     "luzes": "conquista.luzes"
   },
-  "nick": {
-    "dorme": {
-      "mapa": "sala",
-      "x": 9,
-      "y": 5,
-      "direcao": "baixo"
-    },
-    "alvo": "sala"
-  },
   "dica": {
     "porta": "dica.porta",
     "luzes": {

@@ -13,7 +13,8 @@ const [, , arquivoArg, saidaArg] = process.argv;
 const arquivo = arquivoArg ?? 'dist-qa/index.html';
 const saida = saidaArg ?? 'tools-arte/preview/areas-3-4';
 mkdirSync(saida, { recursive: true });
-const url = pathToFileURL(resolve(arquivo)).href;
+// `?plano=referencia`: o gancho de QA usa as posições fixas de antes do sorteio (passos escritos à mão). Só existe no build de QA.
+const url = pathToFileURL(resolve(arquivo)).href + '?plano=referencia';
 const real = (ms) => new Promise((r) => setTimeout(r, ms));
 /** Página atual: o tempo do jogo só anda por `esperar`, dentro da página (relógio virtual abaixo). */
 let pagina = null;
@@ -158,6 +159,9 @@ for (const tela of TELAS) {
   // Vidro da Sala (parede oeste, x = 0, linhas 3 a 8): o sobrinho encostado nele.
   await em(1, 6, 'esquerda');
   await foto('vidro-oeste');
+  // Mural de fotos (face norte do tile (9, 4), ao lado da porta cozinha-sala).
+  await em(9, 4, 'cima');
+  await foto('mural');
   // Portas da alcova: no meio da alcova (7, 1), olhando para cima.
   await em(7, 1, 'cima');
   await foto('alcova-portas');
@@ -198,20 +202,33 @@ for (const tela of TELAS) {
     }
   };
   await area('quarto', 'quarto-sala', 'quarto-da-oli', [['cama-sul', 1, 2, 'cima'], ['comoda', 2, 1, 'direita']]);
-  await area('quarto_casal', 'quarto_casal-sala', 'quarto-do-casal', [['cama-sul', 2, 3, 'cima'], ['armario-norte', 2, 3, 'baixo']]);
+  await area('quarto_casal', 'quarto_casal-sala', 'quarto-do-casal', [['cama-sul', 2, 3, 'cima'], ['armario-norte', 2, 3, 'baixo'], ['porta-sala', 5, 4, 'direita'], ['porta-banheiro', 3, 1, 'direita']]);
   await area('escritorio', 'escritorio-sala', 'escritorio', [['mesa-sul', 5, 1, 'cima'], ['cama-oeste', 4, 2, 'direita']]);
-  await area('banheiro1', 'banheiro1-quarto', 'banheiro-1', []);
-  await area('banheiro_escritorio', 'banheiro_escritorio-escritorio', 'banheiro-do-escritorio', []);
+  await area('banheiro1', 'banheiro1-quarto', 'banheiro-1', [['porta-quarto', 3, 2, 'baixo'], ['porta-quarto-casal', 0, 1, 'esquerda']]);
+  await area('banheiro_escritorio', 'banheiro_escritorio-escritorio', 'banheiro-do-escritorio', [['porta', 0, 0, 'esquerda']]);
   await area('quartinho', 'cozinha-quartinho', 'quartinho', []);
   await area('hall', 'hall-sala', 'hall', [['bilhete', 2, 0, 'cima']]);
+  // Setas de farejar (amarelas) nas portas de cada lado, e os indicadores de direção das portas.
+  for (const [areaId, spawn, porta, rotulo] of [['quarto', 'quarto-sala', 'quarto-sala', 'quarto-sala-baixo'], ['sala', 'hall-sala', 'quarto-sala', 'sala-quarto-cima'], ['sala', 'hall-sala', 'cozinha-sala', 'sala-cozinha-direita'], ['cozinha', 'cozinha-sala', 'cozinha-sala', 'cozinha-sala-esquerda'], ['hall', 'hall-sala', 'hall-sala', 'hall-sala-cima']]) {
+    await page.evaluate(([a, b]) => window.__teleportar(a, b), [areaId, spawn]);
+    await esperar(500);
+    await page.evaluate((p) => window.__seta(p), porta);
+    await esperar(1600);
+    await foto(`seta-farejar-${rotulo}`);
+  }
   // Modo explorar (enfeites de Natal, com `elevacao` sobre os móveis): as 5 áreas do modo.
   await page.evaluate(() => { window.__partidaConcluida('lolo', true); window.__irPara('Casa', { modo: 'explorar' }); });
   await esperar(1500);
-  for (const [id, sp] of [['sala', 'hall-sala'], ['cozinha', 'cozinha-sala'], ['escritorio', 'escritorio-sala'], ['quarto', 'quarto-sala'], ['hall', 'hall-sala']]) {
+  for (const [id, sp] of [['sala', 'hall-sala'], ['cozinha', 'cozinha-sala'], ['escritorio', 'escritorio-sala'], ['quarto', 'quarto-sala'], ['hall', 'hall-sala'], ['quarto_casal', 'quarto_casal-sala'], ['banheiro1', 'banheiro1-quarto'], ['banheiro_escritorio', 'banheiro_escritorio-escritorio']]) {
     await page.evaluate(([a, b]) => window.__teleportar(a, b), [id, sp]);
     await esperar(600);
     await foto(`explorar-${id}`);
   }
+  // Interruptor de parede: do tile em frente (6, 4), olhando para cima (brilho na placa).
+  await page.evaluate(() => window.__teleportar('sala', 'hall-sala'));
+  await esperar(600);
+  await em(6, 4, 'cima');
+  await foto('interruptor-de-frente');
   // Interruptor apagado e aceso, e a árvore em todos os estados (partida nova, fase a fase).
   await page.evaluate(() => { window.__novaPartida('lolo'); window.__irPara('Casa', { modo: 'intro' }); });
   await esperar(1500);

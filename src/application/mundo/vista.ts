@@ -101,12 +101,18 @@ export function chaveDaPeca(a: ArestaDesenhada): string {
  * `spr_parede_vidro_` (ex.: `linha_v_meio_sombra` → `spr_parede_vidro_meio_sombra`). Aresta que não é `linha_v` não tem vidro.
  */
 export function chaveDoVidro(a: ArestaDesenhada): string | undefined {
-  return a.tipo === 'linha_v' ? `spr_parede_vidro_${chaveDaPeca(a).replace(/^linha_v_/, '')}` : undefined;
+  if (a.tipo === 'linha_v') return `spr_parede_vidro_${chaveDaPeca(a).replace(/^linha_v_/, '')}`;
+  // Face norte de vidro: `spr_parede_vidro_face_<posição>` (esquerda, meio, direita, ilha); a sombra já vem na peça.
+  if (a.tipo === 'face_norte') return `spr_parede_vidro_face_${chaveDaPeca(a).replace(/^face_norte_/, '')}`;
+  return undefined;
 }
 
-/** A aresta está na lista de vidro da área (`vista.json`)? Coordenadas do conteúdo: aresta vertical à esquerda do tile (x, y). */
+/**
+ * A aresta está na lista de vidro da área (`vista.json`)? Coordenadas do conteúdo: `linha_v` é a aresta vertical à esquerda do tile
+ * (x, y); `face_norte` é a de cima do tile (x, y). Linha horizontal interna não tem vidro.
+ */
 export function ehVidro(a: ArestaDesenhada, vidroDaArea: readonly { tipo: string; x: number; y: number }[] | undefined): boolean {
-  return a.tipo === 'linha_v' && (vidroDaArea ?? []).some((v) => v.tipo === 'linha_v' && v.x === a.x && v.y === a.y);
+  return (a.tipo === 'linha_v' || a.tipo === 'face_norte') && (vidroDaArea ?? []).some((v) => v.tipo === a.tipo && v.x === a.x && v.y === a.y);
 }
 
 /**
@@ -185,3 +191,26 @@ export const extensaoDoMovel = (alturaDoPng: number, h: number, tile: number, v:
 
 /** Limite de E (ADR-012 seção 5.3): `faceNorte`; `extensaoEmPisoAndavel` (24 no HD) quando o tile ao norte da pegada é andável (o sobrinho e o Nick não somem). */
 export const limiteDeExtensao = (norteAndavel: boolean, v: VistaDoPerfil): number => (norteAndavel ? Math.min(v.extensaoEmPisoAndavel, v.faceNorte) : v.faceNorte);
+
+/** Móvel alto para a transparência: o retângulo do sprite acima da pegada, em px do mundo, e a profundidade (base da pegada). */
+export interface MovelAlto {
+  rect: { x: number; y: number; w: number; h: number };
+  base: number;
+}
+
+/**
+ * O personagem está "atrás" do móvel alto (ADR-012 + 1.3.0)? A caixa do personagem (quadro) sobrepõe a parte do sprite acima da
+ * pegada e a base do personagem é menor que a base do móvel (profundidade: ele é desenhado atrás). Só então o móvel fica
+ * transparente.
+ */
+export function personagemAtras(caixa: { x: number; y: number; w: number; h: number }, baseDoPersonagem: number, m: MovelAlto): boolean {
+  if (m.rect.h <= 0 || baseDoPersonagem >= m.base) return false;
+  return caixa.x < m.rect.x + m.rect.w && caixa.x + caixa.w > m.rect.x && caixa.y < m.rect.y + m.rect.h && caixa.y + caixa.h > m.rect.y;
+}
+
+/** Um passo da transição de alfa: de `atual` rumo a `alvo`, no ritmo de (1 − alfaAtras) por `transicaoMs`. */
+export function passoDoAlfa(atual: number, alvo: number, deltaMs: number, alfaAtras: number, transicaoMs: number): number {
+  if (transicaoMs <= 0) return alvo;
+  const passo = ((1 - alfaAtras) * deltaMs) / transicaoMs;
+  return atual < alvo ? Math.min(alvo, atual + passo) : Math.max(alvo, atual - passo);
+}

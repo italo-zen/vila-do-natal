@@ -16,27 +16,6 @@ export interface Destino {
   y: number;
   direcao: 'cima' | 'baixo' | 'esquerda' | 'direita';
 }
-/**
- * Tile de dormir do Nick (ADR-005 seção 2.2). `x` e `y` são `null` enquanto a Arte não escolhe o tile (N001). `mapa` é o
- * id da subárea; `direcao` é de onde ele olha quando dorme.
- */
-export interface DestinoDoNick {
-  mapa: string;
-  x: number | null;
-  y: number | null;
-  direcao: string;
-}
-
-/**
- * Campo `nick` de uma missão de fase (ADR-005 seção 2.2). Não tem `depois`: foi removido (ADR-006 seção 6; N008). O Nick
- * vai ao `dorme` da missão ativa seguinte.
- */
-export interface NickDaMissao {
-  dorme: DestinoDoNick;
-  /** Subárea onde está o item da fase (a seta procura esse cômodo). Não é tile (ADR-005 seção 2.3). */
-  alvo: string;
-}
-
 /** Texto da dica de uma fase: um valor vale para os dois estados do Nick, ou um objeto com um valor por estado. */
 export type DicaPorEstado = string | { dormindo: string; acordado: string };
 
@@ -54,8 +33,7 @@ export interface Missao {
   conducao: Record<string, Destino>;
   /** Chave de texto da tela de conquista de cada fase (ADR-002 seção 2). */
   conquistas: Record<string, string>;
-  /** Nick: onde dorme e o que procura (ADR-005 seção 2). Obrigatório nas missões de fase; a validação (N001) confere. */
-  nick?: NickDaMissao;
+  // `nick` (dorme e alvo) saiu das missões: é do plano sorteado (ADR-013). Presente no arquivo, é erro N015.
   /** Dica da missão (ADR-005 seção 2). Obrigatória nas missões de fase; a validação (N001, N014) confere. */
   dica?: DicaDaMissao;
 }
