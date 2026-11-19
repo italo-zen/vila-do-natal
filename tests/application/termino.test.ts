@@ -6,6 +6,8 @@ import { validarConteudo } from '../../src/application/content/validarConteudo';
 import type { Conteudo } from '../../src/application/usecases/CarregarConteudo';
 import { codigosDeRegra, entradaComManifesto, entradaComMissoes, entradaComSubarea, entradaComTextosDoMarco4, manifestoDe, tileParaCaixa } from '../helpers/fixturesTermino';
 import { entradaComMissao } from '../helpers/fixturesNick';
+import { PLANO_DE_REFERENCIA } from '../helpers/planoDeReferencia';
+import { candidatosDoNick } from '../../src/application/plano/candidatos';
 
 /**
  * Término e caixa de enfeite (ADR-006 seção 9, T001 a T009; N007, N008, N011 e N014 da seção 6). Cada fixture quebra uma
@@ -100,8 +102,8 @@ descreverComConteudoNovo('validarConteudo: término e caixa (T005 a T009)', () =
   it('T006: duas caixas de enfeite (só T006; a segunda cai num tile válido, longe do tile de dormir da parte 3)', async () => {
     const x = await carregar();
     const escritorio = x.todosOsMapas.get('escritorio')!;
-    const dormeDaParte3 = x.missoes.find((m) => m.id === 'parte3')!.missao.nick!.dorme;
-    const tile = tileParaCaixa(escritorio, [{ x: dormeDaParte3.x!, y: dormeDaParte3.y! }]);
+    const dormeDaParte3 = PLANO_DE_REFERENCIA.nick.parte3;
+    const tile = tileParaCaixa(escritorio, [{ x: dormeDaParte3.x, y: dormeDaParte3.y }]);
     expect(tile, 'o Escritório tem um tile válido para a segunda caixa').toBeDefined();
     const e = entradaComSubarea(x, 'escritorio', (mp) => {
       mp.objetos.push({ tipo: 'enfeite', x: tile!.x, y: tile!.y, dados: { estadoInicial: 'escondida', id: 'enfeite', ordem: 4 } });
@@ -131,14 +133,10 @@ descreverComConteudoNovo('validarConteudo: término e caixa (T005 a T009)', () =
     expect(errosDe(e).some((er) => er.startsWith('T007') && er.includes('alcançável'))).toBe(true);
   });
 
-  it('T008: a caixa fora da subárea alvo do farejar. Vem sempre com N011: alvo sem caixa e caixa fora do alvo são a mesma falha', async () => {
+  it('T008: a caixa fora das subáreas da missão de enfeites (o alvo do farejar é derivado do mapa da caixa, ADR-013)', async () => {
     const x = await carregar();
-    // O alvo passa a ser o Quarto, que não tem caixa; a caixa segue no Escritório.
-    const e = entradaComMissao(x, 'enfeites', (m) => {
-      m.nick.alvo = 'quarto';
-    });
-    const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes: e.missoes, textos: x.textos, perfil: x.perfil });
-    expect(codigosDeRegra(erros)).toEqual(['N011', 'T008']);
+    const missoes = x.missoes.map((m) => (m.id === 'enfeites' ? { ...m, maps: m.maps.filter((id) => id !== 'escritorio') } : m));
+    const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes, textos: x.textos, perfil: x.perfil });
     expect(erros.some((er) => er.startsWith('T008'))).toBe(true);
   });
 
@@ -161,26 +159,13 @@ descreverComConteudoNovo('validarConteudo: término e caixa (T005 a T009)', () =
   });
 });
 
-descreverComConteudoNovo('validarNick da caixa e do fim (N007, N008, N011, N014; ADR-006 seção 6 e 9)', () => {
-  it('N007: o tile de dormir da fase enfeites encosta na caixa (só N007)', async () => {
+descreverComConteudoNovo('validarNick da caixa e do fim (N007, N014, N015; ADR-006 seção 6 e 9; ADR-013)', () => {
+  it('N007 (candidato do Nick): nenhum tile encostado na caixa de enfeite é candidato (ADR-013)', async () => {
     const x = await carregar();
-    // Dorme em (6, 1), encostado na caixa (5, 1). O outro vizinho livre da caixa, (4, 1), segue na rota: N009 não dispara.
-    const e = entradaComMissao(x, 'enfeites', (m) => {
-      m.nick.dorme = { mapa: 'escritorio', x: 6, y: 1, direcao: 'baixo' };
-    });
-    const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes: e.missoes, textos: x.textos, perfil: x.perfil });
-    expect(codigosDeRegra(erros)).toEqual(['N007']);
-    expect(erros.some((er) => er.startsWith('N007') && er.includes('encostado em peça'))).toBe(true);
-  });
-
-  it('N011: o alvo da fase enfeites é a Sala, sem caixa. T008 vem junto: a caixa não está no alvo (mesma falha)', async () => {
-    const x = await carregar();
-    const e = entradaComMissao(x, 'enfeites', (m) => {
-      m.nick.alvo = 'sala';
-    });
-    const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes: e.missoes, textos: x.textos, perfil: x.perfil });
-    expect(codigosDeRegra(erros)).toEqual(['N011', 'T008']);
-    expect(erros).toContain("N011 nick 'enfeites': alvo 'sala' sem caixa de enfeite");
+    const escritorio = x.todosOsMapas.get('escritorio')!;
+    const caixa = escritorio.objetos.find((o) => o.tipo === 'enfeite')!;
+    const t = candidatosDoNick(escritorio, { linhasDaTela: x.perfil.sala.linhas, pecas: [] });
+    expect(t.some((q) => Math.abs(q.x - caixa.x) + Math.abs(q.y - caixa.y) < 2)).toBe(false);
   });
 
   it('N014: a dica da parte 3 ainda tem `livre` (só N014)', async () => {
@@ -192,13 +177,12 @@ descreverComConteudoNovo('validarNick da caixa e do fim (N007, N008, N011, N014;
     expect(codigosDeRegra(erros)).toEqual(['N014']);
   });
 
-  it('N008: `depois` na parte 3 é erro, com a mensagem do ADR-006 seção 6 (só N008)', async () => {
+  it('N015: `nick` numa missão é erro (saiu para o plano, ADR-013); `depois` junto não gera mais código próprio', async () => {
     const x = await carregar();
     const e = entradaComMissao(x, 'parte3', (m) => {
-      m.nick.depois = { mapa: 'sala', x: 8, y: 5, direcao: 'baixo' };
+      m.nick = { dorme: { mapa: 'sala', x: 8, y: 5, direcao: 'baixo' }, alvo: 'sala', depois: { mapa: 'sala', x: 8, y: 5, direcao: 'baixo' } };
     });
     const erros = errosDe({ manifesto: x.manifesto, todos: x.todosOsMapas, missoes: e.missoes, textos: x.textos, perfil: x.perfil });
-    expect(codigosDeRegra(erros)).toEqual(['N008']);
-    expect(erros).toContain("N008 nick 'parte3': depois foi removido (ADR-006 seção 6)");
+    expect(codigosDeRegra(erros)).toEqual(['N015']);
   });
 });

@@ -90,7 +90,7 @@ A casa está bagunçada: as luzes estão apagadas, as peças da árvore estão e
 ### 4.4 Peças da árvore
 
 - Há **3 peças** da árvore, distribuídas em cômodos diferentes da casa.
-- **Na v1, as posições são fixas.** O sorteio a cada partida fica planejado para versões futuras.
+- **Até a 1.2.x, as posições são fixas. Na 1.3.0 o jogo sorteia a cada partida** a área e o tile de cada peça, com a peça **nunca na Sala nem no Hall** (decisão do Diretor, 2026-11-20; regras em 21.16).
 - Cada peça está visível no cômodo, com um brilho ou animação suave que chame atenção, sem indicar a posição exata.
 - Ao interagir, a peça é encontrada e a tela de conquista aparece.
 - Ao nascer de novo, o personagem aparece ao lado da árvore, que mostra as peças já montadas.
@@ -100,7 +100,7 @@ A casa está bagunçada: as luzes estão apagadas, as peças da árvore estão e
 - É a mesma coisa que uma peça da árvore, com uma **animação diferente** ao ser posicionada (por exemplo, a caixa abre, o enfeite flutua e se encaixa).
 - **Quantidade:** **1 caixa de enfeite.**
 - **Localização (v1):** em um cômodo onde nenhuma peça da árvore foi colocada, para que o jogador não encontre tudo no mesmo lugar. Posição exata fixa. **Decidido (Produto, 2026-11-09, pergunta 2):** Escritório; ver 17.3.
-- **Localização (futuro):** sorteada a cada partida, em qualquer cômodo, incluindo cômodos já usados pelas peças. Essa mudança deve ser feita junto com o sorteio das peças, sem alterar a lógica de farejar do Nick.
+- **Localização (futuro):** sorteada a cada partida, em qualquer cômodo, incluindo cômodos já usados pelas peças. Essa mudança deve ser feita junto com o sorteio das peças, sem alterar a lógica de farejar do Nick. *1.3.0: o sorteio vale para as 3 peças e para o Nick; **a caixa de enfeite continua fixa no Escritório** (5, 1) (padrão do Produto, 2026-11-20; sortear a caixa fica como ideia futura, 21.16).*
 
 ### 4.6 Nick, o cachorro
 
@@ -251,7 +251,7 @@ Todas as telas têm barra de controles no rodapé (14.8).
 
 ## 11. Fora de escopo (v1)
 
-- Sorteio das peças da árvore e da caixa de enfeite a cada partida (planejado para versão futura).
+- Sorteio da caixa de enfeite a cada partida (ideia futura). *O sorteio das 3 peças da árvore e do Nick entrou na 1.3.0 (21.16).*
 - Corrida (o botão B está reservado para o farejar do Nick).
 - Modo multijogador.
 - Monetização, anúncios ou compras.
@@ -888,7 +888,7 @@ Tudo o que o Marco 1 fixou (seções 4, 5, 8 e 14) continua valendo, salvo o que
 | Parte 3 (topo) | Lavanderia (parte de baixo, sem móvel; cômodo próprio, pergunta 27) | (3, 5) | Depois que a parte 2 está encaixada | Livres ao redor: (3, 4), (4, 5). Peça, não objeto examinável. Cumpre a regra 4.4 com a parte 2 na Cozinha (4, 1). Mesma subárea da Cozinha no mapa (interpretação a confirmar, 12, item 27) |
 
 - Nenhuma peça fica no Hall (é fora da casa), no Elevador, em gatilho de porta, no vão, no spawn, em tile de chegada gerado por porta, no interruptor, na árvore, na última linha da tela (14.8) ou sobre móvel.
-- Posições fixas na v1 (seção 11: sorteio fica para versão futura).
+- Posições fixas na v1 (seção 11: sorteio fica para versão futura). **Superado na 1.3.0 (21.16): as posições da tabela acima são só a da 1.0.x e 1.1.x; a 1.3.0 sorteia.**
 - **Parte 3 fixa na Lavanderia, (3, 5)** (pergunta 27, decidida em 2026-11-08). A opção de Quarto ou Escritório para a parte 3 cai.
 - **Regra 4.4 cumprida:** parte 1 na Sala, parte 2 na Cozinha (4, 1), parte 3 na Lavanderia (3, 5).
 
@@ -1137,7 +1137,7 @@ Com os 4 sobrinhos, no teclado, salvo indicação. Cada rodada do QA dura no má
 - **E18 (vão):** o vão de P2 (8, 1) da Sala e o de P3 (9, 2) não são andáveis; o Quarto não tem tapete (a P2 tem seta, 15.3.3).
 - **E19 (áreas fechadas):** a Suíte e os banheiros não são alcançáveis (pergunta 30 = A). P1 segue porta fechada, com o texto de 14.10.3 e seta para a esquerda. P4 e P6 mostram o texto de 14.10.3.
 - **E20 (rota com passagem P7 e 2×):** a condução da parte 3, saindo da Lavanderia (3, 5), cruza a P7 e chega a (3, 7) da Sala, com 2× e fade na passagem. Registrar passos (esperado: 17 passos, 2×; 15.3.5). As áreas novas (Quarto e Escritório) não têm peça: só entram no E17 e no E18.
-- **E21 (Quarto, ida e volta):** da Sala, em (7, 2), andar para cima sobre o gatilho (7, 1): fade de 0,5 s, nasce em (0, 6) do Quarto, de frente para cima. Andar para baixo sobre o gatilho (0, 7) e voltar: fade, nasce em (7, 2) da Sala, de frente para baixo. Tentar andar para o vão (8, 1) não faz nada, porque ele não é andável. Com os 4 sobrinhos, no teclado.
+- **E21 (Quarto, ida e volta) [obsoleto na 1.1.0; substituído por PL5 e PL17]:** *geometria da 1.0.x (gatilhos (7, 1) e (0, 7), vão (8, 1)) não existe mais.* Valem a travessia por aresta (21.4), PL5 (portas abertas) e PL17 (portas novas): fade de 0,5 s, chegada no tile do outro lado, sem voltar sozinho, com os 4 sobrinhos no teclado.
 - **E22 (Quarto, caixa e câmera):** captura em 480×352 com os 4 tiles novos do Quarto desenhados (gatilho (0, 7), chegada (0, 6) e corredor (0, 5) e (0, 4)), a seta para a esquerda sobre o gatilho (0, 7) e nenhum tapete; a caixa do Quarto (5×8) inclui os tiles novos; câmera centralizada, sem rolagem e sem corte; a última linha da tela sem chão andável. Teste: nenhum piso do Quarto encosta em piso da Sala (E004). Captura aprovada pelo Diretor antes da conversão.
 - **E23 (Suíte, N/A no Marco 2; vale numa versão posterior):** ida e volta pela P1, pelo caminho que a 30 escolher; a chegada de entrada é o tile novo da Suíte; Cama e Armário no lugar da planta, sem reação a A; P5 é porta fechada com o texto de 14.10.3. No Marco 2, E23 vira N/A no checklist e vale o E19.
 - **E24 (nada de peça nos cômodos novos):** no Quarto, na Suíte e no Escritório, nenhuma peça, brilho, aviso "ainda não" ou NPC aparece; A em Cama, Armário e Mesa não mostra nada; o Quarto não tem móvel nomeado.
@@ -1176,15 +1176,15 @@ Tudo o que os Marcos 1 e 2 fixaram continua valendo, salvo o que esta seção mu
 ### 16.2 Nick: onde dorme
 
 **16.2.1 Regras.**
-- Nick começa toda partida dormindo na Sala, dentro do círculo de luz da entrada (14.5). Ele não sorteia: em cada fase, dorme em um cômodo fixo (padrão, pergunta 32).
+- Nick começa toda partida dormindo na Sala, dentro do círculo de luz da entrada (14.5). Ele não sorteia: em cada fase, dorme em um cômodo fixo (padrão, pergunta 32). **Na 1.3.0 isso muda: o cômodo e o tile de dormir são sorteados por fase, dentro das regras de 21.16.**
 - Cômodos possíveis: só os de dentro da casa que estão abertos no Marco 3: Sala, Cozinha e Lavanderia, Quarto e Escritório. Nick não dorme no Hall (fora da casa), na Suíte nem nos banheiros (fechados, 15.3.2).
 - O tile de dormir é escolhido pela Arte dentro destas regras: chão livre; com pelo menos 2 vizinhos livres, nenhum deles tile de peça; fora da última linha da tela (14.8; na Sala, ver pergunta 31); fora de gatilho, vão, chegada, interruptor, árvore, peça, bilhete e móvel; e fora da rota de condução da fase (16.14, N14).
 
-**16.2.2 Onde Nick dorme em cada fase** (fases conforme a seção 3)
+**16.2.2 Onde Nick dorme em cada fase** (fases conforme a seção 3). *Tabela da 1.0.x e 1.1.x. Na 1.3.0 as linhas de parte 1, 2, 3 e enfeites são sorteadas (21.16.4); porta e luzes seguem na Sala.*
 
 | Fase | Nick dorme em | Tile | Motivo |
 |---|---|---|---|
-| Porta (1) | Sala | (8, 5) [sugestão do Produto; a Arte confirma]. Chão livre, 3 vizinhos livres, a 2,24 tiles da entrada (6, 6), dentro do círculo de luz | Aparece assim que a porta abre, sem andar. É o primeiro encontro com o Nick |
+| Porta (1) | Sala | (8, 5) [1.0.x]; na 1.1.0 (9, 5); na 1.3.0 sorteado (21.16.4, Chebyshev 2 ou mais da chegada). Círculo de luz: não exigido (21.16.10) | Aparece assim que a porta abre, sem andar. É o primeiro encontro com o Nick |
 | Luzes (2) | Sala | (8, 5) | Mesmo lugar. Pode ser acordado antes das luzes |
 | Parte 1 (3) | Cozinha e Lavanderia | Arte escolhe | Cômodo aberto pela P7, a uma porta da Sala |
 | Parte 2 (4) | Quarto | Arte escolhe | Aberto pela P2, a uma porta da Sala |
@@ -1376,7 +1376,7 @@ Chaves novas em `content/texts/pt-BR.json`, com texto exato e quebra automática
 Com os 4 sobrinhos, no teclado, salvo indicação. Cada rodada do QA dura no máximo 15 minutos (regra do Diretor, 2026-11-07). O que não couber vira "não testado (limite de tempo)".
 
 **Nick (N)**
-- **N1 (início):** nova partida; Nick dormindo na Sala, no tile de 16.2.2, visível dentro do círculo de luz quando a P8 abre. Captura.
+- **N1 (início):** nova partida; Nick dormindo na Sala, no tile do plano (16.2.2, 21.16.4), a pelo menos 2 tiles da chegada; aparece quando o sobrinho anda até ele (a regra do círculo de luz foi retirada para o Nick, 21.16.10). Captura.
 - **N2 (acordar):** A na frente de Nick dormindo, e também com o sobrinho encostado de lado, olhando para o outro lado (Q4). Animação de 1,2 s com o controle travado. Depois, "O Nick acordou! Ele vai seguir você." e "Aperte X para farejar.", com barra "Z: avançar  X: fechar".
 - **N3 (uma vez):** outro acordar na mesma partida não mostra o diálogo de primeira vez.
 - **N4 (seguir):** andar 10 passos com Nick acordado. Ele fica 1 tile atrás, encostado, pelo mesmo caminho; parado, para no tile que o sobrinho deixou por último (versão 0.7.1).
@@ -2737,7 +2737,7 @@ Origem: pedido do Diretor após o PT5 e a validação no iPhone da 0.11.2 ("Deu 
 
 - **Entrada:** botão "Explorar a casa" nos créditos. Fade de 0,5 s na cor `#0b1030` (14.10.5). O jogador nasce **na Sala, no tile (3, 7), de frente para a árvore**, como depois da conquista 1 (14.11), com o Nick acordado ao lado.
 - **Estado:** partida concluída (campo `final` de 17.12). **Não há missão, objetivo, conquista, encaixe, nem diálogo automático.** O estado é só de sessão; nada é salvo (ADR-002 seção 3).
-- **Áreas:** as que o jogo já abre: Hall, Sala, Cozinha e Lavanderia, Quarto e Escritório (15.3, opção B). A Suíte e os banheiros continuam fechados, **salvo P2**. Nenhuma porta nova.
+- **Áreas:** as que o jogo já abre: Hall, Sala, Cozinha e Lavanderia, Quarto e Escritório (15.3, opção B). A Suíte e os banheiros continuam fechados, **salvo P2**. Nenhuma porta nova. *Na 1.3.0 o modo anda em 8 áreas, com o Quarto do casal e os dois banheiros (21.15).*
 - **Controles:** direções; A examina (objetos e enfeites, 20.6); P ou o ícone II abrem a pausa (19.3.1). **Não há "?" nem H**: a dica não existe no modo (16.8.6). O Nick segue o jogador (16.4) e não volta a dormir.
 - **B (farejar):** o Nick fareja com a animação e o S08, **sem seta**, porque não há alvo no modo (ADR-010 2). Não existe a seta de próxima porta.
 - **Interruptor:** no modo, não tem ação. As luzes já estão acesas. Examinar o interruptor não toca S04 nem muda nada (ADR-010 2).
@@ -2951,9 +2951,9 @@ Tamanhos conferidos por contagem na planta; a caixa já é a da planta antes do 
 | `cozinha` | Cozinha e Lavanderia | 38 | **30** (conferido no golden, 2026-11-17; antes 24) | 5×6 (**6×5**) | `cozinha` (Lavanderia é cômodo separado dentro dela, decisão 27) | Aberta, escura até as luzes |
 | `quarto` | Quarto da Oli | 34 | 13 | 4×4 (4×4) | `quarto` (antes "Quarto Olivia"), aberto pelo Marco 2 | Aberto |
 | `escritorio` | Escritório | 258 (de cima) | 17 | 5×7 (7×5) | `escritorio` | Aberto |
-| `quarto_casal` | Quarto (do casal) | 258 (de baixo) | 24 | 5×6 (6×5) | **Substitui a Suíte Casal** (`suite_casal`): é o mesmo cômodo, renomeado; a Suíte não existe como área separada | Fechado |
-| `banheiro1` | Banheiro 1 | 38 (pequeno) | 12 | 3×4 (4×3) | **Substitui o Banheiro do casal** (`banheiro_casal`). Passa a ter duas portas (Quarto da Oli e Quarto do casal) | Fechado |
-| `banheiro_escritorio` | Banheiro do escritório | 34 | 4 | 2×2 (2×2) | `banheiro_escritorio` | Fechado |
+| `quarto_casal` | Quarto (do casal) | 258 (de baixo) | 24 | 5×6 (6×5) | **Substitui a Suíte Casal** (`suite_casal`): é o mesmo cômodo, renomeado; a Suíte não existe como área separada | **Aberto na 1.3.0** (era fechado) |
+| `banheiro1` | Banheiro 1 | 38 (pequeno) | 12 | 3×4 (4×3) | **Substitui o Banheiro do casal** (`banheiro_casal`). Passa a ter duas portas (Quarto da Oli e Quarto do casal) | **Aberto na 1.3.0** (era fechado) |
+| `banheiro_escritorio` | Banheiro do escritório | 34 | 4 | 2×2 (2×2) | `banheiro_escritorio` | **Aberto na 1.3.0** (era fechado; 1 tile livre, o de chegada) |
 | `quartinho` | Quartinho | 4 | 6 | 2×3 (3×2) | **Novo** | Fechado |
 
 - Os ids que existem são mantidos (`hall`, `sala`, `cozinha`, `quarto`, `escritorio`, `banheiro_escritorio`). Dois renomeados: `suite_casal` para `quarto_casal` e `banheiro_casal` para `banheiro1`. Um novo: `quartinho`. Id sem nome de pessoa (14.10.6): o Quarto da Oli segue `quarto` (decisão de 2026-11-08).
@@ -2971,11 +2971,11 @@ Id da porta no conteúdo: os ids das duas áreas, em ordem alfabética, ligados 
 | `cozinha-sala` | Cozinha e Sala | P7 | Aberta (passagem) |
 | `escritorio-sala` | Escritório e Sala | P3 | Aberta (Marco 2) |
 | `quarto-sala` | Quarto da Oli e Sala | P2 | Aberta (Marco 2) |
-| `quarto_casal-sala` | Quarto do casal e Sala | P1 | Porta fechada (lado da Sala), "Essa porta está fechada." |
-| `banheiro1-quarto` | Banheiro 1 e Quarto da Oli | P4 | Porta fechada (lado do Quarto) |
-| `banheiro_escritorio-escritorio` | Banheiro do escritório e Escritório | P6 | Porta fechada (lado do Escritório) |
+| `quarto_casal-sala` | Quarto do casal e Sala | P1 | **Aberta na 1.3.0** (passagem; era porta fechada) |
+| `banheiro1-quarto` | Banheiro 1 e Quarto da Oli | P4 | **Aberta na 1.3.0** (era porta fechada) |
+| `banheiro_escritorio-escritorio` | Banheiro do escritório e Escritório | P6 | **Aberta na 1.3.0** (era porta fechada) |
 | `cozinha-quartinho` | Cozinha e Quartinho | nova | Porta fechada (lado da Cozinha) |
-| `banheiro1-quarto_casal` | Banheiro 1 e Quarto do casal | P5 | Fora do conteúdo jogável: as duas áreas estão fechadas (como a P5 hoje) |
+| `banheiro1-quarto_casal` | Banheiro 1 e Quarto do casal | P5 | **Aberta na 1.3.0** (as duas áreas abrem; cria o circuito Sala, Quarto da Oli, Banheiro 1, Quarto do casal, Sala) |
 
 Os ids e os pares acima saíram da posição dos 9 pontos da planta; o conversor confirma na primeira execução (21.9, PL2) e qualquer divergência volta ao Diretor.
 
@@ -3005,9 +3005,9 @@ Hoje a colisão é por tile (ADR-003, seção 5). Um muro de 4 a 7 px cobre meno
 
 ### 21.6 O que fica trancado ou aberto
 
-- **Abertas (as mesmas da 1.0.0):** Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório (`missions[].maps` sem mudança). Fechadas: Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho.
+- **Abertas na 1.1.0 (as mesmas da 1.0.0):** Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório. Fechadas na 1.1.0: Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho. **Na 1.3.0 abrem o Quarto do casal, o Banheiro 1 e o Banheiro do escritório (21.15); só o Quartinho fica fechado.**
 - **Porta fechada** não leva a lugar nenhum, com o texto de 14.10.3 ("Essa porta está fechada." / "Hoje não dá para entrar."). Nenhum texto novo.
-- **Abrir os quartos e banheiros** fica para uma versão menor depois (1.2): acrescentar o id em `missions[].maps` e converter a porta, sem mexer no motor. Não entra na 1.1.0.
+- **Abrir os quartos e banheiros** ficou para depois da 1.1.0 e **entrou na 1.3.0** (decisão do Diretor, 2026-11-20): ver 21.15. Não entra na 1.1.0.
 - **Modo "Explorar a casa" (20.5):** anda nas mesmas áreas da missão (Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório). As quatro portas fechadas respondem igual. Sem porta nova aberta. Nasce na Sala, de frente para a árvore (tile novo, 21.7).
 
 ### 21.7 Missões, peças, dica e Nick nas áreas novas
@@ -3015,7 +3015,7 @@ Hoje a colisão é por tile (ADR-003, seção 5). Um muro de 4 a 7 px cobre meno
 Nenhuma regra de jogo muda. Mudam os tiles, que a Arte reposiciona na planta nova e o conversor valida.
 
 - **Missão e condução:** `luzes`, `parte1`, `parte2`, `parte3` e `enfeites` com as mesmas áreas. As coordenadas de `conducao` e `inicio` saem do conteúdo gerado (a árvore e o interruptor mudam de tile na Sala nova). A rota passa pelas portas abertas e respeita as paredes (21.5). Passos acima de 10 seguem a regra do 2× (14.11.3). **Posições entregues (2026-11-17, golden e `content/missions`):** `inicio` no Elevador do Hall (0, 1); `conducao` de todas as fases em Sala (2, 7), direção `baixo`, de frente para a árvore (2, 8); interruptor em Sala (6, 4). **Passos medidos pelo Dev (com `CUSTO_DA_PORTA` = 1):** 3, 5 e 8 passos nas rotas curtas (velocidade normal) e 16 a 22 passos nas longas, que são as de fora da Sala (2×). O Produto conferiu (2026-11-17): o 2× vale como está, sem mudança (a 4 tiles por segundo, 22 passos a 2× levam cerca de 3 s, mais o fade de 0,5 s em cada porta). O QA registra o número real de cada fase (PL9).
-- **Peças (entregues):** peça 1 na Sala (0, 5); peça 2 na Cozinha (3, 2); peça 3 na Lavanderia (5, 3) (regra 4.4: cômodos diferentes). A peça 3 fica na parte da área `cozinha` separada pelo muro interno (linhas 3 e 4); a passagem é a coluna 4. Decidido na pendência 46.
+- **Peças (entregues):** peça 1 na Sala (0, 5); peça 2 na Cozinha (3, 2); peça 3 na Lavanderia (5, 3) (regra 4.4: cômodos diferentes). A peça 3 fica na parte da área `cozinha` separada pelo muro interno (linhas 3 e 4); a passagem tem 2 tiles, colunas 3 e 4 (alargada em 2026-11-18). Decidido na pendência 46.
 - **Interruptor e árvore:** na Sala. O interruptor fica a mais de 3 tiles do tile de chegada da porta `hall-sala` (regra de 14.10.2, item 5). A árvore fica a uma distância confortável da chegada (3 a 8 passos; sugestão).
 - **Bilhete (pista):** no Hall (2, 0), encostado na parede de cima, ao lado da `hall-sala`: o A de frente para a parede lê o bilhete. O texto "Há um bilhete perto dela" (`orientacao.2`) segue certo.
 - **Examináveis da Cozinha:** Pia, Fogão e Geladeira, com os textos de 14.10.4, na metade Cozinha. A Lavanderia segue sem objeto.
@@ -3035,15 +3035,15 @@ Rótulos (id, nome, `escuro` na Sala e na Cozinha), spawn `elevador`, interrupto
 
 - **PL1 (áreas):** o conversor gera 9 áreas, com 8, 70, **30**, 13, 17, 24, 12, 4 e 6 tiles de piso (Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório, Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho), Cozinha e Lavanderia em 6×5, ids de 21.3, sem erro.
 - **PL2 (portas):** 9 portas com os ids e as áreas de 21.4. Cada uma está numa aresta entre áreas diferentes; nenhum ponto exige ajuste maior que 12 px.
-- **PL3 (paredes):** nenhuma aresta de fronteira entre áreas fica livre, exceto as das 9 portas; o muro interno da Cozinha e Lavanderia (entre as linhas 2 e 3) deixa 1 tile de passagem, na coluna 4; cada área é conexa (os móveis não a dividem).
+- **PL3 (paredes):** nenhuma aresta de fronteira entre áreas fica livre, exceto as das 9 portas; o muro interno da Cozinha e Lavanderia (entre as linhas 2 e 3) deixa a passagem de **2 tiles, colunas 3 e 4** (decisão do Diretor, 2026-11-18, padrão aplicado; antes 1 tile, coluna 4); cada área é conexa (os móveis não a dividem).
 - **PL4 (giro):** o golden sai girado 90° (horário), com Sala 11×10, e todas as caixas ≤ 15×11. A linha 10 da tela fica sem tile.
 - **PL5 (atravessar):** com o jogo no teclado e no toque, as quatro portas abertas atravessam por andar contra elas e por A, nos dois sentidos, com fade, chegada no tile do outro lado e sem voltar sozinho.
 - **PL6 (parede):** o sobrinho não cruza muro nem fronteira entre áreas, em nenhum lado e em nenhuma esquina (amostra: 3 muros da Sala, o muro interno da Cozinha). Nick também não.
-- **PL7 (fechada):** as quatro portas fechadas mostram o diálogo de 14.10.3 ao A e só param ao andar contra. A `banheiro1-quarto_casal` não existe no jogo.
+- **PL7 (fechada; 1.3.0):** só a `cozinha-quartinho` fica fechada: mostra o diálogo de 14.10.3 ao A e só para ao andar contra. As outras três portas antes fechadas agora abrem (PL17).
 - **PL8 (código):** a porta `hall-sala` abre pelo painel com o código dos 4 sobrinhos, como em 14.1.
 - **PL9 (fluxo):** luzes, parte 1, parte 2, parte 3, enfeites e créditos, do início ao fim, com os 4 sobrinhos, sem bloqueio; condução e rotas dentro das paredes; nenhuma peça, caixa ou tile de dormir inalcançável.
 - **PL10 (Nick e dica):** acordar, seguir, farejar (seta na porta certa) e dormir em cada fase; a dica orienta sem bloquear.
-- **PL11 (explorar):** o modo anda nas 5 áreas, sem dica e sem missão.
+- **PL11 (explorar; 1.3.0):** o modo anda nas 8 áreas abertas (as 5 de antes mais Quarto do casal, Banheiro 1 e Banheiro do escritório), sem dica e sem missão.
 - **PL12 (golden e captura):** o diff do golden (`.txt` e `resumo.json`) e as capturas de cada área aprovados pelo Diretor antes de qualquer artifact ou release (regra de 2026-11-08).
 - **PL13 (regressão):** suítes do jogo, `verificar:conteudo` e `validar:perfil` passam; a build de playtest e a release continuam dentro dos limites de peso (20.7); título e créditos mostram "1.1.0".
 - **PL14 (cacto):** na Sala, andar contra o cacto (0, 3) empurra o sobrinho 1 tile para longe e o cacto pisca por cerca de 1 s (só o sprite do cacto; no máximo 3 ciclos por segundo, AC4; nenhuma tela inteira pisca). Sem texto, sem som novo, sem bloqueio: dá para repetir. Se o tile de empurrão estiver ocupado ou for parede, o sobrinho não atravessa nada (nem móvel, nem parede, nem muro). O A de frente para o cacto não trava o jogo. Nick e a condução não disparam o cacto, e a rota passa longe dele. Teclado e toque iguais.
@@ -3065,6 +3065,91 @@ Abrir Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho; missão 
 ### 21.12 Perguntas ao Diretor
 
 Pendências 45 a 49 (seção 12): todas decididas em 2026-11-17 ("siga as sugestões"). Aberta, com padrão aplicado: o OK do Diretor ao deslocamento do Quartinho em uma coluna (21.3) e à posição dos objetos e móveis nas capturas (PL12).
+
+### 21.15 Abertura de áreas na 1.3.0 (decisão do Diretor, 2026-11-20)
+
+Versão 1.3.0 (menor; inclui a 1.2.x: arte 3/4 e as melhorias do playtest da 1.2.2). Conteúdo jogável novo: sem missão nova, sem peça nova, sem texto novo.
+
+**Regras**
+1. **Áreas abertas (8):** Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório, **Quarto do casal, Banheiro 1 e Banheiro do escritório**. **Fechada (1):** Quartinho.
+2. **Portas abertas (8):** `hall-sala` (com código), `cozinha-sala`, `escritorio-sala`, `quarto-sala`, **`quarto_casal-sala`, `banheiro1-quarto`, `banheiro1-quarto_casal`, `banheiro_escritorio-escritorio`**. Fechada: só `cozinha-quartinho` ("Essa porta está fechada. / Hoje não dá para entrar."). Os 4 ids novos entram em `missions[].maps` de todas as missões; o motor decide aberta ou fechada por aí, sem mudar código de porta. Travessia como em 21.4 (andar contra ou A, fade de 0,5 s). `trancadaAte` segue só na `hall-sala`.
+3. **Sem peça nas áreas novas:** peças 1 a 3 e caixa de enfeite ficam onde estão (Sala, Cozinha, Lavanderia, Escritório). A busca não muda; as áreas novas só se exploram. **Nenhum `nick.dorme`, `conducao` nem `inicio` fica nas áreas novas** (conferido em `content/missions`: Sala (9,5) e (2,7), Cozinha (1,1), Quarto da Oli (1,2), Escritório (4,2), Hall).
+4. **Rotas:** como o Banheiro 1 liga o Quarto da Oli ao Quarto do casal, surge um circuito. Nenhuma rota de condução, de Nick ou de farejar pode passar mais longe nem entrar nas áreas novas sem precisar (a rota mais curta de cada fase continua pela Sala). O QA mede os passos de novo (PL9); o 2× segue a regra 14.11.3.
+5. **Nick:** pode seguir o sobrinho para dentro das áreas novas (mesma regra de seguir, 16.4). Não dorme nelas. A seta de farejar aponta a porta certa da rota, nunca uma porta das áreas novas se o alvo não estiver lá.
+6. **Dica:** não muda. Nenhum texto de dica cita lugar: "Procure em outro cômodo" continua certo, e nenhuma dica diz "só há 5 cômodos". Conferido em `pt-BR.json` (2026-11-20).
+7. **Escuro:** as 3 áreas novas são claras (sem `escuro`), como o Quarto da Oli e o Escritório.
+8. **Modo "Explorar a casa":** anda em 8 áreas (Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório e as 3 novas). Nasce na Sala, como em 21.6. O Quartinho segue fechado.
+9. **Enfeites das 3 áreas novas (só no explorar, sem colisão, sem rota nova, sem sprite novo):** Quarto do casal, 4 objetos; Banheiro 1, 3; Banheiro do escritório, 2 (total 9, passa de 25 para 34). Só nos tiles de móvel ou de parede, nunca no tile de chegada, na porta, no interruptor nem no caminho entre as portas; no Banheiro do escritório (1 tile livre) tudo fica sobre móvel. A Arte escolhe tiles e entre os 9 sprites existentes.
+10. **Textos dos enfeites (nenhum texto novo; usar as chaves que já existem em `pt-BR.json`, sem nome de pessoa):** guirlanda (`enfeite.guirlanda`), presente (`enfeite.presente`), meias (`enfeite.meias`), mini-árvore (`enfeite.arvore`), luz que pisca (`enfeite.pisca`). Pano de prato e outros enfeites visuais seguem sem resposta ao A. Sugestão de uso: Quarto do casal com meias, presente, mini-árvore e luz; Banheiro 1 com mini-árvore e presente; Banheiro do escritório com mini-árvore e presente. Se a Arte quiser um texto próprio de banheiro, volta ao Produto (padrão: não).
+11. **Texto "Essa porta está fechada":** não precisa de ajuste. Continua valendo para o Quartinho; é genérico e não cita cômodo.
+12. **Aviso de pilar:** com mais cômodos, procurar pode ficar mais longo. O jogo não ganha pressão de tempo e a dica não bloqueia. O Nick e a seta seguem como ajuda (PT de verificação na 1.3.0).
+
+**Aceite (QA)**
+- **PL17 (portas novas):** as 4 portas novas atravessam por andar contra e por A, nos dois sentidos, com fade, chegada no tile do outro lado e sem voltar sozinho; teclado e toque. A `banheiro1-quarto_casal` e a `banheiro1-quarto` fecham o circuito sem prender o jogador.
+- **PL18 (quinas e corredores):** nenhum ponto prende o jogador (o corredor das portas do Escritório e do Quarto da Oli na Sala, a Cozinha ao encostar na pia e descer para a Lavanderia, a alcova da Sala com as portas `quarto-sala`, `escritorio-sala` e `quarto_casal-sala`, e as quinas das 3 áreas novas). Em cada área nova, o sobrinho sai pela porta de onde entrou.
+- **PL19 (passagem da Cozinha):** a passagem tem 2 tiles (colunas 3 e 4), nenhuma peça ou rota fica coberta; cada área segue conexa.
+- **PL20 (interruptor):** o A funciona no próprio interruptor e a área sensível coincide com o desenho (o círculo amarelo do playtest da 1.2.2 não fica deslocado).
+- **PL21 (cacto, de novo):** PL14 passa com o cacto todo envidraçado (arte nova), sem bloquear a rota.
+- **PL22 (áreas novas fora da missão):** nenhuma peça, caixa, Nick dormindo ou condução cai nas áreas novas; as 4 fases e os créditos passam do início ao fim; as passagens das fases não mudam de número de passos sem registro (PL9).
+- **PL23 (enfeites novos):** os 9 enfeites novos aparecem só no explorar, não mudam a colisão e os que têm `examinar` respondem com o texto certo; nenhuma tela pisca mais de 3 vezes por segundo.
+- **PL24 (Quartinho):** a `cozinha-quartinho` segue fechada, com o diálogo de 14.10.3.
+- **PL11 e PL7 atualizados** (acima). PL13: título e créditos mostram "1.3.0".
+
+### 21.16 Sorteio das peças e do Nick a cada partida (1.3.0; pedido do Diretor, 2026-11-20)
+
+Pedido literal: "aleatorizar onde as peças da árvore vão nascer, e onde o Nick nasce, para dar mais dinâmica a quem joga de novo. Coloque um limitador de não nascer peça da árvore na Sala." Decidido pelo Produto por padrão, na ausência do Diretor; o Diretor revê no próximo playtest. Muda 4.4, 15.2.2 e 16.2 (já anotadas). Fica igual: a caixa de enfeite (Escritório, 5 1), a árvore, o interruptor, o enigma da porta, textos, dica e a regra "uma peça visível por vez" (parte 2 só depois da parte 1, parte 3 só depois da parte 2).
+
+**21.16.1 Tiles candidatos para peças.** Regra de um tile de peça (o validador confere em cada combinação, 21.16.6): piso livre, sem móvel, objeto, enfeite ou aresta de porta; não é tile de chegada de porta nem vizinho dele (distância de Manhattan 2 ou mais); não é tile de passagem da Cozinha e Lavanderia (colunas 3 e 4, linhas 2 e 3; **vizinho dela pode**, vale a tabela e a conectividade: Lavanderia (2,3) e (5,3) ficam); fora da faixa da barra (14.8, 2 tiles de folga); com pelo menos 1 vizinho livre alcançável; **com a peça presente, toda chegada de porta, todo examinável e o tile de dormir do Nick da fase continuam alcançáveis entre si** (a peça não tranca a passagem entre duas portas). Peça **nunca** no Hall, na Sala, no Quartinho (fechado), no Banheiro do escritório (1 tile livre) nem no Banheiro 1 (corredor entre duas portas: toda peça o trancaria). Os tiles abaixo vêm do conteúdo real (`content/maps/casa-real`) e do golden e são o **esperado**; o gerador de candidatos do Dev (21.16.6) produz a lista final, e divergência volta ao Produto:
+
+| Área e cômodo | Tiles candidatos (x, y; girado) | N |
+|---|---|---|
+| Cozinha (linhas 0 a 2) | (2,0), (3,0), (1,1) | 3 |
+| Lavanderia (linhas 3 e 4) | (1,3), (2,3), (1,4), (5,3) | 4 |
+| Quarto da Oli | (2,0), (3,0), (2,1), (1,2), (2,2), (3,2), (2,3) | 7 |
+| Escritório | (4,1), (4,2) | 2 |
+| Quarto do casal | (0,0), (0,1), (0,2), (0,3), (1,3), (2,3) | 6 |
+
+Fora desses por regra: Cozinha (2,1) e (4,1) ficariam em frente da Geladeira e da Pia (única entrada deles) e (3,1) trancaria a passagem; Escritório (2,4) trancaria o corredor entre as duas portas. Se a Arte mover um móvel, o gerador recalcula.
+
+**21.16.2 Regra de sorteio das peças (decisão: uma peça por área, sem repetir).**
+1. Áreas sorteáveis: `cozinha` (Cozinha e Lavanderia contam como **uma** área), `quarto` (Quarto da Oli), `escritorio` e `quarto_casal`. Sorteiam-se **3 áreas distintas, em ordem**: a primeira recebe a peça 1, a segunda a peça 2, a terceira a peça 3. Há 4 áreas para 3 peças, então uma sempre fica sem peça. Motivo: a regra 4.4 (cômodos diferentes), mais dinâmica entre partidas e nenhuma peça tão perto da outra que a busca vire um passeio de um tile.
+2. **Sorteio em duas etapas:** primeiro a área, uniforme; depois o tile, uniforme entre os candidatos da área (na `cozinha`, entre os 7 da Cozinha e da Lavanderia juntos, ADR-013). **Consequência aceita:** cada tile de uma área pequena é mais provável que um de uma área grande (ex.: Escritório, 2 tiles, tem cada tile mais provável que um do Quarto da Oli, 7).
+3. **Alcançável:** toda combinação é alcançável a partir da Sala pelas portas abertas (21.15), com a peça presente e sem passar por porta fechada. Toda fase (luzes, parte 1, parte 2, parte 3, enfeites) segue válida: a condução termina sempre na Sala (2, 7) de frente para a árvore; só o número de passos muda (o 2× de 14.11.3 vale pelo tamanho real da rota).
+4. **Anti-repetição, só em memória:** **a peça 1 não cai na mesma área da peça 1 da partida anterior** da mesma sessão. Vale só quando a semente vem da entropia (com semente fixa do QA o sorteio não consulta a partida anterior, para ser reproduzível). Sem `localStorage`, sem save (decisão da v1.x). Substitui a regra anterior de "plano idêntico".
+
+**21.16.3 Peça 1 deixa de ser o tutorial na Sala.** Hoje a peça 1 aparece na Sala depois das luzes (15.2.2), à vista, como primeira lição de "pegar uma peça". Na 1.3.0 ela está sempre fora da Sala. Roteiro novo, sem texto novo: (a) luzes e árvore como hoje ("A árvore ainda está desmontada. Ela precisa de 3 partes."); (b) na parte 1, o **Nick dorme sempre na Sala** (21.16.4), de modo que a primeira lição passa a ser "acorde o Nick e aperte X para farejar" (`nick.acordou`), e a seta leva à porta da área da peça 1; (c) a dica "Procure uma parte da árvore" continua certa (não cita lugar). O QA confere se o primeiro contato é compreensível para uma criança de 5 anos (PL25).
+
+**21.16.4 Onde o Nick dorme (sorteado por fase).** Tile de dormir: piso livre, fora de móvel, objeto, enfeite, porta, chegada e do vizinho da chegada (Manhattan 2 ou mais); com pelo menos 2 vizinhos livres, nenhum tile de peça; fora da barra; fora do tile da árvore e de seu tile de frente, do interruptor e da peça da fase. **Nunca onde a condução passa:** a validação trata o tile do Nick como bloqueado e exige que a rota da condução da fase (da peça, ou do interruptor, até a árvore) continue existindo (N009, N14). Nick nunca em tile bloqueado, no Hall, nos banheiros nem no Quartinho (regra "no máximo a uma porta da Sala", 16.2.2, mantida).
+
+| Fase | Área de Nick (sorteada entre) | Observação |
+|---|---|---|
+| Porta e luzes | Sala (fixa) | Tile sorteado entre os válidos da Sala com **distância de Chebyshev 2 ou mais** do tile de chegada da `hall-sala` (ADR-013; as peças seguem Manhattan). **Não exige estar dentro do círculo de luz de 3 tiles** (ver 21.16.10) |
+| Parte 1 | Sala (fixa) | Qualquer tile válido da Sala. Motivo: tutorial do farejar (21.16.3) |
+| Parte 2 e 3 | Sala, `cozinha`, `quarto`, `escritorio` ou `quarto_casal`, **menos a área da peça da fase** | Nick e peça nunca na mesma área: a criança acorda o Nick, e a seta leva até a peça |
+| Enfeites | Sala, `cozinha`, `quarto` ou `quarto_casal` (não o Escritório, onde está a caixa) | Depois da parte 3 |
+
+`nick.alvo` (a área que a seta de farejar aponta) deixa de ser fixo no conteúdo: é **a área da peça sorteada** da fase (e o Escritório na fase dos enfeites). A dica (tela e textos) **não muda**: ela não cita lugar, e quem orienta para a área é a seta do Nick (16.5). "Procure em outro cômodo" (parte 3) segue certo.
+
+**21.16.5 Determinismo e semente.** O sorteio usa um **gerador injetável** (porta de domínio, sem `Math.random()` solto no código de jogo). Entrada: uma semente numérica; mesma semente, mesmo plano, em qualquer aparelho (algoritmo especificado e testado com valores conhecidos). A semente nova nasce **a cada partida**, no fim da seleção do sobrinho (antes da introdução), a partir de uma fonte de entropia do navegador (`crypto.getRandomValues`, com reserva no relógio). **A semente nunca aparece na tela** (nem no playtest). O **plano da partida** (áreas e tiles das 3 peças e do Nick em cada fase) é calculado todo de uma vez ao começar e fica só em memória. **Sem `localStorage`**, sem save e sem semente na tela de um sobrinho. O QA fixa a semente pelo gancho de QA (`__semente` e `__plano`, só sob `__QA__`: existe **só no build de QA**, nunca no build de playtest do Diretor nem na release) e lê o plano pelo mesmo gancho. Mesmo plano de uma semente fixa em duas execuções (teste).
+
+**21.16.6 Validação.** (a) `validarConteudo` calcula os candidatos de cada área pela regra de 21.16.1 e 21.16.4 e **recusa** conteúdo cujo pool tenha menos candidatos que o mínimo (cozinha/lavanderia 2, quarto 2, escritório 1, quarto do casal 2; Sala para o Nick 4) ou cujo tile viole as regras. (b) Em `content/sorteio.json` ficam só as áreas sorteáveis, os mínimos e, por fase, as áreas do Nick. **Os tiles candidatos são calculados dos mapas por função pura (`candidatos.ts`), não ficam em `content/`** (desvio do ADR-002 aceito no ADR-013; mexer num móvel recalcula sozinho). (c) **Enumeração completa:** um teste percorre todo (peça candidata, tile do Nick candidato) de cada fase e confere alcance, rota da condução com o Nick bloqueado, seta de farejar na porta certa e Nick fora da área da peça; hoje são cerca de 4 pools de peça × até ~40 tiles de Nick por fase, uma conta pequena. (d) Teste de propriedade: 1000 sementes, plano sempre válido, nenhuma peça na Sala ou no Hall, 3 áreas distintas. (e) A mudança de qualquer mapa em `content/` roda de novo esses testes.
+
+**21.16.7 Aceite (QA).**
+- **PL25 (sorteio):** com sementes diferentes, as peças aparecem em áreas e tiles diferentes; nunca na Sala nem no Hall; sempre 3 áreas distintas; nunca na área do Nick da fase.
+- **PL25b (anti-repetição):** com semente da entropia, duas partidas seguidas na mesma sessão nunca têm a peça 1 na mesma área (20 pares). Com semente fixa pelo gancho, a regra não atua.
+- **PL26 (semente fixa):** com a mesma semente (gancho), duas partidas dão o mesmo plano; com sementes novas, planos diferentes; sem `localStorage` (inspecionar).
+- **PL27 (20 partidas):** 20 partidas completas simuladas (sementes distintas, 4 sobrinhos; teclado e toque em amostra): luzes, partes 1 a 3, enfeites e créditos, sem bloqueio; peça e Nick sempre alcançáveis; 2× onde a rota passa de 10 passos; registrar o número de passos de cada condução (pode passar de 22).
+- **PL28 (farejar):** em cada partida, a seta de farejar aponta a porta da rota até a área da peça; o Nick acorda e segue pelo mesmo caminho; a dica não bloqueia.
+- **PL29 (primeira peça):** sem peça visível na Sala, uma criança de 5 anos entende o que fazer (acordar o Nick, farejar). Só o Diretor, no playtest.
+- **PL30 (passagem e quinas):** nenhuma peça nem Nick trancam a passagem da Cozinha e Lavanderia, as chegadas das portas nem o corredor entre as duas portas do Escritório ou do Quarto do casal.
+
+**21.16.8 Padrões aplicados (sem pergunta ao Diretor).** Caixa de enfeite fixa; Cozinha e Lavanderia são uma área para o sorteio (evita duas peças lado a lado no escuro); banheiros fora do sorteio de peça e de Nick; peça 1 nunca visível na Sala; Nick fixo na Sala nas fases porta, luzes e parte 1; Nick nunca na área da peça; semente nova a cada partida e plano só em memória; anti-repetição entre partidas; o texto de dica não muda.
+
+**21.16.10 Nick e o círculo de luz (corrige 16.2.1, 16.2.2 e N1).** A regra "dentro do círculo de luz da entrada" (14.5) nasceu para o Nick em (8, 5) da planta antiga. Na planta nova ele dorme longe da entrada (Sala (9, 5) na 1.1.0), fora do círculo de 3 tiles. **Decisão:** a regra de 3 tiles vale só para o **interruptor** (14.10.2, item 5), não para o Nick. O Nick das luzes é visto quando o sobrinho anda até ele (o círculo acompanha o sobrinho) e a condução e a seta não dependem disso. N1 passa a: "nova partida; Nick dormindo na Sala, a pelo menos 2 tiles (Chebyshev) da chegada; aparece ao andar até ele".
+
+**21.16.11 Aviso de arte (ADR-013).** Na visão 3/4 a peça e o halo desenham acima dos móveis em profundidade e não ficam atrás de face norte nem de sombra, nos tiles candidatos de todos os cômodos (backlog 193).
+
+**21.16.9 Riscos.** (1) Busca mais longa para criança pequena: o Nick sempre acordável na Sala na parte 1 e a seta mitigam; a dica nunca bloqueia; sem pressão de tempo. (2) Conteúdo mudar e invalidar o pool: 21.16.6(a) e (e). (3) Pools pequenos (Escritório 2, Quarto da Oli 7): se o Diretor achar repetitivo, a Arte afrouxa móveis ou o Produto relaxa a regra. (4) Rotas até ~30 passos em 2×: cerca de 4 s com fade, dentro do aceitável.
 
 ### 21.14 Easter egg do cacto (decisão do Diretor, 2026-11-17)
 

@@ -86,6 +86,7 @@ export const CHAVE = {
   lampada: 'spr_lampada',
   indicadorSetaDireita: 'spr_indicador_seta_direita',
   indicadorSetaEsquerda: 'spr_indicador_seta_esquerda',
+  indicadorSetaBaixo: 'spr_indicador_seta_baixo',
   indicadorTapete: 'spr_indicador_tapete',
 } as const;
 
@@ -122,4 +123,10 @@ export const CHAVE_FUMACA = 'spr_fumaca_dormir';
 export const ANIM_FUMACA = 'fumaca-dormir';
 /** Seta dourada de farejar, na direção de saída da porta (direita, esquerda, cima). */
 export const CHAVE_SETA_FAREJAR = (dir: Direcao): string => `spr_seta_farejar_${dir}`;
+/**
+ * Seta de farejar de uma porta de `lado` qualquer. A Arte tem as setas cima, direita e esquerda; a de baixo é a de cima virada
+ * de ponta-cabeça (sem ela, a seta de uma porta de lado baixo, como a `quarto-sala`, nunca aparecia: 1.3.0).
+ */
+export const SETA_FAREJAR_DO_LADO = (lado: Direcao): { chave: string; flipY: boolean } =>
+  lado === 'baixo' ? { chave: CHAVE_SETA_FAREJAR('cima'), flipY: true } : { chave: CHAVE_SETA_FAREJAR(lado), flipY: false };
 export const CHAVE_ICONE_DICA = 'spr_icone_dica';

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 2,
+  "subarea": "quarto_casal",
+  "enfeites": [
+    {
+      "id": "quarto_casal_arvore_g_1",
+      "sprite": "dec_arvore_g",
+      "x": 0,
+      "y": 0,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_casal_arvore_p_1",
+      "sprite": "dec_arvore_p",
+      "x": 0,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_casal_presente_verde_1",
+      "sprite": "dec_presente_verde",
+      "x": 3,
+      "y": 3,
+      "pisca": false,
+      "examinar": null
+    },
+    {
+      "id": "quarto_casal_meias_1",
+      "sprite": "dec_meias",
+      "x": 1,
+      "y": 2,
+      "pisca": false,
+      "examinar": "enfeite.meias",
+      "elevacao": 18
+    },
+    {
+      "id": "quarto_casal_presente_vermelho_1",
+      "sprite": "dec_presente_vermelho",
+      "x": 2,
+      "y": 2,
+      "pisca": false,
+      "examinar": "enfeite.presente",
+      "elevacao": 18
+    }
+  ]
+}

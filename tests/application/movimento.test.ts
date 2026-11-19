@@ -11,13 +11,12 @@ import {
 } from '../../src/application/mundo/movimento';
 import { SessaoDeJogo } from '../../src/application/SessaoDeJogo';
 import { ConcluirFase } from '../../src/application/usecases/ConcluirFase';
-import { IniciarNovoJogo } from '../../src/application/usecases/IniciarNovoJogo';
 import { TentarCodigoDaPorta } from '../../src/application/usecases/TentarCodigoDaPorta';
 import { AcenderLuzes } from '../../src/application/usecases/AcenderLuzes';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { PerfilDeArte } from '../../src/application/arte/PerfilDeArte';
-import { missoesReais } from '../helpers/missoesReais';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 
 /**
  * Movimento (ADR-003 seções 4 e 5): a geometria vem do perfil. Os testes rodam para tile 16 (v1) e 32 (2×):
@@ -154,7 +153,7 @@ describe.each([16, 32])('interação tolerante (GDD 14.9.2, casos Q1 a Q9), tile
 describe('fluxo de sessão: casos de uso sem persistência', () => {
   it('porta com código certo avança a fase; certo de outro sobrinho é errado', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('bibi');
+    iniciarComReferencia(sessao).executar('bibi');
     new ConcluirFase(sessao).executar('introducao');
     const tentar = new TentarCodigoDaPorta(sessao);
     expect(tentar.executar('017')).toEqual({ tipo: 'errado', mensagem: 0 });
@@ -166,7 +165,7 @@ describe('fluxo de sessão: casos de uso sem persistência', () => {
 
   it('mensagens de erro alternam 0, 1, 2 e voltam a 0 (GDD 14.1)', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     const tentar = new TentarCodigoDaPorta(sessao);
     const ordem = [0, 1, 2, 0, 1].map(() => tentar.executar('999'));
@@ -175,14 +174,14 @@ describe('fluxo de sessão: casos de uso sem persistência', () => {
 
   it('código incompleto não conta erro para a mensagem', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     expect(new TentarCodigoDaPorta(sessao).executar('01')).toEqual({ tipo: 'incompleto' });
   });
 
   it('interruptor só acende na fase luzes e uma vez', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('tutu');
+    iniciarComReferencia(sessao).executar('tutu');
     const acender = new AcenderLuzes(sessao);
     expect(acender.executar()).toBe(false);
     new ConcluirFase(sessao).executar('introducao');
@@ -195,10 +194,10 @@ describe('fluxo de sessão: casos de uso sem persistência', () => {
 
   it('primeiraVez marca o aviso só uma vez por partida', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     expect(sessao.primeiraVez('escuro')).toBe(true);
     expect(sessao.primeiraVez('escuro')).toBe(false);
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     expect(sessao.primeiraVez('escuro')).toBe(true);
   });
 });

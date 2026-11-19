@@ -109,6 +109,7 @@ descreverComConteudoNovo('conteúdo real em content/ (ADR-002 schema 3, ADR-011)
       missoes: c.missoes,
       textos: c.textos,
       perfil: arquivos['art-profiles/hd-480x352.json'] as PerfilDeArte,
+      sorteio: c.sorteio,
     });
     expect(erros).toEqual([]);
   });
@@ -167,10 +168,16 @@ describe('validação do manifesto (schema 3)', () => {
     expect(v2.ok).toBe(false);
     if (!v2.ok) expect(v2.erros.join(' ')).toMatch(/schemaVersion 2 não é mais suportada.*planta antiga/);
     const nova = base();
-    nova.schemaVersion = 4;
-    const v4 = validarManifesto(nova);
-    expect(v4.ok).toBe(false);
-    if (!v4.ok) expect(v4.erros.join(' ')).toMatch(/schemaVersion 4 é mais nova/);
+    nova.schemaVersion = 5;
+    const v5 = validarManifesto(nova);
+    expect(v5.ok).toBe(false);
+    if (!v5.ok) expect(v5.erros.join(' ')).toMatch(/schemaVersion 5 é mais nova/);
+    // O schema 3 (antes do sorteio) é recusado com a mensagem do ADR-013.
+    const tres = base();
+    tres.schemaVersion = 3;
+    const v3 = validarManifesto(tres);
+    expect(v3.ok).toBe(false);
+    if (!v3.ok) expect(v3.erros.join(' ')).toMatch(/schemaVersion 3 não é mais suportada.*antes do sorteio/);
     expect(validarManifesto(base()).ok).toBe(true);
   });
 
@@ -405,8 +412,9 @@ descreverComConteudoNovo('chegada e lado da porta (ADR-011 seções 3.2 e 7; ite
 
   it('o conteúdo real passa sem erro e sem avisos (o W027 de pares de fórmula não existe mais)', async () => {
     const c = await carregar(lerConteudo());
-    expect(c.avisos).toEqual([]);
-    expect(avisosDeConteudo({ manifesto: c.manifesto, todos: c.todosOsMapas, missoes: c.missoes, textos: c.textos, perfil: c.perfil })).toEqual([]);
+    // S008 (peça fixa ainda nos mapas gerados) é aviso até a Arte regerar os mapas sem `peca` (ADR-013 seção 6).
+    expect(c.avisos.filter((a) => !a.startsWith('S008'))).toEqual([]);
+    expect(avisosDeConteudo({ manifesto: c.manifesto, todos: c.todosOsMapas, missoes: c.missoes, textos: c.textos, perfil: c.perfil, sorteio: c.sorteio })).toEqual([]);
   });
 
   it('spawns de nomes diferentes no mesmo tile são aceitos (quarto-sala e escritorio-sala em (7, 0))', async () => {

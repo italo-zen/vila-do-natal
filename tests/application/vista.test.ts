@@ -208,15 +208,17 @@ describe('vidro da Sala (vista.json): só desenho, sem mudar a colisão', () => 
 
   it('o vista.json real é válido e tem o vidro da Sala em x = 0, y de 3 a 8', () => {
     expect(r.ok).toBe(true);
-    expect(vista.vidro?.sala?.map((v) => [v.x, v.y])).toEqual([[0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8]]);
+    expect(vista.vidro?.sala?.filter((v) => v.tipo === 'linha_v').map((v) => [v.x, v.y])).toEqual([[0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8]]);
+    // 1.2.3: a quina do cacto também tem vidro na face norte, em (0, 3) e (1, 3).
+    expect(vista.vidro?.sala?.filter((v) => v.tipo === 'face_norte').map((v) => [v.x, v.y])).toEqual([[0, 3], [1, 3]]);
   });
 
   it('toda aresta de vidro é uma linha vertical da Sala e a peça de vidro existe no sprites.json', () => {
     const sala = todos.get('sala')!;
     const arestas = classificarArestas(sala);
     for (const v of vista.vidro!.sala) {
-      const a = arestas.find((x) => x.tipo === 'linha_v' && x.x === v.x && x.y === v.y);
-      expect(a, `(${v.x}, ${v.y})`).toBeDefined();
+      const a = arestas.find((x) => x.tipo === v.tipo && x.x === v.x && x.y === v.y);
+      expect(a, `(${v.tipo} ${v.x}, ${v.y})`).toBeDefined();
       expect(ehVidro(a!, vista.vidro!.sala)).toBe(true);
       expect(nomes.has(`${chaveDoVidro(a!)}.png`), chaveDoVidro(a!)).toBe(true);
     }
@@ -229,15 +231,78 @@ describe('vidro da Sala (vista.json): só desenho, sem mudar a colisão', () => 
     expect(esq.map((a) => chaveDoVidro(a))).toEqual(['spr_parede_vidro_topo_com_face_sombra', 'spr_parede_vidro_fim_sombra']);
     expect(chavesDaParede(esq[1], true)).toEqual(['spr_parede_vidro_fim_sombra', 'spr_parede_linha_v_fim_sombra', 'spr_parede_linha_v']);
     expect(chavesDaParede(esq[1], false)).toEqual(['spr_parede_linha_v_fim_sombra', 'spr_parede_linha_v']);
-    // Só linha vertical tem vidro.
-    const face = classificarArestas(m).find((a) => a.tipo === 'face_norte')!;
-    expect(chaveDoVidro(face)).toBeUndefined();
-    expect(ehVidro(face, [{ tipo: 'linha_v', x: face.x, y: face.y }])).toBe(false);
+    // Linha horizontal interna não tem vidro.
+    const interna = classificarArestas(mapaDeTexto('c', ['+-+-+', '|. .|', '+-+ +', '|. .|', '+-+-+'])).find((a) => a.tipo === 'linha_h')!;
+    expect(chaveDoVidro(interna)).toBeUndefined();
+    expect(ehVidro(interna, [{ tipo: 'face_norte', x: interna.x, y: interna.y }])).toBe(false);
+  });
+
+  it('arteDeParede: o mural de fotos da Sala em (9, 4), lado cima, fica na aresta norte de um tile de piso, com âncora (14, 23) no sprites.json', () => {
+    expect(r.ok).toBe(true);
+    const lista = vista.arteDeParede?.sala;
+    expect(lista).toEqual([{ sprite: 'spr_mural_de_fotos', x: 9, y: 4, lado: 'cima' }]);
+    const sala = todos.get('sala')!;
+    expect(sala.chao[4][9]).not.toBe(0);
+    // A aresta norte do tile é face (vazio acima): o mural fica sobre ela, sem mudar a colisão.
+    expect(classificarArestas(sala).some((a) => a.tipo === 'face_norte' && a.x === 9 && a.y === 4)).toBe(true);
+    const img = (JSON.parse(readFileSync(join(raiz, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; ancora?: { x: number; y: number } }[] }).imagens.find((i) => i.arquivo === 'spr_mural_de_fotos.png');
+    expect(img?.ancora).toEqual({ x: 14, y: 23 });
+    // Posição pela âncora: x = tile × 32 + 16 − 14; y = tile × 32 − 23.
+    expect({ x: 9 * 32 + 16 - img!.ancora!.x, y: 4 * 32 - img!.ancora!.y }).toEqual({ x: 290, y: 105 });
+  });
+
+  it('vidro e arteDeParede valem para TODAS as áreas do vista.json, não só a Sala (1.2.2)', () => {
+    expect(Object.keys(vista.vidro ?? {}).sort()).toEqual(['cozinha', 'sala']);
+    expect(Object.keys(vista.arteDeParede ?? {}).sort()).toEqual(['escritorio', 'quarto', 'quarto_casal', 'sala']);
+    const imagens = (JSON.parse(readFileSync(join(raiz, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; ancora?: unknown }[] }).imagens;
+    for (const [area, lista] of Object.entries(vista.vidro ?? {})) {
+      const arestas = classificarArestas(todos.get(area)!);
+      for (const v of lista) {
+        const a = arestas.find((x) => x.tipo === v.tipo && x.x === v.x && x.y === v.y);
+        expect(a, `vidro ${area} (${v.x}, ${v.y})`).toBeDefined();
+        expect(nomes.has(`${chaveDoVidro(a!)}.png`), `${area}: ${chaveDoVidro(a!)}`).toBe(true);
+      }
+    }
+    for (const [area, lista] of Object.entries(vista.arteDeParede ?? {})) {
+      const mapa = todos.get(area)!;
+      const arestas = classificarArestas(mapa);
+      for (const a of lista) {
+        expect(mapa.chao[a.y][a.x], `${area} ${a.sprite} (${a.x}, ${a.y}) em piso`).not.toBe(0);
+        // Lado cima: a aresta norte do tile é face de parede (vazio acima), onde o quadro fica preso.
+        expect(arestas.some((e) => e.tipo === 'face_norte' && e.x === a.x && e.y === a.y), `${area} ${a.sprite}`).toBe(true);
+        expect(imagens.find((i) => i.arquivo === `${a.sprite}.png`)?.ancora, `${a.sprite} com âncora`).toBeDefined();
+      }
+    }
+  });
+
+  it('vidro na face norte (1.2.3): mapeamento spr_parede_vidro_face_<posição> com fallback na face normal', () => {
+    const m = mapaDeTexto('s', ['+-+-+-+', '|. . .|', '+-+-+-+']);
+    const faces = classificarArestas(m).filter((a) => a.tipo === 'face_norte');
+    expect(faces.map((a) => chaveDoVidro(a))).toEqual(['spr_parede_vidro_face_esquerda', 'spr_parede_vidro_face_meio', 'spr_parede_vidro_face_direita']);
+    expect(chavesDaParede(faces[1], true)).toEqual(['spr_parede_vidro_face_meio', 'spr_parede_face_norte_meio', 'spr_parede_face_norte']);
+    expect(chavesDaParede(faces[1], false)).toEqual(['spr_parede_face_norte_meio', 'spr_parede_face_norte']);
+    const lista = [{ tipo: 'face_norte', x: 1, y: 0 }];
+    expect(faces.map((a) => ehVidro(a, lista))).toEqual([false, true, false]);
+    // `face_norte` na lista não vira vidro de uma linha vertical de mesmas coordenadas, e vice-versa.
+    const v = classificarArestas(m).find((a) => a.tipo === 'linha_v' && a.x === 1 && a.y === 0);
+    expect(v === undefined || !ehVidro(v, lista)).toBe(true);
+    expect(ehVidro(faces[1], [{ tipo: 'linha_v', x: 1, y: 0 }])).toBe(false);
+  });
+
+  it('arteDeParede mal formada é recusada', () => {
+    const base = { schemaVersion: 1 };
+    expect(validarVistaDaArte({ ...base, arteDeParede: { sala: [{ sprite: 'spr_x', x: 1, y: 1, lado: 'cima' }] } }).ok).toBe(true);
+    for (const ruim of [{ sprite: 'x', x: 1, y: 1, lado: 'cima' }, { sprite: 'spr_x', x: -1, y: 1, lado: 'cima' }, { sprite: 'spr_x', x: 1, y: 1, lado: 'norte' }, { sprite: 'spr_x', x: 1.5, y: 1, lado: 'cima' }]) {
+      expect(validarVistaDaArte({ ...base, arteDeParede: { sala: [ruim] } }).ok, JSON.stringify(ruim)).toBe(false);
+    }
+    expect(validarVistaDaArte({ ...base, arteDeParede: [] }).ok).toBe(false);
+    expect(validarVistaDaArte({ ...base, arteDeParede: { sala: 'x' } }).ok).toBe(false);
   });
 
   it('o vista.json mal formado é recusado', () => {
     expect(validarVistaDaArte({ schemaVersion: 2 }).ok).toBe(false);
     expect(validarVistaDaArte({ schemaVersion: 1, vidro: { sala: [{ tipo: 'linha_h', x: 0, y: 0 }] } }).ok).toBe(false);
+    expect(validarVistaDaArte({ schemaVersion: 1, vidro: { sala: [{ tipo: 'face_norte', x: 0, y: 3 }] } }).ok).toBe(true);
     expect(validarVistaDaArte({ schemaVersion: 1, vidro: { sala: 'x' } }).ok).toBe(false);
     expect(validarVistaDaArte({ schemaVersion: 1 }).ok).toBe(true);
   });

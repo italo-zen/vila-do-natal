@@ -5,12 +5,13 @@ import { deslocamentoDaSubarea, ladoDaPorta, type LadoDaPorta } from './subarea'
  * Indicadores de porta (GDD 14.10.10, item 046). Só desenho: não cria objeto, gatilho nem colisão.
  *
  * A direção é o campo `lado` da `porta` (ADR-011 seção 3.4; substitui o `saida` do ADR-004), no tile da porta.
- * Lado direita ou esquerda: seta. Lado baixo: tapete. Lado cima: nada.
+ * Lado direita, esquerda ou cima: seta no tile da porta (1.3.0: o lado cima também tem seta, para o Quarto da Oli e as portas da
+ * alcova da Sala). Lado baixo: tapete.
  *
  * Coordenadas em tiles locais da subárea (como o conteúdo). A posição na tela é a local mais o deslocamento.
  */
 
-export type TipoDeIndicador = 'seta-direita' | 'seta-esquerda' | 'tapete';
+export type TipoDeIndicador = 'seta-direita' | 'seta-esquerda' | 'seta-cima' | 'tapete';
 
 export interface IndicadorDePorta {
   tipo: TipoDeIndicador;
@@ -44,6 +45,7 @@ export function indicadoresDaSubarea(mapa: MapaDoJogo, tela: { colunas: number; 
     let tipo: TipoDeIndicador | null = null;
     if (lado === 'esquerda') tipo = 'seta-esquerda';
     else if (lado === 'direita') tipo = 'seta-direita';
+    else if (lado === 'cima') tipo = 'seta-cima';
     else if (lado === 'baixo') tipo = 'tapete';
     if (!tipo) continue;
     // Fora da caixa da tela, ou na última linha (a barra): não desenha (cobertura por teste).

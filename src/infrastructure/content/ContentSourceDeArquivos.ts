@@ -4,6 +4,7 @@ interface ManifestoBruto {
   maps?: Array<{ id: string; file: string }>;
   missions?: Array<{ id: string; file: string }>;
   texts?: Array<{ locale: string; file: string }>;
+  sorteio?: string;
 }
 
 /**
@@ -44,6 +45,11 @@ export class ContentSourceDeArquivos implements ContentSource {
     const d = this.manifestoBruto().texts?.find((t) => t.locale === locale);
     if (!d) throw new Error(`Textos "${locale}" não estão no manifesto.`);
     return this.ler(d.file);
+  }
+  async sorteio(): Promise<unknown> {
+    const f = this.manifestoBruto().sorteio;
+    if (!f) throw new Error('O manifesto não declara o sorteio (schema 4, ADR-013).');
+    return this.ler(f);
   }
   async missao(id: string): Promise<unknown> {
     const d = this.manifestoBruto().missions?.find((m) => m.id === id);

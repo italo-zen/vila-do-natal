@@ -6,6 +6,54 @@ Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelo
 
 - Nada por enquanto. As próximas versões entram aqui.
 
+## [1.3.0] - 2026-11-20
+
+Três cômodos novos para explorar, peças da árvore e Nick em lugares diferentes a cada partida, e vários ajustes de conforto. Nenhuma missão ou texto mudou.
+
+**Para quem mantém o conteúdo (schema 4, ADR-013):** o manifesto passa a `schemaVersion` 4 e ganha a chave `sorteio` (`content/sorteio.json`: as áreas sorteáveis e as regras do Nick). `nick.dorme` e `nick.alvo` saíram das missões (`nick` presente é erro N015). Os objetos `peca` saem dos mapas (S008; por enquanto, aviso: o motor os ignora). Conteúdo de antes do sorteio (schema 3) é recusado com mensagem clara.
+
+### Adicionado
+- As três partes da árvore agora nascem em lugares diferentes a cada partida: sempre em três cômodos diferentes entre a Cozinha e a Lavanderia, o Quarto da Oli, o Escritório e o Quarto do casal, e nunca na Sala. O Nick também dorme em lugares diferentes a cada fase: na Sala nas luzes e na parte 1 (é ele quem ensina a farejar), e em outro cômodo, que não o da peça, nas partes 2 e 3. A seta de farejar leva sempre à porta certa. A partida seguinte não repete o cômodo da primeira peça. Nada é guardado no aparelho.
+- Seta de direção em todas as portas abertas, inclusive a do Quarto da Oli (porta de baixo, seta virada para cima).
+- O Nick tem um farejar mais confiável: a seta amarela volta a aparecer em todas as portas (a de lado baixo não tinha imagem).
+- Para o QA (só no build de QA): `__semente(n)`, `__plano()` e `?semente=N` fixam e leem o sorteio; o plano nunca aparece na tela.
+- O Quarto do casal, o Banheiro do quarto e o Banheiro do escritório estão abertos para andar. As portas deles abrem junto com o Quarto da Oli e o Escritório. O Quartinho segue fechado.
+- No modo "Explorar a casa", enfeites de Natal nesses três cômodos.
+- Assistência de quina: quando o sobrinho esbarra numa quina por poucos pixels, o jogo o desliza para o lado livre. Acabaram os travamentos na entrada do corredor das portas e ao descer da Cozinha para a Lavanderia. Vale no teclado e no toque, e nunca atravessa parede nem móvel.
+- Móveis altos ficam transparentes enquanto alguém está atrás deles, para não esconder o sobrinho nem o Nick.
+- Vidro também na quina da parede da Sala, perto do cacto.
+
+### Mudou
+- Peça e brilho desenham sempre acima dos móveis, para nunca ficarem escondidos atrás de um móvel alto.
+- Candidatos do sorteio: Cozinha 3, Lavanderia 4, Quarto da Oli 7, Escritório 2, Quarto do casal 6 (22 tiles). As regras vivem num lugar só (`candidatos.ts`) e valem no jogo e na validação; testes percorrem todas as combinações e 1000 sementes.
+- O brilho do interruptor agora fica em cima da placa na parede, e o A funciona de frente para ela, a partir do tile onde ela está.
+- As alturas da geladeira, do forno e de outros eletros foram reduzidas pela Arte.
+- Ids de arte e de conteúdo ajustados (sem efeito no jogo).
+- Os mapas gerados saem sem as peças fixas: o sorteio é o dono delas (S008 agora é erro).
+
+## [1.2.2] - 2026-11-20
+
+Ajuste de arte dos quartos, do Escritório e da Cozinha. Nada de regra, missão, mapa ou texto mudou.
+
+### Adicionado
+- Quarto da Oli: boiserie (o painel de madeira na parede) e margaridas na parede.
+- Quarto do casal: quadros na parede.
+- Escritório: quadro de fotos na parede.
+- Cozinha: janela sobre a pia e piso bege.
+
+### Mudou
+- Os quartos, o Escritório e a Cozinha foram redesenhados a partir de fotos reais da casa.
+
+## [1.2.1] - 2026-11-20
+
+Ajuste de arte da Sala. Nada de regra, missão, mapa ou texto mudou.
+
+### Adicionado
+- Mural de fotos na parede do corredor da Sala, ao lado da porta da Cozinha. É só enfeite: não bloqueia nem responde ao A.
+
+### Mudou
+- O sofá, o rack da TV, a mesa de jantar e o aparador foram redesenhados a partir de fotos reais da casa.
+
 ## [1.2.0] - 2026-11-19
 
 O jogo ganhou uma nova visão, inspirada nos jogos de aventura em pixel art como Pokémon FireRed: a casa é vista "de três quartos", com paredes e móveis que têm frente, topo e sombra. As missões, as regras e os textos continuam os mesmos.

@@ -141,17 +141,45 @@ export function caixaCruzaAresta(x0: number, y0: number, x1: number, y1: number,
 }
 
 /**
+ * Assistência de quina (como nos jogos de Pokémon): o avanço na direção (dx, dy) está barrado. Procura o menor deslocamento lateral
+ * s (1 a `quina` px, para um lado ou o outro) em que o caminho lateral inteiro está livre e o avanço, dali, também. Devolve a
+ * posição depois de 1 px de deslize para esse lado, ou undefined se não há saída. Sem saída em ≤ `quina` px (parede reta), nada muda.
+ */
+function deslizeDeQuina(atual: Posicao, dx: number, dy: number, passo: number, quina: number, bloqueado: Bloqueado, g: Geometria, parede?: ParedeNoTile): Posicao | undefined {
+  const px = dx === 0 ? 1 : 0;
+  const py = dy === 0 ? 1 : 0;
+  for (let s = 1; s <= quina; s++) {
+    for (const lado of [1, -1]) {
+      let livre = true;
+      for (let k = 1; k <= s && livre; k++) livre = !caixaBateEmParede({ x: atual.x + px * lado * k, y: atual.y + py * lado * k }, bloqueado, g, parede);
+      if (!livre) continue;
+      const alvo = { x: atual.x + px * lado * s + dx * passo, y: atual.y + py * lado * s + dy * passo };
+      if (!caixaBateEmParede(alvo, bloqueado, g, parede)) return { x: atual.x + px * lado, y: atual.y + py * lado };
+    }
+  }
+  return undefined;
+}
+
+/**
  * Move em uma direção (sem diagonal), pixel a pixel, parando na primeira parede (de tile ou de aresta).
  * Nunca atravessa parede e nunca fica preso: se não há colisão, anda a distância toda.
  */
-export function mover(p: Posicao, direcao: Direcao, distancia: number, bloqueado: Bloqueado, g: Geometria, parede?: ParedeNoTile): Posicao {
+export function mover(p: Posicao, direcao: Direcao, distancia: number, bloqueado: Bloqueado, g: Geometria, parede?: ParedeNoTile, quina = 0): Posicao {
   const { dx, dy } = VETOR[direcao];
   let atual = { ...p };
   let restante = distancia;
   while (restante > 0) {
     const passo = Math.min(1, restante);
     const candidato = { x: atual.x + dx * passo, y: atual.y + dy * passo };
-    if (caixaBateEmParede(candidato, bloqueado, g, parede)) break;
+    if (caixaBateEmParede(candidato, bloqueado, g, parede)) {
+      // Assistência de quina: barrado por uma quina de até `quina` px, desliza 1 px para o lado livre (nunca atravessa parede nem
+      // móvel: cada passo lateral e o avanço depois dele passam pela mesma colisão).
+      const deslize = quina > 0 ? deslizeDeQuina(atual, dx, dy, passo, quina, bloqueado, g, parede) : undefined;
+      if (!deslize) break;
+      atual = deslize;
+      restante -= passo;
+      continue;
+    }
     atual = candidato;
     restante -= passo;
   }

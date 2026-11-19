@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { expect, it } from 'vitest';
-import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { comReferencia, lerConteudoDoDisco } from '../helpers/conteudoReal';
 import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo, ConteudoInvalidoError } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
@@ -30,7 +30,7 @@ const RAIZ = join(AQUI, '..', '..');
 const lerConteudo = lerConteudoDoDisco;
 
 const copia = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
-const carregar = (arquivos: Record<string, unknown>) => new CarregarConteudo(new ContentSourceDeArquivos(arquivos)).executar();
+const carregar = async (arquivos: Record<string, unknown>) => comReferencia(await new CarregarConteudo(new ContentSourceDeArquivos(arquivos)).executar());
 async function errosDe(arquivos: Record<string, unknown>): Promise<string[]> {
   try {
     await carregar(arquivos);
@@ -116,8 +116,9 @@ descreverComConteudoNovo('Marco 2: missões e manifesto (ADR-002 seção 2.2; ba
     expect(c.missoes.map((m) => m.requires)).toEqual([[], ['marco1'], ['parte1'], ['parte2'], ['parte3']]);
     expect(c.missoes[0].maps).toEqual(['hall', 'sala', 'cozinha']);
     for (const m of c.missoes.slice(1)) {
-      // Quarto (P2) e Escritório (P3) abrem depois das luzes; a Suíte segue fechada (pergunta 30; ADR-004 seção 9.1).
-      expect(m.maps, m.id).toEqual(['hall', 'sala', 'cozinha', 'quarto', 'escritorio']);
+      // Quarto (P2) e Escritório (P3) abrem depois das luzes; na 1.3.0 abrem junto o Quarto do casal e os dois banheiros. O Quartinho
+      // segue fechado (ADR-004 seção 9.1; ADR-011 3.3).
+      expect(m.maps, m.id).toEqual(['hall', 'sala', 'cozinha', 'quarto', 'escritorio', 'quarto_casal', 'banheiro1', 'banheiro_escritorio']);
     }
   });
 
@@ -145,7 +146,7 @@ descreverComConteudoNovo('Marco 2: missões e manifesto (ADR-002 seção 2.2; ba
     expect(ativa(['luzes', 'parte1', 'parte2', 'parte3', 'enfeites'])).toBe('enfeites');
   });
 
-  it('o contexto da partida abre Quarto (P2) e Escritório (P3) só depois das luzes, e nunca a Suíte nem banheiros', async () => {
+  it('o contexto da partida abre Quarto (P2) e Escritório (P3) só depois das luzes, e, na 1.3.0, junto o Quarto do casal e os banheiros; o Quartinho nunca', async () => {
     const c = await carregar(lerConteudo());
     const antes = contextoDaPartida(c.missoes, () => false);
     const depois = contextoDaPartida(c.missoes, (f) => f === 'luzes');
@@ -153,11 +154,11 @@ descreverComConteudoNovo('Marco 2: missões e manifesto (ADR-002 seção 2.2; ba
     expect(antes.areaAberta('quarto')).toBe(false);
     expect(depois.areaAberta('escritorio')).toBe(true);
     expect(depois.areaAberta('quarto')).toBe(true);
-    for (const ctx of [antes, depois]) {
-      expect(ctx.areaAberta('quarto_casal')).toBe(false);
-      expect(ctx.areaAberta('banheiro1')).toBe(false);
-      expect(ctx.areaAberta('quartinho')).toBe(false);
+    for (const a of ['quarto_casal', 'banheiro1', 'banheiro_escritorio']) {
+      expect(antes.areaAberta(a), a).toBe(false);
+      expect(depois.areaAberta(a), a).toBe(true);
     }
+    for (const ctx of [antes, depois]) expect(ctx.areaAberta('quartinho')).toBe(false);
   });
 });
 
@@ -348,47 +349,7 @@ descreverComConteudoNovo('Marco 2: validação do conteúdo (ADR-004 seção 8, 
     expect(await errosDe(lerConteudo())).toEqual([]);
   });
 
-  it('peça sem vizinho livre é erro (item 16)', async () => {
-    // Fecha os 3 vizinhos da peça 1 (0, 5) da Sala: (0,4), (0,6) e (1,5).
-    const arquivos = alterarSubarea('sala', (s) => {
-      for (const [x, y] of [[0, 4], [0, 6], [1, 5]]) s.colisao[y * s.largura + x] = 1;
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/peca1|peça 1|sem vizinho livre/);
-  });
-
-  it('peça em tile bloqueado é erro (item 16)', async () => {
-    const arquivos = alterarSubarea('sala', (s) => {
-      s.colisao[5 * s.largura + 0] = 1;
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/piso livre/);
-  });
-
-  it('peça fora de ordem (ordem 2 repetida) e peça faltando são erro (item 15)', async () => {
-    const repetida = alterarObjetos('cozinha', (objs) => {
-      const p = objs.find((o) => o.tipo === 'peca' && o.ordem === 3)!;
-      p.ordem = 2;
-      p.id = 'peca2';
-    });
-    expect((await errosDe(repetida)).join(' ')).toMatch(/peça 2 aparece 2 vezes|peça 3 não existe/);
-  });
-
-  it('estado inicial errado (peça 2 visível) é erro (item 15)', async () => {
-    const arquivos = alterarObjetos('cozinha', (objs) => {
-      objs.find((o) => o.tipo === 'peca' && o.ordem === 2)!.estadoInicial = 'visivel';
-    });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/peça 2 com estadoInicial "visivel"/);
-  });
-
-  it('peça 1 em tile do interruptor ou encostada nele é erro (item 17)', async () => {
-    const arquivos = alterarObjetos('sala', (objs) => {
-      const p = objs.find((o) => o.tipo === 'peca')!;
-      const i = objs.find((o) => o.tipo === 'interruptor')!;
-      p.x = i.x - 1;
-      p.y = i.y;
-    });
-    const erros = (await errosDe(arquivos)).join(' ');
-    expect(erros).toMatch(/encostada no interruptor|precisa estar em piso livre/);
-  });
+  // Itens 15 a 17 (peça fixa no mapa: vizinho, piso, ordem, estado, interruptor) passaram ao plano sorteado (ADR-013): ver plano-validacao.test.ts.
 
   it('porta cujo vizinho do lado é piso da própria área é erro (item 26)', async () => {
     // A `cozinha-sala` da Sala (10, 4) passa a olhar para a esquerda, onde há piso: a porta não está numa fronteira.
@@ -460,9 +421,9 @@ descreverComConteudoNovo('Marco 2: exame da árvore em cada estado (GDD 15.4; BU
 });
 
 descreverComConteudoNovo('Marco 2: versão e perfil (backlog 057 e 054)', () => {
-  it('package.json está em 1.2.0 (visão 3/4; antes 1.1.0)', () => {
+  it('package.json está em 1.3.0 (antes 1.2.2)', () => {
     const pkg = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf-8')) as { version: string };
-    expect(pkg.version).toBe('1.2.0');
+    expect(pkg.version).toBe('1.3.0');
   });
 
   it('o perfil HD tem a posição da tela de conquista da peça (telas.conquista.peca e personagemDaPeca)', () => {

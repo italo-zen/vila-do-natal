@@ -321,14 +321,6 @@
       "y": 8
     },
     {
-      "estadoInicial": "visivel",
-      "id": "peca1",
-      "ordem": 1,
-      "tipo": "peca",
-      "x": 0,
-      "y": 5
-    },
-    {
       "h": 1,
       "id": "cacto",
       "nome": "Cacto",

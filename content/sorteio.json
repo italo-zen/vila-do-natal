@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "pecas": {
+    "quantidade": 3,
+    "areas": [
+      { "id": "cozinha", "minimo": 2, "passagem": { "x": 3, "y": 2, "w": 2, "h": 2 }, "comodos": [
+        { "id": "cozinha", "mapa": "cozinha", "retangulo": { "x": 0, "y": 0, "w": 6, "h": 3 } },
+        { "id": "lavanderia", "mapa": "cozinha", "retangulo": { "x": 0, "y": 3, "w": 6, "h": 2 } }
+      ] },
+      { "id": "quarto", "minimo": 2, "comodos": [ { "id": "quarto", "mapa": "quarto" } ] },
+      { "id": "escritorio", "minimo": 1, "comodos": [ { "id": "escritorio", "mapa": "escritorio" } ] },
+      { "id": "quarto_casal", "minimo": 2, "comodos": [ { "id": "quarto_casal", "mapa": "quarto_casal" } ] }
+    ]
+  },
+  "nick": {
+    "marco1": { "areas": ["sala"], "dentroDaLuzDeEntrada": { "mapa": "sala", "spawn": "hall-sala" }, "minimo": 4, "direcao": "baixo" },
+    "parte1": { "areas": ["sala"], "minimo": 4, "direcao": "baixo" },
+    "parte2": { "areas": ["sala", "cozinha", "quarto", "escritorio", "quarto_casal"], "foraDaAreaDaPeca": 2, "direcao": "baixo" },
+    "parte3": { "areas": ["sala", "cozinha", "quarto", "escritorio", "quarto_casal"], "foraDaAreaDaPeca": 3, "direcao": "baixo" },
+    "enfeites": { "areas": ["sala", "cozinha", "quarto", "quarto_casal"], "direcao": "baixo" }
+  }
+}

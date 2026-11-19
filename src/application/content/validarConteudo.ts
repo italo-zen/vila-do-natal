@@ -11,6 +11,9 @@ import { FASE_DO_ENFEITE } from '../mundo/enfeite';
 import type { MissaoCarregada } from '../mundo/missoes';
 import { pontosDaCaixa, vizinhosLivresAlcancaveis, vizinhosLivresPorAresta } from './pontosDePartida';
 import { validarNick } from './validarNick';
+import type { Sorteio } from './Sorteio';
+import { candidatosDePeca } from '../plano/candidatos';
+import { mapasComPlano } from '../plano/mapasComPlano';
 
 const DIRECOES = ['cima', 'baixo', 'esquerda', 'direita'];
 const TIPOS_CONHECIDOS = ['porta', 'spawn', 'interruptor', 'bilhete', 'arvore', 'examinavel', 'movel', 'peca', 'enfeite'];
@@ -100,6 +103,8 @@ export interface EntradaDeConteudo {
   missoes: MissaoCarregada[];
   textos: Textos;
   perfil: PerfilDeArte;
+  /** Sorteio das peças e do Nick (ADR-013). Com ele, as regras de peça (12, 15 e 18) valem por candidato, sobre `mapasComPlano`. */
+  sorteio?: Sorteio;
 }
 
 /** Posição local de um tile livre: piso com colisão 0 (ADR-004 seção 8, item 16). */
@@ -385,17 +390,27 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
 
   // Regra 15 e 18: peças, uma de cada ordem (1, 2 e 3), sem repetir e sem pular; cada uma na área da sua missão.
   const pecas = [...todos.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'peca').map((o) => ({ mapa: m, o })));
-  for (const ordem of [1, 2, 3]) {
-    const quantas = pecas.filter((p) => Number(p.o.dados.ordem) === ordem).length;
-    if (quantas === 0) erros.push(`peça ${ordem} não existe no conteúdo (ADR-004 seção 8, item 15).`);
-    if (quantas > 1) erros.push(`peça ${ordem} aparece ${quantas} vezes.`);
-  }
-  for (const { mapa, o } of pecas) {
-    const ordem = Number(o.dados.ordem);
-    const estadoEsperado = ordem === 1 ? 'visivel' : 'escondida';
-    if (o.dados.estadoInicial !== estadoEsperado) erros.push(`Subárea "${mapa.id}": peça ${ordem} com estadoInicial "${String(o.dados.estadoInicial)}"; deveria ser "${estadoEsperado}" (ADR-004 seção 8, item 15).`);
-    const missaoDaPeca = missaoPorId(`parte${ordem}`);
-    if (missaoDaPeca && !missaoDaPeca.maps.includes(mapa.id)) erros.push(`Subárea "${mapa.id}": peça ${ordem} fora das subáreas abertas de parte${ordem} (ADR-004 seção 8, item 18).`);
+  if (e.sorteio) {
+    // Peças do plano (ADR-013 seção 6): cada área sorteável está aberta em parte1 a parte3 (item 18); a ordem e o estado vêm de `objetoDePeca`.
+    for (const a of e.sorteio.pecas.areas) {
+      for (const ordem of [1, 2, 3]) {
+        const missaoDaPeca = missaoPorId(`parte${ordem}`);
+        if (missaoDaPeca && !missaoDaPeca.maps.includes(a.id)) erros.push(`Sorteio: área "${a.id}" fora das subáreas abertas de parte${ordem} (ADR-004 seção 8, item 18).`);
+      }
+    }
+  } else {
+    for (const ordem of [1, 2, 3]) {
+      const quantas = pecas.filter((p) => Number(p.o.dados.ordem) === ordem).length;
+      if (quantas === 0) erros.push(`peça ${ordem} não existe no conteúdo (ADR-004 seção 8, item 15).`);
+      if (quantas > 1) erros.push(`peça ${ordem} aparece ${quantas} vezes.`);
+    }
+    for (const { mapa, o } of pecas) {
+      const ordem = Number(o.dados.ordem);
+      const estadoEsperado = ordem === 1 ? 'visivel' : 'escondida';
+      if (o.dados.estadoInicial !== estadoEsperado) erros.push(`Subárea "${mapa.id}": peça ${ordem} com estadoInicial "${String(o.dados.estadoInicial)}"; deveria ser "${estadoEsperado}" (ADR-004 seção 8, item 15).`);
+      const missaoDaPeca = missaoPorId(`parte${ordem}`);
+      if (missaoDaPeca && !missaoDaPeca.maps.includes(mapa.id)) erros.push(`Subárea "${mapa.id}": peça ${ordem} fora das subáreas abertas de parte${ordem} (ADR-004 seção 8, item 18).`);
+    }
   }
 
   // Caixa de enfeite (ADR-006 seções 2 e 9): T006 (uma caixa, ordem 4, escondida), T007 (tile), T008 (subárea do farejar).
@@ -414,10 +429,9 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
     if (mapa.objetos.some((m) => m.tipo === 'movel' && o.x >= m.x && o.y >= m.y && o.x < m.x + Number(m.dados.w) && o.y < m.y + Number(m.dados.h))) {
       erros.push(`T007 ${rotulo} dentro de móvel.`);
     }
-    // T008: a caixa está na subárea que é `nick.alvo` da missão de enfeites, e essa subárea está em `maps` dela.
-    const alvo = missaoDosEnfeites?.missao.nick?.alvo;
-    if (!missaoDosEnfeites || alvo !== mapa.id || !missaoDosEnfeites.maps.includes(mapa.id)) {
-      erros.push(`T008 ${rotulo}: a caixa precisa estar na subárea alvo de "${missaoDosEnfeites?.id ?? 'enfeites'}" (alvo "${String(alvo)}") e nas subáreas da missão.`);
+    // T008: a caixa está numa subárea de `maps` da missão de enfeites. O alvo do farejar é derivado do mapa da caixa (ADR-013), então vale por construção.
+    if (!missaoDosEnfeites || !missaoDosEnfeites.maps.includes(mapa.id)) {
+      erros.push(`T008 ${rotulo}: a caixa precisa estar nas subáreas da missão "${missaoDosEnfeites?.id ?? 'enfeites'}".`);
     }
   }
 
@@ -526,6 +540,25 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
         const peca = pecas.find((p) => Number(p.o.dados.ordem) === ordem);
         if (peca) {
           partidas = vizinhosLivresPorAresta(peca.mapa, peca.o.x, peca.o.y).map((p) => ({ mapa: peca.mapa.id, ...p }));
+        } else if (e.sorteio) {
+          // Por candidato (ADR-013 seção 6): com a peça em cada tile do pool, a rota até o destino existe.
+          const sem: string[] = [];
+          let total = 0;
+          for (const a of e.sorteio.pecas.areas) {
+            for (const c of a.comodos) {
+              const m = todos.get(c.mapa);
+              if (!m) continue;
+              for (const t of candidatosDePeca(m, tela.linhas, c.retangulo, a.passagem)) {
+                total += 1;
+                const comPeca = mapasComPlano(todos, { pecas: [{ ordem, mapa: c.mapa, x: t.x, y: t.y }] });
+                const pontos = vizinhosLivresPorAresta(comPeca.get(c.mapa)!, t.x, t.y).map((p) => ({ mapa: c.mapa, ...p }));
+                if (!pontos.some((p) => calcularRotaDeConducao(comPeca, p, { mapa: d.mapa, x: d.x, y: d.y }, concluida, ctx))) sem.push(`${c.mapa} (${t.x}, ${t.y})`);
+              }
+            }
+          }
+          if (total > 0 && sem.length === total) erros.push(`${rotulo}: destino ${d.mapa} (${d.x}, ${d.y}) sem rota a partir da peça ${ordem} (em nenhum dos ${total} tiles candidatos).`);
+          else if (sem.length > 0) erros.push(`${rotulo}: com a peça ${ordem} em ${sem.slice(0, 5).join(', ')}${sem.length > 5 ? ` e mais ${sem.length - 5}` : ''} o destino ${d.mapa} (${d.x}, ${d.y}) fica sem rota.`);
+          continue;
         }
       }
       if (partidas.length === 0) {

@@ -2,7 +2,7 @@ import type { Conteudo } from './usecases/CarregarConteudo';
 import { SessaoDeJogo } from './SessaoDeJogo';
 import { AcenderLuzes } from './usecases/AcenderLuzes';
 import { ConcluirFase } from './usecases/ConcluirFase';
-import { IniciarNovoJogo } from './usecases/IniciarNovoJogo';
+import { IniciarNovoJogo, planejadorDoConteudo } from './usecases/IniciarNovoJogo';
 import { TentarCodigoDaPorta } from './usecases/TentarCodigoDaPorta';
 import { AcordarNick } from './usecases/AcordarNick';
 import { RegistrarPassoDoSobrinho } from './usecases/RegistrarPassoDoSobrinho';
@@ -10,6 +10,7 @@ import { EntrarNaArea } from './usecases/EntrarNaArea';
 import { DevolverControle } from './usecases/DevolverControle';
 import { FarejarComNick } from './usecases/FarejarComNick';
 import { MontarDica } from './usecases/MontarDica';
+import type { FonteDeSemente } from './ports/FonteDeSemente';
 
 /** Casos de uso já montados, entregues às cenas. A apresentação não conhece infraestrutura. */
 export interface Servicos {
@@ -28,13 +29,14 @@ export interface Servicos {
   montarDica: MontarDica;
 }
 
-export function montarServicos(conteudo: Conteudo, versao: string): Servicos {
+/** `fonte`: de onde vem a semente nova de cada partida (o navegador injeta `crypto`; o teste, uma fixa). */
+export function montarServicos(conteudo: Conteudo, versao: string, fonte: FonteDeSemente): Servicos {
   const sessao = new SessaoDeJogo();
   return {
     versao,
     conteudo,
     sessao,
-    iniciarNovoJogo: new IniciarNovoJogo(sessao, conteudo.missoes),
+    iniciarNovoJogo: new IniciarNovoJogo(sessao, conteudo.missoes, planejadorDoConteudo({ sorteio: conteudo.sorteio, todos: conteudo.todosOsMapas, missoes: conteudo.missoes, perfil: conteudo.perfil }, fonte)),
     concluirFase: new ConcluirFase(sessao),
     tentarCodigo: new TentarCodigoDaPorta(sessao),
     acenderLuzes: new AcenderLuzes(sessao),
@@ -42,7 +44,7 @@ export function montarServicos(conteudo: Conteudo, versao: string): Servicos {
     registrarPasso: new RegistrarPassoDoSobrinho(sessao),
     entrarNaArea: new EntrarNaArea(sessao),
     devolverControle: new DevolverControle(sessao, conteudo.missoes),
-    farejarComNick: new FarejarComNick(sessao, conteudo.missoes, conteudo.todosOsMapas),
+    farejarComNick: new FarejarComNick(sessao, conteudo.missoes),
     montarDica: new MontarDica(sessao, conteudo.missoes),
   };
 }

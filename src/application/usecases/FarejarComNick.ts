@@ -1,5 +1,4 @@
 import type { PortaASeguir } from '../../domain/nick/PortaASeguir';
-import type { MapaDoJogo } from '../content/Mapa';
 import type { SessaoDeJogo } from '../SessaoDeJogo';
 import type { MissaoCarregada } from '../mundo/missoes';
 import { alvoDaFase } from '../mundo/nick/missaoDoNick';
@@ -21,7 +20,6 @@ export class FarejarComNick {
   constructor(
     private readonly sessao: SessaoDeJogo,
     private readonly missoes: readonly MissaoCarregada[],
-    private readonly mapas: ReadonlyMap<string, MapaDoJogo>,
   ) {}
 
   /** `mapaDoSobrinho`: a subárea onde o sobrinho está agora (o cômodo do farejar, ADR-005 seção 4.3). */
@@ -29,11 +27,11 @@ export class FarejarComNick {
     const nick = this.sessao.progresso.nick;
     if (nick.dormindo) return { tipo: 'dormindo' };
     const concluida = (f: Parameters<SessaoDeJogo['faseConcluida']>[0]) => this.sessao.faseConcluida(f);
-    const alvo = alvoDaFase(this.missoes, concluida);
+    const alvo = alvoDaFase(this.missoes, concluida, this.sessao.plano);
     if (!alvo) return { tipo: 'semAlvo' };
     if (alvo === mapaDoSobrinho) return { tipo: 'mesmoComodo' };
     const aberta = contextoDaPartida(this.missoes, concluida).areaAberta;
-    const porta = portaASeguir(this.mapas, aberta, mapaDoSobrinho, alvo);
+    const porta = portaASeguir(this.sessao.mapas, aberta, mapaDoSobrinho, alvo);
     if (!porta) return { tipo: 'semAlvo' };
     this.sessao.farejo.mostrar(porta);
     return { tipo: 'porta', porta };

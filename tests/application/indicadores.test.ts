@@ -26,7 +26,7 @@ const GRADE_3X3 = [
 const area = (objetos: Parameters<typeof mapaDeTexto>[2]) => mapaDeTexto('teste', GRADE_3X3, objetos);
 
 descreverComConteudoNovo('indicadores de porta no conteúdo real (GDD 14.10.10; C20 a C22)', () => {
-  it('toda porta com lado esquerda, direita ou baixo tem indicador no próprio tile; lado cima não tem', async () => {
+  it('1.3.0: TODA porta de TODA área tem indicador no próprio tile: seta (cima, esquerda, direita) ou tapete (baixo)', async () => {
     const c = await carregarConteudoReal();
     for (const mapa of c.todosOsMapas.values()) {
       const portas = mapa.objetos.filter((o) => o.tipo === 'porta');
@@ -34,16 +34,17 @@ descreverComConteudoNovo('indicadores de porta no conteúdo real (GDD 14.10.10; 
       for (const p of portas) {
         const lado = String(p.dados.lado);
         const ind = indicadores.find((i) => i.porta === p.dados.id);
-        if (lado === 'cima') expect(ind, `${mapa.id}/${String(p.dados.id)}`).toBeUndefined();
-        else if (ind) expect({ x: ind.x, y: ind.y }).toEqual({ x: p.x, y: p.y });
+        expect(ind, `${mapa.id}/${String(p.dados.id)}`).toBeDefined();
+        expect({ x: ind!.x, y: ind!.y }).toEqual({ x: p.x, y: p.y });
+        expect(ind!.tipo).toBe({ cima: 'seta-cima', esquerda: 'seta-esquerda', direita: 'seta-direita', baixo: 'tapete' }[lado]);
       }
     }
   });
 });
 
 describe('indicadores: regra (direção = campo lado da porta)', () => {
-  it('lado cima não tem indicador', () => {
-    expect(indicadoresDaSubarea(area([porta('z-x', 1, 0, 'cima', 'x')]), TELA)).toEqual([]);
+  it('lado cima tem seta para cima no tile da porta (1.3.0: Quarto da Oli e alcova da Sala)', () => {
+    expect(indicadoresDaSubarea(area([porta('z-x', 1, 0, 'cima', 'x')]), TELA)).toEqual([{ tipo: 'seta-cima', x: 1, y: 0, porta: 'z-x' }]);
   });
 
   it('porta sem lado válido não recebe indicador (a validação acusa, não o desenho)', () => {

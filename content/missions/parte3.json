@@ -11,15 +11,6 @@
   "conquistas": {
     "parte3": "conquista.parte3"
   },
-  "nick": {
-    "dorme": {
-      "mapa": "escritorio",
-      "x": 4,
-      "y": 2,
-      "direcao": "baixo"
-    },
-    "alvo": "cozinha"
-  },
   "dica": {
     "parte3": {
       "dormindo": "dica.parte3.dormindo",

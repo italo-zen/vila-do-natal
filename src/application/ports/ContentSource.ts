@@ -11,4 +11,6 @@ export interface ContentSource {
   decoracao(id: string): Promise<unknown | null>;
   textos(locale: string): Promise<unknown>;
   missao(id: string): Promise<unknown>;
+  /** JSON do sorteio de peças e do Nick (`content/sorteio.json`, ADR-013). */
+  sorteio(): Promise<unknown>;
 }

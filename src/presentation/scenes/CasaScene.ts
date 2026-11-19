@@ -53,7 +53,7 @@ import {
 import { indicadoresDaSubarea, type TipoDeIndicador } from '../../application/mundo/indicadores';
 import { LADOS, OPOSTO_DO_LADO, VETOR_DO_LADO, paredeNoTile, passosEntreTiles } from '../../application/mundo/arestas';
 import { desenharParedesEm34, ancoraDaImagem, pontoDaAresta, posicaoPelaAncora } from './desenhoDaVista';
-import { profundidadeDoPersonagem, recuoVertical } from '../../application/mundo/vista';
+import { passoDoAlfa, personagemAtras, profundidadeDoPersonagem, recuoVertical, type MovelAlto } from '../../application/mundo/vista';
 import { ehEspinhoso, espinhosoContra, espinhososDe, posicaoDoEmpurrao, type RetanguloEmTiles } from '../../application/mundo/espinhoso';
 import { bilheteDeFrente, portaContraAoAndar, portaDeFrente, type PortaDeTile } from '../../application/mundo/travessia';
 import { calcularRotaDeConducao, type NoDaRota } from '../../application/mundo/conducao';
@@ -135,6 +135,10 @@ const PERIODO_DO_BRILHO_DA_PECA_MS = PERIODOS_DE_PULSO_MS.brilhoDaPeca;
 /** Profundidades de desenho (ordem de camadas, não arte). */
 const PROFUNDIDADE_JOGADOR = 10;
 const PROFUNDIDADE_BRILHO = 950;
+/** Depois do fim do fade de uma travessia, o andar contra a porta não dispara por este tempo (P3 do QA; o A de frente segue valendo). */
+const PAUSA_DAS_PORTAS_APOS_TRAVESSIA_MS = 450;
+/** Móvel mais alto do conteúdo (Pia, 3 tiles): a peça visível sobe esse tanto na profundidade para nunca ficar atrás de móvel (ADR-013 seção 4). */
+const ALTURA_MAXIMA_DE_MOVEL_EM_TILES = 4;
 const RECUO_DO_HALO_NA_PROFUNDIDADE = -1;
 const PROFUNDIDADE_FADE = 1100;
 /**
@@ -148,6 +152,8 @@ const PROFUNDIDADE_MURO = 5;
 const CHAVE_DO_INDICADOR: Record<TipoDeIndicador, string> = {
   'seta-direita': CHAVE.indicadorSetaDireita,
   'seta-esquerda': CHAVE.indicadorSetaEsquerda,
+  // A seta para cima é a seta para baixo da Arte, virada (ver `desenharIndicadores`).
+  'seta-cima': CHAVE.indicadorSetaBaixo,
   tapete: CHAVE.indicadorTapete,
 };
 
@@ -173,6 +179,10 @@ export class CasaScene extends Phaser.Scene {
   private barra!: Barra;
   private fade!: Phaser.GameObjects.Rectangle;
   private transitando = false;
+  /** Até quando as portas ignoram o andar contra, depois de uma travessia (ms do relógio da cena). */
+  private portasIgnoramAte = 0;
+  /** Seta segurada desde a travessia: não dispara a porta vizinha até ser solta (P3 do QA). */
+  private portasAguardamSoltar = false;
   private gatilhoDoPainel: ObjetoDoMapa | null = null;
 
   private mapa!: MapaDoJogo;
@@ -200,6 +210,8 @@ export class CasaScene extends Phaser.Scene {
   private empurraoAte = 0;
   /** Quanto a área é desenhada mais para baixo, em px (visão 3/4; 0 fora da Sala e sem `vista`). */
   private recuo = 0;
+  /** Móveis altos com transparência quando alguém está atrás (1.3.0): o sprite, a região acima da pegada e o alfa atual. */
+  private moveisAltos: { img: Phaser.GameObjects.Image; alto: MovelAlto; alfa: number }[] = [];
   /** Gancho de QA: trata todas as áreas como abertas (capturas das áreas fechadas). Falso no jogo. */
   qaAreasAbertas = false;
   /** Sprites do interruptor da área (2 quadros: apagado e aceso). */
@@ -245,6 +257,8 @@ export class CasaScene extends Phaser.Scene {
   private rota: NoDaRota[] = [];
   private indiceRota = 0;
   private fatorConducao = 1;
+  /** Passos da rota da condução atual (o gancho de QA lê; não muda o jogo). */
+  passosDaConducao = 0;
   /** Fase que a condução atual conclui ao chegar (`luzes`, `parte1` a `parte3`). */
   private faseDaConducao: Fase = 'luzes';
 
@@ -304,7 +318,7 @@ export class CasaScene extends Phaser.Scene {
     } else if (dados.modo === 'explorar') {
       // Modo explorar (ADR-010 1.2, EX1): a Sala, no tile acima da árvore, de frente para ela, com o Nick acordado atrás.
       // O tile vem da árvore do conteúdo (planta 1.1.0: árvore em (2, 8), então (2, 7) e o Nick em (2, 6)).
-      const arvoreDaSala = this.sv.conteudo.todosOsMapas.get('sala')!.objetos.find((x) => x.tipo === 'arvore')!;
+      const arvoreDaSala = this.sv.sessao.mapas.get('sala')!.objetos.find((x) => x.tipo === 'arvore')!;
       const diante = { x: arvoreDaSala.x, y: arvoreDaSala.y - 1 };
       this.carregarSubarea('sala', undefined, diante);
       this.dir = 'baixo';
@@ -349,11 +363,12 @@ export class CasaScene extends Phaser.Scene {
     if (!destino) throw new Error(`Não há condução para a fase "${fase}".`);
     // Rota pela situação da própria fase: subáreas da missão dela, e a peça dela visível (ADR-004 seção 11.2).
     const { concluida, ctx } = situacaoDaFase(this.sv.conteudo.missoes, f);
-    const r = calcularRotaDeConducao(this.sv.conteudo.todosOsMapas, { mapa: origem.mapa, x: origem.x, y: origem.y }, destino, concluida, ctx);
+    const r = calcularRotaDeConducao(this.sv.sessao.mapas, { mapa: origem.mapa, x: origem.x, y: origem.y }, destino, concluida, ctx);
     if (!r) throw new Error(`Condução de "${fase}" sem rota a partir de (${origem.mapa}, ${origem.x}, ${origem.y}).`);
     this.rota = r.nos;
     this.indiceRota = 0;
     this.fatorConducao = fatorDaConducao(r.passos);
+    this.passosDaConducao = r.passos;
     this.faseDaConducao = f;
     this.estado = 'conducao';
     this.barra.setVisible(false);
@@ -605,6 +620,7 @@ export class CasaScene extends Phaser.Scene {
     }
 
     this.atualizarSprite(time);
+    this.atualizarTransparenciaDosMoveis(delta);
     this.atualizarLuz();
     this.atualizarHalo();
     this.registrarPassoDoSobrinho();
@@ -614,6 +630,25 @@ export class CasaScene extends Phaser.Scene {
     this.barra.setVisible(this.estado === 'livre');
     this.icone.setVisible(podeAbrirDica(modo, this.sv.sessao.modo));
     this.atualizarIconesDeTela();
+  }
+
+  /**
+   * Móvel alto transparente enquanto o sobrinho ou o Nick está atrás dele (a caixa do personagem sobrepõe a parte do sprite
+   * acima da pegada). Alfa e tempo vêm de `vista.transparenciaDeMovelAlto`; a transição é linear. Só desenho.
+   */
+  private atualizarTransparenciaDosMoveis(delta: number): void {
+    const regra = this.perfil.vista?.transparenciaDeMovelAlto;
+    if (!regra || this.moveisAltos.length === 0) return;
+    const caixas: { caixa: { x: number; y: number; w: number; h: number }; base: number }[] = [
+      { caixa: { x: this.pos.x, y: this.pos.y, w: this.geo.quadro.w, h: this.geo.quadro.h }, base: this.pos.y + this.geo.quadro.h },
+    ];
+    const nick = this.nick.sprite;
+    if (nick.visible) caixas.push({ caixa: { x: nick.x, y: nick.y, w: this.nick.geo.quadro.w, h: this.nick.geo.quadro.h }, base: nick.y + this.nick.geo.quadro.h });
+    for (const m of this.moveisAltos) {
+      const atras = caixas.some((c) => personagemAtras(c.caixa, c.base, m.alto));
+      m.alfa = passoDoAlfa(m.alfa, atras ? regra.alfa : 1, delta, regra.alfa, regra.transicaoMs);
+      m.img.setAlpha(m.alfa);
+    }
   }
 
   /** Ícones de pausa e de som conforme a tela (GDD 19.3.2; ADR-008 7.4). O som mostra ligado ou desligado. */
@@ -703,7 +738,7 @@ export class CasaScene extends Phaser.Scene {
     this.balao.apagar();
     this.sv.sessao.farejo.cancelar();
     this.indicadoresDePorta.clear();
-    const mapa = this.sv.conteudo.todosOsMapas.get(id);
+    const mapa = this.sv.sessao.mapas.get(id);
     if (!mapa || !this.areaAberta(id)) throw new Error(`Subárea "${id}" não está aberta nesta missão.`);
     const tela = this.perfil.sala;
     this.mapa = mapa;
@@ -716,6 +751,7 @@ export class CasaScene extends Phaser.Scene {
     this.objetosTela = objetosNaTela(mapa, this.desl);
     this.espinhosos = espinhososDe(this.objetosTela);
     this.interruptores = [];
+    this.moveisAltos = [];
     this.desenhosEspinhosos = [];
     this.enfeitesDaArea = { area: null, total: 0, piscantes: [] };
     const decoracao = this.sv.sessao.modo === 'explorar' ? this.sv.conteudo.decoracao.get(id) : undefined;
@@ -725,6 +761,7 @@ export class CasaScene extends Phaser.Scene {
     this.desenharMuros();
     this.desenharObjetos();
     this.desenharIndicadores();
+    this.desenharArteDeParede();
     if (decoracao) this.desenharDecoracao(id, decoracao.enfeites);
 
     if (tile) {
@@ -789,15 +826,16 @@ export class CasaScene extends Phaser.Scene {
         this.tweens.add({ targets: bilhete, alpha: 0.6, duration: PERIODOS_DE_PULSO_MS.bilhete / 2, yoyo: true, repeat: -1 });
       }
       if (o.tipo === 'interruptor') {
-        this.desenharInterruptor(o);
-        // Brilho fraco e constante para ser achável no escuro (GDD 14.3). Raio e alfa vêm do perfil.
+        const placa = this.desenharInterruptor(o);
+        // Brilho fraco e constante para ser achável no escuro (GDD 14.3). Raio e alfa vêm do perfil. O círculo fica no centro da
+        // placa (na face norte do tile), não no centro do tile: é a placa que o jogador procura (QA do Diretor, 1.2.3).
         const brilho = this.perfil.objetos.brilhoInterruptor;
         this.registrar(
           this.add
             .graphics()
             .setDepth(PROFUNDIDADE_BRILHO)
             .fillStyle(numeroDaCor(this.perfil.tema.destaque), brilho.alfa)
-            .fillCircle(x + tile / 2, y + tile / 2, brilho.raioEmTiles * tile),
+            .fillCircle(placa?.x ?? x + tile / 2, placa?.y ?? y + tile / 2, brilho.raioEmTiles * tile),
         );
       }
       // Porta sobre a aresta do `lado`, nos três estados (ADR-011 seção 3.4; GDD 14.10.9). O estado é do motor
@@ -909,8 +947,10 @@ export class CasaScene extends Phaser.Scene {
     const tile = this.perfil.tile;
     const x = o.x * tile;
     const y = o.y * tile;
-    this.brilhoDoTile(x, y);
-    this.registrar(this.add.image(x, y, CHAVE_DA_PECA[ordem]).setOrigin(0, 0).setDepth(y + tile));
+    // A peça e o halo sempre acima dos móveis (ADR-013 seção 4, item 5): sem isto, um móvel alto no tile de baixo a esconderia na visão 3/4.
+    const sobe = ALTURA_MAXIMA_DE_MOVEL_EM_TILES * tile;
+    this.brilhoDoTile(x, y, sobe);
+    this.registrar(this.add.image(x, y, CHAVE_DA_PECA[ordem]).setOrigin(0, 0).setDepth(y + tile + sobe));
   }
 
   /**
@@ -927,14 +967,14 @@ export class CasaScene extends Phaser.Scene {
   }
 
   /** Brilho dourado pulsante atrás de um objeto de tile (GDD 15.2.4; a peça e a caixa usam o mesmo, ADR-006 seção 2.4). */
-  private brilhoDoTile(x: number, y: number): void {
+  private brilhoDoTile(x: number, y: number, sobeNaProfundidade = 0): void {
     const tile = this.perfil.tile;
     const m = MARGEM_DO_BRILHO_DA_PECA;
     const brilho = this.registrar(
       this.add
         .rectangle(x - m, y - m, tile + 2 * m, tile + 2 * m, numeroDaCor(this.perfil.tema.destaque), BRILHO_DA_PECA_MIN)
         .setOrigin(0, 0)
-        .setDepth(y + tile - RECUO_DO_HALO_NA_PROFUNDIDADE),
+        .setDepth(y + tile - RECUO_DO_HALO_NA_PROFUNDIDADE + sobeNaProfundidade),
     );
     this.tweens.add({
       targets: brilho,
@@ -963,6 +1003,24 @@ export class CasaScene extends Phaser.Scene {
 
   /** Desenha os enfeites da subárea (ADR-010 3.9): ordenados pela base, como os outros objetos de tile. */
   /**
+   * Arte de parede (`vista.json` → `arteDeParede`, ex.: o mural de fotos da Sala): imagem presa na aresta do `lado` do tile (x, y),
+   * pela âncora do `sprites.json` no centro da aresta, profundidade da face + 1. Só desenho: sem colisão nem interação.
+   */
+  private desenharArteDeParede(): void {
+    const lista = arteDe(this).vista?.arteDeParede?.[this.mapa.id] ?? [];
+    const tile = this.perfil.tile;
+    for (const a of lista) {
+      const ancora = ancoraDaImagem(arteDe(this), a.sprite);
+      if (!ancora || !this.textures.exists(a.sprite)) continue;
+      const tx = this.desl.x + a.x;
+      const ty = this.desl.y + a.y;
+      const aresta = { tipo: a.lado === 'esquerda' || a.lado === 'direita' ? ('linha_v' as const) : ('linha_h' as const), x: a.lado === 'direita' ? tx + 1 : tx, y: a.lado === 'baixo' ? ty + 1 : ty };
+      const ponto = pontoDaAresta({ ...aresta, antes: false, depois: false, pisoALeste: false, topoComFace: false }, tile);
+      this.registrar(this.add.image(ponto.x - ancora.x, ponto.y - ancora.y, a.sprite).setOrigin(0, 0).setDepth(a.lado === 'cima' ? ty * tile + 1 : (ty + 1) * tile + 1));
+    }
+  }
+
+  /**
    * Bilhete preso na parede (Arte, lote 4): imagem 16×24 com âncora no centro da aresta do `lado` (cima = face norte), profundidade
    * da face + 1. Sem âncora no sprites.json (arte antiga), a imagem no canto do tile, como na 1.1.0.
    */
@@ -983,7 +1041,7 @@ export class CasaScene extends Phaser.Scene {
    * face norte do tile (x = tile×32 + 16 − âncora.x, y = tile×32 − âncora.y), profundidade aresta + 5. O brilho no escuro é desta
    * cena e a interação continua a partir do tile. Sem folha (arte antiga 32×32), a imagem no canto do tile.
    */
-  private desenharInterruptor(o: ObjetoDoMapa): void {
+  private desenharInterruptor(o: ObjetoDoMapa): { x: number; y: number } | undefined {
     const tile = this.perfil.tile;
     const imagem = arteDe(this).sprites.imagens.find((i) => i.arquivo === `${CHAVE.interruptor}.png`);
     if (imagem?.tipo === 'folhas' && imagem.ancora) {
@@ -991,9 +1049,16 @@ export class CasaScene extends Phaser.Scene {
       const s = this.add.sprite(o.x * tile + tile / 2 - imagem.ancora.x, o.y * tile - imagem.ancora.y, CHAVE.interruptor, quadro).setOrigin(0, 0).setDepth(o.y * tile + 1);
       this.registrar(s);
       this.interruptores.push(s);
-      return;
+      // Centro da placa, em px da tela.
+      return { x: s.x + (imagem.quadro?.w ?? 0) / 2, y: s.y + (imagem.quadro?.h ?? 0) / 2 };
     }
     this.registrar(this.add.image(o.x * tile, o.y * tile, CHAVE.interruptor).setOrigin(0, 0).setDepth(o.y * tile + tile));
+    return undefined;
+  }
+
+  /** A no interruptor: acende as luzes; no modo explorar elas já estão acesas e não há ação (ADR-010 2). */
+  private acionarInterruptor(): void {
+    if (this.sv.sessao.modo !== 'explorar') this.acenderLuzes();
   }
 
   private desenharDecoracao(area: string, enfeites: EnfeiteBruto[]): void {
@@ -1044,14 +1109,22 @@ export class CasaScene extends Phaser.Scene {
 
   private desenharIndicadores(): void {
     const tile = this.perfil.tile;
-    for (const i of indicadoresDaSubarea(this.mapa, this.perfil.sala)) {
+    const todos = indicadoresDaSubarea(this.mapa, this.perfil.sala);
+    // Duas setas no mesmo tile (a alcova da Sala: `quarto-sala` para cima e `escritorio-sala` para a direita) se afastam de lado, em
+    // frações do tile (a seta para cima vai para a esquerda, a lateral para o lado dela), sem sair do tile nem cobrir a face.
+    const porTile = new Map<string, number>();
+    for (const i of todos) porTile.set(`${i.x},${i.y}`, (porTile.get(`${i.x},${i.y}`) ?? 0) + 1);
+    for (const i of todos) {
       const chave = CHAVE_DO_INDICADOR[i.tipo];
+      const dividido = (porTile.get(`${i.x},${i.y}`) ?? 1) > 1 && i.tipo !== 'tapete';
+      const desvio = dividido ? tile / 4 : 0;
+      const dx = i.tipo === 'seta-direita' ? desvio : i.tipo === 'seta-esquerda' || i.tipo === 'seta-cima' ? -desvio : 0;
       // Sprite que não existe no perfil ativo não desenha nada (em vez de quebrar a cena).
       if (!this.textures.exists(chave)) continue;
-      const x = (this.desl.x + i.x) * tile;
+      const x = (this.desl.x + i.x) * tile + dx;
       const y = (this.desl.y + i.y) * tile;
       const profundidade = i.tipo === 'tapete' ? PROFUNDIDADE_INDICADOR : y + tile + 0.5;
-      this.indicadoresDePorta.set(i.porta, this.registrar(this.add.image(x, y, chave).setOrigin(0, 0).setDepth(profundidade)));
+      this.indicadoresDePorta.set(i.porta, this.registrar(this.add.image(x, y, chave).setOrigin(0, 0).setDepth(profundidade).setFlipY(i.tipo === 'seta-cima')));
     }
   }
 
@@ -1073,6 +1146,15 @@ export class CasaScene extends Phaser.Scene {
       const px = ancora ? o.x * tile - ancora.x : o.x * tile;
       const py = ancora ? (o.y + Number(o.dados.h)) * tile - ancora.y : o.y * tile;
       const img = this.registrar(this.add.image(px, py, chaveDoSprite).setOrigin(0, 0).setDepth(o.y * tile + altura));
+      // Móvel alto (E ≥ extensaoMinima do perfil): fica transparente enquanto alguém está atrás dele (dado do sprites.json).
+      const regra = this.perfil.vista?.transparenciaDeMovelAlto;
+      const movel = arteDe(this).sprites.imagens.find((i) => i.arquivo === `${chaveDoSprite}.png`)?.movel;
+      if (regra && movel && ancora && !ehEspinhoso(o)) {
+        const extensao = Math.max(0, img.height - movel.sombra.dy - movel.pegada.h * tile);
+        if (extensao >= regra.extensaoMinima) {
+          this.moveisAltos.push({ img, alfa: 1, alto: { rect: { x: px, y: py, w: img.width, h: o.y * tile - py }, base: (o.y + Number(o.dados.h)) * tile } });
+        }
+      }
       if (ehEspinhoso(o)) this.desenhosEspinhosos.push(img);
       return;
     }
@@ -1111,6 +1193,7 @@ export class CasaScene extends Phaser.Scene {
     else if (this.controles.segurada('baixo')) dy = 1;
     if (dx === 0 && dy === 0) {
       this.empurrando = null;
+      this.portasAguardamSoltar = false;
       this.pararAnimacao();
       return;
     }
@@ -1118,7 +1201,7 @@ export class CasaScene extends Phaser.Scene {
     this.dir = dir;
     this.empurrando = dir;
     const velocidade = this.sv.sessao.progresso.sobrinho.habilidades.velocidadeTilesPorSegundo * this.perfil.tile;
-    this.pos = mover(this.pos, dir, (velocidade * delta) / 1000, this.bloqueado, this.geo, this.parede);
+    this.pos = mover(this.pos, dir, (velocidade * delta) / 1000, this.bloqueado, this.geo, this.parede, this.perfil.vista?.quinaMaximaPx ?? 0);
     this.empurrarSeEspinhoso(dir, time);
     if (time >= this.interagindoAte) this.andarAnimado(dir);
   }
@@ -1161,6 +1244,8 @@ export class CasaScene extends Phaser.Scene {
    */
   private andouContraUmaPorta(): boolean {
     if (!this.empurrando) return false;
+    // Depois de uma travessia, as portas ignoram o "andar contra" por um instante (P3 do QA): o movimento segue livre.
+    if (this.time.now < this.portasIgnoramAte || this.portasAguardamSoltar) return false;
     const achada = portaContraAoAndar(this.pos, this.empurrando, this.portasNaTela(), this.geo);
     if (!achada) return false;
     const r = resolverPorta(achada.objeto, this.concluida, this.contexto());
@@ -1222,6 +1307,8 @@ export class CasaScene extends Phaser.Scene {
             this.controles.exigirSoltar(sp.dados.direcao as Direcao);
             this.empurrando = null;
             this.bloqueadoAte = this.time.now + PAUSA_DE_ENTRADA_MS;
+            this.portasIgnoramAte = this.time.now + PAUSA_DAS_PORTAS_APOS_TRAVESSIA_MS;
+            this.portasAguardamSoltar = true; // quem segurou a seta na travessia só abre a próxima porta depois de soltar e apertar de novo
           },
         });
       },
@@ -1259,6 +1346,14 @@ export class CasaScene extends Phaser.Scene {
       this.falar(['bilhete.1', String(bilhete.objeto.dados.texto)], { nome: this.sobrinho().nome });
       return;
     }
+    // Interruptor de parede: a placa fica na face norte do tile, então, no tile do interruptor, olhando para cima (pés em qualquer ponto
+    // do tile, a até 1 tile da linha), o A de frente a aciona, como no bilhete. De um vizinho livre que a alcança, vale a regra geral abaixo.
+    const interruptores = this.objetosTela.flatMap((o) => (o.tipo === 'interruptor' ? [{ x: o.x, y: o.y, lado: 'cima' as const, objeto: o }] : []));
+    if (interruptores.length > 0 && portaDeFrente(this.pos, this.dir, interruptores, this.geo, 1)) {
+      this.comecarGestoDeInteracao(time);
+      this.acionarInterruptor();
+      return;
+    }
     // Ordem do A (ADR-005 seção 3.6): objeto na frente ou encostado; o Nick dormindo entra nessa lista, no fim; o Nick
     // acordado só se nada acima achou.
     const achado = alvoDoA(
@@ -1282,8 +1377,7 @@ export class CasaScene extends Phaser.Scene {
         this.falar([String(alvo.dados.texto)]);
         break;
       case 'interruptor':
-        // No modo explorar as luzes já estão acesas: o interruptor não tem ação, nem som nem texto (ADR-010 2).
-        if (this.sv.sessao.modo !== 'explorar') this.acenderLuzes();
+        this.acionarInterruptor();
         break;
       case 'arvore':
         // Antes das luzes, A na árvore não faz nada (GDD 14.10.2, item 7). Depois, mostra o texto do estado (GDD 15.4).

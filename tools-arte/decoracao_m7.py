@@ -39,7 +39,7 @@ PROPOSTA_MANIFESTO = ATLAS / "decoracao-manifesto-proposta.json"
 PASSAGEM = {537, 538}
 TIPOS_PROIBIDOS = {"spawn", "porta", "portaFechada", "interruptor", "bilhete", "arvore", "peca", "examinavel",
                    "caixa", "painel"}
-CONTAGEM = {"hall": 4, "sala": 8, "cozinha": 6, "quarto": 4, "escritorio": 3}
+CONTAGEM = {"hall": 4, "sala": 8, "cozinha": 6, "quarto": 4, "escritorio": 3, "quarto_casal": 5, "banheiro1": 3, "banheiro_escritorio": 3}
 LINHAS_TELA = 11  # sala.linhas (perfil hd-480x352)
 MAX_ATLAS = 16_000
 
@@ -91,13 +91,34 @@ POSICOES = [
     ("escritorio", 6, 1, "dec_arvore_p", "chao"),
     ("escritorio", 4, 0, "dec_luz", "movel"),     # sobre a mesa
     ("escritorio", 5, 3, "dec_meias", "movel"),   # sobre a cama (lida de (4, 3); BUG-120-01: (6, 3) não tinha vizinho livre)
+    # Quarto do casal (1.3.0; cama (1,0)-(2,2), armário (0,4)-(3,4); chegadas em (3,1) e (5,4))
+    ("quarto_casal", 0, 0, "dec_arvore_g", "chao"),
+    ("quarto_casal", 0, 3, "dec_arvore_p", "chao"),
+    ("quarto_casal", 3, 3, "dec_presente_verde", "chao"),
+    ("quarto_casal", 1, 2, "dec_meias", "movel"),               # no pé da cama
+    ("quarto_casal", 2, 2, "dec_presente_vermelho", "movel"),   # no pé da cama
+    # Banheiro 1 (box (0,0)-(2,0), privada (3,0), pia (0,2)-(2,2); chegadas em (0,1) e (3,2))
+    ("banheiro1", 1, 2, "dec_vela", "movel"),                   # sobre a pia (lida de (1, 1); (0, 1) é a chegada da porta)
+    ("banheiro1", 2, 2, "dec_pano", "movel"),                   # toalha sobre a pia
+    ("banheiro1", 1, 1, "dec_arvore_p", "chao"),
+    # Banheiro do escritório (pia (1,0), privada (0,1), box (1,1); chegada em (0,0), o único tile livre)
+    ("banheiro_escritorio", 1, 0, "dec_vela", "movel"),         # sobre a pia
+    ("banheiro_escritorio", 1, 1, "dec_guirlanda", "movel"),    # no box (sem vizinho livre: não examinável)
+    ("banheiro_escritorio", 0, 1, "dec_pano", "movel"),         # toalha na privada
 ]
 
 
-# Elevação (px acima da base do tile) dos enfeites apoiados em móvel na visão 3/4 (ADR-012 5.5). Só vai para o JSON com --com-elevacao,
-# depois que o Dev aceitar a chave `elevacao` no validador (hoje E1 rejeita chave desconhecida). Valores = altura da superfície de apoio.
+# Enfeites sobre móvel sem vizinho livre alcançável (a chegada da porta não conta): não são examináveis (E10).
+SEM_EXAMINAR = {("banheiro_escritorio", 1, 0), ("banheiro_escritorio", 1, 1), ("banheiro_escritorio", 0, 1)}
+
+
+# Elevação (px acima da base do tile) dos enfeites apoiados em móvel na visão 3/4 (ADR-012 5.5); o validador aceita de 0 a 32.
+# Valores = altura da superfície de apoio. `--sem-elevacao` omite a chave.
 ELEVACAO = {("sala", 2, 1): 22, ("sala", 4, 1): 22, ("sala", 5, 1): 22, ("sala", 10, 7): 20,
-            ("escritorio", 4, 0): 14, ("escritorio", 5, 3): 14}
+            ("escritorio", 4, 0): 14, ("escritorio", 5, 3): 14,
+            # 1.3.0: áreas novas (cama: duvet a 18 px da base do tile; pias, box e privada: tampo no limite de 32)
+            ("quarto_casal", 1, 2): 18, ("quarto_casal", 2, 2): 18, ("banheiro1", 1, 2): 32, ("banheiro1", 2, 2): 32,
+            ("banheiro_escritorio", 1, 0): 32, ("banheiro_escritorio", 1, 1): 32, ("banheiro_escritorio", 0, 1): 32}
 
 
 def carregar_mapa(subarea):
@@ -193,9 +214,11 @@ def montar():
             pisca = False
         if local != "chao" and chave is None and sprite not in ("dec_cortina", "dec_pano", "dec_estrela", "dec_bola"):
             erros.append(f"E6 {sub} ({x},{y}): bloqueado sem texto para {sprite}")
+        if (sub, x, y) in SEM_EXAMINAR:
+            chave = None
         ident = f"{sub}_{sprite.replace('dec_', '')}_{sum(1 for e in por_sub[sub] if e['sprite'] == sprite) + 1}"
         item = {"id": ident, "sprite": sprite, "x": x, "y": y, "pisca": pisca, "examinar": chave}
-        if "--com-elevacao" in sys.argv and (sub, x, y) in ELEVACAO:
+        if (sub, x, y) in ELEVACAO and "--sem-elevacao" not in sys.argv:
             item["elevacao"] = ELEVACAO[(sub, x, y)]
         por_sub[sub].append(item)
         usados[sprite] = usados.get(sprite, 0) + 1
@@ -203,8 +226,8 @@ def montar():
         if len(por_sub[sub]) != n:
             erros.append(f"E3 {sub}: {len(por_sub[sub])} enfeites, o GDD 20.6 pede {n}")
     total = sum(len(v) for v in por_sub.values())
-    if total != 25:
-        erros.append(f"E3 total {total}, o GDD 20.6 pede 25")
+    if total != sum(CONTAGEM.values()):
+        erros.append(f"E3 total {total}, esperado {sum(CONTAGEM.values())}")
     atlas = sum((ATLAS / (sp + ".png")).stat().st_size for sp in usados if (ATLAS / (sp + ".png")).exists())
     if atlas > MAX_ATLAS:
         erros.append(f"E8 atlas dec_* em uso: {atlas} bytes (limite 16.000)")
@@ -237,7 +260,7 @@ def main(argv):
         gravar(por_sub)
         print(f"Gravado: {', '.join(f'content/maps/decoracao/{s}.json' for s in CONTAGEM)}")
         print(f"Proposta de manifesto: {PROPOSTA_MANIFESTO}")
-    print(f"OK: 25 enfeites, E1 a E8. Atlas dec_* em uso: {atlas} bytes (limite 16.000). Sprites: {sorted(usados)}")
+    print(f"OK: {sum(CONTAGEM.values())} enfeites, E1 a E8. Atlas dec_* em uso: {atlas} bytes (limite 16.000). Sprites: {sorted(usados)}")
     for p in pendencias:
         print("PENDENTE", p)
     return 0

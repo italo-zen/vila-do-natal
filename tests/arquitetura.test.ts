@@ -68,6 +68,19 @@ describe('regras de arquitetura (ADR-001)', () => {
   });
 });
 
+/** ADR-013 seção 7, item 8: o sorteio é injetável e só em memória. */
+describe('sorteio (ADR-013)', () => {
+  it('src/ inteiro não usa Math.random (o sorteio recebe um Rng; a semente nova vem de crypto na infraestrutura)', () => {
+    const problemas = arquivos(SRC).filter((f) => /Math\.random/.test(readFileSync(f, 'utf-8')));
+    expect(problemas).toEqual([]);
+  });
+
+  it('a apresentação não importa application/plano nem o Rng: ela não sabe que existe sorteio', () => {
+    const problemas = arquivos(join(SRC, 'presentation')).filter((f) => /application\/plano|domain\/shared\/Rng|domain\/plano/.test(readFileSync(f, 'utf-8')));
+    expect(problemas.map((f) => f.slice(SRC.length))).toEqual([]);
+  });
+});
+
 /** ADR-007 12.1 (0.10.0): a direção do joystick é função pura; a pilha da cruz saiu do código. */
 describe('joystick (ADR-007 1.3 e 12.1)', () => {
   it('direcaoDoAnalogico.ts não usa DOM nem Phaser', () => {

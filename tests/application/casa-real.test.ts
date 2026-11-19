@@ -32,8 +32,8 @@ const PORTAS: Record<string, [string, string]> = {
 };
 
 describe('casa real 1.1.0: as áreas (PL1)', () => {
-  it('o manifesto lista as 9 áreas, e todas são schema 3 com a máscara de paredes', () => {
-    expect(manifesto.schemaVersion).toBe(3);
+  it('o manifesto (schema 4) lista as 9 áreas, e todas são schema 3 com a máscara de paredes', () => {
+    expect(manifesto.schemaVersion).toBe(4);
     expect(manifesto.maps.map((m) => m.id).sort()).toEqual(Object.keys(PISO).sort());
     for (const m of todos.values()) expect(m.paredes).toHaveLength(m.altura);
   });
@@ -78,21 +78,22 @@ describe('casa real 1.1.0: as portas (PL2)', () => {
     expect(trancadas.sort()).toEqual(['hall/hall-sala/porta', 'sala/hall-sala/porta']);
   });
 
-  it('as quatro áreas fechadas ficam fora de todo `missions[].maps`', () => {
+  it('1.3.0: só o Quartinho segue fechado; o Quarto do casal e os dois banheiros abrem com o Quarto e o Escritório (parte 1 em diante)', () => {
     const abertas = new Set(manifesto.missions.flatMap((m) => m.maps));
-    for (const id of ['quarto_casal', 'banheiro1', 'banheiro_escritorio', 'quartinho']) expect(abertas.has(id), id).toBe(false);
-    for (const id of ['hall', 'sala', 'cozinha', 'quarto', 'escritorio']) expect(abertas.has(id), id).toBe(true);
+    expect(abertas.has('quartinho')).toBe(false);
+    for (const id of ['hall', 'sala', 'cozinha', 'quarto', 'escritorio', 'quarto_casal', 'banheiro1', 'banheiro_escritorio']) expect(abertas.has(id), id).toBe(true);
+    expect(manifesto.missions[0].maps).toEqual(['hall', 'sala', 'cozinha']);
   });
 
-  it('o motor decide o estado pela missão: quarto_casal-sala, banheiro1-quarto, banheiro_escritorio-escritorio e cozinha-quartinho (lado aberto) são sempre fechadas; hall-sala tem código até a fase `porta`', () => {
+  it('o motor decide o estado pela missão: só a cozinha-quartinho é sempre fechada (1.3.0); as portas das áreas novas abrem da parte 1 em diante; hall-sala tem código até a fase `porta`', () => {
     const missoes = missoesReais();
     // Parte 1 em andamento: a introdução, a porta e as luzes já foram concluídas.
     const concluida = (f: Fase) => f === 'introducao' || f === 'porta' || f === 'luzes';
     const ctx = contextoDaPartida(missoes, concluida);
     const estado = (area: string, id: string) => estadoDaPorta(todos.get(area)!.objetos.find((o) => o.tipo === 'porta' && o.dados.id === id)!, concluida, ctx);
-    expect(estado('sala', 'quarto_casal-sala')).toBe('fechada');
-    expect(estado('quarto', 'banheiro1-quarto')).toBe('fechada');
-    expect(estado('escritorio', 'banheiro_escritorio-escritorio')).toBe('fechada');
+    for (const [area, id] of [['sala', 'quarto_casal-sala'], ['quarto_casal', 'quarto_casal-sala'], ['quarto', 'banheiro1-quarto'], ['banheiro1', 'banheiro1-quarto'], ['quarto_casal', 'banheiro1-quarto_casal'], ['banheiro1', 'banheiro1-quarto_casal'], ['escritorio', 'banheiro_escritorio-escritorio'], ['banheiro_escritorio', 'banheiro_escritorio-escritorio']] as const) {
+      expect(estado(area, id), `${area}/${id}`).toBe('aberta');
+    }
     expect(estado('cozinha', 'cozinha-quartinho')).toBe('fechada');
     expect(estado('sala', 'cozinha-sala')).toBe('aberta');
     expect(estado('sala', 'escritorio-sala')).toBe('aberta');

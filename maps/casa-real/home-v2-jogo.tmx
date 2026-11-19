@@ -286,9 +286,6 @@
   <object id="181" class="bilhete" x="-32" y="64" width="32" height="32"><properties><property name="lado" value="esquerda"/><property name="texto" value="bilhete.pista"/></properties></object>
   <object id="182" class="interruptor" x="-192" y="-32" width="32" height="32"/>
   <object id="183" class="arvore" x="-64" y="96" width="32" height="32"><properties><property name="estado" value="desmontada"/></properties></object>
-  <object id="184" class="peca" x="-160" y="160" width="32" height="32"><properties><property name="estadoInicial" value="visivel"/></properties><text wrap="1" halign="center">1</text></object>
-  <object id="185" class="peca" x="-160" y="-288" width="32" height="32"><properties><property name="estadoInicial" value="escondida"/></properties><text wrap="1" halign="center">2</text></object>
-  <object id="186" class="peca" x="-96" y="-352" width="32" height="32"><properties><property name="estadoInicial" value="escondida"/></properties><text wrap="1" halign="center">3</text></object>
   <object id="187" name="pia" class="examinavel" x="-160" y="-352" width="32" height="32"><properties><property name="texto" value="cozinha.pia"/></properties></object>
   <object id="188" name="fogao" class="examinavel" x="-192" y="-320" width="32" height="32"><properties><property name="texto" value="cozinha.fogao"/></properties></object>
   <object id="189" name="geladeira" class="examinavel" x="-128" y="-256" width="32" height="32"><properties><property name="texto" value="cozinha.geladeira"/></properties></object>

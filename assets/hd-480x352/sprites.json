@@ -175,7 +175,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 44
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -193,7 +193,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 80
+          "y": 72
         },
         "sombra": {
           "dx": 6,
@@ -211,7 +211,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 56
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -405,7 +405,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 48
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -626,7 +626,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 44
+          "y": 48
         },
         "sombra": {
           "dx": 6,
@@ -644,7 +644,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 44
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -671,7 +671,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 56
+          "y": 44
         },
         "sombra": {
           "dx": 6,
@@ -726,7 +726,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 48
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -810,12 +810,20 @@
         },
         "ancora": {
           "x": 0,
-          "y": 40
+          "y": 56
         },
         "sombra": {
           "dx": 6,
           "dy": 6
         }
+      }
+    },
+    {
+      "arquivo": "spr_mural_de_fotos.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 14,
+        "y": 23
       }
     },
     {
@@ -907,6 +915,22 @@
       "quadros": 4
     },
     {
+      "arquivo": "spr_oli_face.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 16,
+        "y": 32
+      }
+    },
+    {
+      "arquivo": "spr_oli_face_margaridas.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 16,
+        "y": 32
+      }
+    },
+    {
       "arquivo": "spr_parede_face_norte_direita.png",
       "tipo": "imagem"
     },
@@ -984,6 +1008,38 @@
     },
     {
       "arquivo": "spr_parede_v.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_direita_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_esquerda_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_ilha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_ilha_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_meio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_face_meio_sombra.png",
       "tipo": "imagem"
     },
     {
@@ -1066,7 +1122,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 44
+          "y": 40
         },
         "sombra": {
           "dx": 6,
@@ -1219,12 +1275,36 @@
         },
         "ancora": {
           "x": 0,
-          "y": 48
+          "y": 40
         },
         "sombra": {
           "dx": 6,
           "dy": 6
         }
+      }
+    },
+    {
+      "arquivo": "spr_quadro_grade.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 9,
+        "y": 23
+      }
+    },
+    {
+      "arquivo": "spr_quadro_letras.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 8,
+        "y": 25
+      }
+    },
+    {
+      "arquivo": "spr_quadro_paisagem.png",
+      "tipo": "imagem",
+      "ancora": {
+        "x": 8,
+        "y": 25
       }
     },
     {
@@ -1285,7 +1365,7 @@
         },
         "ancora": {
           "x": 0,
-          "y": 44
+          "y": 40
         },
         "sombra": {
           "dx": 6,

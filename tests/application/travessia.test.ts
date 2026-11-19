@@ -16,14 +16,13 @@ import { CONTEXTO_PADRAO, estadoDaPorta, resolverPorta, type ContextoDeArea } fr
 import { AtravessarPorta } from '../../src/application/usecases/AtravessarPorta';
 import { SessaoDeJogo } from '../../src/application/SessaoDeJogo';
 import { ConcluirFase } from '../../src/application/usecases/ConcluirFase';
-import { IniciarNovoJogo } from '../../src/application/usecases/IniciarNovoJogo';
 import { TentarCodigoDaPorta } from '../../src/application/usecases/TentarCodigoDaPorta';
-import { missoesReais } from '../helpers/missoesReais';
 import { TravaDeEntrada } from '../../src/presentation/input/TravaDeEntrada';
 import type { Direcao } from '../../src/domain/shared/Direcao';
 import type { PerfilDeArte } from '../../src/application/arte/PerfilDeArte';
 import { areasReais } from '../helpers/areasReais';
 import { chegada, mapaDeTexto, porta } from '../helpers/mapasDeArestas';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 
 /**
  * M3 a M6 (ADR-011 seção 8): travessia de porta por aresta. Tile 16 e 32, como o movimento. Teclado e toque entregam
@@ -157,7 +156,7 @@ describe('M4: porta, estados (ADR-011 seção 3.3)', () => {
 
   it('o caso de uso AtravessarPorta devolve o mesmo resultado e olha a fase da sessão', () => {
     const sessao = new SessaoDeJogo();
-    new IniciarNovoJogo(sessao, missoesReais()).executar('lolo');
+    iniciarComReferencia(sessao).executar('lolo');
     new ConcluirFase(sessao).executar('introducao');
     const caso = new AtravessarPorta(sessao);
     const ctx = aberta(['a', 'b']);

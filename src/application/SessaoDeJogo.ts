@@ -2,6 +2,8 @@ import type { Fase } from '../domain/progresso/Fase';
 import { indiceDaFase } from '../domain/progresso/Fase';
 import type { Progresso } from '../domain/progresso/Progresso';
 import { Farejo } from '../domain/nick/Farejo';
+import type { Plano } from '../domain/plano/Plano';
+import type { MapaDoJogo } from './content/Mapa';
 import { MODO_DE_SESSAO_INICIAL, type ModoDeSessao } from './sessao/modoDeSessao';
 
 /** Estado da partida em memória. Só os casos de uso o alteram. Não é gravado (ADR-002 seção 3). */
@@ -13,6 +15,22 @@ export class SessaoDeJogo {
   readonly farejo = new Farejo();
   /** Modo da sessão (ADR-010 1.1): `historia`, ou `explorar` depois da partida concluída. Só em memória. */
   private _modo: ModoDeSessao = MODO_DE_SESSAO_INICIAL;
+
+  private _plano: Plano | null = null;
+  private _mapas: Map<string, MapaDoJogo> | null = null;
+  /** Área da peça 1 da partida anterior desta sessão (só em memória; anti-repetição, ADR-013 seção 3). */
+  areaDaPeca1Anterior: string | undefined;
+
+  /** Plano da partida (peças e Nick sorteados). Só em memória (ADR-002 seção 3). */
+  get plano(): Plano {
+    if (!this._plano) throw new Error('A partida não tem plano.');
+    return this._plano;
+  }
+  /** Mapas da partida: os do conteúdo com as peças do plano injetadas (ADR-013 seção 3). A apresentação lê só estes. */
+  get mapas(): Map<string, MapaDoJogo> {
+    if (!this._mapas) throw new Error('A partida não tem mapas (sem plano).');
+    return this._mapas;
+  }
 
   get modo(): ModoDeSessao {
     return this._modo;
@@ -33,8 +51,11 @@ export class SessaoDeJogo {
   get temPartida(): boolean {
     return this._progresso !== null;
   }
-  iniciar(p: Progresso): void {
+  iniciar(p: Progresso, plano?: Plano, mapas?: Map<string, MapaDoJogo>): void {
     this._progresso = p;
+    this._plano = plano ?? null;
+    this._mapas = mapas ?? null;
+    if (plano) this.areaDaPeca1Anterior = plano.pecas[0].area;
     this._modo = MODO_DE_SESSAO_INICIAL;
     this.erros = 0;
     this.vistos.clear();

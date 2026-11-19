@@ -524,3 +524,29 @@ Sem bug confirmado. Observações para o Dev:
 - **Cacto A de frente: FECHADO**: o travado era o aviso "Está tudo escuro!". Em explorar, sem texto, jogo livre. Empurrão 3 de 3 (2 vezes 1 tile, uma voltou a 1,3 por empurrão contra o sofá/parede, sem atravessar).
 - **Observação P3 (667×375):** o joystick (86..206, 128..248) cobre o cacto e a mini-árvore da coluna 0; não esconde peça, interruptor nem A.
 - **Observação (960×640 do playtest):** a barra encosta na fileira de baixo da Sala (presentes e árvore); em 960×704 e em 667×375 as peças estão inteiras.
+
+## 1.2.1, rodada 1
+- Nenhum bug P0 a P3 novo. Sala redesenhada (sofá, rack/TV, mesa com 6 cadeiras, aparador, mural) ancorada e sem cobrir interruptor, porta cozinha-sala nem peça 1 (960, 667, 844). Colisão: 12 de 12 bloqueios mantidos. No 667×375 o mural (y 128-146) fica acima do B (começa em y 156): não coberto nesta captura.
+- Observação: um `smoke:release` rodado junto com outros processos mediu título desenhado 4,07 s; sozinho, 3,2 s (imagem 3,7 s).
+
+## 1.2.2, rodada 1
+- Nenhum bug P0 a P3 novo. Áreas (9) abertas em 960/667/844 sem erro de console; colisão igual (muro da Cozinha, abertura coluna 4 -> (4,3), coluna 3 desce até a porta do Quartinho, camas, cômoda, poltrona, mesa, sofá bloqueiam). Créditos "Versão 1.2.2".
+- Pendente: `smoke:release` (tempo de título) não registrou números nesta rodada (saída vazia no fim do tempo); repetir sozinho.
+
+## 1.3.0, rodada 1
+- Nenhum bug P0 a P3 confirmado. Sorteio: 24 planos (sementes diferentes) sem peça em Sala, Hall, banheiros ou Quartinho; 3 áreas distintas; peça e Nick em piso e fora de móvel; Nick em Sala nas fases iniciais; mesma semente repete o plano. Portas novas por toque 667 e 844: 33 de 33 OK cada. Borda: nenhum passo para piso inválido ou móvel nas 8 áreas.
+- Observação (script, não é bug): no teclado, segurar a seta após atravessar a porta da alcova da Sala leva o sobrinho à porta vizinha (escritorio-sala e quarto_casal-sala em (7,0) e (6,0); quarto-sala), o que parece "travessia errada". Em 4 casos do teclado. Confirmar com o Diretor se a alcova deve evitar isso (P3 de design).
+- Não coberto: PL27 (20 partidas completas), conduções 2×, transparência atrás de geladeira/forno, farejar/setas por fase, quina do cacto por captura, enfeites novos do explorar.
+
+## 1.3.0, rodada 2
+- P3 da alcova (segurar a seta): FECHADO. `v130-portas.mjs` nos 3 modos: 33 de 33 OK, 0 falhas (teclado, toque 667, toque 844). A falha intermitente `banheiro1->quarto A` em toque667 não reproduziu; era carga de máquina/script, não do jogo.
+- PL28 (farejar): 9 de 9 casos (3 sementes x 3 fases) com a seta na porta certa (`__plano()` vs `__estado().farejo.porta`), inclusive `banheiro1-quarto` e `cozinha-sala`.
+- Transparência: forno/coifa translúcidos com o sobrinho atrás (ok). Armário alto da Cozinha (coluna 5, linhas 0 a 2): sobrinho posicionado nos tiles do próprio móvel fica oculto, mas esses tiles são inalcançáveis; sem tile ao norte. Observação, não bug.
+- Enfeites A: vela do Banheiro 1, meias e presente do casal respondem. A pia inteira (também o tile do pano, não examinável) mostra o texto da vela (A de frente para o móvel com enfeite, PL16): comportamento previsto.
+- Observação P3 (sorteio): sementes próximas (500, 513, 526) deram a peça 1 sempre no Quarto da Oli e Nick no casal na parte 2; com sementes de entropia a variedade foi boa nas 24 de 7919*i. Verificar a mistura da semente (testes de 1000 sementes passam).
+- PL27 (20 partidas completas com conduções): script de coleta (`v130-fluxo.mjs`) instável; NÃO coberto. Cobertura por dados: 1000 sementes válidas nos testes; fluxo real só com plano de referência no smoke.
+
+## 1.3.0, rodada 3 (PL27)
+- 16 partidas rodadas (`v130-pl27.mjs`, 4 sobrinhos, sementes 500..576, 1000..1037, 2000..2037, 3000..3037, 4000..4037): 0 erros de página, `__irAPeca` sempre devolveu um vizinho alcançável; peças em Escritório, Quarto da Oli, Cozinha, Quarto do casal; nenhuma na Sala, Hall, banheiros ou Quartinho. Sementes 500, 513, 526, 539 dão planos variados.
+- Condução: 33 leituras de passos, mín. 13, máx. 23, todas com `dobro` (2×). 15 leituras ficaram nulas por polling do script (a fase seguiu normalmente): falha de script, não do jogo.
+- Não cobertas: fase enfeites e créditos nestas partidas (só partes 1 a 3).

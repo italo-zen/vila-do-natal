@@ -12,7 +12,8 @@ const [, , arquivoArg, saidaArg] = process.argv;
 const arquivo = arquivoArg ?? 'dist-qa/index.html';
 const saida = saidaArg ?? 'dist-qa/capturas-cacto';
 mkdirSync(saida, { recursive: true });
-const url = pathToFileURL(resolve(arquivo)).href;
+// `?plano=referencia`: o gancho de QA usa as posições fixas de antes do sorteio (passos escritos à mão). Só existe no build de QA.
+const url = pathToFileURL(resolve(arquivo)).href + '?plano=referencia';
 const real = (ms) => new Promise((r) => setTimeout(r, ms));
 /** Página atual: o tempo do jogo só anda por `esperar`, dentro da página (relógio virtual abaixo). */
 let pagina = null;

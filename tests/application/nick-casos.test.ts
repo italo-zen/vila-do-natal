@@ -7,14 +7,15 @@ import { portaASeguir } from '../../src/application/mundo/nick/portaASeguir';
 import { alvoDaFase } from '../../src/application/mundo/nick/missaoDoNick';
 import { chaveDaDica } from '../../src/application/mundo/nick/dica';
 import { podeAbrirDica, podeFarejar, type ModoDaTela } from '../../src/application/mundo/nick/modoDaTela';
-import { IniciarNovoJogo } from '../../src/application/usecases/IniciarNovoJogo';
+import { iniciarComReferencia } from '../helpers/planoDeReferencia';
 import { tile } from '../../src/domain/shared/Tile';
 
 /** Partida nova no conteúdo real, com o Lolo, pronta para a fase `porta` (introdução concluída). */
 async function novaPartida(): Promise<{ s: Servicos; c: Conteudo }> {
   const c = await carregarConteudoReal();
-  const s = montarServicos(c, 'teste');
-  new IniciarNovoJogo(s.sessao, c.missoes).executar('lolo');
+  const s = montarServicos(c, 'teste', { nova: () => 0 });
+  s.iniciarNovoJogo = iniciarComReferencia(s.sessao);
+  s.iniciarNovoJogo.executar('lolo');
   return { s, c };
 }
 
@@ -48,19 +49,19 @@ descreverComConteudoNovo('Nick no conteúdo real (ADR-005 seções 2.3 e 3.7)', 
   it('o alvo do farejar segue a fase: sala nas luzes e na parte 1, cozinha nas partes 2 e 3, Escritório na fase enfeites', async () => {
     const { s, c } = await novaPartida();
     avancarAte(s, 'luzes');
-    expect(alvoDaFase(c.missoes, concluida(s))).toBe('sala');
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBe('sala');
     avancarAte(s, 'parte1');
-    expect(alvoDaFase(c.missoes, concluida(s))).toBe('sala');
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBe('sala');
     avancarAte(s, 'parte2');
-    expect(alvoDaFase(c.missoes, concluida(s))).toBe('cozinha');
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBe('cozinha');
     avancarAte(s, 'parte3');
-    expect(alvoDaFase(c.missoes, concluida(s))).toBe('cozinha');
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBe('cozinha');
     // Fase enfeites (GDD 17.6): o alvo é o Escritório, onde está a caixa (ADR-006 seção 5).
     avancarAte(s, 'enfeites');
-    expect(alvoDaFase(c.missoes, concluida(s))).toBe('escritorio');
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBe('escritorio');
     // Caixa encaixada: o jogo terminou e não há mais alvo.
     concluirEnfeites(s);
-    expect(alvoDaFase(c.missoes, concluida(s))).toBeUndefined();
+    expect(alvoDaFase(c.missoes, concluida(s), s.sessao.plano)).toBeUndefined();
   });
 
   it('o Nick dorme em cada fase no tile de conteúdo: cozinha na parte 1, quarto na parte 2, escritório na parte 3', async () => {
