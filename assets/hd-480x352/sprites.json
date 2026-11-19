@@ -81,11 +81,39 @@
     },
     {
       "arquivo": "dec_arvore_g.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "dec_arvore_p.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 40
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "dec_bola.png",
@@ -138,24 +166,148 @@
       "quadros": 2
     },
     {
+      "arquivo": "spr_armario_da_cozinha.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_armario_da_lavanderia.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 2
+        },
+        "ancora": {
+          "x": 0,
+          "y": 80
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_armario_do_casal.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 4,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
       "arquivo": "spr_arvore_1parte.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_arvore_2partes.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_arvore_completa.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_arvore_desmontada.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_arvore_enfeitada.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_balao_au.png",
@@ -219,7 +371,173 @@
     },
     {
       "arquivo": "spr_bilhete.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "ancora": {
+        "x": 8,
+        "y": 23
+      }
+    },
+    {
+      "arquivo": "spr_box_do_banheiro_1.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 3,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_box_do_banheiro_do_escritorio.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_cacto.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_cadeira_de_amamentacao.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_cama_da_oli.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 2
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_cama_do_casal.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 2,
+          "h": 3
+        },
+        "ancora": {
+          "x": 0,
+          "y": 96
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_cama_do_escritorio.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 2,
+          "h": 2
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_comoda.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 3
+        },
+        "ancora": {
+          "x": 0,
+          "y": 104
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_comoda_da_oli.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 40
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_conquista_enfeites.png",
@@ -300,7 +618,39 @@
     },
     {
       "arquivo": "spr_fogao.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_forno.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_fumaca_dormir.png",
@@ -313,7 +663,21 @@
     },
     {
       "arquivo": "spr_geladeira.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_icone_dica.png",
@@ -337,11 +701,38 @@
     },
     {
       "arquivo": "spr_interruptor.png",
-      "tipo": "imagem"
+      "tipo": "folhas",
+      "quadro": {
+        "w": 16,
+        "h": 24
+      },
+      "quadros": 2,
+      "ancora": {
+        "x": 8,
+        "y": 23
+      }
     },
     {
       "arquivo": "spr_lampada.png",
       "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_lava_roupas.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_lolo_celebrate.png",
@@ -390,6 +781,42 @@
         "h": 48
       },
       "quadros": 2
+    },
+    {
+      "arquivo": "spr_mesa_de_jantar.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 3,
+          "h": 2
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_mesa_do_escritorio.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 3,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 40
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_nick_happy.png",
@@ -480,6 +907,126 @@
       "quadros": 4
     },
     {
+      "arquivo": "spr_parede_face_norte_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_face_norte_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_face_norte_ilha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_face_norte_meio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_h.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_h_direita.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_h_esquerda.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_h_ilha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_h_meio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_fim.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_fim_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_ilha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_ilha_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_meio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_meio_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_topo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_topo_com_face.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_topo_com_face_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_linha_v_topo_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_v.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_fim.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_fim_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_ilha.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_ilha_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_meio.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_meio_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_topo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_topo_com_face.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_topo_com_face_sombra.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_parede_vidro_topo_sombra.png",
+      "tipo": "imagem"
+    },
+    {
       "arquivo": "spr_peca_1.png",
       "tipo": "imagem"
     },
@@ -493,15 +1040,210 @@
     },
     {
       "arquivo": "spr_pia.png",
-      "tipo": "imagem"
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 3
+        },
+        "ancora": {
+          "x": 0,
+          "y": 104
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_pia_do_banheiro_1.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 3,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_pia_do_banheiro_do_escritorio.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_porta.png",
       "tipo": "imagem"
     },
     {
+      "arquivo": "spr_porta_aberta.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_aberta_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_codigo.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_codigo_vertical.png",
+      "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_porta_lado.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 12,
+        "h": 32
+      },
+      "quadros": 3,
+      "ancora": {
+        "x": 6,
+        "y": 16
+      }
+    },
+    {
+      "arquivo": "spr_porta_norte.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 38
+      },
+      "quadros": 3,
+      "ancora": {
+        "x": 16,
+        "y": 32
+      }
+    },
+    {
+      "arquivo": "spr_porta_sul.png",
+      "tipo": "folhas",
+      "quadro": {
+        "w": 32,
+        "h": 12
+      },
+      "quadros": 3,
+      "ancora": {
+        "x": 16,
+        "y": 12
+      }
+    },
+    {
       "arquivo": "spr_porta_vertical.png",
       "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_prateleira.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 3,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 56
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_prateleira_pequena.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_privada_do_banheiro_1.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_privada_do_banheiro_do_escritorio.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_rack_da_sala.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 4,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 48
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_seta_farejar_cima.png",
@@ -514,6 +1256,42 @@
     {
       "arquivo": "spr_seta_farejar_esquerda.png",
       "tipo": "imagem"
+    },
+    {
+      "arquivo": "spr_sofa.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 2,
+          "h": 2
+        },
+        "ancora": {
+          "x": 0,
+          "y": 64
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
+    },
+    {
+      "arquivo": "spr_tanque.png",
+      "tipo": "imagem",
+      "movel": {
+        "pegada": {
+          "w": 1,
+          "h": 1
+        },
+        "ancora": {
+          "x": 0,
+          "y": 44
+        },
+        "sombra": {
+          "dx": 6,
+          "dy": 6
+        }
+      }
     },
     {
       "arquivo": "spr_tutu_celebrate.png",

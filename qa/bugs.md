@@ -505,3 +505,22 @@ Sem bug confirmado. Observações para o Dev:
 - **P3 (FI2, decisão do Orquestrador):** a barra "Z ou X: continuar" cobre ~9% da altura da imagem de fim (faixa inferior), incluindo a base dos corpos das crianças; os rostos ficam livres.
 - **EN2:** nenhum enfeite sobre porta, interruptor, bilhete, árvore, caixa, peça, spawn ou tile do Nick (dados). Enfeites examináveis sobre móveis: previsto (GDD 20.6, EN4).
 - EX5 667×375 (2 min, não os 5 pedidos): sem erro de console; sem trava confirmada; cobertura das áreas incompleta (Sala e Quarto). Repetir 5 min na próxima rodada.
+
+## 1.1.0, rodada 1
+- Nenhum bug P0 a P3 confirmado. Pendências N/T no `qa/checklist-110.md`.
+- Observação: no "andar contra" a travessia deixa o sobrinho 3 tiles dentro da área nova se a tecla continua apertada (ex.: Hall para Sala chega em (4,5)); é continuação do movimento, não volta.
+
+## 1.2.0, rodada 1
+- **BUG-120-01 (P2, a confirmar): meias sobre a cama do Escritório não respondem ao A.** Passos: build:qa, título, `__partidaConcluida('lolo', false)`, créditos, Explorar a casa; `__teleportar('escritorio','escritorio-sala')`; `__posicionar(6,4,'cima')`; apertar Z. Esperado: texto `enfeite.meias` (PL16, enfeite em (6,3)). Obtido: nenhum diálogo, `travado=false`. Evidência: `qa/evidencias/v120/exame-esc-meias.png` (meia desenhada em cima da cama). Os enfeites do rack (guirlanda, luz, meias) e da cômoda (vela, mini-árvore) respondem corretamente. Confirmar com tecla de seta de frente (a direção veio de `__posicionar`).
+- Teste do presente do Quarto da Oli inválido: tile (0,0) do Quarto não tem piso; refazer com o presente em (1,0) pelo tile (1,1)... é a cama (1,0)-(1,1); conferir por qual lado se examina.
+- Cacto/paredes/móveis ao vivo: `v120.mjs` inconclusivo (a posição ficou travada por diálogo anterior); regressão `smoke-cacto` passou.
+- **BUG-120-01 confirmado em repetição** (`qa/scripts/v120b.mjs`, seta para cima antes do Z): dir=cima, sem texto. Continua P2.
+- **BUG-120-02 (P3, a confirmar): Cozinha, `__posicionar(3,2)` + seta para baixo termina em (0,0)** (tile do spawn cozinha-sala); a passagem do muro está nas colunas 3 e 4 na captura, e a coluna 4 não passou (ficou em 4,2). Ver `qa/evidencias/v120/area-cozinha-960.png`. Conferir com o Produto onde fica a passagem (GDD diz coluna 4).
+- Cacto (PL14, teclado 960×704): empurra 1 tile, 3 de 3 vezes. A de frente deixou `travado=true` sem texto: confirmar se é o pisca/empurrão em andamento.
+
+## 1.2.0, rodada 2
+- **BUG-120-01: FECHADO.** Meias do Escritório respondem de (4,3) virado para a direita; de (6,4) para cima não respondem (regra E10). Presente do Quarto da Oli responde de (2,0) e de (1,2).
+- **BUG-120-02: FECHADO (não é bug do jogo)**, conforme o Dev: passagem nas colunas 3 e 4; (3,2) desce até a porta cozinha-quartinho. Reteste: coluna 4 para (4,3).
+- **Cacto A de frente: FECHADO**: o travado era o aviso "Está tudo escuro!". Em explorar, sem texto, jogo livre. Empurrão 3 de 3 (2 vezes 1 tile, uma voltou a 1,3 por empurrão contra o sofá/parede, sem atravessar).
+- **Observação P3 (667×375):** o joystick (86..206, 128..248) cobre o cacto e a mini-árvore da coluna 0; não esconde peça, interruptor nem A.
+- **Observação (960×640 do playtest):** a barra encosta na fileira de baixo da Sala (presentes e árvore); em 960×704 e em 667×375 as peças estão inteiras.

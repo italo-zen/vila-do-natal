@@ -9,6 +9,8 @@ declare module 'virtual:perfil-de-arte' {
   export const idDoPerfil: string;
   export const perfil: unknown;
   export const sprites: unknown;
+  /** `vista.json` do perfil (visão 3/4, ADR-012), ou null. */
+  export const vista: unknown;
   export const urls: Record<string, string>;
 }
 

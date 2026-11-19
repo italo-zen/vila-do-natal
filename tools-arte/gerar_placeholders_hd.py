@@ -94,11 +94,13 @@ TIPOS = {
 
 # gid -> tipo. Gids de content/maps/casa-real/*.json (ver docstring).
 GIDS_POR_TIPO = {
-    "hall": [2, 3, 4, 18, 19, 20, 258, 274],
-    "sala": [260, 355, 358],
+    # Planta nova (ADR-011): hall, quarto e banheiro do escritório = 34; sala = 358; cozinha, lavanderia e banheiro 1 = 38;
+    # escritório e quarto do casal = 258; quartinho = 4. Os demais gids ficam para o histórico da 1.0.0.
+    "hall": [34, 2, 3, 18, 19, 20, 274],
+    "sala": [358, 260, 355],
     "cozinha": [38, 277, 532],
-    "quartos": [34, 310],
-    "neutro": [1, 37],
+    "quartos": [258, 310],
+    "neutro": [4, 1, 37],
     "parede": [533, 534, 535, 536],
     "passagem_h": [537],   # passagem em parede horizontal (P8): soleira horizontal
     "passagem_v": [538],   # passagem em parede vertical (P7): soleira vertical
@@ -201,6 +203,288 @@ def porta():
 
 def porta_vertical():
     return girar_celula(porta())
+
+
+# ---- Paredes e portas da planta nova (backlog 173; ADR-011 seção 3.4) --------------------------------------------------
+# Muro fino por aresta: faixa de 8 px centrada na linha da grade, 40 px de comprimento (4 px de sobra em cada ponta, para
+# fechar a quina entre duas arestas). `spr_parede_h` (40×8) e `spr_parede_v` (8×40, a mesma girada). Centro do sprite =
+# ponto médio da aresta. Portas: 32×32, faixa de 8 px centrada no canvas, mesmo eixo da parede.
+COR_PAREDE = "#3b3f6b"
+COR_PAREDE_TOPO = "#5a6096"
+COR_PAREDE_BASE = "#2a2d50"
+COR_MADEIRA = "#8b5a2b"
+COR_MADEIRA_CLARA = "#b07a3c"
+COR_BORDA_PORTA = "#3b2416"
+
+
+def parede():
+    im = canvas(40, 8)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 39, 7], fill=cor(COR_PAREDE))
+    d.rectangle([0, 0, 39, 1], fill=cor(COR_PAREDE_TOPO))
+    d.rectangle([0, 6, 39, 7], fill=cor(COR_PAREDE_BASE))
+    return im
+
+
+def parede_vertical():
+    return girar_celula(parede())
+
+
+def porta_fechada():
+    """Folha fechada: madeira com tábuas, batentes escuros nas pontas e maçaneta dourada."""
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 12, 31, 19], fill=cor(COR_MADEIRA), outline=cor(COR_BORDA_PORTA))
+    d.line([(4, 13), (27, 13)], fill=cor(COR_MADEIRA_CLARA))
+    d.rectangle([0, 12, 3, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([28, 12, 31, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([20, 14, 24, 17], fill=cor("#f4d35e"), outline=cor(COR_BORDA_PORTA))
+    return im
+
+
+def porta_com_codigo():
+    """Porta com código (hall-sala): folha azul-aço com painel de teclas e luz vermelha, bem diferente da fechada comum."""
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 12, 31, 19], fill=cor("#4f5f86"), outline=cor(COR_BORDA_PORTA))
+    d.rectangle([0, 12, 3, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([28, 12, 31, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([11, 13, 20, 18], fill=cor("#1b2452"), outline=cor("#9aa3c7"))
+    for x in (13, 16, 19):
+        d.rectangle([x - 1, 15, x, 16], fill=cor("#e8e0c8"))
+    d.rectangle([22, 14, 25, 17], fill=cor("#c0392b"), outline=cor(COR_BORDA_PORTA))
+    return im
+
+
+def porta_aberta():
+    """Vão aberto: batentes escuros nas pontas e uma soleira dourada fina no meio; o piso aparece entre eles."""
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 12, 3, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([28, 12, 31, 19], fill=cor(COR_BORDA_PORTA))
+    d.rectangle([4, 15, 27, 16], fill=(244, 211, 94, 200))
+    return im
+
+
+def mov_pia():
+    """Pia da cozinha: 1 tile de largura por 3 de altura (coluna encostada na parede), vista de cima."""
+    im = canvas(32, 96)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 30, 94], fill=cor("#b8c0c8"), outline=cor("#7d8790"))
+    d.rectangle([5, 14, 26, 80], fill=cor("#5f6a73"), outline=cor("#3d444a"))
+    d.line([(16, 47), (16, 47)], fill=cor("#2a2d33"))
+    d.rectangle([14, 4, 17, 12], fill=cor("#d8dde2"))
+    d.ellipse([14, 44, 18, 50], fill=cor("#2a2d33"))
+    return im
+
+
+def mov_fogao():
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 30, 30], fill=cor("#4a4f57"), outline=cor("#2a2d33"))
+    for cx, cy in ((9, 9), (22, 9), (9, 21), (22, 21)):
+        d.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=cor("#2a2d33"), outline=cor("#6b7480"))
+        d.ellipse([cx - 2, cy - 2, cx + 2, cy + 2], fill=cor("#c0392b"))
+    d.rectangle([8, 28, 23, 29], fill=cor("#a9b2bb"))
+    return im
+
+
+# Móveis da Sala (planta nova): vistos de cima, já na orientação final, tamanho = tiles do conteúdo girado × 32 px.
+# Nome do arquivo = spr_<id do móvel>: sofa 2×2, rack_da_sala 4×1, cacto 1×1, mesa_de_jantar 3×2, comoda 1×3.
+def _caixa(im, caixa, base, borda):
+    ImageDraw.Draw(im).rectangle(caixa, fill=cor(base), outline=cor(borda))
+
+
+def mov_sofa():
+    im = canvas(64, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 62, 62], fill=cor("#7a2e2a"), outline=cor("#3b1614"))          # estofado vermelho-escuro
+    d.rectangle([1, 46, 62, 62], fill=cor("#5c211f"), outline=cor("#3b1614"))         # encosto na base (o sofá olha para cima)
+    d.rectangle([1, 1, 10, 46], fill=cor("#5c211f"), outline=cor("#3b1614"))          # braços
+    d.rectangle([53, 1, 62, 46], fill=cor("#5c211f"), outline=cor("#3b1614"))
+    d.rectangle([13, 5, 31, 42], fill=cor("#9a3d37"), outline=cor("#5c211f"))         # duas almofadas
+    d.rectangle([33, 5, 50, 42], fill=cor("#9a3d37"), outline=cor("#5c211f"))
+    d.rectangle([16, 8, 22, 16], fill=cor("#f4d35e"))                                   # almofada dourada
+    return im
+
+
+def mov_rack_da_sala():
+    im = canvas(128, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 127, 31], fill=cor("#5c3a21"), outline=cor("#2a1a0f"))
+    d.rectangle([40, 3, 87, 20], fill=cor("#1b1d22"), outline=cor("#6b7480"))        # TV de cima: moldura fina
+    d.rectangle([44, 6, 83, 16], fill=cor("#2b3a5c"))
+    d.rectangle([6, 6, 24, 26], fill=cor("#7a4e2d"), outline=cor("#2a1a0f"))
+    d.rectangle([103, 6, 121, 26], fill=cor("#7a4e2d"), outline=cor("#2a1a0f"))
+    d.rectangle([14, 14, 16, 18], fill=cor("#f4d35e"))
+    d.rectangle([111, 14, 113, 18], fill=cor("#f4d35e"))
+    return im
+
+
+def mov_cacto():
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.ellipse([4, 4, 27, 27], fill=cor("#a8582f"), outline=cor("#5c2f17"))            # vaso de barro
+    d.ellipse([8, 8, 23, 23], fill=cor("#3f9a5f"), outline=cor("#1f5a3a"))            # cacto visto de cima
+    d.ellipse([12, 12, 19, 19], fill=cor("#63b87d"))
+    for x, y in ((15, 6), (15, 24), (6, 15), (24, 15)):
+        d.point((x, y), fill=cor("#f4e9c8"))
+    return im
+
+
+def mov_mesa_de_jantar():
+    im = canvas(96, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 94, 62], fill=cor("#a8703a"), outline=cor("#5c3a21"))
+    d.rectangle([4, 4, 91, 59], fill=cor("#b9824a"))
+    d.rectangle([30, 22, 65, 41], fill=cor("#c0392b"), outline=cor("#7a2018"))        # trilho de mesa vermelho
+    for cx, cy in ((17, 12), (48, 12), (79, 12), (17, 51), (48, 51), (79, 51)):
+        d.ellipse([cx - 6, cy - 6, cx + 6, cy + 6], fill=cor("#f4e9c8"), outline=cor("#9a9078"))   # pratos
+    d.ellipse([44, 28, 52, 36], fill=cor("#f4d35e"), outline=cor("#9a7a1e"))           # centro de mesa
+    return im
+
+
+def mov_comoda():
+    im = canvas(32, 96)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 30, 94], fill=cor("#7a4e2d"), outline=cor("#2a1a0f"))
+    for y in (32, 63):
+        d.line([(2, y), (29, y)], fill=cor("#2a1a0f"))
+    for y in (15, 47, 79):
+        d.rectangle([13, y - 1, 18, y + 1], fill=cor("#f4d35e"), outline=cor("#2a1a0f"))
+    d.rectangle([5, 4, 26, 8], fill=cor("#9a6a40"))
+    return im
+
+
+# ---- Móveis das outras áreas (planta nova): vistos de cima, na orientação final, tamanho = tiles × 32 px -----------------
+def _base(w, h, base, borda):
+    im = canvas(w * 32, h * 32)
+    ImageDraw.Draw(im).rectangle([1, 1, w * 32 - 2, h * 32 - 2], fill=cor(base), outline=cor(borda))
+    return im, ImageDraw.Draw(im)
+
+
+def mov_armario(w, h):
+    im, d = _base(w, h, "#8a5a33", "#3b2416")
+    if w >= h:   # portas lado a lado, uma por tile
+        for i in range(w):
+            d.rectangle([i * 32 + 3, 3, i * 32 + 28, h * 32 - 4], outline=cor("#5c3a21"))
+            d.rectangle([i * 32 + 24, h * 16 - 2, i * 32 + 26, h * 16 + 2], fill=cor("#f4d35e"))
+    else:
+        for i in range(h):
+            d.rectangle([3, i * 32 + 3, w * 32 - 4, i * 32 + 28], outline=cor("#5c3a21"))
+            d.rectangle([w * 16 - 2, i * 32 + 24, w * 16 + 2, i * 32 + 26], fill=cor("#f4d35e"))
+    return im
+
+
+def mov_forno():
+    im, d = _base(1, 1, "#4a4f57", "#2a2d33")
+    d.rectangle([4, 4, 27, 10], fill=cor("#2a2d33"))
+    for x in (8, 16, 24):
+        d.ellipse([x - 2, 6, x + 1, 9], fill=cor("#a9b2bb"))
+    d.rectangle([5, 14, 26, 27], fill=cor("#1b1d22"), outline=cor("#6b7480"))
+    d.rectangle([9, 17, 22, 24], fill=cor("#6b7480"))
+    return im
+
+
+def mov_lava_roupas():
+    im, d = _base(1, 1, "#e6eef2", "#7d8790")
+    d.ellipse([5, 7, 26, 28], fill=cor("#aab7bf"), outline=cor("#5f6a73"))
+    d.ellipse([9, 11, 22, 24], fill=cor("#5f8fb5"))
+    d.rectangle([4, 3, 12, 5], fill=cor("#7d8790"))
+    d.ellipse([22, 3, 26, 5], fill=cor("#c0392b"))
+    return im
+
+
+def mov_tanque():
+    im, d = _base(1, 1, "#b8c0c8", "#7d8790")
+    d.rectangle([4, 8, 27, 28], fill=cor("#5f6a73"), outline=cor("#3d444a"))
+    d.rectangle([14, 3, 17, 7], fill=cor("#d8dde2"))
+    d.ellipse([14, 16, 17, 19], fill=cor("#2a2d33"))
+    return im
+
+
+def mov_cama(w, h, coberta):
+    im, d = _base(w, h, "#f4e9c8", "#8b7355")
+    d.rectangle([3, 3, w * 32 - 4, 8], fill=cor("#5c3a21"))                       # cabeceira
+    for i in range(w):
+        d.rectangle([i * 32 + 6, 11, i * 32 + 25, 22], fill=cor("#ffffff"), outline=cor("#9aa3c7"))   # travesseiros
+    d.rectangle([3, 26, w * 32 - 4, h * 32 - 4], fill=cor(coberta), outline=cor("#3b2416"))
+    d.line([(4, 29), (w * 32 - 5, 29)], fill=cor("#f4e9c8"))
+    return im
+
+
+def mov_comoda_pequena():
+    im, d = _base(1, 1, "#7a4e2d", "#2a1a0f")
+    d.line([(2, 15), (29, 15)], fill=cor("#2a1a0f"))
+    for y in (8, 22):
+        d.rectangle([13, y, 18, y + 2], fill=cor("#f4d35e"))
+    return im
+
+
+def mov_cadeira_amamentacao():
+    im, d = _base(1, 1, "#9aa0a8", "#4a4f57")                                       # cinza
+    d.rectangle([3, 3, 28, 10], fill=cor("#7d8790"), outline=cor("#4a4f57"))        # encosto
+    d.rectangle([3, 12, 8, 28], fill=cor("#7d8790"), outline=cor("#4a4f57"))        # braços
+    d.rectangle([23, 12, 28, 28], fill=cor("#7d8790"), outline=cor("#4a4f57"))
+    d.rectangle([10, 13, 21, 27], fill=cor("#b8bec6"))
+    return im
+
+
+def mov_mesa_escritorio():
+    im, d = _base(3, 1, "#a8703a", "#5c3a21")
+    d.rectangle([8, 7, 30, 24], fill=cor("#2b3a5c"), outline=cor("#1b2452"))        # notebook
+    d.rectangle([40, 8, 56, 24], fill=cor("#f4e9c8"), outline=cor("#9a9078"))       # papéis
+    d.ellipse([70, 10, 82, 22], fill=cor("#c0392b"), outline=cor("#7a2018"))        # caneca
+    return im
+
+
+def mov_box():
+    im, d = _base(1, 1, "#b9d8e8", "#5f8fb5")
+    d.ellipse([12, 12, 19, 19], fill=cor("#5f8fb5"), outline=cor("#3d6e8f"))
+    return im
+
+
+def mov_box_largo(w):
+    im = canvas(w * 32, 32)
+    for i in range(w):
+        im.paste(mov_box(), (i * 32, 0))
+    return im
+
+
+def mov_privada():
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([6, 2, 25, 10], fill=cor("#e6eef2"), outline=cor("#7d8790"))        # caixa de descarga
+    d.ellipse([7, 10, 24, 30], fill=cor("#ffffff"), outline=cor("#7d8790"))
+    d.ellipse([11, 14, 20, 26], fill=cor("#b9d8e8"))
+    return im
+
+
+def mov_pia_banheiro(w):
+    im, d = _base(w, 1, "#e6eef2", "#7d8790")
+    for i in range(w):
+        d.ellipse([i * 32 + 6, 7, i * 32 + 25, 26], fill=cor("#b9d8e8"), outline=cor("#7d8790"))
+        d.rectangle([i * 32 + 14, 3, i * 32 + 17, 6], fill=cor("#a9b2bb"))
+    return im
+
+
+def mov_prateleira(w):
+    im, d = _base(w, 1, "#8a5a33", "#3b2416")
+    cores = ["#c0392b", "#3f9a5f", "#f4d35e", "#5f8fb5"]
+    for i in range(w * 3):
+        d.rectangle([4 + i * 10, 6 + (i % 2) * 4, 11 + i * 10, 26], fill=cor(cores[i % 4]), outline=cor("#3b2416"))
+    return im
+
+
+def mov_geladeira():
+    im = canvas(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 1, 30, 30], fill=cor("#e6eef2"), outline=cor("#7d8790"))
+    d.line([(2, 15), (29, 15)], fill=cor("#aab7bf"))
+    d.rectangle([24, 5, 26, 12], fill=cor("#7d8790"))
+    d.rectangle([24, 18, 26, 26], fill=cor("#7d8790"))
+    d.rectangle([4, 4, 12, 4], fill=cor("#ffffff"))
+    return im
 
 
 def interruptor():
@@ -945,7 +1229,8 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
         for direcao in ("down", "up", "left", "right"):
             imagens.append({"arquivo": f"spr_{nome}_walk_{direcao}.png", "tipo": "folhas",
                             "quadro": {"w": w, "h": h}, "quadros": 2})
-    for nome in ("porta", "porta_vertical", "interruptor", "lampada", "bilhete", "arvore_desmontada", "arvore_1parte",
+    for nome in ("porta", "porta_vertical", "porta_codigo", "porta_codigo_vertical", "porta_aberta", "porta_aberta_vertical",
+                 "parede_h", "parede_v", "armario_da_cozinha", "forno", "armario_da_lavanderia", "lava_roupas", "tanque", "cama_da_oli", "comoda_da_oli", "cadeira_de_amamentacao", "cama_do_casal", "armario_do_casal", "mesa_do_escritorio", "cama_do_escritorio", "box_do_banheiro_1", "privada_do_banheiro_1", "pia_do_banheiro_1", "pia_do_banheiro_do_escritorio", "privada_do_banheiro_do_escritorio", "box_do_banheiro_do_escritorio", "prateleira", "prateleira_pequena", "sofa", "rack_da_sala", "cacto", "mesa_de_jantar", "comoda", "interruptor", "lampada", "bilhete", "arvore_desmontada", "arvore_1parte",
                  "arvore_2partes", "arvore_completa", "pia", "fogao", "geladeira", "indicador_seta_direita",
                  "indicador_seta_esquerda", "indicador_seta_baixo", "indicador_tapete",
                  "peca_1", "peca_2", "peca_3", "conquista_parte1", "conquista_parte2", "conquista_parte3",
@@ -991,8 +1276,14 @@ def main():
     gids = desenhar_tileset()
     print(f"tiles_casa.png: {len(gids)} tiles nos gids {gids[0]}..{gids[-1]} (dos usados em casa-real + paredes)")
     desenhos = {
-        "spr_porta.png": porta(),
-        "spr_porta_vertical.png": porta_vertical(),
+        "spr_porta.png": porta_fechada(),                 # fechada (planta nova, 2026-11-17)
+        "spr_porta_vertical.png": girar_celula(porta_fechada()),
+        "spr_porta_codigo.png": porta_com_codigo(),       # com código (hall-sala)
+        "spr_porta_codigo_vertical.png": girar_celula(porta_com_codigo()),
+        "spr_porta_aberta.png": porta_aberta(),           # vão aberto (porta de aresta aberta)
+        "spr_porta_aberta_vertical.png": girar_celula(porta_aberta()),
+        "spr_parede_h.png": parede(),                     # muro fino por aresta, 40×8
+        "spr_parede_v.png": parede_vertical(),            # 8×40
         "spr_interruptor.png": interruptor(),
         "spr_lampada.png": lampada(),
         "spr_bilhete.png": bilhete(),
@@ -1000,9 +1291,34 @@ def main():
         "spr_arvore_1parte.png": arvore("1parte"),
         "spr_arvore_2partes.png": arvore("2partes"),
         "spr_arvore_completa.png": arvore("completa"),
-        "spr_pia.png": girar_celula(pia()),        # móveis giram como imagem (GDD 14.12.4)
-        "spr_fogao.png": girar_celula(fogao()),    # 64 × 32 depois do giro
-        "spr_geladeira.png": girar_celula(geladeira()),
+        "spr_pia.png": mov_pia(),                  # móveis 1×1 da planta nova, já na orientação final (vista de cima)
+        "spr_fogao.png": mov_fogao(),
+        "spr_geladeira.png": mov_geladeira(),
+        "spr_armario_da_cozinha.png": mov_armario(1, 1),
+        "spr_forno.png": mov_forno(),
+        "spr_armario_da_lavanderia.png": mov_armario(1, 2),
+        "spr_lava_roupas.png": mov_lava_roupas(),
+        "spr_tanque.png": mov_tanque(),
+        "spr_cama_da_oli.png": mov_cama(1, 2, '#c0392b'),
+        "spr_comoda_da_oli.png": mov_comoda_pequena(),
+        "spr_cadeira_de_amamentacao.png": mov_cadeira_amamentacao(),
+        "spr_cama_do_casal.png": mov_cama(2, 3, '#3f6a9a'),
+        "spr_armario_do_casal.png": mov_armario(4, 1),
+        "spr_mesa_do_escritorio.png": mov_mesa_escritorio(),
+        "spr_cama_do_escritorio.png": mov_cama(2, 2, '#3f9a5f'),
+        "spr_box_do_banheiro_1.png": mov_box_largo(3),
+        "spr_privada_do_banheiro_1.png": mov_privada(),
+        "spr_pia_do_banheiro_1.png": mov_pia_banheiro(3),
+        "spr_pia_do_banheiro_do_escritorio.png": mov_pia_banheiro(1),
+        "spr_privada_do_banheiro_do_escritorio.png": mov_privada(),
+        "spr_box_do_banheiro_do_escritorio.png": mov_box(),
+        "spr_prateleira.png": mov_prateleira(3),
+        "spr_prateleira_pequena.png": mov_prateleira(1),
+        "spr_sofa.png": mov_sofa(),                # móveis da Sala (planta nova): spr_<id do móvel>
+        "spr_rack_da_sala.png": mov_rack_da_sala(),
+        "spr_cacto.png": mov_cacto(),
+        "spr_mesa_de_jantar.png": mov_mesa_de_jantar(),
+        "spr_comoda.png": mov_comoda(),
         "spr_indicador_seta_direita.png": seta_direita(),
         "spr_indicador_seta_esquerda.png": seta_esquerda(),
         "spr_indicador_seta_baixo.png": seta_baixo(),

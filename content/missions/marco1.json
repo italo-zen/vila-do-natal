@@ -13,7 +13,7 @@
   "conducao": {
     "luzes": {
       "mapa": "sala",
-      "x": 3,
+      "x": 2,
       "y": 7,
       "direcao": "baixo"
     }
@@ -24,7 +24,7 @@
   "nick": {
     "dorme": {
       "mapa": "sala",
-      "x": 8,
+      "x": 9,
       "y": 5,
       "direcao": "baixo"
     },

@@ -11,6 +11,7 @@ import type { MissaoCarregada } from '../mundo/missoes';
 import { validarDecoracao, type DecoracaoDaSubarea } from '../content/decoracao';
 import type { MapaDoJogo } from '../content/Mapa';
 import { deslocamentoDaSubarea } from '../mundo/subarea';
+import { vizinhosLivresAlcancaveis } from '../content/pontosDePartida';
 
 export class ConteudoInvalidoError extends Error {
   constructor(public readonly erros: string[]) {
@@ -38,7 +39,7 @@ export interface Conteudo {
   decoracao: Map<string, DecoracaoDaSubarea>;
 }
 
-/** Lê o manifesto (schema 2), o perfil de arte, todas as subáreas e todas as missões, e valida o conjunto. */
+/** Lê o manifesto (schema 3), o perfil de arte, todas as subáreas e todas as missões, e valida o conjunto. */
 export class CarregarConteudo {
   constructor(private readonly fonte: ContentSource) {}
 
@@ -87,6 +88,7 @@ export class CarregarConteudo {
         altura: mapa.altura,
         bloqueado: (x, y) => mapa.colisao[y]?.[x] === true,
         proibido: (x, y) => tilesProibidosDaSubarea(mapa, perfil.sala).has(`${x},${y}`),
+        temVizinhoLivre: (x, y) => vizinhosLivresAlcancaveis(mapa, x, y).length > 0,
         chavesDeTexto: textos.chaves(),
       });
       if (errosDaSubarea.length > 0) throw new ConteudoInvalidoError(errosDaSubarea);
@@ -99,11 +101,11 @@ export class CarregarConteudo {
 }
 
 /**
- * Tiles onde enfeite não pode ficar (ADR-010 3.7): objetos de jogo (spawn, portas, interruptor, bilhete, árvore, caixa,
- * peças, passagem) e a barra de controles (`sala.linhas − 2` e `− 1`, ADR-004 seção 8). Função pura.
+ * Tiles onde enfeite não pode ficar (ADR-010 3.7): objetos de jogo (spawn, tile de porta, interruptor, bilhete, árvore, caixa,
+ * peças) e, pelo ADR-011 seção 5.5, o tile cujo lado tem bilhete e a barra de controles (`sala.linhas − 2` e `− 1`, ADR-004 seção 8). Função pura.
  */
 export function tilesProibidosDaSubarea(mapa: MapaDoJogo, tela: { colunas: number; linhas: number }): Set<string> {
-  const TIPOS = new Set(['spawn', 'porta', 'portaFechada', 'interruptor', 'bilhete', 'arvore', 'peca', 'enfeite', 'passagem']);
+  const TIPOS = new Set(['spawn', 'porta', 'interruptor', 'bilhete', 'arvore', 'peca', 'enfeite', 'passagem']);
   const proibidos = new Set<string>();
   for (const o of mapa.objetos) if (TIPOS.has(o.tipo)) proibidos.add(`${o.x},${o.y}`);
   // Barra de controles: as duas últimas linhas da TELA (perfil.sala), não do mapa (ADR-004 seção 8, item 6).

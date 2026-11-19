@@ -23,6 +23,8 @@ export class IconeDeDica {
     this.imagem = cena.add
       .image(largura - lado - p.espaco.pequeno, p.espaco.pequeno, CHAVE_ICONE_DICA)
       .setOrigin(0, 0)
+      // Objeto de UI: fica na tela quando a câmera recua a área (visão 3/4, ADR-012 seção 4).
+      .setScrollFactor(0)
       .setDepth(PROFUNDIDADE_ICONE)
       .setVisible(false);
     if (comToqueDaCena(cena)) {

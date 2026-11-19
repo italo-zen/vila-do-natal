@@ -2,13 +2,20 @@ import type { ManifestoMapa } from './Manifest';
 import type { MapaDoJogo, ObjetoDoMapa, ValorDeObjeto } from './Mapa';
 
 /**
- * Lê o JSON de uma subárea gerado pelo conversor (docs/conversor-tmx.md, seção 4.2). Não é o Tiled:
- * o conversor já fez a geometria. Aqui só se confere a forma e se monta o `MapaDoJogo`.
+ * Lê o JSON de uma área gerado pelo conversor (ADR-011 seção 4, schemaVersion 3). Não é o Tiled: o conversor já fez a
+ * geometria. Aqui só se confere a forma e se monta o `MapaDoJogo`. Recusa o schema 2 (planta antiga) com mensagem clara.
  */
 export function interpretarSubarea(bruto: unknown, decl: ManifestoMapa): MapaDoJogo {
   const b = bruto as Record<string, unknown> | null;
   const erro = (msg: string) => new Error(`Subárea "${decl.id}" inválida: ${msg}`);
   if (typeof b !== 'object' || b === null || Array.isArray(b)) throw erro('o arquivo não é um objeto.');
+  if (b.schemaVersion !== 3) {
+    throw erro(
+      b.schemaVersion === undefined || b.schemaVersion === 2
+        ? 'conteúdo de planta antiga (schemaVersion 2 ou ausente); o motor lê a schemaVersion 3 (ADR-011 seção 4).'
+        : `schemaVersion ${String(b.schemaVersion)} não suportada; o motor lê a 3.`,
+    );
+  }
   if (b.id !== decl.id) throw erro(`o id do arquivo é "${String(b.id)}", e o manifesto diz "${decl.id}".`);
   const tile = b.tile;
   const largura = b.largura;
@@ -22,13 +29,16 @@ export function interpretarSubarea(bruto: unknown, decl: ManifestoMapa): MapaDoJ
   const A = altura as number;
   if (!Array.isArray(b.chao) || b.chao.length !== L * A) throw erro(`chao precisa ter ${L * A} valores.`);
   if (!Array.isArray(b.colisao) || b.colisao.length !== L * A) throw erro(`colisao precisa ter ${L * A} valores.`);
+  if (!Array.isArray(b.paredes) || b.paredes.length !== L * A) throw erro(`paredes precisa ter ${L * A} valores.`);
   if (!Array.isArray(b.objetos)) throw erro('objetos precisa ser uma lista.');
 
   const chao: number[][] = [];
   const colisao: boolean[][] = [];
+  const paredes: number[][] = [];
   for (let y = 0; y < A; y++) {
     chao.push((b.chao as number[]).slice(y * L, (y + 1) * L).map(Number));
     colisao.push((b.colisao as number[]).slice(y * L, (y + 1) * L).map((v) => Number(v) !== 0));
+    paredes.push((b.paredes as number[]).slice(y * L, (y + 1) * L).map(Number));
   }
 
   const objetos: ObjetoDoMapa[] = (b.objetos as Array<Record<string, unknown>>).map((o, i) => {
@@ -47,5 +57,5 @@ export function interpretarSubarea(bruto: unknown, decl: ManifestoMapa): MapaDoJ
     return { tipo: o.tipo, x: o.x as number, y: o.y as number, dados };
   });
 
-  return { id: decl.id, tileset: decl.tileset, tile: tile as number, largura: L, altura: A, escuro: b.escuro, chao, colisao, objetos };
+  return { id: decl.id, tileset: decl.tileset, tile: tile as number, largura: L, altura: A, escuro: b.escuro, chao, colisao, paredes, objetos };
 }

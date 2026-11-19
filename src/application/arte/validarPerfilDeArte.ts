@@ -143,6 +143,9 @@ export function validarPerfilDeArte(bruto: unknown, idEsperado?: string, opcoes:
     if (!ehInteiro(g.colunas) || g.colunas < 1) erros.push('painel.grade.colunas precisa ser inteiro ≥ 1.');
   }
 
+  // Visão 3/4 (ADR-012 seção 2): bloco opcional; quando existe, inteiros ≥ 0, faceNorte múltiplo de 8 e ≤ tile, recuoMaximo ≤ faceNorte.
+  if (p.vista !== undefined) erros.push(...validarVista(p.vista, ehInteiro(p.tile) ? p.tile : 0));
+
   // Controles de toque (ADR-007 seção 5.3): obrigatórios no perfil ativo; o bloco, quando existe, é sempre validado.
   if (p.toque === undefined) {
     if (opcoes.ativo) erros.push('toque ausente: o perfil ativo precisa do bloco "toque" (ADR-007 seção 5.1).');
@@ -153,4 +156,38 @@ export function validarPerfilDeArte(bruto: unknown, idEsperado?: string, opcoes:
   }
 
   return erros.length > 0 ? { ok: false, erros } : { ok: true, perfil: bruto as unknown as PerfilDeArte };
+}
+
+/** Erros do bloco `vista` do perfil (ADR-012 seção 2). */
+export function validarVista(v: unknown, tile: number): string[] {
+  if (!ehObjeto(v)) return ['vista precisa ser um objeto.'];
+  const erros: string[] = [];
+  if (v.tipo !== '3-4') erros.push('vista.tipo precisa ser "3-4".');
+  const naoNegativo = (nome: string, valor: unknown): valor is number => {
+    const ok = ehInteiro(valor) && valor >= 0;
+    if (!ok) erros.push(`vista.${nome} precisa ser um inteiro ≥ 0.`);
+    return ok;
+  };
+  const face = naoNegativo('faceNorte', v.faceNorte) ? v.faceNorte : undefined;
+  naoNegativo('linhaLateral', v.linhaLateral);
+  const extensao = naoNegativo('extensaoEmPisoAndavel', v.extensaoEmPisoAndavel) ? v.extensaoEmPisoAndavel : undefined;
+  const recuo = naoNegativo('recuoMaximo', v.recuoMaximo) ? v.recuoMaximo : undefined;
+  if (!ehObjeto(v.sombra)) erros.push('vista.sombra precisa ter dx e dy.');
+  else {
+    naoNegativo('sombra.dx', v.sombra.dx);
+    naoNegativo('sombra.dy', v.sombra.dy);
+  }
+  if (face !== undefined) {
+    if (face % 8 !== 0) erros.push('vista.faceNorte precisa ser múltiplo de 8.');
+    if (tile > 0 && face > tile) erros.push(`vista.faceNorte (${face}) não pode passar do tile (${tile}).`);
+  }
+  if (face !== undefined && recuo !== undefined && recuo > face) erros.push('vista.recuoMaximo não pode passar de vista.faceNorte.');
+  if (face !== undefined && extensao !== undefined && extensao > face) erros.push('vista.extensaoEmPisoAndavel não pode passar de vista.faceNorte.');
+  if (v.provisorio !== undefined) {
+    const pr = v.provisorio;
+    if (!ehObjeto(pr) || ![pr.face, pr.linha, pr.sombra].every((c) => typeof c === 'string' && COR.test(c)) || typeof pr.alfaSombra !== 'number' || pr.alfaSombra < 0 || pr.alfaSombra > 1) {
+      erros.push('vista.provisorio precisa de face, linha e sombra em #rrggbb e alfaSombra entre 0 e 1.');
+    }
+  }
+  return erros;
 }

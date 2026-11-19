@@ -1,0 +1,15 @@
+{
+  "versao": "1.1.0",
+  "descricao": "sha256 de cada content/maps/**/*.json (exceto decoracao/) da planta por áreas (schema 3): colisão, paredes por aresta, portas, spawns e objetos (ADR-011 seção 8, V4; ADR-010 9, EN1). Qualquer mudança em um mapa reprova.",
+  "mapas": {
+    "maps/casa-real/banheiro1.json": "903f8bd8bad77beb223acd6ff05149e6efa38eb26060e8b0c875af963f310e87",
+    "maps/casa-real/banheiro_escritorio.json": "218f2f487de2035db4d9cafdb40e5e4e6e10ed262df6a27329ae46d73ed06d22",
+    "maps/casa-real/cozinha.json": "6aa9d9236a8e3055bd56bea13bf8a4f18a33d16bd28932decc050e9a17d8f925",
+    "maps/casa-real/escritorio.json": "4687af3c45b76041edb151ffb027d2e979f6d9b2dd2606c04a92bae89028424f",
+    "maps/casa-real/hall.json": "4cc823a71916b011fd3b892010094fab8bb134e154f65a2901be9e07f262ab32",
+    "maps/casa-real/quartinho.json": "eabc16fdfd2cdc1068be1b7383a9b10505805749eb57376195c121e385a23ec9",
+    "maps/casa-real/quarto.json": "ee3898d2490aa3ba294a43af0a46dcf1b30de45318f137077746e1a909a9196f",
+    "maps/casa-real/quarto_casal.json": "ace8edf83c3be6b31d6bda66f20738338e4331ed376af75f1d8e8982f914b119",
+    "maps/casa-real/sala.json": "0e2803da57ba4da96e9638f92b5a2f1035e5f35fb55f69304f88b5ed5f73669c"
+  }
+}

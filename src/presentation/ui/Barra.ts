@@ -17,6 +17,8 @@ export class Barra {
   constructor(
     private readonly cena: Phaser.Scene,
     profundidade: number,
+    /** Fundo da cor da caixa e borda de cima (a barra da casa na visão 3/4). Os menus seguem com o fundo de sempre. */
+    private readonly destacar = false,
   ) {
     const p = perfilDe(cena);
     this.fundo = cena.add.graphics().setScrollFactor(0).setDepth(profundidade);
@@ -45,7 +47,12 @@ export class Barra {
     const base = altura - p.barra.margemInferior;
     const topo = altura - p.barra.alturaPorLinhas[chaves.length >= 2 ? '2' : '1'];
     this.fundo.clear();
-    this.fundo.fillStyle(numeroDaCor(p.tema.fundo), p.tema.alfaBarra).fillRect(0, topo, largura, altura - topo);
+    // Na visão 3/4 a área da casa acaba exatamente no topo da barra (ADR-012 seção 4): o fundo da barra tem a cor da caixa, para a barra se
+    // distinguir do vazio, e uma linha fina de `tema.fraco` marca a borda de cima. Sem `vista`, o fundo de sempre.
+    const painel = this.destacar && p.vista !== undefined;
+    const cor = painel ? p.tema.caixa : p.tema.fundo;
+    this.fundo.fillStyle(numeroDaCor(cor), p.tema.alfaBarra).fillRect(0, topo, largura, altura - topo);
+    if (painel) this.fundo.fillStyle(numeroDaCor(p.tema.fraco), 1).fillRect(0, topo, largura, p.barra.bordaDeCima ?? 0);
 
     this.linhas.forEach((t, i) => {
       if (i >= chaves.length) {

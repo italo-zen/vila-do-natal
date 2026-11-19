@@ -5,6 +5,8 @@
 //    do Sobrinho, com corpos.sobrinho.quadro;
 //  - cada PNG tem no máximo `paleta.maximoDeCores` cores; o conjunto do perfil tem pelo menos `paleta.minimoDeCores`;
 //  - cada sprite de sobrinho (spr_<id>_*) tem pelo menos `sprites.sobrinho.coresMin` cores;
+//  - visão 3/4 (ADR-012 seção 8): `movel` e `ancora` do sprites.json contra o PNG (largura, altura, âncora, E, cores, indexado),
+//    o perfil (`vista`) e o conteúdo (pegada = w e h do móvel de mesmo id);
 //  - o tile de cada subárea do manifesto (e de --mapa) bate com o tile do perfil, e a caixa cabe na tela (sala).
 // Saída: código 1 se houver erro (mensagem em português, sem stack trace); 2 se faltar argumento.
 import { existsSync, readFileSync } from 'node:fs';
@@ -54,6 +56,9 @@ const motor = {
   perfil: await server.ssrLoadModule('/src/application/arte/validarPerfilDeArte.ts'),
   sprites: await server.ssrLoadModule('/src/application/arte/SpritesDoPerfil.ts'),
   toque: await server.ssrLoadModule('/src/application/arte/validarToque.ts'),
+  vistaDaArte: await server.ssrLoadModule('/src/application/arte/VistaDaArte.ts'),
+  vista: await server.ssrLoadModule('/src/application/mundo/vista.ts'),
+  subarea: await server.ssrLoadModule('/src/application/content/interpretarSubarea.ts'),
 };
 
 // `ativo`: o perfil é o da build (manifesto), e então o bloco `toque` é obrigatório (ADR-007 seção 5.3).
@@ -121,10 +126,60 @@ else {
       }
     }
     erros.push(...motor.sprites.validarCoresDosPersonagens(contagens, perfil));
+    // Visão 3/4 (ADR-012 seção 8): móveis e peças com âncora.
+    const medidas = {};
+    for (const img of sp.sprites.imagens) {
+      if ((!img.movel && !img.ancora) || !existsSync(join(pasta, img.arquivo))) continue;
+      const buf = readFileSync(join(pasta, img.arquivo));
+      const { w, h } = dimensoesDoPng(buf);
+      medidas[img.arquivo] = { w, h, cores: contagens[img.arquivo] ?? 0, indexado: buf[24] === 8 && buf[25] === 3 };
+    }
+    const moveisDoConteudo = new Map();
+    if ((manifesto.artProfile ?? 'gba-240x160') === idEsperado) {
+      for (const m of manifesto.maps) {
+        const area = lerJson(join(RAIZ, 'content', m.file), 'Subárea');
+        const livre = (x, y) => x >= 0 && y >= 0 && x < area.largura && y < area.altura && area.chao[y * area.largura + x] !== 0 && !area.colisao[y * area.largura + x];
+        for (const o of area.objetos.filter((x) => x.tipo === 'movel')) {
+          moveisDoConteudo.set(o.id, { w: o.w, h: o.h, norteAndavel: livre(o.x, o.y - 1) });
+        }
+      }
+    }
+    const tresQuartos = motor.sprites.validarMoveisDoPerfil(sp.sprites.imagens, medidas, perfil, moveisDoConteudo);
+    erros.push(...tresQuartos.erros);
+    for (const a of tresQuartos.avisos) avisos.push(`AVISO ${a}`);
     if (todos.size < perfil.paleta.minimoDeCores) {
       erros.push(`o conjunto de PNG do perfil tem ${todos.size} cores; o mínimo do perfil é ${perfil.paleta.minimoDeCores}.`);
     }
     avisos.push(`${sp.sprites.imagens.length} imagens, ${todos.size} cores no conjunto do perfil`);
+  }
+}
+
+// vista.json (visão 3/4, ADR-012): forma, arestas de vidro que existem como `linha_v` na área e peças `spr_parede_vidro_*` no sprites.json.
+const arquivoVista = join(pasta, 'vista.json');
+if (existsSync(arquivoVista) && existsSync(arquivoSprites)) {
+  const vj = motor.vistaDaArte.validarVistaDaArte(lerJson(arquivoVista, 'vista.json'));
+  if (!vj.ok) erros.push(...vj.erros.map((e) => `vista.json: ${e}`));
+  else if (vj.vista.vidro && (manifesto.artProfile ?? 'gba-240x160') === idEsperado) {
+    const nomes = new Set(lerJson(arquivoSprites, 'sprites.json').imagens.map((i) => i.arquivo));
+    for (const [area, lista] of Object.entries(vj.vista.vidro)) {
+      const decl = manifesto.maps.find((m) => m.id === area);
+      if (!decl) {
+        erros.push(`vista.json: vidro da área "${area}", que não existe no manifesto.`);
+        continue;
+      }
+      const mapa = motor.subarea.interpretarSubarea(lerJson(join(RAIZ, 'content', decl.file), 'Subárea'), decl);
+      const arestas = motor.vista.classificarArestas(mapa);
+      for (const v of lista) {
+        const a = arestas.find((x) => x.tipo === 'linha_v' && x.x === v.x && x.y === v.y);
+        if (!a) {
+          erros.push(`vista.json: vidro ${area} (${v.x}, ${v.y}) não é uma aresta vertical desenhada.`);
+          continue;
+        }
+        const chave = motor.vista.chaveDoVidro(a);
+        if (!nomes.has(`${chave}.png`)) avisos.push(`AVISO vista.json: falta ${chave}.png para o vidro ${area} (${v.x}, ${v.y}); a cena usa a peça normal.`);
+      }
+      avisos.push(`vidro: ${lista.length} arestas em "${area}"`);
+    }
   }
 }
 

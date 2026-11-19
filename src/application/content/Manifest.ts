@@ -1,4 +1,4 @@
-/** Uma subárea do manifesto (schema 2, ADR-002 seção 2 e ADR-004 seção 2). */
+/** Uma subárea do manifesto (schema 3, ADR-002 seção 2 e ADR-011). */
 export interface ManifestoMapa {
   id: string;
   file: string;
@@ -32,5 +32,5 @@ export interface Manifest {
   texts: ManifestoTexto[];
 }
 
-/** Maior schemaVersion do manifesto que este motor entende (ADR-002 seção 2.1). */
-export const SCHEMA_VERSION_SUPORTADA = 2;
+/** Única schemaVersion do manifesto e das áreas que este motor lê (ADR-011 seção 4: 3 = planta por áreas, `paredes`, `porta.lado`). */
+export const SCHEMA_VERSION_SUPORTADA = 3;

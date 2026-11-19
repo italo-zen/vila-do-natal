@@ -1,11 +1,17 @@
 // Leitor de PNG para as ferramentas (sem dependência externa): dimensões, decodificação RGBA e cores distintas.
-// Cobre o que o projeto usa: 8 bits, não entrelaçado, tipos RGB (2) e RGBA (6).
+// Cobre o que o projeto usa: 8 bits, não entrelaçado, tipos RGB (2), RGBA (6) e indexado (3, com PLTE e tRNS; visão 3/4, ADR-012).
 import { deflateSync, inflateSync, crc32 } from 'node:zlib';
 
 /** Largura e altura do IHDR. */
 export function dimensoesDoPng(buf) {
   if (buf.length < 24 || buf.readUInt32BE(0) !== 0x89504e47) throw new Error('não é PNG');
   return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+}
+
+/** Profundidade e tipo de cor do IHDR (tipo 3 = indexado). */
+export function tipoDoPng(buf) {
+  if (buf.length < 26 || buf.readUInt32BE(0) !== 0x89504e47) throw new Error('não é PNG');
+  return { bitDepth: buf[24], colorType: buf[25] };
 }
 
 /** Decodifica para RGBA (Uint8Array de w×h×4). */
@@ -17,6 +23,8 @@ export function decodificarPng(buf) {
   let colorType;
   let interlace;
   const idat = [];
+  let paleta = null;
+  let transparencia = null;
   while (pos < buf.length) {
     const len = buf.readUInt32BE(pos);
     const tipo = buf.toString('ascii', pos + 4, pos + 8);
@@ -29,12 +37,15 @@ export function decodificarPng(buf) {
       interlace = dados[12];
     }
     if (tipo === 'IDAT') idat.push(dados);
+    if (tipo === 'PLTE') paleta = Buffer.from(dados);
+    if (tipo === 'tRNS') transparencia = Buffer.from(dados);
     pos += 12 + len;
   }
-  if (bitDepth !== 8 || interlace !== 0 || (colorType !== 2 && colorType !== 6)) {
+  if (bitDepth !== 8 || interlace !== 0 || (colorType !== 2 && colorType !== 6 && colorType !== 3)) {
     throw new Error(`PNG não suportado (bitDepth ${bitDepth}, colorType ${colorType}, entrelaçado ${interlace})`);
   }
-  const bpp = colorType === 6 ? 4 : 3;
+  if (colorType === 3 && !paleta) throw new Error('PNG indexado sem PLTE');
+  const bpp = colorType === 6 ? 4 : colorType === 3 ? 1 : 3;
   const stride = w * bpp;
   const raw = inflateSync(Buffer.concat(idat));
   const out = Buffer.alloc(stride * h);
@@ -65,7 +76,14 @@ export function decodificarPng(buf) {
     anterior = atual;
   }
   const rgba = new Uint8Array(w * h * 4);
-  for (let i = 0; i < w * h; i++) {
+  for (let i = 0; i < w * h && colorType === 3; i++) {
+    const idx = out[i];
+    rgba[i * 4] = paleta[idx * 3];
+    rgba[i * 4 + 1] = paleta[idx * 3 + 1];
+    rgba[i * 4 + 2] = paleta[idx * 3 + 2];
+    rgba[i * 4 + 3] = transparencia && idx < transparencia.length ? transparencia[idx] : 255;
+  }
+  for (let i = 0; i < w * h && colorType !== 3; i++) {
     rgba[i * 4] = out[i * bpp];
     rgba[i * 4 + 1] = out[i * bpp + 1];
     rgba[i * 4 + 2] = out[i * bpp + 2];
@@ -106,6 +124,36 @@ export function codificarPng(w, h, rgba) {
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     chunk('IHDR', ihdr),
+    chunk('IDAT', deflateSync(linhas)),
+    chunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+/** Codifica PNG indexado de 8 bits (para os PNGs de teste da visão 3/4). `indices`: w×h índices; `paleta`: lista de [r, g, b, a]. */
+export function codificarPngIndexado(w, h, indices, paleta) {
+  const linhas = Buffer.alloc((w + 1) * h);
+  for (let y = 0; y < h; y++) {
+    linhas[y * (w + 1)] = 0;
+    Buffer.from(indices.buffer, indices.byteOffset + y * w, w).copy(linhas, y * (w + 1) + 1);
+  }
+  const chunk = (tipo, dados) => {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(dados.length);
+    const td = Buffer.concat([Buffer.from(tipo, 'ascii'), dados]);
+    const crc = Buffer.alloc(4);
+    crc.writeUInt32BE(crc32(td) >>> 0);
+    return Buffer.concat([len, td, crc]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 3;
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk('IHDR', ihdr),
+    chunk('PLTE', Buffer.from(paleta.flatMap(([r, g, b]) => [r, g, b]))),
+    chunk('tRNS', Buffer.from(paleta.map(([, , , a]) => a))),
     chunk('IDAT', deflateSync(linhas)),
     chunk('IEND', Buffer.alloc(0)),
   ]);

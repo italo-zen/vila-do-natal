@@ -1,29 +1,13 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo, ConteudoInvalidoError } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { interpretarSubarea } from '../../src/application/content/interpretarSubarea';
 import { bloqueiosDaSubarea } from '../../src/application/mundo/subarea';
 
-const AQUI = dirname(fileURLToPath(import.meta.url));
-const RAIZ = join(AQUI, '..', '..');
-const CONTENT = join(RAIZ, 'content');
 
-/** Lê todos os JSON de content/ do disco (mesmo formato que o Vite embute na build). */
-function lerConteudo(): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const varrer = (dir: string) => {
-    for (const nome of readdirSync(dir)) {
-      const cam = join(dir, nome);
-      if (statSync(cam).isDirectory()) varrer(cam);
-      else if (nome.endsWith('.json')) out[relative(CONTENT, cam).split('\\').join('/')] = JSON.parse(readFileSync(cam, 'utf-8'));
-    }
-  };
-  varrer(CONTENT);
-  return out;
-}
+const lerConteudo = lerConteudoDoDisco;
 
 const copia = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 const carregar = (arquivos: Record<string, unknown>) => new CarregarConteudo(new ContentSourceDeArquivos(arquivos)).executar();
@@ -60,13 +44,14 @@ function comOnzeLinhas(s: Record<string, any>): void { // eslint-disable-line @t
   s.altura = 11;
   s.chao.push(...Array(s.largura).fill(0));
   s.colisao.push(...Array(s.largura).fill(1));
+  s.paredes.push(...Array(s.largura).fill(0));
 }
 
 /**
- * Hall real (4×3): linha 0 é "###." (tiles 0 a 2 bloqueados, 3 livre); linha 1 é livre.
+ * Hall real (4×3, planta 1.1.0): linha 0 é "##.." (tiles 0 e 1 sem piso e bloqueados, 2 e 3 livres); linha 1 é livre.
  * Os casos abaixo usam esses tiles (ADR-004 seção 8 e contrato do móvel).
  */
-describe('móvel: validação (contrato da Arte com o Desenvolvedor)', () => {
+descreverComConteudoNovo('móvel: validação (contrato da Arte com o Desenvolvedor)', () => {
   it('válido: retângulo que cobre só tiles bloqueados passa, sem erro', async () => {
     const erros = await errosDe(comObjetos('hall', [movel(0, 0, 2, 1)]));
     expect(erros).toEqual([]);
@@ -88,8 +73,8 @@ describe('móvel: validação (contrato da Arte com o Desenvolvedor)', () => {
   });
 
   it('sobre piso livre: um retângulo que mistura bloqueado e livre também é erro', async () => {
-    const erros = await errosDe(comObjetos('hall', [movel(2, 0, 2, 1)]));
-    expect(erros.join(' ')).toMatch(/cobre tile livre em \(3, 0\)/);
+    const erros = await errosDe(comObjetos('hall', [movel(1, 0, 2, 1)]));
+    expect(erros.join(' ')).toMatch(/cobre tile livre em \(2, 0\)/);
   });
 
   it('w < 1 é erro, e h < 1 também', async () => {
@@ -129,19 +114,21 @@ describe('móvel: validação (contrato da Arte com o Desenvolvedor)', () => {
       escuro: false,
       chao: Array(12).fill(1),
       colisao: Array(12).fill(0),
+      paredes: Array(12).fill(0),
+      schemaVersion: 3,
       objetos: [{ tipo: 'movel', id: 'sofa', nome: 'Sofá', x: 0, y: 0, w: 1.5, h: 1 }],
     };
     expect(() => interpretarSubarea(bruto, { id: 'hall', file: 'maps/casa-real/hall.json', tileset: 'tiles_casa' })).toThrow(/w e h inteiros/);
   });
 
   it('a leitura guarda w, h, id e nome do móvel em dados, e x, y como coordenadas locais', async () => {
-    const c = await carregar(comObjetos('hall', [movel(1, 0, 2, 1)]));
+    const c = await carregar(comObjetos('hall', [movel(0, 0, 2, 1)]));
     const m = c.todosOsMapas.get('hall')!.objetos.find((o) => o.tipo === 'movel');
-    expect(m).toMatchObject({ tipo: 'movel', x: 1, y: 0, dados: { id: 'sofa', nome: 'Sofá', w: 2, h: 1 } });
+    expect(m).toMatchObject({ tipo: 'movel', x: 0, y: 0, dados: { id: 'sofa', nome: 'Sofá', w: 2, h: 1 } });
   });
 });
 
-describe('móvel: não altera a colisão', () => {
+descreverComConteudoNovo('móvel: não altera a colisão', () => {
   it('a grade de bloqueios da subárea é a mesma com e sem móvel, tile a tile', async () => {
     const semMovel = await carregar(lerConteudo());
     const comMovel = await carregar(comObjetos('hall', [movel(0, 0, 2, 1)]));

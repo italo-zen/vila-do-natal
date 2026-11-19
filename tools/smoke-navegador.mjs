@@ -131,11 +131,24 @@ const PX_POR_QUADRO = (VELOCIDADE_TILES_S * T * 16) / 1000;
 const subareas = Object.fromEntries(manifesto.maps.map((m) => [m.id, lerJson(`content/${m.file}`)]));
 const missao = lerJson('content/missions/marco1.json');
 const deslocamentoDe = (s) => ({ x: Math.floor((TELA.colunas - s.largura) / 2), y: Math.floor((TELA.linhas - s.altura) / 2) });
-const BLOQUEANTES = new Set(['arvore', 'portaFechada', 'examinavel']);
+const BLOQUEANTES = new Set(['arvore', 'examinavel']);
+/** Aresta por bit de `paredes` (ADR-011): [dx, dy, bit]. */
+const LADOS = { cima: [0, -1, 1], direita: [1, 0, 2], baixo: [0, 1, 4], esquerda: [-1, 0, 8] };
+const OPOSTO = { cima: 'baixo', baixo: 'cima', esquerda: 'direita', direita: 'esquerda' };
+const TECLA_DO_LADO = { cima: 'ArrowUp', baixo: 'ArrowDown', esquerda: 'ArrowLeft', direita: 'ArrowRight' };
+const arestaAberta = (s, x, y, lado) => {
+  const [dx, dy, bit] = LADOS[lado];
+  const nx = x + dx;
+  const ny = y + dy;
+  if (nx < 0 || ny < 0 || nx >= s.largura || ny >= s.altura) return false;
+  return !(s.paredes[y * s.largura + x] & bit) && !(s.paredes[ny * s.largura + nx] & LADOS[OPOSTO[lado]][2]);
+};
 /** Estado da partida no smoke (espelho do jogo): luzes acesas e quantas peças já foram encaixadas (1, 2 ou 3). */
 const partida = { luzes: false, encaixadas: 0, caixaVisivel: false };
 /** Nick no espelho do smoke (ADR-005 seção 2.3): começa dormindo na Sala, em (8, 5). Dormindo bloqueia o tile. */
-const nick = { mapa: 'sala', x: 8, y: 5, dormindo: true };
+const nick = { mapa: 'sala', x: 9, y: 5, dormindo: true };
+// Planta 1.1.0 (itens 164 e 174): árvore (2, 8); interruptor (6, 4); peça 1 (0, 5); peças 2 e 3 na Cozinha (3, 1) e (5, 3);
+// caixa no Escritório (5, 1). O Nick dorme em marco1 e enfeites na Sala (9, 5); em parte1 na Cozinha (1, 1).
 const nickBloqueia = (mapa, x, y) => nick.dormindo && nick.mapa === mapa && nick.x === x && nick.y === y;
 /** Peça visível bloqueia o tile (GDD 15.2.3): é a próxima da sequência; a peça 1 depois das luzes. */
 const pecaVisivel = (o) => o.tipo === 'peca' && o.ordem === partida.encaixadas + 1 && (o.ordem !== 1 || partida.luzes);
@@ -153,12 +166,13 @@ function posicionarEmTile(mapa, x, y, dir) {
   jog.centro = centroDoTile(x + d.x, y + d.y);
   void dir;
 }
-function posicionarNoSpawn(mapa, nome) {
+/** Spawn de início (elevador): pés na base do tile. Chegada por porta (`centralizado`): pés no centro do tile (ADR-011 3.4). */
+function posicionarNoSpawn(mapa, nome, centralizado = true) {
   const s = subareas[mapa];
   const d = deslocamentoDe(s);
   const sp = s.objetos.find((o) => o.tipo === 'spawn' && o.nome === nome);
   jog.mapa = mapa;
-  jog.centro = centroDoTile(sp.x + d.x, sp.y + d.y);
+  jog.centro = centralizado ? { x: (sp.x + d.x) * T + T / 2, y: (sp.y + d.y) * T + T / 2 } : centroDoTile(sp.x + d.x, sp.y + d.y);
 }
 /** Caminho em tiles locais (BFS) até `alvo`, sem atravessar bloqueios, gatilhos ou objetos de interação. */
 function caminho(alvo) {
@@ -166,11 +180,9 @@ function caminho(alvo) {
   const d = deslocamentoDe(s);
   const ini = tileGlobalDe(jog.centro);
   const start = { x: ini.x - d.x, y: ini.y - d.y };
-  const porta = new Set(s.objetos.filter((o) => o.tipo === 'porta').map((o) => `${o.x},${o.y}`));
   const livre = (x, y) => {
     if (x < 0 || y < 0 || x >= s.largura || y >= s.altura) return false;
     if (s.chao[y * s.largura + x] === 0 || s.colisao[y * s.largura + x]) return false;
-    if (porta.has(`${x},${y}`) && !(x === alvo.x && y === alvo.y)) return false;
     if (s.objetos.some((o) => BLOQUEANTES.has(o.tipo) && o.x === x && o.y === y)) return false;
     if (s.objetos.some((o) => pecaVisivel(o) && o.x === x && o.y === y)) return false;
     if (s.objetos.some((o) => caixaVisivel(o) && o.x === x && o.y === y)) return false;
@@ -183,9 +195,9 @@ function caminho(alvo) {
   while (fila.length) {
     const p = fila.shift();
     if (p.x === alvo.x && p.y === alvo.y) break;
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    for (const [lado, [dx, dy]] of Object.entries(LADOS)) {
       const q = { x: p.x + dx, y: p.y + dy };
-      if (antes.has(chave(q)) || !livre(q.x, q.y)) continue;
+      if (antes.has(chave(q)) || !livre(q.x, q.y) || !arestaAberta(s, p.x, p.y, lado)) continue;
       antes.set(chave(q), p);
       fila.push(q);
     }
@@ -220,34 +232,6 @@ async function andarPara(alvo, passo) {
   }
 }
 
-/** Anda até um tile vizinho (4 lados) do objeto de jogo `tipo`/`id` ou `texto`, pelo primeiro vizinho alcançável. */
-async function andarAoLado(tipo, chaveDoObjeto, passo) {
-  const s = subareas[jog.mapa];
-  const o = s.objetos.find((x) => x.tipo === tipo && (x.dados?.id ?? x.texto ?? x.nome) === chaveDoObjeto || (x.tipo === tipo && x.id === chaveDoObjeto) || (x.tipo === tipo && x.texto === chaveDoObjeto));
-  if (!o) throw new Error(`Objeto ${tipo} ${chaveDoObjeto} não existe em "${jog.mapa}".`);
-  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-    const c = { x: o.x + dx, y: o.y + dy };
-    // Não pisa em outro objeto (ex.: o interruptor ao lado da P1): só em tile livre de objeto.
-    if (s.objetos.some((x) => x.x === c.x && x.y === c.y && x.tipo !== 'peca')) continue;
-    try {
-      await andarPara(c, passo);
-      return;
-    } catch {
-      // vizinho bloqueado ou fora do piso: tenta o próximo lado
-    }
-  }
-  throw new Error(`Nenhum lado de ${tipo} ${chaveDoObjeto} é alcançável em "${jog.mapa}".`);
-}
-
-/** Atravessa um gatilho que o personagem acabou de pisar: a subárea e o spawn vêm do JSON da porta. */
-function depoisDeAtravessar(gatilho) {
-  posicionarNoSpawn(gatilho.destino, gatilho.spawnDestino);
-}
-function gatilhoEm(tile) {
-  const s = subareas[jog.mapa];
-  const d = deslocamentoDe(s);
-  return s.objetos.find((o) => o.tipo === 'porta' && o.x + d.x === tile.x && o.y + d.y === tile.y);
-}
 /** Tile local onde o personagem está, na subárea atual. */
 function tileLocal() {
   const d = deslocamentoDe(subareas[jog.mapa]);
@@ -294,6 +278,24 @@ async function jogar(nome, indice, codigo, opcoes) {
     writeFileSync(`${saida}/${arquivo}`, Buffer.from(dataUrl.split(',')[1], 'base64'));
   };
   const teclaTransicao = () => esperar(800);
+  /** Empurra contra a parede do `lado` até encostar (a caixa dos pés fica a 0 px da linha) e acompanha o modelo. */
+  const encostar = async (lado) => {
+    await passo.segurar(TECLA_DO_LADO[lado], 300);
+    const g = tileGlobalDe(jog.centro);
+    if (lado === 'cima') jog.centro = { x: jog.centro.x, y: g.y * T + 8 };
+    else if (lado === 'baixo') jog.centro = { x: jog.centro.x, y: (g.y + 1) * T - 8 };
+    else if (lado === 'esquerda') jog.centro = { x: g.x * T + 12, y: jog.centro.y };
+    else jog.centro = { x: (g.x + 1) * T - 12, y: jog.centro.y };
+  };
+  /** Anda ao tile da porta `id` da área atual, empurra contra ela (andar contra, ADR-011 3.4), espera o fade e posiciona o modelo na chegada. */
+  const irPelaPorta = async (id) => {
+    const s = subareas[jog.mapa];
+    const porta = s.objetos.find((o) => o.tipo === 'porta' && o.id === id);
+    await andarPara({ x: porta.x, y: porta.y }, passo);
+    await passo.segurar(TECLA_DO_LADO[porta.lado], 250);
+    await teclaTransicao();
+    posicionarNoSpawn(porta.destino, porta.spawnDestino);
+  };
 
   // Título -> seleção -> introdução (4 páginas) -> orientação (2 páginas).
   if (nome === 'lolo') await page.screenshot({ path: `${saida}/titulo.png` });
@@ -307,21 +309,22 @@ async function jogar(nome, indice, codigo, opcoes) {
   await tecla('z');
   await tecla('z');
   await esperar(300);
-  posicionarNoSpawn('hall', 'elevador');
+  posicionarNoSpawn('hall', 'elevador', false);
   await foto('02-hall');
   if (nome === 'lolo') await ampliada(`${nome}-hall-3x.png`);
 
-  // Bilhete no Hall: tile de parede em (2, 0), lido de (2, 1), virado para cima (GDD 14.10.2, item 2). 2 páginas.
-  await andarPara({ x: 2, y: 1 }, passo);
-  await tecla('ArrowUp', 60);
+  // Bilhete no Hall: tile livre (2, 0), lido de frente para a parede do `lado` (ADR-011 3.2; GDD 14.10.2, item 2). 2 páginas.
+  const bilheteDoHall = subareas.hall.objetos.find((o) => o.tipo === 'bilhete');
+  await andarPara({ x: bilheteDoHall.x, y: bilheteDoHall.y }, passo);
+  await encostar(bilheteDoHall.lado);
   await tecla('z');
   await foto('03-bilhete');
   await tecla('z');
   await tecla('z');
 
-  // P8 trancada (gatilho em (3, 0)): de (3, 1), virado para cima, A abre o painel do código (GDD 14.10.2, item 3).
-  await andarPara({ x: 3, y: 1 }, passo);
-  await tecla('ArrowUp', 60);
+  // hall-sala com código (porta em (3, 0), lado cima): andar contra só para; A de frente abre o painel (GDD 14.10.2, item 3).
+  await andarPara({ x: 3, y: 0 }, passo);
+  await encostar('cima');
   await tecla('z');
   await esperar(200);
   if (nome === 'lolo') await page.screenshot({ path: `${saida}/painel-teclas-foco-ok.png` });
@@ -337,7 +340,7 @@ async function jogar(nome, indice, codigo, opcoes) {
   await foto('05-porta-abriu');
   await tecla('z');
   await teclaTransicao();
-  posicionarNoSpawn('sala', 'P8');
+  posicionarNoSpawn('sala', 'hall-sala');
 
   // Sala escura: o aviso da primeira entrada (GDD 14.1).
   await tecla('z');
@@ -350,9 +353,9 @@ async function jogar(nome, indice, codigo, opcoes) {
   await tecla('h');
   await foto('nick-02-dica-luzes-dormindo');
   await tecla('z');
-  // Acordar (N2): de (7, 5), virado para a direita, com o Nick à frente. A anima 1,2 s; "Au!" no segundo quadro.
-  await andarPara({ x: 7, y: 5 }, passo);
-  await tecla('ArrowRight', 60);
+  // Acordar (N2): de (9, 4), virado para baixo, com o Nick à frente (9, 5). A anima 1,2 s; "Au!" no segundo quadro.
+  await andarPara({ x: 9, y: 4 }, passo);
+  await tecla('ArrowDown', 60);
   await tecla('z', 40);
   await foto('nick-03-acordando-au');
   await esperar(1000);
@@ -383,19 +386,16 @@ async function jogar(nome, indice, codigo, opcoes) {
   await foto('nick-07-dica-luzes-acordado');
   await tecla('z');
 
-  // P1 (porta fechada, em (6, 2)): de (5, 2), virado para a direita, A mostra o texto de 14.10.3.
-  // Andar contra a porta (ArrowRight) não muda nada.
-  // Antes do corredor (5, 3), um toque curto para a esquerda alinha a caixa dos pés: depois do Nick acordado, a chegada
-  // a (5, 4) vem pela direita, e sem o toque a caixa encosta na parede (6, 3) (mesmo ajuste de tools, item 2 do corredor).
-  await passo.segurar('ArrowLeft', 60);
-  await andarPara({ x: 5, y: 2 }, passo);
-  await tecla('ArrowRight', 60);
+  // Porta fechada (`quarto-sala`, Sala (7, 0), lado cima; o Quarto só abre na parte 1): andar contra só para; A de frente mostra
+  // o texto de 14.10.3.
+  await andarPara({ x: 7, y: 0 }, passo);
+  await encostar('cima');
   await tecla('z');
   await foto('07-porta-fechada');
   await tecla('z');
-  // Interruptor (5, 3): de (5, 4), virado para cima, acende a casa e abre a conquista 1.
-  await andarPara({ x: 5, y: 5 }, passo);
+  // Interruptor (6, 4): de (5, 4), virado para a direita, acende a casa e abre a conquista 1.
   await andarPara({ x: 5, y: 4 }, passo);
+  await tecla('ArrowRight', 60);
   await tecla('z');
   await tecla('z');
   partida.luzes = true;
@@ -414,7 +414,7 @@ async function jogar(nome, indice, codigo, opcoes) {
     await esperar(100);
   }
   await esperar(1000);
-  posicionarEmTile('sala', 3, 7, 'baixo');
+  posicionarEmTile('sala', 2, 7, 'baixo');
   // Chegou sozinho (decisão do Diretor, PT2b; GDD 14.9.3): o diálogo da árvore (2 páginas) já está aberto, sem tecla.
   // A captura sai antes de qualquer tecla. Z avança para a página 2; Z na última fecha.
   await foto('09-chegada-dialogo-forcado');
@@ -436,8 +436,8 @@ async function jogar(nome, indice, codigo, opcoes) {
   await esperar(300);
   // Fim do diálogo de chegada: o Nick sai da fila e dorme na Cozinha, no tile da parte 1 (ADR-005 seção 3.5).
   nick.mapa = 'cozinha';
-  nick.x = 5;
-  nick.y = 3;
+  nick.x = 1;
+  nick.y = 1;
   nick.dormindo = true;
   await foto('09b-depois-da-chegada');
   // Depois da chegada o jogador fica livre: A para baixo (bloqueio) mostra o texto da árvore (primeiro exame).
@@ -445,21 +445,18 @@ async function jogar(nome, indice, codigo, opcoes) {
   await tecla('z');
   await tecla('z');
 
-  // Passagem P7 (gatilho (10, 5), parede da direita da Sala): anda até o spawn (9, 5) e segue para a direita.
-  await andarPara({ x: 9, y: 5 }, passo);
-  await passo.segurar('ArrowRight', 16 * 16);
-  await teclaTransicao();
-  posicionarNoSpawn('cozinha', 'P7');
+  // Porta `cozinha-sala` (Sala (10, 4), lado direita): anda até o tile da porta e empurra para a direita.
+  await irPelaPorta('cozinha-sala');
   await foto('10-cozinha');
-  // Nick dormindo na Cozinha (N10, parte 1). (5, 3) é um beco: com o Nick ali, (5, 4) fica isolado. Acorde de (4, 3), de frente para a direita.
-  await andarPara({ x: 4, y: 3 }, passo);
-  await tecla('ArrowRight', 60);
+  // Nick dormindo na Cozinha (N10, parte 1), em (1, 1). Acorde de (1, 0), de frente para baixo.
+  await andarPara({ x: 1, y: 0 }, passo);
+  await tecla('ArrowDown', 60);
   await foto('nick-08-dormindo-cozinha');
   await tecla('z', 40);
   await foto('nick-09-acordando-cozinha');
   await esperar(1300);
   nick.dormindo = false;
-  // Seta de farejar (F4): da Cozinha, com o alvo na Sala, a seta vai para a esquerda sobre a P7. "Farejando" 1,2 s, depois a seta.
+  // Seta de farejar (F4): da Cozinha, com o alvo na Sala, a seta vai para a esquerda sobre a cozinha-sala. "Farejando" 1,2 s, depois a seta.
   await tecla('x', 60);
   // Seta (PT3, 2026-11-09): a seta aparece depois da animação de farejar (1,2 s) e treme 2 vezes; capturas a cada 100 ms.
   await esperar(1000);
@@ -476,56 +473,41 @@ async function jogar(nome, indice, codigo, opcoes) {
   await tecla('h');
   await foto('nick-11-dica-parte1-acordado');
   await tecla('z');
-  // Pia (5, 1): de (4, 1), virado para a direita, A ao lado dela.
-  await andarAoLado('examinavel', 'cozinha.pia', passo);
-  // Vira para a pia (na frente): depois do Nick, a subida pela coluna 4 deixa o sobrinho virado para cima, e então a
-  // peça 2 (escondida, no mesmo tile) seria o alvo do A ('Ainda não!'). Um toque para a direita fixa a direção.
+  // Pia (examinável em (5, 1)): de (4, 1), virado para a direita, A de frente para ela.
+  await andarPara({ x: 4, y: 1 }, passo);
   await tecla('ArrowRight', 60);
   await tecla('z');
   await foto('11-pia');
   await tecla('z');
-  // Volta pela P7 (gatilho (0, 0)): anda até o spawn (1, 0) e segue para a esquerda. Depois do Nick acordado, a subida
-  // pela coluna 4 deixa a caixa dos pés fora da linha 1: um toque curto para cima alinha antes do corredor (mesmo ajuste do Marco 2).
-  await passo.segurar('ArrowUp', 16);
-  await andarPara({ x: 1, y: 0 }, passo);
-  await passo.segurar('ArrowLeft', 16 * 16);
-  await teclaTransicao();
-  posicionarNoSpawn('sala', 'P7');
+  // Volta pela `cozinha-sala` (Cozinha (0, 0), lado esquerda) à Sala, chegada em (10, 4).
+  await irPelaPorta('cozinha-sala');
   await foto('12-sala-voltou');
 
   // Marco 2 (GDD 15; backlog 052 a 055, 059): um sobrinho percorre as três partes, os dois avisos "ainda não" alcançáveis
   // e o Escritório pela P3. Cada peça: A encostado, conquista, Continuar, condução até a Sala (3, 7), encaixe, diálogo.
   if (opcoes.marco2) {
-    // Antes da parte 1 (peça 1 ainda no chão): a peça 2 (escondida, chão livre) mostra "ainda não" de (3, 1), encostado.
-    // Pela Cozinha, pela P7 (gatilho (10, 5) da Sala, sai em (1, 0) da Cozinha).
-    await andarPara({ x: 9, y: 5 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('cozinha', 'P7');
-    await andarPara({ x: 3, y: 1 }, passo);
+    // Antes da parte 1 (peça 1 ainda no chão): a peça 2 (escondida, chão livre, Cozinha (3, 1)) mostra "ainda não" de (2, 1), virado para a direita.
+    await irPelaPorta('cozinha-sala');
+    await andarPara({ x: 2, y: 1 }, passo);
+    await tecla('ArrowRight', 60);
     await tecla('z');
     await foto('13-m2-aviso-peca2-pagina1');
     await tecla('z');
     await foto('13b-m2-aviso-peca2-pagina2');
     await tecla('z');
-    // Peça 3 (escondida, Lavanderia (3, 5)): "ainda não", de (3, 4), encostado por cima (GDD 15.2.7, E16 primeiro caso).
-    await andarPara({ x: 3, y: 4 }, passo);
+    // Peça 3 (escondida, Cozinha (5, 3)): "ainda não", de (4, 3), virado para a direita (GDD 15.2.7, E16 primeiro caso).
+    await andarPara({ x: 4, y: 3 }, passo);
+    await tecla('ArrowRight', 60);
     await tecla('z');
     await foto('14-m2-aviso-peca3-pagina1');
     await tecla('z');
     await foto('14b-m2-aviso-peca3-pagina2');
     await tecla('z');
-    // Volta pela P7 à Sala (9, 5) e pega a peça 1 (Sala (1, 4)), de (2, 4), encostada.
-    // Antes do corredor (3, 3) → (4, 3), um toque curto para cima alinha a altura: sem ele, a deriva de ~2 px deixa os pés
-    // encostados na parede (4, 4) e o movimento lateral trava (achado do QA de 2026-11-08; ver relatório do Desenvolvedor).
-    await passo.segurar('ArrowUp', 16);
-    await andarPara({ x: 1, y: 0 }, passo);
-    await passo.segurar('ArrowLeft', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('sala', 'P7');
-    await foto('nick-12-volta-sala-pela-p7');
+    // Volta pela cozinha-sala à Sala (10, 4) e pega a peça 1 (Sala (0, 5)), de (1, 5), virado para a esquerda.
+    await irPelaPorta('cozinha-sala');
+    await foto('nick-12-volta-sala-pela-cozinha-sala');
     // Troca de cômodo (PT3, 2026-11-09): o Nick chega oculto na chegada e aparece no primeiro passo do sobrinho.
-    // Capturas a cada 100 ms enquanto o sobrinho dá o primeiro passo para a esquerda; depois o modelo é alinhado no tile.
+    // Capturas a cada 100 ms enquanto o sobrinho dá o primeiro passo para a esquerda; depois o modelo acompanha o deslocamento.
     await page.keyboard.down('ArrowLeft');
     for (let i = 0; i < 8; i++) {
       await esperar(100);
@@ -533,10 +515,9 @@ async function jogar(nome, indice, codigo, opcoes) {
     }
     await page.keyboard.up('ArrowLeft');
     await esperar(200);
-    // O modelo anda o mesmo que o sobrinho: 800 ms de ArrowLeft, a 4 tiles por segundo, são 50 quadros (102,4 px). Sem
-    // encaixe no tile: o sobrinho para onde a tecla foi solta. (Antes o modelo era alinhado em (8, 5), e o roteiro saía do lugar.)
     jog.centro = { x: jog.centro.x - 50 * PX_POR_QUADRO, y: jog.centro.y };
-    await andarPara({ x: 2, y: 4 }, passo);
+    await andarPara({ x: 1, y: 5 }, passo);
+    await tecla('ArrowLeft', 60);
     await tecla('z');
     await esperar(300);
     await foto('15-m2-conquista-parte1');
@@ -546,7 +527,7 @@ async function jogar(nome, indice, codigo, opcoes) {
     await esperar(1000);
     await foto('16-m2-encaixe-parte1-dialogo');
     await tecla('z');
-    posicionarEmTile('sala', 3, 7, 'baixo');
+    posicionarEmTile('sala', 2, 7, 'baixo');
     await foto('16b-m2-arvore-estado1-sem-dialogo');
     await tecla('z');
     await esperar(400);
@@ -554,12 +535,10 @@ async function jogar(nome, indice, codigo, opcoes) {
     await tecla('z');
     await foto('17-m2-arvore-estado1');
 
-    // Parte 2: peça 2 em (4, 1), de (3, 1), encostada. Condução de 15 passos (2×), pela P7.
-    await andarPara({ x: 9, y: 5 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('cozinha', 'P7');
-    await andarPara({ x: 3, y: 1 }, passo);
+    // Parte 2: peça 2 em (5, 1), de (4, 1), virado para a direita. Condução de 17 passos (2×), pela cozinha-sala.
+    await irPelaPorta('cozinha-sala');
+    await andarPara({ x: 2, y: 1 }, passo);
+    await tecla('ArrowRight', 60);
     await tecla('z');
     await esperar(300);
     await foto('18-m2-conquista-parte2');
@@ -569,7 +548,7 @@ async function jogar(nome, indice, codigo, opcoes) {
     await esperar(1000);
     await foto('19-m2-encaixe-parte2-dialogo');
     await tecla('z');
-    posicionarEmTile('sala', 3, 7, 'baixo');
+    posicionarEmTile('sala', 2, 7, 'baixo');
     await foto('19b-m2-arvore-estado2-sem-dialogo');
     await tecla('z');
     await esperar(400);
@@ -577,29 +556,22 @@ async function jogar(nome, indice, codigo, opcoes) {
     await tecla('z');
     await foto('20-m2-arvore-estado2');
 
-    // Escritório pela P3, com a parte 2 concluída (EN1, GDD 17.3): a caixa está escondida, e o A na caixa mostra o aviso
-    // "Ainda não!" em duas páginas. O tile é chão livre, então o sobrinho fica virado para ela no último passo, de baixo.
-    await andarPara({ x: 7, y: 2 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('escritorio', 'P3');
-    await andarPara({ x: 5, y: 3 }, passo);
+    // Escritório pela `escritorio-sala`, com a parte 2 concluída (EN1, GDD 17.3): a caixa (6, 1) está escondida, e o A na caixa
+    // mostra o aviso "Ainda não!" em duas páginas. O tile é chão livre: de (6, 2), virado para cima.
+    await irPelaPorta('escritorio-sala');
+    await andarPara({ x: 4, y: 1 }, passo);
+    await tecla('ArrowRight', 60);
     await tecla('z');
     await foto('EN1-escritorio-caixa-escondida-aviso-pagina1');
     await tecla('z');
     await foto('EN1-escritorio-caixa-escondida-aviso-pagina2');
     await tecla('z');
-    await andarPara({ x: 1, y: 5 }, passo);
-    await passo.segurar('ArrowLeft', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('sala', 'P3');
+    await irPelaPorta('escritorio-sala');
 
-    // Parte 3: peça 3 em (3, 5), de (3, 4), encostada. Condução de 20 passos (2×), pela P7.
-    await andarPara({ x: 9, y: 5 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('cozinha', 'P7');
-    await andarPara({ x: 3, y: 4 }, passo);
+    // Parte 3: peça 3 em (5, 3), de (4, 3). Condução de 19 passos (2×), pela cozinha-sala.
+    await irPelaPorta('cozinha-sala');
+    await andarPara({ x: 4, y: 3 }, passo);
+    await tecla('ArrowRight', 60);
     await tecla('z');
     await esperar(300);
     await foto('21-m2-conquista-parte3');
@@ -617,10 +589,10 @@ async function jogar(nome, indice, codigo, opcoes) {
     // Fim do diálogo de chegada da parte 3: Nick vai dormir na Sala, (8, 5), e a caixa de enfeite aparece (GDD 17.2 e 17.6).
     partida.caixaVisivel = true;
     nick.mapa = 'sala';
-    nick.x = 8;
+    nick.x = 9;
     nick.y = 5;
     nick.dormindo = true;
-    posicionarEmTile('sala', 3, 7, 'baixo');
+    posicionarEmTile('sala', 2, 7, 'baixo');
     await foto('22b-m2-arvore-estado3-sem-dialogo');
     await tecla('z');
     await esperar(400);
@@ -630,49 +602,35 @@ async function jogar(nome, indice, codigo, opcoes) {
     await foto('23-m2-arvore-estado3');
     await tecla('z');
 
-    // Escritório pela P3 (GDD 15.3.3): de (7, 2), andar para a direita entra no gatilho (8, 2); volta pelo gatilho (0, 5).
-    await andarPara({ x: 7, y: 2 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('escritorio', 'P3');
-    await foto('24-m2-escritorio-pela-p3');
-    await passo.segurar('ArrowLeft', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('sala', 'P3');
-    await foto('25-m2-sala-volta-pela-p3');
+    // Escritório pela `escritorio-sala` (GDD 15.3.3): ida e volta, a chegada olhando para dentro.
+    await irPelaPorta('escritorio-sala');
+    await foto('24-m2-escritorio-pela-escritorio-sala');
+    await irPelaPorta('escritorio-sala');
+    await foto('25-m2-sala-volta-pela-escritorio-sala');
     console.log(`${nome}: Marco 2 percorrido (partes 1 a 3 e Escritório)`);
 
-    // Quarto pela P2 (ADR-004 seção 13; GDD 15.3.3): de (7, 2), a seta da P2 em (7, 1) aponta para a direita. Sobe ao gatilho:
-    // a travessia custa 3 passos e chega em (0, 6) do Quarto, olhando para cima (fora do gatilho (0, 7), que tem seta à esquerda).
-    // Passeia pelo Quarto e volta pelo gatilho (0, 7) à Sala, chegada (7, 2) olhando para baixo.
-    await andarPara({ x: 7, y: 2 }, passo);
-    await foto('26-m2-sala-seta-p2');
-    await passo.segurar('ArrowUp', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('quarto', 'P2');
+    // Quarto pela `quarto-sala` (Sala (7, 0), lado cima): a seta da porta no tile, a travessia de tile a tile, passeio e volta
+    // pelo tile da porta do Quarto (0, 3), lado baixo.
+    await andarPara({ x: 7, y: 1 }, passo);
+    await foto('26-m2-sala-perto-da-quarto-sala');
+    await irPelaPorta('quarto-sala');
     await foto('27-m2-quarto-chegada');
-    await andarPara({ x: 4, y: 4 }, passo);
+    await andarPara({ x: 2, y: 2 }, passo);
     await foto('28-m2-quarto-passeio');
-    await andarPara({ x: 0, y: 6 }, passo);
-    await foto('28b-m2-quarto-antes-da-volta');
-    await passo.segurar('ArrowDown', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('sala', 'P2');
-    await foto('29-m2-sala-volta-pela-p2');
-    console.log(`${nome}: Marco 2, ida e volta pelo Quarto (P2) feitas`);
+    await irPelaPorta('quarto-sala');
+    await foto('29-m2-sala-volta-pela-quarto-sala');
+    console.log(`${nome}: Marco 2, ida e volta pelo Quarto (quarto-sala) feitas`);
 
     // Marco 4 (GDD 17.2 a 17.7; ADR-006): a caixa de enfeite no Escritório (EN2), o A (EN3), a condução até a Sala, o
     // encaixe de 1,7 s, o diálogo final, o fade e os créditos (CR1 e CR2). Sem save: no fim, o título.
-    await andarPara({ x: 7, y: 2 }, passo);
-    await passo.segurar('ArrowRight', 16 * 16);
-    await teclaTransicao();
-    posicionarNoSpawn('escritorio', 'P3');
-    await andarPara({ x: 5, y: 3 }, passo);
+    await irPelaPorta('escritorio-sala');
+    await andarPara({ x: 4, y: 1 }, passo);
+    await tecla('ArrowRight', 60);
     await foto('EN2-escritorio-caixa-visivel');
     await tecla('z');
     await foto('EN3-conquista-enfeites');
     await tecla('z');
-    // Condução automática até (3, 7) da Sala, de frente para a árvore: sem tecla. Quadros do encaixe a cada 200 ms.
+    // Condução automática até (2, 7) da Sala, de frente para a árvore: sem tecla. Quadros do encaixe a cada 200 ms.
     await esperar(3000);
     for (let i = 0; i < 12; i++) {
       await foto(`enfeite-encaixe-quadro-${String(i).padStart(2, '0')}`);

@@ -1,14 +1,15 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { caixaCabeNaAreaDeJogo, deslocamentoDaSubarea, objetosNaTela, posicaoDoSpritePelaBase } from '../../src/application/mundo/subarea';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(AQUI, '..', '..');
-const CONTENT = join(RAIZ, 'content');
 const ASSETS = join(RAIZ, 'assets', 'hd-480x352');
 
 /** Tamanho em px de um PNG, lido do cabeçalho IHDR (largura e altura, 4 bytes cada, big-endian). */
@@ -17,21 +18,9 @@ function tamanhoDoPng(arquivo: string): { w: number; h: number } {
   return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
 }
 
-/** Lê todos os JSON de content/ do disco (mesmo formato que o Vite embute na build). */
-function lerConteudo(): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const varrer = (dir: string) => {
-    for (const nome of readdirSync(dir)) {
-      const cam = join(dir, nome);
-      if (statSync(cam).isDirectory()) varrer(cam);
-      else if (nome.endsWith('.json')) out[relative(CONTENT, cam).split('\\').join('/')] = JSON.parse(readFileSync(cam, 'utf-8'));
-    }
-  };
-  varrer(CONTENT);
-  return out;
-}
+const lerConteudo = lerConteudoDoDisco;
 
-describe('sprite de objeto ancorado na base do tile (árvore alta, ADR-004 seção 6)', () => {
+descreverComConteudoNovo('sprite de objeto ancorado na base do tile (árvore alta, ADR-004 seção 6)', () => {
   it('a árvore é ancorada pela base: o tamanho vem do PNG do disco e a base do sprite cai na base do tile', () => {
     const { w, h } = tamanhoDoPng('spr_arvore_desmontada.png');
     expect(w).toBeGreaterThan(0);
@@ -42,12 +31,12 @@ describe('sprite de objeto ancorado na base do tile (árvore alta, ADR-004 seç�
     expect(p.y + h).toBe(9 * 32);
   });
 
-  it('a árvore real da Sala (tile local (3, 8), tela (5, 8)) cabe na área de jogo 15×11, acima da barra', async () => {
+  it('a árvore real da Sala (tile local (2, 8), tela (4, 8)) cabe na área de jogo 15×11, acima da barra', async () => {
     const { w, h } = tamanhoDoPng('spr_arvore_desmontada.png');
     const c = await new CarregarConteudo(new ContentSourceDeArquivos(lerConteudo())).executar();
     const sala = c.todosOsMapas.get('sala')!;
     const arvore = objetosNaTela(sala, deslocamentoDaSubarea(sala, c.perfil.sala)).find((o) => o.tipo === 'arvore')!;
-    expect({ x: arvore.x, y: arvore.y }).toEqual({ x: 5, y: 8 });
+    expect({ x: arvore.x, y: arvore.y }).toEqual({ x: 4, y: 8 });
     const p = posicaoDoSpritePelaBase(arvore, c.perfil.tile, h);
     const caixa = { x: p.x, y: p.y, w, h };
     expect(caixaCabeNaAreaDeJogo(caixa, c.perfil.sala, c.perfil.tile)).toBe(true);
@@ -88,10 +77,33 @@ describe('sprite de objeto ancorado na base do tile (árvore alta, ADR-004 seç�
     expect(caixaCabeNaAreaDeJogo({ x: 0, y: 288, w: 32, h: 32 }, tela, 32)).toBe(true);
   });
 
-  it('os outros sprites de objeto (bilhete, interruptor, porta) são 32×32: cabem no próprio tile', () => {
-    for (const arquivo of ['spr_bilhete.png', 'spr_interruptor.png', 'spr_porta.png']) {
-      const { w, h } = tamanhoDoPng(arquivo);
-      expect([w, h], arquivo).toEqual([32, 32]);
+  it('a porta fechada da 1.1.0 (fallback) é 32×32; o bilhete é uma imagem 16×24 presa na parede, com âncora (8, 23)', () => {
+    expect(tamanhoDoPng('spr_porta.png')).toEqual({ w: 32, h: 32 });
+    expect(tamanhoDoPng('spr_bilhete.png')).toEqual({ w: 16, h: 24 });
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; ancora?: { x: number; y: number } }[] };
+    expect(sprites.imagens.find((i) => i.arquivo === 'spr_bilhete.png')?.ancora).toEqual({ x: 8, y: 23 });
+  });
+
+  it('o interruptor é uma folha de 2 quadros 16×24 (0 apagado, 1 aceso) com âncora (8, 23), posto sobre a face norte do tile', () => {
+    const { w, h } = tamanhoDoPng('spr_interruptor.png');
+    expect([w, h]).toEqual([32, 24]);
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; tipo: string; quadro?: { w: number; h: number }; quadros?: number; ancora?: { x: number; y: number } }[] };
+    const img = sprites.imagens.find((i) => i.arquivo === 'spr_interruptor.png')!;
+    expect(img).toMatchObject({ tipo: 'folhas', quadro: { w: 16, h: 24 }, quadros: 2, ancora: { x: 8, y: 23 } });
+    // Posição pela âncora: x = tile × 32 + 16 − 8; y = tile × 32 − 23 (Sala (6, 4) com deslocamento 2 em x).
+    const tx = 6 + 2;
+    const ty = 4;
+    expect({ x: tx * 32 + 16 - img.ancora!.x, y: ty * 32 - img.ancora!.y }).toEqual({ x: 8 * 32 + 8, y: 128 - 23 });
+  });
+
+  it('a árvore e a decoração da árvore têm movel com âncora (0, 56) e posicionam como os móveis', () => {
+    const sprites = JSON.parse(readFileSync(join(ASSETS, 'sprites.json'), 'utf-8')) as { imagens: { arquivo: string; movel?: { pegada: { w: number; h: number }; ancora: { x: number; y: number } } }[] };
+    for (const [arquivo, ancoraY] of [['spr_arvore_desmontada.png', 56], ['spr_arvore_enfeitada.png', 56], ['dec_arvore_g.png', 56], ['dec_arvore_p.png', 40]] as const) {
+      const m = sprites.imagens.find((i) => i.arquivo === arquivo)?.movel;
+      expect(m, arquivo).toBeDefined();
+      expect(m!.ancora).toEqual({ x: 0, y: ancoraY });
+      expect(m!.pegada).toEqual({ w: 1, h: 1 });
     }
+    expect(tamanhoDoPng('spr_arvore_desmontada.png')).toEqual({ w: 38, h: 62 });
   });
 });

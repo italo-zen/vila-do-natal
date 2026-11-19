@@ -1,7 +1,9 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
+import { lerConteudoDoDisco } from '../helpers/conteudoReal';
+import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 import { CarregarConteudo, ConteudoInvalidoError } from '../../src/application/usecases/CarregarConteudo';
 import { ContentSourceDeArquivos } from '../../src/infrastructure/content/ContentSourceDeArquivos';
 import { calcularRotaDeConducao } from '../../src/application/mundo/conducao';
@@ -24,20 +26,8 @@ import type { Fase } from '../../src/domain/progresso/Fase';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(AQUI, '..', '..');
-const CONTENT = join(RAIZ, 'content');
 
-function lerConteudo(): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  const varrer = (dir: string) => {
-    for (const nome of readdirSync(dir)) {
-      const cam = join(dir, nome);
-      if (statSync(cam).isDirectory()) varrer(cam);
-      else if (nome.endsWith('.json')) out[relative(CONTENT, cam).split('\\').join('/')] = JSON.parse(readFileSync(cam, 'utf-8'));
-    }
-  };
-  varrer(CONTENT);
-  return out;
-}
+const lerConteudo = lerConteudoDoDisco;
 
 const copia = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 const carregar = (arquivos: Record<string, unknown>) => new CarregarConteudo(new ContentSourceDeArquivos(arquivos)).executar();
@@ -80,7 +70,7 @@ function linhasDe(texto: string, largura: number): number {
   return linhas;
 }
 
-describe('Marco 2: textos exatos (GDD 15.8; backlog 051, critério 3)', () => {
+descreverComConteudoNovo('Marco 2: textos exatos (GDD 15.8; backlog 051, critério 3)', () => {
   const t = interpretarTextos(lerConteudo()['texts/pt-BR.json']);
   const esperado: Record<string, string | string[]> = {
     'conquista.parte1': 'Parabéns, você conseguiu encontrar a primeira parte da árvore de Natal.',
@@ -119,7 +109,7 @@ describe('Marco 2: textos exatos (GDD 15.8; backlog 051, critério 3)', () => {
   });
 });
 
-describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () => {
+descreverComConteudoNovo('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () => {
   it('manifesto: marco1, parte1, parte2, parte3 e enfeites (Marco 4) com requires encadeado e maps da opção B', async () => {
     const c = await carregar(lerConteudo());
     expect(c.missoes.map((m) => m.id)).toEqual(['marco1', 'parte1', 'parte2', 'parte3', 'enfeites']);
@@ -131,15 +121,15 @@ describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () 
     }
   });
 
-  it('cada parte tem conducao.parteN (Sala, (3, 7), baixo) e conquistas.parteN (chave de texto existente)', async () => {
+  it('cada parte tem conducao.parteN (Sala, (2, 7), baixo) e conquistas.parteN (chave de texto existente)', async () => {
     const c = await carregar(lerConteudo());
     for (const n of [1, 2, 3]) {
       const m = c.missoes.find((x) => x.id === `parte${n}`)!.missao;
-      expect(m.conducao[`parte${n}`]).toEqual({ mapa: 'sala', x: 3, y: 7, direcao: 'baixo' });
+      expect(m.conducao[`parte${n}`]).toEqual({ mapa: 'sala', x: 2, y: 7, direcao: 'baixo' });
       expect(m.conquistas[`parte${n}`]).toBe(`conquista.parte${n}`);
       expect(m.inicio).toBeUndefined();
     }
-    expect(conducaoDaFase(c.missoes, 'parte2' as Fase)).toEqual({ mapa: 'sala', x: 3, y: 7, direcao: 'baixo' });
+    expect(conducaoDaFase(c.missoes, 'parte2' as Fase)).toEqual({ mapa: 'sala', x: 2, y: 7, direcao: 'baixo' });
   });
 
   it('missão ativa: marco1, parte1, parte2, parte3 e enfeites; depois da final, a própria final (ADR-006 seção 1.4)', async () => {
@@ -164,13 +154,14 @@ describe('Marco 2: missões e manifesto (ADR-002 seção 2.2; backlog 051)', () 
     expect(depois.areaAberta('escritorio')).toBe(true);
     expect(depois.areaAberta('quarto')).toBe(true);
     for (const ctx of [antes, depois]) {
-      expect(ctx.areaAberta('suite_casal')).toBe(false);
-      expect(ctx.areaAberta('banheiro_casal')).toBe(false);
+      expect(ctx.areaAberta('quarto_casal')).toBe(false);
+      expect(ctx.areaAberta('banheiro1')).toBe(false);
+      expect(ctx.areaAberta('quartinho')).toBe(false);
     }
   });
 });
 
-describe('Marco 2: peças e árvore (GDD 15.2 a 15.4; ADR-004 seção 6)', () => {
+descreverComConteudoNovo('Marco 2: peças e árvore (GDD 15.2 a 15.4; ADR-004 seção 6)', () => {
   const nenhuma = () => false;
   const ate = (fases: Fase[]) => (f: Fase) => fases.includes(f);
 
@@ -214,42 +205,43 @@ describe('Marco 2: peças e árvore (GDD 15.2 a 15.4; ADR-004 seção 6)', () =>
     const sala = c.todosOsMapas.get('sala')!;
     const cozinha = c.todosOsMapas.get('cozinha')!;
     // Antes das luzes: a peça 1 é escondida, com o tile livre.
-    expect(bloqueiosDaSubarea(sala, nenhuma, contextoDaPartida(c.missoes, nenhuma))[4][1]).toBe(false);
+    expect(bloqueiosDaSubarea(sala, nenhuma, contextoDaPartida(c.missoes, nenhuma))[5][0]).toBe(false);
     // Com as luzes: a peça 1 é visível, bloqueada.
-    expect(bloqueiosDaSubarea(sala, ate(['luzes']), contextoDaPartida(c.missoes, ate(['luzes'])))[4][1]).toBe(true);
+    expect(bloqueiosDaSubarea(sala, ate(['luzes']), contextoDaPartida(c.missoes, ate(['luzes'])))[5][0]).toBe(true);
     // Peça 2 e peça 3 escondidas: livres (o sobrinho anda sobre elas).
     const todas = ate(['luzes']);
     const grade = bloqueiosDaSubarea(cozinha, todas, contextoDaPartida(c.missoes, todas));
-    expect(grade[1][4]).toBe(false);
-    expect(grade[5][3]).toBe(false);
+    expect(grade[1][3]).toBe(false);
+    expect(grade[3][5]).toBe(false);
   });
 
-  it('par com destino fechado age como porta fechada: bloqueia e não tem transição antes das luzes (ADR-004 seção 3)', async () => {
+  it('porta para área fechada nesta missão age como porta fechada: o motor decide, a aresta segue parede (ADR-011 seção 3.3)', async () => {
     const c = await carregar(lerConteudo());
     const sala = c.todosOsMapas.get('sala')!;
-    const p3 = sala.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'P3')!;
+    const p3 = sala.objetos.find((o) => o.tipo === 'porta' && o.dados.id === 'escritorio-sala')!;
     const antes = contextoDaPartida(c.missoes, nenhuma);
     expect(resolverPorta(p3, nenhuma, antes)).toEqual({ tipo: 'fechada' });
-    expect(bloqueiosDaSubarea(sala, nenhuma, antes)[p3.y][p3.x]).toBe(true);
+    // O tile da porta não bloqueia mais (a porta é uma aresta); quem barra é `paredes`.
+    expect(bloqueiosDaSubarea(sala, nenhuma, antes)[p3.y][p3.x]).toBe(false);
+    expect(sala.paredes[p3.y][p3.x] & 2).toBe(2);
     const depois = contextoDaPartida(c.missoes, ate(['luzes']));
-    expect(resolverPorta(p3, ate(['luzes']), depois)).toEqual({ tipo: 'entrar', mapa: 'escritorio', spawn: 'P3' });
-    expect(bloqueiosDaSubarea(sala, ate(['luzes']), depois)[p3.y][p3.x]).toBe(false);
+    expect(resolverPorta(p3, ate(['luzes']), depois)).toEqual({ tipo: 'entrar', mapa: 'escritorio', spawn: 'escritorio-sala' });
     expect(CONTEXTO_PADRAO.areaAberta('qualquer')).toBe(true);
   });
 
-  it('peças do conteúdo real: uma de cada ordem, com os tiles do GDD 15.2.2 (Sala (1,4), Cozinha (4,1), Lavanderia (3,5))', async () => {
+  it('peças do conteúdo real: uma de cada ordem, com os tiles do GDD 15.2.2 (Sala (0,5), Cozinha (3,1), Lavanderia (5,3))', async () => {
     const c = await carregar(lerConteudo());
     const pecas = [...c.todosOsMapas.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'peca').map((o) => ({ m: m.id, o })));
     const porOrdem = Object.fromEntries(pecas.map((p) => [p.o.dados.ordem, { m: p.m, x: p.o.x, y: p.o.y, estado: p.o.dados.estadoInicial }]));
     expect(porOrdem).toEqual({
-      1: { m: 'sala', x: 1, y: 4, estado: 'visivel' },
-      2: { m: 'cozinha', x: 4, y: 1, estado: 'escondida' },
-      3: { m: 'cozinha', x: 3, y: 5, estado: 'escondida' },
+      1: { m: 'sala', x: 0, y: 5, estado: 'visivel' },
+      2: { m: 'cozinha', x: 3, y: 1, estado: 'escondida' },
+      3: { m: 'cozinha', x: 5, y: 3, estado: 'escondida' },
     });
   });
 });
 
-describe('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, critério 2)', () => {
+descreverComConteudoNovo('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, critério 2)', () => {
   /** Rota de uma peça, a partir do vizinho livre dela, como a condução faz (ADR-004 seção 11.2). */
   async function rotaDaPeca(ordem: number) {
     const c = await carregar(lerConteudo());
@@ -271,37 +263,37 @@ describe('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, cr
     return { rotas, melhor: rotas.reduce((a, b) => (b.passos < a.passos ? b : a)), c };
   }
 
-  it('parte 1 (Sala): 4 a 6 passos, sem passagem, velocidade normal', async () => {
+  it('parte 1 (Sala): 3 a 5 passos, sem passagem, velocidade normal', async () => {
     const { melhor } = await rotaDaPeca(1);
-    expect(melhor.passos).toBeGreaterThanOrEqual(4);
-    expect(melhor.passos).toBeLessThanOrEqual(6);
+    expect(melhor.passos).toBeGreaterThanOrEqual(3);
+    expect(melhor.passos).toBeLessThanOrEqual(5);
     expect(fatorDaConducao(melhor.passos)).toBe(1);
   });
 
-  // Medido com a regra do ADR-004 seção 11.2 (a passagem P7 custa 3 passos: vão, gatilho e chegada). A estimativa do
-  // GDD 15.3.5 (12 a 13 e 17 a 18) não contava o custo da passagem. Em qualquer caso a rota passa de 10: é 2×.
-  it('parte 2 (Cozinha): passa pela P7, mais de 10 passos, velocidade 2× (medido 15; estimativa do GDD 15.3.5: 12 a 13)', async () => {
+  // Medido com a regra do ADR-011 seção 5.3 (a porta custa 1 passo, de tile a tile) na planta 1.1.0. Em qualquer caso a rota
+  // passa de 10: é 2×.
+  it('parte 2 (Cozinha): passa pela cozinha-sala, mais de 10 passos, velocidade 2× (medido 15)', async () => {
     const { melhor, rotas } = await rotaDaPeca(2);
     expect(rotas.length).toBeGreaterThan(0);
-    expect(melhor.nos.some((n) => n.mapa === 'sala' && n.spawn === 'P7')).toBe(true);
+    expect(melhor.nos.some((n) => n.mapa === 'sala' && n.spawn === 'cozinha-sala')).toBe(true);
     expect(melhor.passos).toBe(15);
     expect(fatorDaConducao(melhor.passos)).toBe(2);
   });
 
-  it('parte 3 (Lavanderia): passa pela P7, 2× (medido 20; estimativa do GDD 15.3.5: 17 a 18)', async () => {
+  it('parte 3 (Lavanderia): passa pela cozinha-sala, 2× (medido 19)', async () => {
     const { melhor } = await rotaDaPeca(3);
-    expect(melhor.nos.some((n) => n.mapa === 'sala' && n.spawn === 'P7')).toBe(true);
-    expect(melhor.passos).toBe(20);
+    expect(melhor.nos.some((n) => n.mapa === 'sala' && n.spawn === 'cozinha-sala')).toBe(true);
+    expect(melhor.passos).toBe(19);
     expect(fatorDaConducao(melhor.passos)).toBe(2);
   });
 
   // Tabela por origem (BUG-M2-03): o A dá-se de um vizinho livre da peça. Cada origem tem o seu número de passos. "passos"
-  // é o da regra de jogo (ADR-004 11.2): tiles visitados mais 3 da passagem (vão, gatilho de chegada, spawn). Os tiles
-  // visitados (sem contar o gatilho de saída) são o que o QA mede no tile: 12 e 14 para a parte 2; 17 e 19 para a parte 3.
+  // é o da regra de jogo (ADR-011 5.3): tiles andados mais 1 da porta. A origem (5,2) das partes 2 e 3 fica atrás de uma
+  // parede em relação à peça, mas é vizinha de tile: a rota dá a volta.
   const TABELA: Record<string, Record<string, number>> = {
-    parte1: { '2,4': 4, '1,3': 6, '1,5': 4, '0,4': 6 },
-    parte2: { '3,1': 15, '4,2': 17 },
-    parte3: { '3,4': 20, '4,5': 22 },
+    parte1: { '1,5': 3, '0,6': 3, '0,4': 5 },
+    parte2: { '3,0': 15, '3,2': 17, '2,1': 15, '4,1': 17 },
+    parte3: { '4,3': 19 },
   };
   for (const fase of ['parte1', 'parte2', 'parte3'] as const) {
     it(`tabela de origens da ${fase}: cada origem tem o número de passos da tabela, e o fator 2× é o da regra (> 10 passos)`, async () => {
@@ -324,12 +316,13 @@ describe('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, cr
     });
   }
 
-  it('condução da parte 2 pega de (4,2) tem rota: a peça que sai do chão não bloqueia o próprio trajeto (backlog 052, critério 5)', async () => {
+  it('condução da parte 2 pega de (5,2) tem rota: a peça que sai do chão não bloqueia o próprio trajeto (backlog 052, critério 5)', async () => {
     const c = await carregar(lerConteudo());
     const { concluida, ctx } = situacaoDaFase(c.missoes, 'parte2');
-    const r = calcularRotaDeConducao(c.todosOsMapas, { mapa: 'cozinha', x: 4, y: 2 }, conducaoDaFase(c.missoes, 'parte2')!, concluida, ctx);
+    const r = calcularRotaDeConducao(c.todosOsMapas, { mapa: 'cozinha', x: 5, y: 2 }, conducaoDaFase(c.missoes, 'parte2')!, concluida, ctx);
     expect(r).not.toBeNull();
-    expect(r!.nos.some((n) => n.mapa === 'cozinha' && n.x === 4 && n.y === 1)).toBe(true);
+    // A peça 2 (5, 1) sai do chão na condução: o tile dela é livre, e a rota de (4,1) a atravessa se for o caminho mais curto.
+    expect(ctx.estadoDaPeca(2)).toBe('encaixada');
   });
 
   it('a peça de luzes (1) segue no chão: a condução das luzes não a tira', async () => {
@@ -338,10 +331,10 @@ describe('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, cr
     expect(situacaoDaFase(c.missoes, 'parte1').ctx.estadoDaPeca(1)).toBe('encaixada');
   });
 
-  it('a rota de uma peça nunca passa pela peça própria nem por tiles bloqueados; termina na Sala (3, 7)', async () => {
+  it('a rota de uma peça nunca passa pela peça própria nem por tiles bloqueados; termina na Sala (2, 7)', async () => {
     for (const ordem of [1, 2, 3]) {
       const { melhor, c } = await rotaDaPeca(ordem);
-      expect(melhor.nos[melhor.nos.length - 1]).toMatchObject({ mapa: 'sala', x: 3, y: 7 });
+      expect(melhor.nos[melhor.nos.length - 1]).toMatchObject({ mapa: 'sala', x: 2, y: 7 });
       for (const n of melhor.nos) {
         const m = c.todosOsMapas.get(n.mapa)!;
         expect(m.colisao[n.y][n.x], `${ordem}: ${n.mapa} (${n.x}, ${n.y})`).toBe(false);
@@ -350,22 +343,22 @@ describe('Marco 2: condução entre peças (GDD 15.3.5 e 15.6.1; backlog 053, cr
   });
 });
 
-describe('Marco 2: validação do conteúdo (ADR-004 seção 8, itens 12 e 15 a 19; backlog 056)', () => {
+descreverComConteudoNovo('Marco 2: validação do conteúdo (ADR-004 seção 8, itens 12 e 15 a 19; backlog 056)', () => {
   it('o conteúdo real do Marco 2 é válido (zero erros)', async () => {
     expect(await errosDe(lerConteudo())).toEqual([]);
   });
 
   it('peça sem vizinho livre é erro (item 16)', async () => {
-    // Fecha os 3 vizinhos da peça 1 (1, 4) da Sala: (0,4), (2,4), (1,3) e (1,5).
+    // Fecha os 3 vizinhos da peça 1 (0, 5) da Sala: (0,4), (0,6) e (1,5).
     const arquivos = alterarSubarea('sala', (s) => {
-      for (const [x, y] of [[0, 4], [2, 4], [1, 3], [1, 5]]) s.colisao[y * s.largura + x] = 1;
+      for (const [x, y] of [[0, 4], [0, 6], [1, 5]]) s.colisao[y * s.largura + x] = 1;
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/peca1|peça 1|sem vizinho livre/);
   });
 
   it('peça em tile bloqueado é erro (item 16)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      s.colisao[4 * s.largura + 1] = 1;
+      s.colisao[5 * s.largura + 0] = 1;
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/piso livre/);
   });
@@ -397,40 +390,39 @@ describe('Marco 2: validação do conteúdo (ADR-004 seção 8, itens 12 e 15 a 
     expect(erros).toMatch(/encostada no interruptor|precisa estar em piso livre/);
   });
 
-  it('vão de passagem com 2 tiles (andável) é erro (item 3 e ADR-004 seção 3)', async () => {
-    // Abre o vão da P3 na Sala, (9, 2): vira chão andável, e o vão deixa de ser de 1 tile.
-    const arquivos = alterarSubarea('sala', (s) => {
-      s.chao[2 * s.largura + 9] = 1;
-      s.colisao[2 * s.largura + 9] = 0;
+  it('porta cujo vizinho do lado é piso da própria área é erro (item 26)', async () => {
+    // A `cozinha-sala` da Sala (10, 4) passa a olhar para a esquerda, onde há piso: a porta não está numa fronteira.
+    const arquivos = alterarObjetos('sala', (objs) => {
+      objs.find((o) => o.tipo === 'porta' && o.id === 'cozinha-sala')!.lado = 'esquerda';
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta P3 \(sala, \(8, 2\)\): saída 'direita' aponta para piso livre \(9, 2\)/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta cozinha-sala: o vizinho do lado "esquerda" \(9, 4\) é piso da própria área/);
   });
 
-  it('chegada de passagem em bloqueio é erro (item 5)', async () => {
+  it('chegada de porta em tile bloqueado é erro (item 5)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      // A chegada da P3 (7, 2) vira bloqueio: a porta deixa de ter chegada livre.
-      s.colisao[2 * s.largura + 7] = 1;
+      // O tile (10, 4) da `cozinha-sala` vira bloqueio: a porta e a chegada deixam de estar em piso livre.
+      s.colisao[4 * s.largura + 10] = 1;
     });
     expect((await errosDe(arquivos)).join(' ')).toMatch(/spawn|piso livre/);
   });
 
-  it('interruptor a 3 tiles ou menos da entrada no escuro (P8, (6, 6)) é erro (item 11)', async () => {
+  it('interruptor a 3 tiles ou menos da entrada no escuro (hall-sala, (4, 8)) é erro (item 11)', async () => {
     const arquivos = alterarObjetos('sala', (objs) => {
-      objs.find((o) => o.tipo === 'interruptor')!.x = 5;
-      objs.find((o) => o.tipo === 'interruptor')!.y = 5;
+      objs.find((o) => o.tipo === 'interruptor')!.x = 4;
+      objs.find((o) => o.tipo === 'interruptor')!.y = 6;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/interruptor em \(5, 5\).*precisa ser mais de 3/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/interruptor em \(4, 6\).*precisa ser mais de 3/);
   });
 
-  it('regra 11 só vale para a entrada no escuro: a chegada da P3 a 2,24 do interruptor não é erro', async () => {
+  it('regra 11 só vale para a entrada no escuro: a chegada da cozinha-sala (10, 4), a 4 tiles do interruptor, não é erro', async () => {
     expect(await errosDe(lerConteudo())).toEqual([]);
   });
 
-  it('porta fechada sem saída é erro (ADR-004 seção 6)', async () => {
+  it('porta sem lado válido é erro (item 26)', async () => {
     const arquivos = alterarObjetos('sala', (objs) => {
-      delete objs.find((o) => o.tipo === 'portaFechada' && o.id === 'P1')!.saida;
+      delete objs.find((o) => o.tipo === 'porta' && o.id === 'hall-sala')!.lado;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/portaFechada P1 em \(6, 2\) sem saída válida/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/porta hall-sala em \(4, 8\) sem lado válido/);
   });
 
   it('aviso "ainda não" sem as duas páginas é erro (item 19)', async () => {
@@ -443,17 +435,17 @@ describe('Marco 2: validação do conteúdo (ADR-004 seção 8, itens 12 e 15 a 
 
   it('destino da condução da parte 2 sem rota (bloqueado) é erro (item 12)', async () => {
     const arquivos = alterarSubarea('sala', (s) => {
-      // Fecha a entrada da Sala pelo lado de cima e pela esquerda do destino (3, 7): nenhuma rota chega até ele.
-      s.colisao[6 * s.largura + 3] = 1;
-      s.colisao[7 * s.largura + 2] = 1;
-      s.colisao[7 * s.largura + 4] = 1;
-      s.colisao[8 * s.largura + 3] = 1;
+      // Fecha os quatro vizinhos do destino (2, 7): nenhuma rota chega até ele.
+      s.colisao[6 * s.largura + 2] = 1;
+      s.colisao[7 * s.largura + 1] = 1;
+      s.colisao[7 * s.largura + 3] = 1;
+      s.colisao[8 * s.largura + 2] = 1;
     });
-    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.parte[123]: destino sala \(3, 7\) sem rota/);
+    expect((await errosDe(arquivos)).join(' ')).toMatch(/conducao\.parte[123]: destino sala \(2, 7\) sem rota/);
   });
 });
 
-describe('Marco 2: exame da árvore em cada estado (GDD 15.4; BUG-M2-04)', () => {
+descreverComConteudoNovo('Marco 2: exame da árvore em cada estado (GDD 15.4; BUG-M2-04)', () => {
   it('estados 0 a 3 têm texto de exame que existe e cabe em 2 linhas; o estado 3 é o texto exato', () => {
     const t = interpretarTextos(lerConteudo()['texts/pt-BR.json']);
     for (const estado of [0, 1, 2, 3]) {
@@ -467,10 +459,10 @@ describe('Marco 2: exame da árvore em cada estado (GDD 15.4; BUG-M2-04)', () =>
   });
 });
 
-describe('Marco 2: versão e perfil (backlog 057 e 054)', () => {
-  it('package.json está em 1.0.0 (candidata de release; antes 0.13.0)', () => {
+descreverComConteudoNovo('Marco 2: versão e perfil (backlog 057 e 054)', () => {
+  it('package.json está em 1.2.0 (visão 3/4; antes 1.1.0)', () => {
     const pkg = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf-8')) as { version: string };
-    expect(pkg.version).toBe('1.0.0');
+    expect(pkg.version).toBe('1.2.0');
   });
 
   it('o perfil HD tem a posição da tela de conquista da peça (telas.conquista.peca e personagemDaPeca)', () => {

@@ -3,18 +3,17 @@ import type { MapaDoJogo, ObjetoDoMapa } from './Mapa';
 import type { Textos } from './Textos';
 import type { PerfilDeArte } from '../arte/PerfilDeArte';
 import { ehFase, proximaFase, type Fase } from '../../domain/progresso/Fase';
-import { deslocamentoDaSubarea, ladoDaPorta, ladoDoVetor, vaoDaPorta, vetorDaSaida } from '../mundo/subarea';
+import { deslocamentoDaSubarea, ladoDaPorta } from '../mundo/subarea';
+import { BIT_DO_LADO, LADOS, OPOSTO_DO_LADO, VETOR_DO_LADO, arestaAberta, paredeNoTile } from '../mundo/arestas';
 import { calcularRotaDeConducao } from '../mundo/conducao';
 import { FASE_DA_PECA, ordemDaFase, situacaoDaFase } from '../mundo/pecas';
 import { FASE_DO_ENFEITE } from '../mundo/enfeite';
 import type { MissaoCarregada } from '../mundo/missoes';
-import { pontosDaCaixa } from './pontosDePartida';
+import { pontosDaCaixa, vizinhosLivresAlcancaveis, vizinhosLivresPorAresta } from './pontosDePartida';
 import { validarNick } from './validarNick';
 
-const VIZINHOS: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 const DIRECOES = ['cima', 'baixo', 'esquerda', 'direita'];
-const LADOS_DA_PORTA = ['cima', 'baixo', 'esquerda', 'direita'];
-const TIPOS_CONHECIDOS = ['porta', 'portaFechada', 'spawn', 'interruptor', 'bilhete', 'arvore', 'examinavel', 'movel', 'peca', 'enfeite'];
+const TIPOS_CONHECIDOS = ['porta', 'spawn', 'interruptor', 'bilhete', 'arvore', 'examinavel', 'movel', 'peca', 'enfeite'];
 /** Chaves de aviso que o Marco 2 exige, com duas páginas cada (GDD 15.8; ADR-004 seção 8, item 19). */
 const AVISOS_OBRIGATORIOS = ['aviso.peca2.antes1', 'aviso.peca3.antes1', 'aviso.peca3.antes2'];
 
@@ -59,11 +58,11 @@ export function linhasDe(texto: string, largura: number): number {
 }
 
 /**
- * Spawns de entrada no escuro (ADR-004 seção 8, item 11): lista explícita. Só eles têm a regra de 3 tiles do
- * interruptor. Hoje: a entrada da Sala pela P8, em (6, 6). As chegadas de P2, P3 e P7 não entram (a casa está acesa
- * ou a área não é entrada no escuro).
+ * Spawns de entrada no escuro (ADR-004 seção 8, item 11; ADR-011 seção 5.5): lista explícita. Só eles têm a regra de 3
+ * tiles do interruptor. Hoje: a entrada da Sala vinda do Hall (`hall-sala`), antes das luzes. A `cozinha-sala` pode ser
+ * acrescentada aqui sem mudar o motor, se a distância passar.
  */
-export const SPAWNS_DE_ENTRADA_NO_ESCURO: readonly { mapa: string; spawn: string }[] = [{ mapa: 'sala', spawn: 'P8' }];
+export const SPAWNS_DE_ENTRADA_NO_ESCURO: readonly { mapa: string; spawn: string }[] = [{ mapa: 'sala', spawn: 'hall-sala' }];
 
 /**
  * Móvel: retângulo decorativo de tiles, em coordenadas locais da subárea (x, y, w, h). Só cobre tiles já
@@ -107,19 +106,120 @@ export interface EntradaDeConteudo {
 const livreNoMapa = (m: MapaDoJogo, x: number, y: number): boolean =>
   x >= 0 && y >= 0 && x < m.largura && y < m.altura && m.chao[y][x] !== 0 && !m.colisao[y][x];
 
-/**
- * Vãos de passagem da subárea: o primeiro tile fora de cada gatilho, no lado `saida` (ADR-004 seções 3 e 13.18).
- * Só os vãos que caem dentro da caixa entram (os outros são do outro lado).
- */
-function vaosDaSubarea(m: MapaDoJogo): { x: number; y: number; id: string }[] {
-  const vaos: { x: number; y: number; id: string }[] = [];
-  for (const g of m.objetos.filter((o) => o.tipo === 'porta')) {
-    const lado = ladoDaPorta(g);
-    if (!lado) continue;
-    const v = vaoDaPorta(g, lado);
-    if (v.x >= 0 && v.y >= 0 && v.x < m.largura && v.y < m.altura) vaos.push({ ...v, id: String(g.dados.id) });
+/** Item 23 a 25 (ADR-011 seção 7): formato da máscara, simetria interna e fronteira é parede. */
+function errosDaMascara(m: MapaDoJogo): string[] {
+  const erros: string[] = [];
+  const pre = `Subárea "${m.id}"`;
+  if (m.paredes.length !== m.altura || m.paredes.some((linha) => linha.length !== m.largura)) {
+    return [`${pre}: paredes precisa ter o tamanho de chao (${m.largura}×${m.altura}) (item 23).`];
   }
-  return vaos;
+  for (let y = 0; y < m.altura; y++) {
+    for (let x = 0; x < m.largura; x++) {
+      const bits = m.paredes[y][x];
+      if (!Number.isInteger(bits) || bits < 0 || bits > 15) {
+        erros.push(`${pre}: paredes em (${x}, ${y}) vale ${String(bits)}; precisa ser inteiro de 0 a 15 (item 23).`);
+        continue;
+      }
+      if (m.chao[y][x] === 0) {
+        if (bits !== 0) erros.push(`${pre}: paredes em (${x}, ${y}) é ${bits} num tile sem piso; precisa ser 0 (item 23).`);
+        continue;
+      }
+      for (const lado of LADOS) {
+        const v = VETOR_DO_LADO[lado];
+        const nx = x + v.x;
+        const ny = y + v.y;
+        const ligado = (bits & BIT_DO_LADO[lado]) !== 0;
+        const temPiso = nx >= 0 && ny >= 0 && nx < m.largura && ny < m.altura && m.chao[ny][nx] !== 0;
+        if (!temPiso) {
+          // Item 25: fronteira com o vazio é parede.
+          if (!ligado) erros.push(`${pre}: lado ${lado} de (${x}, ${y}) dá para fora do piso e não tem parede (item 25).`);
+        } else if (ligado !== ((m.paredes[ny][nx] & BIT_DO_LADO[OPOSTO_DO_LADO[lado]]) !== 0)) {
+          // Item 24: simetria interna, reportada uma vez (pelo tile de menor índice).
+          if (ny > y || (ny === y && nx > x)) erros.push(`${pre}: a aresta ${lado} de (${x}, ${y}) é assimétrica: os dois tiles precisam ter o mesmo bit (item 24).`);
+        }
+      }
+    }
+  }
+  return erros;
+}
+
+/**
+ * Item 28 (ADR-011 seção 7; espelha E036): todo tile livre da área é alcançável pelas arestas abertas, contando só os tiles
+ * com `colisao` 0 e sem árvore. A área é conexa; senão, lista o primeiro tile isolado.
+ */
+function errosDeConexidade(m: MapaDoJogo): string[] {
+  const arvores = new Set(m.objetos.filter((o) => o.tipo === 'arvore').map((o) => `${o.x},${o.y}`));
+  const livre = (x: number, y: number) => livreNoMapa(m, x, y) && !arvores.has(`${x},${y}`);
+  const todosLivres: { x: number; y: number }[] = [];
+  for (let y = 0; y < m.altura; y++) for (let x = 0; x < m.largura; x++) if (livre(x, y)) todosLivres.push({ x, y });
+  if (todosLivres.length === 0) return [];
+  if (m.paredes.length !== m.altura || m.paredes.some((l) => l.length !== m.largura)) return [];
+  const visto = new Set<string>([`${todosLivres[0].x},${todosLivres[0].y}`]);
+  const fila = [todosLivres[0]];
+  while (fila.length > 0) {
+    const n = fila.shift()!;
+    for (const lado of LADOS) {
+      const v = { x: n.x + VETOR_DO_LADO[lado].x, y: n.y + VETOR_DO_LADO[lado].y };
+      if (!livre(v.x, v.y) || visto.has(`${v.x},${v.y}`) || !arestaAberta(m.paredes, n.x, n.y, lado)) continue;
+      visto.add(`${v.x},${v.y}`);
+      fila.push(v);
+    }
+  }
+  const isolado = todosLivres.find((t) => !visto.has(`${t.x},${t.y}`));
+  return isolado ? [`Subárea "${m.id}": área não conexa pelas arestas abertas; (${isolado.x}, ${isolado.y}) fica isolado de (${todosLivres[0].x}, ${todosLivres[0].y}) (item 28).`] : [];
+}
+
+/**
+ * Item 4′ e 26 (ADR-011 seção 7): a porta é válida nesta área e tem a simétrica na área de destino. Cobre as áreas fechadas.
+ */
+function errosDaPorta(
+  mapa: MapaDoJogo,
+  o: ObjetoDoMapa,
+  rotulo: string,
+  todos: Map<string, MapaDoJogo>,
+  idsNaArea: Set<string>,
+  posicoes: Set<string>,
+): string[] {
+  const erros: string[] = [];
+  const id = mapa.id;
+  const pid = String(o.dados.id);
+  const destino = String(o.dados.destino);
+  const lado = ladoDaPorta(o);
+  if (typeof o.dados.id !== 'string' || o.dados.id === '') erros.push(`Subárea "${id}": ${rotulo} sem id.`);
+  if (idsNaArea.has(pid)) erros.push(`Subárea "${id}": id de porta "${pid}" repetido (item 26).`);
+  idsNaArea.add(pid);
+  if (!lado) {
+    erros.push(`Subárea "${id}": ${rotulo} sem lado válido (cima, baixo, esquerda ou direita; item 26).`);
+  } else {
+    const chave = `${o.x},${o.y},${lado}`;
+    if (posicoes.has(chave)) erros.push(`Subárea "${id}": duas portas em (${o.x}, ${o.y}) com o mesmo lado "${lado}" (item 26).`);
+    posicoes.add(chave);
+    if (!paredeNoTile(mapa.paredes, o.x, o.y, lado)) erros.push(`Subárea "${id}": porta ${pid}: a aresta "${lado}" de (${o.x}, ${o.y}) precisa ter o bit de parede ligado (item 26; a máscara é completa).`);
+    const v = VETOR_DO_LADO[lado];
+    const vx = o.x + v.x;
+    const vy = o.y + v.y;
+    if (vx >= 0 && vy >= 0 && vx < mapa.largura && vy < mapa.altura && mapa.chao[vy][vx] !== 0) {
+      erros.push(`Subárea "${id}": porta ${pid}: o vizinho do lado "${lado}" (${vx}, ${vy}) é piso da própria área; a porta fica numa fronteira (item 26).`);
+    }
+  }
+  if (o.dados.trancadaAte !== undefined && !ehFase(String(o.dados.trancadaAte))) {
+    erros.push(`Subárea "${id}": trancadaAte "${String(o.dados.trancadaAte)}" não é uma fase.`);
+  }
+  // 4′: simetria.
+  const dest = todos.get(destino);
+  if (!dest) return [...erros, `Subárea "${id}": porta ${pid} leva a "${destino}", que não existe no manifesto.`];
+  const par = dest.objetos.find((x) => x.tipo === 'porta' && x.dados.id === o.dados.id);
+  if (!par) return [...erros, `Porta ${pid} (${id}): não há porta de mesmo id em "${destino}" (item 4′).`];
+  if (String(par.dados.destino) !== id) erros.push(`Porta ${pid}: a porta de "${destino}" não aponta de volta para "${id}" (item 4′).`);
+  const ladoDoPar = ladoDaPorta(par);
+  if (lado && ladoDoPar !== OPOSTO_DO_LADO[lado]) erros.push(`Porta ${pid}: o lado em "${destino}" (${String(ladoDoPar)}) deveria ser o oposto de "${lado}" (item 4′).`);
+  const chegada = dest.objetos.find((x) => x.tipo === 'spawn' && x.dados.nome === o.dados.spawnDestino);
+  if (!chegada) erros.push(`Porta ${pid}: spawnDestino "${String(o.dados.spawnDestino)}" não existe em "${destino}" (item 4′).`);
+  else {
+    if (chegada.x !== par.x || chegada.y !== par.y) erros.push(`Porta ${pid}: a chegada "${String(o.dados.spawnDestino)}" em "${destino}" (${chegada.x}, ${chegada.y}) precisa estar no tile da porta (${par.x}, ${par.y}) (item 4′).`);
+    if (lado && String(chegada.dados.direcao) !== lado) erros.push(`Porta ${pid}: a chegada "${String(o.dados.spawnDestino)}" em "${destino}" olha para "${String(chegada.dados.direcao)}", deveria olhar para "${lado}" (para dentro; item 4′).`);
+  }
+  return erros;
 }
 
 /** Rótulo de um objeto, para mensagens de erro (como no conversor). */
@@ -154,18 +254,12 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
   const missaoPorId = (id: string) => missoes.find((m) => m.id === id);
   const inicial = missoes.find((m) => m.requires.length === 0);
 
-  // Pares de porta, em todas as subáreas (regra 4).
-  const portasPorId = new Map<string, { mapa: MapaDoJogo; o: ObjetoDoMapa }[]>();
-  for (const mapa of todos.values()) {
-    for (const o of mapa.objetos) {
-      if (o.tipo === 'porta') portasPorId.set(String(o.dados.id), [...(portasPorId.get(String(o.dados.id)) ?? []), { mapa, o }]);
-    }
-  }
-
   for (const mapa of todos.values()) {
     const id = mapa.id;
     const desl = deslocamentoDaSubarea(mapa, tela);
     if (mapa.tile !== perfil.tile) erros.push(`Subárea "${id}": tile ${mapa.tile} é diferente do tile do perfil "${perfil.id}" (${perfil.tile}).`);
+    erros.push(...errosDaMascara(mapa));
+    erros.push(...errosDeConexidade(mapa));
     // Regra 7: caixa dentro da tela.
     if (mapa.largura > tela.colunas || mapa.altura > tela.linhas) {
       erros.push(`Subárea "${id}": caixa ${mapa.largura}×${mapa.altura} maior que a tela ${tela.colunas}×${tela.linhas}.`);
@@ -197,12 +291,8 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
     }
     const nomesDeSpawn = new Set<string>();
     const ocupados = new Map<string, ObjetoDoMapa[]>();
-    const vaos = vaosDaSubarea(mapa);
-    // Tiles que a peça não pode ter como vizinho livre: gatilho, vão, spawn, chegada, interruptor, porta, examinável (ADR-004, seção 8, item 16).
-    const reservados = new Set<string>([
-      ...mapa.objetos.filter((o) => ['porta', 'portaFechada', 'spawn', 'interruptor', 'examinavel', 'arvore', 'bilhete'].includes(o.tipo)).map((o) => `${o.x},${o.y}`),
-      ...vaos.map((v) => `${v.x},${v.y}`),
-    ]);
+    const idsDePortaNaArea = new Set<string>();
+    const posicoesDePorta = new Set<string>();
     for (const o of mapa.objetos) {
       const rotulo = rotuloDe(o);
       const chave = `${o.x},${o.y}`;
@@ -218,37 +308,45 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       }
       // Regra 6: nenhum objeto na última linha da tela (a barra de controles fica ali, GDD 14.8).
       if (o.y + desl.y === tela.linhas - 1) erros.push(`Subárea "${id}": ${rotulo} está na última linha da tela, onde fica a barra.`);
-      // Dois objetos no mesmo tile (conversor E015). Exceção: spawns de nomes diferentes, como a chegada de P2 e P3 na
-      // Sala (ADR-004 seção 9 e 13.9, item 6). Dois spawns de mesmo nome continuam erro (spawn repetido, abaixo).
+      // Dois objetos no mesmo tile (conversor E015). Exceções (ADR-011 seção 3.2): a chegada (spawn) fica no tile da própria
+      // porta; duas portas no mesmo tile em lados diferentes; spawns de nomes diferentes. Dois spawns de mesmo nome
+      // continuam erro (spawn repetido, abaixo).
       for (const outro of ocupados.get(chave) ?? []) {
         const spawnsDeNomesDiferentes = o.tipo === 'spawn' && outro.tipo === 'spawn' && o.dados.nome !== outro.dados.nome;
-        if (!spawnsDeNomesDiferentes) erros.push(`Subárea "${id}": ${rotulo} e ${rotuloDe(outro)} ocupam o mesmo tile.`);
+        const portaESpawn = (o.tipo === 'porta' && outro.tipo === 'spawn') || (o.tipo === 'spawn' && outro.tipo === 'porta');
+        const portasDeLadosDiferentes = o.tipo === 'porta' && outro.tipo === 'porta' && o.dados.lado !== outro.dados.lado;
+        if (!spawnsDeNomesDiferentes && !portaESpawn && !portasDeLadosDiferentes) erros.push(`Subárea "${id}": ${rotulo} e ${rotuloDe(outro)} ocupam o mesmo tile.`);
       }
       ocupados.set(chave, [...(ocupados.get(chave) ?? []), o]);
       // Regra 5: tipo de tile exigido por objeto.
       const piso = mapa.chao[o.y][o.x] !== 0;
       const livre = piso && !mapa.colisao[o.y][o.x];
-      const temVizinhoLivre = VIZINHOS.some(([dx, dy]) => livreNoMapa(mapa, o.x + dx, o.y + dy));
-      if (o.tipo === 'spawn' || o.tipo === 'porta' || o.tipo === 'interruptor') {
+      const temVizinhoLivre = vizinhosLivresAlcancaveis(mapa, o.x, o.y).length > 0;
+      if (o.tipo === 'spawn' || o.tipo === 'porta' || o.tipo === 'interruptor' || o.tipo === 'bilhete') {
         if (!livre) erros.push(`Subárea "${id}": ${rotulo} precisa estar em piso livre.`);
       }
       if (o.tipo === 'arvore' && !piso) erros.push(`Subárea "${id}": ${rotulo} precisa estar sobre piso.`);
-      // Bilhete é tile de parede, como o examinável: bloqueado, com vizinho livre (GDD 14.10.9, item 040).
-      if (o.tipo === 'examinavel' || o.tipo === 'portaFechada' || o.tipo === 'bilhete') {
-        if (!(mapa.colisao[o.y][o.x] && temVizinhoLivre)) erros.push(`Subárea "${id}": ${rotulo} precisa estar em tile bloqueado com vizinho livre.`);
+      // Examinável: tile bloqueado (móvel) com vizinho livre alcançável pela aresta aberta (ADR-011 seção 5.5).
+      if (o.tipo === 'examinavel') {
+        if (!(mapa.colisao[o.y][o.x] && temVizinhoLivre)) erros.push(`Subárea "${id}": ${rotulo} precisa estar em tile bloqueado com vizinho livre alcançável.`);
       }
-      if (o.tipo === 'portaFechada' && !LADOS_DA_PORTA.includes(String(o.dados.saida))) {
-        erros.push(`Subárea "${id}": ${rotulo} sem saída válida (cima, baixo, esquerda ou direita; ADR-004 seção 6).`);
+      // Bilhete (item 27, ADR-011 seção 3.2): tile livre, com `lado` para uma aresta de parede que não é de porta.
+      if (o.tipo === 'bilhete') {
+        const lado = ladoDaPorta(o);
+        if (!lado) erros.push(`Subárea "${id}": ${rotulo} sem lado válido (cima, baixo, esquerda ou direita; ADR-011 seção 3.2).`);
+        else if (!paredeNoTile(mapa.paredes, o.x, o.y, lado)) erros.push(`Subárea "${id}": ${rotulo} com lado "${lado}" para uma aresta sem parede (item 27).`);
+        else if (mapa.objetos.some((p) => p.tipo === 'porta' && p.x === o.x && p.y === o.y && p.dados.lado === lado)) {
+          erros.push(`Subárea "${id}": ${rotulo} com lado "${lado}" para a aresta de uma porta (item 27).`);
+        }
       }
-      // Peça (ADR-004 seção 6; GDD 15.2.5): tile livre com colisão 0 e vizinho livre que não seja gatilho, vão, chegada etc.
+      // Peça (ADR-004 seção 6; GDD 15.2.5): tile livre com colisão 0 e vizinho livre alcançável (ADR-011 seção 5.5).
       if (o.tipo === 'peca') {
         const ordem = Number(o.dados.ordem);
         if (!Number.isInteger(ordem) || ordem < 1 || ordem > 3) erros.push(`Subárea "${id}": ${rotulo} com ordem inválida (${String(o.dados.ordem)}).`);
         if (o.dados.id !== `peca${ordem}`) erros.push(`Subárea "${id}": ${rotulo} com id "${String(o.dados.id)}", que deveria ser "peca${ordem}".`);
         if (!livre) erros.push(`Subárea "${id}": ${rotulo} precisa estar em piso livre (colisão 0; ADR-004 seção 6).`);
-        const vizinhoLivreComum = VIZINHOS.some(([dx, dy]) => livreNoMapa(mapa, o.x + dx, o.y + dy) && !reservados.has(`${o.x + dx},${o.y + dy}`));
-        if (!vizinhoLivreComum) erros.push(`Subárea "${id}": ${rotulo} sem vizinho livre que não seja gatilho, vão, chegada ou objeto (GDD 15.2.2).`);
-        if (vaos.some((v) => v.x === o.x && v.y === o.y)) erros.push(`Subárea "${id}": ${rotulo} cai em vão de passagem.`);
+        if (!temVizinhoLivre) erros.push(`Subárea "${id}": ${rotulo} sem vizinho livre alcançável pelas arestas abertas, que não seja porta, chegada ou objeto (GDD 15.2.2; ADR-011 seção 5.5).`);
+        if (mapa.objetos.some((p) => p.tipo === 'porta' && p.x === o.x && p.y === o.y)) erros.push(`Subárea "${id}": ${rotulo} cai em tile de porta.`);
       }
       if (o.tipo === 'spawn') {
         const nome = String(o.dados.nome);
@@ -259,51 +357,7 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       // Textos citados existem.
       const chaveTexto = o.dados.texto;
       if (typeof chaveTexto === 'string' && !textos.tem(chaveTexto)) erros.push(`Subárea "${id}": texto "${chaveTexto}" de ${rotulo} não existe.`);
-      if (o.tipo === 'porta') {
-        // Par com destino fechado nesta missão é permitido: age como porta fechada em tempo de execução (ADR-004 seção 3).
-        const destino = String(o.dados.destino);
-        if (!todos.has(destino)) erros.push(`Subárea "${id}": porta ${String(o.dados.id)} leva a "${destino}", que não existe no manifesto.`);
-        if (o.dados.trancadaAte !== undefined && !ehFase(String(o.dados.trancadaAte))) {
-          erros.push(`Subárea "${id}": trancadaAte "${String(o.dados.trancadaAte)}" não é uma fase.`);
-        }
-        // Chegada e saída (ADR-004 seções 3, 8 itens 20 a 22, e 13). A chegada encosta no gatilho (regra da seção 3) e
-        // `direcao` aponta do gatilho para dentro (E028). A saída aponta para o vão, que não pode ser piso livre (item 22).
-        // O item 22 vale só para `porta`: a P1 (`portaFechada`, saída esquerda) aponta para (5, 2), piso livre da Sala,
-        // e segue assim até a Suíte abrir (ADR-004 seção 13.20). Ver o relatório do Desenvolvedor (PARA O ESPECIALISTA).
-        const lado = ladoDaPorta(o);
-        if (!lado) erros.push(`Subárea "${id}": ${rotulo} sem saída válida (cima, baixo, esquerda ou direita; ADR-004 seção 13.18).`);
-        const s = mapa.objetos.find((x) => x.tipo === 'spawn' && x.dados.nome === o.dados.id);
-        if (!s) {
-          erros.push(`Subárea "${id}": porta ${String(o.dados.id)} sem chegada de mesmo nome nesta subárea (ADR-004 seção 3).`);
-        } else if (Math.abs(s.x - o.x) + Math.abs(s.y - o.y) !== 1) {
-          erros.push(`Subárea "${id}": porta ${String(o.dados.id)} com chegada fora do lado do gatilho (ADR-004 seção 3).`);
-        } else {
-          // Sentido do gatilho para a chegada, que é para dentro da área (ADR-004 seção 13.14, d).
-          const sentido = ladoDoVetor(s.x - o.x, s.y - o.y);
-          if (String(s.dados.direcao) !== sentido) {
-            erros.push(`Subárea "${id}": porta ${String(o.dados.id)}: chegada (${s.x}, ${s.y}) com direção "${String(s.dados.direcao)}", deveria ser "${sentido}", para dentro (E028; ADR-004 seção 13.14, d).`);
-          }
-        }
-        if (lado) {
-          const v = vaoDaPorta(o, lado);
-          const dentro = v.x >= 0 && v.y >= 0 && v.x < mapa.largura && v.y < mapa.altura;
-          if (dentro && livreNoMapa(mapa, v.x, v.y)) {
-            erros.push(`Subárea "${id}": porta ${String(o.dados.id)} (${id}, (${o.x}, ${o.y})): saída '${lado}' aponta para piso livre (${v.x}, ${v.y}) (ADR-004 seção 8, item 22).`);
-          }
-        }
-        // Uma porta, uma entrada (ADR-004 seção 8, item 21): exatamente um vizinho livre na própria subárea.
-        // Erro para lado com chegada declarada (E027); aviso W027 para par de fórmula (13.19).
-        if (lado) {
-          const livres = VIZINHOS.filter(([dx, dy]) => livreNoMapa(mapa, o.x + dx, o.y + dy)).length;
-          if (livres !== 1 && s) {
-            const v = vetorDaSaida(lado);
-            const ehDeFormula = s.x === o.x - v.x && s.y === o.y - v.y;
-            const msg = `porta ${String(o.dados.id)} (${id}, (${o.x}, ${o.y})): ${livres} vizinhos livres (esperado 1)`;
-            if (ehDeFormula) avisos.push(`W027 Subárea "${id}": ${msg}; par de fórmula, não bloqueia (ADR-004 seção 13.19).`);
-            else erros.push(`Subárea "${id}": ${msg} (E027; ADR-004 seção 8, item 21).`);
-          }
-        }
-      }
+      if (o.tipo === 'porta') erros.push(...errosDaPorta(mapa, o, rotulo, todos, idsDePortaNaArea, posicoesDePorta));
     }
     // Regra 17: peça de Marco 2 não fica sobre o interruptor nem encostada nele (ADR-004 seção 8, item 17).
     for (const p of mapa.objetos.filter((o) => o.tipo === 'peca')) {
@@ -326,48 +380,6 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       if (d <= perfil.luz.raioEmTiles) {
         erros.push(`Subárea "${nomeMapa}": interruptor em (${i.x}, ${i.y}) a ${d.toFixed(2)} tiles do spawn "${spawn}"; precisa ser mais de ${perfil.luz.raioEmTiles}.`);
       }
-    }
-  }
-
-  // Regra 2 e 4: pares de porta (dois gatilhos com o mesmo id, apontando um para o outro).
-  for (const [pid, grupo] of portasPorId) {
-    if (grupo.length !== 2) {
-      erros.push(`Porta ${pid}: ${grupo.length} gatilho(s); um par exige 2.`);
-      continue;
-    }
-    const [a, b] = grupo;
-    if (a.mapa.id === b.mapa.id || String(a.o.dados.destino) !== b.mapa.id || String(b.o.dados.destino) !== a.mapa.id) {
-      erros.push(`Porta ${pid}: os dois gatilhos não apontam um para o outro.`);
-    }
-    for (const g of grupo) {
-      const sp = String(g.o.dados.spawnDestino);
-      const dest = todos.get(String(g.o.dados.destino));
-      // Regra 3: spawn de chegada existe na subárea de destino.
-      if (dest && !dest.objetos.some((o) => o.tipo === 'spawn' && o.dados.nome === sp)) {
-        erros.push(`Porta ${pid}: spawnDestino "${sp}" não existe em "${dest.id}".`);
-      }
-    }
-  }
-
-  // Regra 14: cada porta fechada aparece uma só vez no conteúdo, e nenhum id de porta fechada é gatilho
-  // (GDD 14.10.9, item 044: P1 é um só objeto portaFechada).
-  const fechadasPorId = new Map<string, number>();
-  for (const mapa of todos.values()) {
-    for (const o of mapa.objetos) {
-      if (o.tipo === 'portaFechada') fechadasPorId.set(String(o.dados.id), (fechadasPorId.get(String(o.dados.id)) ?? 0) + 1);
-    }
-  }
-  for (const pid of fechadasPorId.keys()) {
-    if (portasPorId.has(pid)) erros.push(`Porta ${pid}: existe como portaFechada e como porta; porta fechada não tem par (ADR-004 seção 8, item 14).`);
-  }
-  for (const mapa of todos.values()) {
-    const vistos = new Set<string>();
-    for (const o of mapa.objetos) {
-      const pid = String(o.dados.id);
-      if (o.tipo !== 'portaFechada' || vistos.has(pid)) continue;
-      vistos.add(pid);
-      const total = fechadasPorId.get(pid) ?? 0;
-      if (total > 1) erros.push(`subárea '${mapa.id}': portaFechada ${pid} aparece ${total} vezes.`);
     }
   }
 
@@ -394,18 +406,11 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
     const rotulo = `Subárea "${mapa.id}": enfeite em (${o.x}, ${o.y})`;
     if (Number(o.dados.ordem) !== 4) erros.push(`T006 ${rotulo}: ordem ${String(o.dados.ordem)}, deveria ser 4 (ADR-006 seção 2.2).`);
     if (o.dados.estadoInicial !== 'escondida') erros.push(`T006 ${rotulo}: estadoInicial "${String(o.dados.estadoInicial)}", deveria ser "escondida".`);
-    // T007: piso livre, pelo menos 2 vizinhos livres, e nenhum vizinho livre é peça, enfeite, gatilho, vão, spawn, chegada,
-    // interruptor, porta fechada ou examinável (ADR-004 seção 8, item 6; GDD 17.3).
+    // T007: piso livre e pelo menos 2 vizinhos livres alcançáveis pelas arestas abertas (a definição já exclui peça, enfeite,
+    // porta, spawn, chegada, interruptor, árvore e examinável; ADR-004 seção 8, item 6; ADR-011 seção 5.5; GDD 17.3).
     if (!livreNoMapa(mapa, o.x, o.y)) erros.push(`T007 ${rotulo} precisa estar em piso livre (colisão 0; ADR-006 seção 9).`);
-    const reservadosDaCaixa = new Set<string>([
-      ...mapa.objetos.filter((x) => ['porta', 'portaFechada', 'spawn', 'interruptor', 'examinavel', 'arvore', 'bilhete', 'peca', 'enfeite'].includes(x.tipo)).map((x) => `${x.x},${x.y}`),
-      ...vaosDaSubarea(mapa).map((v) => `${v.x},${v.y}`),
-    ]);
-    const vizinhosLivres = VIZINHOS.filter(([dx, dy]) => livreNoMapa(mapa, o.x + dx, o.y + dy));
-    if (vizinhosLivres.length < 2) erros.push(`T007 ${rotulo} com ${vizinhosLivres.length} vizinho(s) livre(s); precisa de pelo menos 2 (ADR-006 seção 9).`);
-    for (const [dx, dy] of vizinhosLivres) {
-      if (reservadosDaCaixa.has(`${o.x + dx},${o.y + dy}`)) erros.push(`T007 ${rotulo}: o vizinho livre (${o.x + dx}, ${o.y + dy}) é gatilho, vão, chegada, peça, enfeite ou objeto.`);
-    }
+    const vizinhosLivres = vizinhosLivresAlcancaveis(mapa, o.x, o.y);
+    if (vizinhosLivres.length < 2) erros.push(`T007 ${rotulo} com ${vizinhosLivres.length} vizinho(s) livre(s) alcançável(is); precisa de pelo menos 2 (ADR-006 seção 9; ADR-011 seção 5.5).`);
     if (mapa.objetos.some((m) => m.tipo === 'movel' && o.x >= m.x && o.y >= m.y && o.x < m.x + Number(m.dados.w) && o.y < m.y + Number(m.dados.h))) {
       erros.push(`T007 ${rotulo} dentro de móvel.`);
     }
@@ -520,8 +525,7 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       } else if (ordem !== undefined && FASE_DA_PECA[ordem] === fase) {
         const peca = pecas.find((p) => Number(p.o.dados.ordem) === ordem);
         if (peca) {
-          partidas = VIZINHOS.map(([dx, dy]) => ({ mapa: peca.mapa.id, x: peca.o.x + dx, y: peca.o.y + dy }))
-            .filter((p) => livreNoMapa(peca.mapa, p.x, p.y));
+          partidas = vizinhosLivresPorAresta(peca.mapa, peca.o.x, peca.o.y).map((p) => ({ mapa: peca.mapa.id, ...p }));
         }
       }
       if (partidas.length === 0) {

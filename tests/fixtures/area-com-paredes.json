@@ -1,0 +1,15 @@
+{
+  "altura": 2,
+  "chao": [1, 1, 0, 1, 1, 1],
+  "colisao": [0, 0, 1, 0, 0, 1],
+  "escuro": false,
+  "id": "exemplo",
+  "largura": 3,
+  "objetos": [
+    { "tipo": "porta", "id": "exemplo-outra", "x": 1, "y": 0, "lado": "cima", "destino": "outra", "spawnDestino": "exemplo-outra" },
+    { "tipo": "spawn", "nome": "exemplo-outra", "x": 1, "y": 0, "direcao": "baixo" }
+  ],
+  "paredes": [9, 3, 0, 12, 4, 7],
+  "schemaVersion": 3,
+  "tile": 32
+}

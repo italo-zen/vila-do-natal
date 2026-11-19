@@ -314,6 +314,11 @@ Todas as telas têm barra de controles no rodapé (14.8).
 | 42 | **Seleção no layout B sem o botão B: como voltar ao título por toque? PERGUNTA AO DIRETOR.** Pela regra de 18.4, a seleção do celular estreito não tem cruz nem A/B, e o cartão é tocado direto. Sem B, a única saída é recarregar a página. **Opções:** (A) botão de menu "Voltar ao título" abaixo dos cartões, só no layout B, como em Como jogar e Créditos; (B) o botão B aparece na seleção do layout B (contraria 18.4); (C) sem saída por toque (não recomendado). **Sugestão do Produto: A.** Padrão aplicado até a resposta: A (barra `barra.selecao2.toque.menu`, 18.12). Autor: Produto | Diretor (aberta; padrão aplicado) |
 | 43 | **Joystick fixo ou flutuante (Marco 5, ajuste 0.10.0, 18.19). PERGUNTA AO DIRETOR.** O controle de direção deixa de ser a cruz e passa a ser um joystick virtual (base redonda com bolinha que acompanha o polegar; movimento em grade de 4 direções, sem diagonal). **Pergunta:** a base fica sempre no mesmo lugar (embaixo à esquerda, onde estava a cruz) ou aparece onde o polegar toca? **Sugestão do Produto: fixo.** Motivos: no layout B, a área da casa é reservada (18.4); no flutuante, a tela inteira vira zona de toque, o que contraria a regra 5 (18.5); e o analógico físico também é fixo. O pedido "modelo analógico" vale nas duas posições e não muda essa sugestão. **Padrão aplicado até a resposta:** fixo. Autor: Produto | Diretor (aberta; padrão aplicado) |
 | 44 | **Estilo da música de fundo (Marco 6, 19.2.1). PERGUNTA AO DIRETOR.** O GDD 7.3 pede música tranquila, com clima de Natal. A faixa será gerada por síntese, sem terceiros. **Opções:** (A) chiptune suave, com ondas quadradas e triangulares, no mesmo estilo dos efeitos e da pixel art (lembra o GBA); (B) sinos e celesta sintetizados, mais acústicos e mais de Natal. **Pergunta:** A ou B? **Sugestão do Produto: B.** Padrão aplicado até a resposta: B. Só a faixa (item 123) espera a resposta; os demais itens do Marco 6 seguem | Diretor (aberta; padrão aplicado) |
+| 45 | **Fronteira entre áreas sem muro e sem porta (1.1.0, 21.5). PERGUNTA AO DIRETOR.** Duas áreas de piso diferente que se tocam sem muro desenhado nem porta: é parede ou passagem aberta? **Sugestão do Produto: parede** (o conversor avisa onde falta muro desenhado). **Decidido (Diretor, 2026-11-17, "siga as sugestões"): parede** | Fechada |
+| 46 | **Qual metade da Cozinha e Lavanderia é a Lavanderia (1.1.0, 21.7). PERGUNTA AO DIRETOR.** O muro interno divide a área (6×5, 30 tiles) em duas partes, com 1 tile de passagem (coluna 4). **Sugestão do Produto:** a metade da porta da Sala é a Cozinha (Pia, Fogão, Geladeira, peça 2); a metade da porta do Quartinho é a Lavanderia (peça 3). **Decidido (Diretor, 2026-11-17, "siga as sugestões"): a sugestão.** Cozinha = linhas 0 a 2 (18 tiles); Lavanderia = linhas 3 e 4 (12 tiles) | Fechada |
+| 47 | **Áreas abertas na 1.1.0 e no modo explorar (1.1.0, 21.6; fecha também a P2 de 20.12). PERGUNTA AO DIRETOR.** Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho abrem na 1.1.0 ou ficam fechados, com porta fechada? **Sugestão do Produto: fechados** (mesmo escopo da 1.0.0; abrir é uma 1.2). **Decidido (Diretor, 2026-11-17): fechados** | Fechada |
+| 48 | **Quem posiciona rótulos, interruptor, árvore, peças, bilhete, examináveis e caixa na planta nova (1.1.0, 21.8). PERGUNTA AO DIRETOR.** **Sugestão do Produto:** a Arte propõe, o Diretor aprova no golden e na captura. **Decidido (Diretor, 2026-11-17): a sugestão** (a Arte propôs; falta só a aprovação das capturas, PL12) | Fechada |
+| 49 | **Atravessar a porta (1.1.0, 21.4). PERGUNTA AO DIRETOR.** Como hoje, andar contra a porta aberta atravessa (A também), ou só A de frente? **Sugestão do Produto: como hoje** (andar contra; crianças pequenas não precisam saber do A). **Decidido (Diretor, 2026-11-17): como hoje** | Fechada |
 
 ---
 
@@ -325,6 +330,8 @@ Todas as telas têm barra de controles no rodapé (14.8).
 4. **Enfeite e créditos:** caixa de enfeite e fim do jogo. Especificado na seção 17 (versão 0.8.0; backlog 086 a 095).
 5. **Toque e rotação:** controles do celular e aviso de modo retrato. Especificado na seção 18 (versão 0.9.0; backlog 097 a 109). Ajuste 0.10.0: joystick virtual no lugar da cruz (18.19; backlog 111 a 119).
 6. **Polimento:** áudio, pausa, polimento, acessibilidade básica e desempenho. Especificado na seção 19 (versão 0.11.0 no PT5; release 1.0.0 depois da aprovação do PT5; backlog 120 a 142).
+7. **Imagens, explorar e enfeites:** seção 20 (versão 0.13.0).
+8. **Nova planta da casa (release 1.1.0):** 9 áreas, portas em aresta e paredes finas. Seção 21 (backlog 162 a 178).
 
 ---
 
@@ -544,6 +551,8 @@ Depois dos 150 ms, o botão volta ao estado de foco (ou normal, se não tiver o 
 **Casos de QA:** em título, Como jogar, seleção e painel, cada botão mostra o estado normal, de foco e pressionado conforme a tabela; nenhum texto informativo tem caixa; os 5 pares acima são conferidos com um medidor de contraste sobre captura de tela.
 
 ### 14.10 Casa real no Marco 1 (revisão de 2026-11-07)
+
+> **Histórico da 1.0.0:** na 1.1.0, posições, áreas e portas desta seção (e de 14.12, 15.2.2, 15.3, 16.2 e 17.3) são as da planta nova (seção 21). Regras de jogo e textos continuam valendo.
 
 Origem: respostas do Diretor às perguntas de `docs/mapa-casa-real.md` (ver `decisions.md`, 2026-11-07, "Mapa real, respostas do Diretor"). Planta: `maps/casa-real/our-home.tmx`. Esta seção descreve posições por lado e por linha; a coordenada exata de cada tile é da Arte, no Tiled. Esta seção vale sobre 14.2, 14.3, 14.4, 14.5 e 14.7. A regra da última linha da tela (14.8) vale em todas as áreas. **Revisão de 2026-11-08 (item 036):** o nascimento depois da conquista 1 vira condução automática até a árvore (14.11). O restante desta seção não muda; o que muda está marcado "[Muda com 036]". **Revisão de 2026-11-08 (PT2):** ajustes em 14.10.2, 14.10.3 e 14.10.9 (desenho das portas e passagens). As posições de 14.10 são da planta girada (14.12.3), já aplicada no conteúdo (`content/maps/casa-real/*.json`, conferido em 2026-11-08). O que descreve a planta antiga está marcado como histórico.
 
@@ -2747,14 +2756,14 @@ Posições e tipos conforme a entrega da Arte (2026-11-10, `content/maps/decorac
 | Cômodo | Quantidade | Enfeites (tipo, sprite em `content/maps/decoracao`) |
 |---|---|---|
 | Hall | 4 | 2 mini-árvores (`dec_arvore_p`, `dec_arvore_g`); 2 presentes (`dec_presente_vermelho`, `dec_presente_verde`) |
-| Sala | 8 | 2 mini-árvores; 2 presentes; meias (`dec_meias`); luz pisca sobre o sofá (`dec_luz`); guirlanda (`dec_guirlanda`); vela sobre a estante (`dec_vela`) |
+| Sala | 8 | 2 mini-árvores (a grande sobre a cômoda, (10, 7)); 2 presentes; meias (`dec_meias`), luz pisca (`dec_luz`) e guirlanda (`dec_guirlanda`) sobre o rack (linha 1); vela (`dec_vela`) sobre a cômoda, (10, 6) |
 | Cozinha e Lavanderia | 6 | Pano de prato na pia (`dec_pano`); meias (`dec_meias`); 2 mini-árvores; 2 presentes |
 | Quarto | 4 | 2 presentes; 2 mini-árvores |
-| Escritório | 3 | Mini-árvore (`dec_arvore_p`); luz pisca sobre a cama (`dec_luz`); meias sobre a cama (`dec_meias`) |
+| Escritório | 3 | Mini-árvore (`dec_arvore_p`); luz pisca sobre a mesa (`dec_luz`); meias sobre a cama (`dec_meias`) |
 
 - **Total:** 25 objetos, com 9 sprites distintos: `dec_arvore_p`, `dec_arvore_g`, `dec_presente_vermelho`, `dec_presente_verde`, `dec_meias`, `dec_pano`, `dec_luz`, `dec_guirlanda` e `dec_vela`.
-- **Responde ao A (examinar) só o que tem `examinar` no JSON:** luz pisca na Sala e no Escritório (`enfeite.pisca`); vela na Sala (`enfeite.vela`); guirlanda na Sala (`enfeite.guirlanda`); meias no Escritório (`enfeite.meias`). Os demais são visuais e não respondem: pano de prato, meias da Cozinha e da Sala, mini-árvores e presentes (`examinar: null`). Cortina não existe no mapa.
-- **`enfeite.arvore` não está em uso** por nenhum enfeite entregue. A chave continua em `pt-BR.json`, sem mudança, para um uso futuro.
+- **Responde ao A (examinar) só o que tem `examinar` no JSON (planta 1.1.0, 2026-11-17):** luz pisca na Sala e no Escritório (`enfeite.pisca`); vela na Sala (`enfeite.vela`); guirlanda na Sala (`enfeite.guirlanda`); meias na Sala e no Escritório (`enfeite.meias`); mini-árvore grande da Sala (`enfeite.arvore`); presente vermelho do Quarto da Oli (`enfeite.presente`). Os demais são visuais e não respondem: pano de prato, meias da Cozinha, demais mini-árvores e presentes (`examinar: null`). Cortina não existe no mapa. Os enfeites apoiados em móvel respondem ao A de frente para o móvel (decisão de padrão, 2026-11-17: o texto de 20.6 foi ajustado ao mapa, e não o contrário).
+- **`enfeite.arvore` agora está em uso** pela mini-árvore grande da Sala.
 - **Colisão e rota:** nenhum enfeite muda a grade de colisão, os gatilhos, as portas, o spawn ou a rota da condução. Enfeite de parede cai em tile que já é parede; enfeite de chão é só visual, ou ocupa tile que já bloqueia (móvel).
 - **Não cobre:** porta, interruptor, bilhete, painel, passagem, árvore, caixa, Nick nem o chão de passagem. A captura de cada cômodo confere (EN2).
 - **Pisca:** 1 ciclo por segundo (metade acesa, metade apagada), no limite de 3 ciclos por segundo do AC4. Nenhuma tela inteira pisca, e não há flash.
@@ -2762,8 +2771,8 @@ Posições e tipos conforme a entrega da Arte (2026-11-10, `content/maps/decorac
   - luz pisca: "Que luzinhas bonitas! Elas piscam devagarinho."
   - vela elétrica (texto próprio, `enfeite.vela`): "Uma vela elétrica! A luz / fica piscando, sem fogo." (decisão do Produto, ADR-010 3.4)
   - guirlanda: "Uma guirlanda vermelha para a porta da festa."
-  - presente: "Tem presente aqui! Será que é para alguém da família?"
-  - meias: "Meias de Natal! Uma para cada pessoa da casa."
+  - presente: "Tem presente aqui! Será para quem da família?" (texto de `pt-BR.json`)
+  - meias: "Meias de Natal! Uma para cada um da casa." (texto de `pt-BR.json`)
   - mini-árvore: "Uma árvorezinha de Natal, para a casa toda."
 - **Limite do atlas:** ≤ 16 000 bytes brutos para os sprites novos (entram no HTML, 20.7).
 
@@ -2905,3 +2914,168 @@ Chaves em `content/texts/pt-BR.json`. Limites: diálogo e tela de fim, 28 por li
 | 5 | No modo explorar, o jogador não sabe o que fazer | Textos de examinar, Nick e a casa; sem pressão nem objetivo (pilar 1) |
 | 6 | Desenho de pessoas reais no site público | P1 |
 | 7 | 1.0.0 volta a atrasar | 1.0.0 só depois do 0.13.0 aprovado (20.2); o Orquestrador decide a ordem |
+
+---
+
+## 21. Especificação da versão 1.1.0 (nova planta da casa)
+
+Origem: o Diretor redesenhou a casa como na vida real (`home_v2.tmx`, 2026-11-17; original dele, não se edita). Versão menor (SemVer): novo mapa, sem save, sem missão nova. **Esta seção vale sobre todas as posições e portas das seções 14.10, 14.12, 15.2.2, 15.3, 16.2 e 17.3, que passam a ser histórico da 1.0.0.** Tudo o que não está aqui continua como está (fluxo, enigma da porta, luzes, peças, Nick, dica, enfeite, créditos, explorar, controles, áudio). Pilares: sem pressão, dica nunca bloqueia, tom afetuoso, textos curtos (nenhum texto novo nesta versão).
+
+### 21.1 Escopo
+
+| Item | Na 1.1.0 | Onde |
+|---|---|---|
+| Planta nova | 9 áreas (hoje 8), 9 portas, paredes finas | 21.3, 21.4, 21.5 |
+| Convenções da planta (Diretor) | Áreas por piso, porta = um ponto, muro = retângulo fino, giro de 90° | 21.2 |
+| O que fica aberto ou trancado | Mesmas áreas abertas da 1.0.0 | 21.6 |
+| Missões, peças, Nick, dica, explorar | Mesmas regras, em tiles novos | 21.7 |
+| O que a Arte ainda põe na planta | Rótulos, spawn, interruptor, árvore, bilhete, examináveis, peças, caixa, móveis, enfeites | 21.8 |
+| Móveis e cacto (easter egg) | 28 móveis bloqueantes nas 9 áreas; cacto da Sala empurra | 21.8, 21.14 |
+| Aceite | Casos PL1 a PL16 | 21.9 |
+
+### 21.2 Convenções da planta (decididas pelo Diretor, 2026-11-17)
+
+1. **Área por piso.** Cada padrão de piso (gid) conectado nos 4 vizinhos é uma área. O mesmo gid em blocos não conectados são áreas diferentes. Blocos do mesmo gid que se tocam, sem muro entre eles, são uma área só. Gids diferentes que se tocam são áreas diferentes, sem vão entre elas (muda a regra "subáreas não se tocam", ADR-004 seção 2).
+2. **Porta = um ponto** (objeto point, camada `Portas`) sobre a borda entre dois tiles vizinhos de áreas diferentes. Não há vão, gatilho em tile nem par de marcas com nome (muda ADR-004 seção 3).
+3. **Muro = retângulo fino** (4 a 7 px) na camada `muros`, fora da grade, que bloqueia a passagem entre áreas ou dentro de uma (ex.: Cozinha e Lavanderia). Representação em 21.5.
+4. **Giro:** a planta gira 90° no sentido horário no conversor (opção `--girar`, a mesma da 1.0.0). A tela, os sprites e o texto não giram.
+
+### 21.3 As 9 áreas
+
+Tamanhos conferidos por contagem na planta; a caixa já é a da planta antes do giro (largura × altura em tiles) e entre parênteses depois do giro. Todas cabem em 15×11.
+
+| Id (conteúdo) | Nome | Gid | Tiles | Caixa (girada) | Hoje na 1.0.0 | Estado na 1.1.0 |
+|---|---|---|---|---|---|---|
+| `hall` | Hall (Elevador) | 34 | 8 | 3×4 (4×3) | `hall`, caixa 3×4, mesma função (nasce no Elevador, bilhete, porta do código) | Aberta, sempre clara |
+| `sala` | Sala | 358 | 70 | 10×11 (11×10) | `sala` (73 a 75 tiles) | Aberta, escura até as luzes |
+| `cozinha` | Cozinha e Lavanderia | 38 | **30** (conferido no golden, 2026-11-17; antes 24) | 5×6 (**6×5**) | `cozinha` (Lavanderia é cômodo separado dentro dela, decisão 27) | Aberta, escura até as luzes |
+| `quarto` | Quarto da Oli | 34 | 13 | 4×4 (4×4) | `quarto` (antes "Quarto Olivia"), aberto pelo Marco 2 | Aberto |
+| `escritorio` | Escritório | 258 (de cima) | 17 | 5×7 (7×5) | `escritorio` | Aberto |
+| `quarto_casal` | Quarto (do casal) | 258 (de baixo) | 24 | 5×6 (6×5) | **Substitui a Suíte Casal** (`suite_casal`): é o mesmo cômodo, renomeado; a Suíte não existe como área separada | Fechado |
+| `banheiro1` | Banheiro 1 | 38 (pequeno) | 12 | 3×4 (4×3) | **Substitui o Banheiro do casal** (`banheiro_casal`). Passa a ter duas portas (Quarto da Oli e Quarto do casal) | Fechado |
+| `banheiro_escritorio` | Banheiro do escritório | 34 | 4 | 2×2 (2×2) | `banheiro_escritorio` | Fechado |
+| `quartinho` | Quartinho | 4 | 6 | 2×3 (3×2) | **Novo** | Fechado |
+
+- Os ids que existem são mantidos (`hall`, `sala`, `cozinha`, `quarto`, `escritorio`, `banheiro_escritorio`). Dois renomeados: `suite_casal` para `quarto_casal` e `banheiro_casal` para `banheiro1`. Um novo: `quartinho`. Id sem nome de pessoa (14.10.6): o Quarto da Oli segue `quarto` (decisão de 2026-11-08).
+- **A Sala não encolhe:** a caixa é 10×11, igual à de hoje, e gira para 11×10. As duas colunas de baixo à esquerda da Sala girada, (0, 9) e (1, 9), continuam andáveis na linha 9, como hoje (ADR-004 seção 8, item 6; pergunta 31). A Arte e o Dev conferem no golden; a regra vigente vale sem mudança.
+- O Hall tem 8 tiles em T (3 colunas × 2 linhas e um tronco de 2 tiles). A Cozinha e Lavanderia têm 6×5 = 30 tiles, com um muro interno entre as linhas 2 e 3 e passagem na coluna 4 (Cozinha = linhas 0 a 2, 18 tiles; Lavanderia = linhas 3 e 4, 12 tiles). Posições finais em 21.7. Quartinho: a Arte o deslocou uma coluna na cópia de trabalho (aguarda o OK do Diretor; padrão: sim). O original `home_v2.tmx` não muda.
+- Relações depois do giro, para a Arte e o QA: a Sala fica acima do Hall; a Cozinha e Lavanderia à direita da Sala; o Escritório e o Quarto da Oli acima e à direita; o Quarto do casal e o Banheiro 1 abaixo e à esquerda. A conferência é o golden (`.txt`).
+
+### 21.4 As 9 portas
+
+Id da porta no conteúdo: os ids das duas áreas, em ordem alfabética, ligados por hífen (ex.: `hall-sala`). Sem marca com nome na planta. Se duas portas ligarem as mesmas áreas, a Arte dá a propriedade `id` a uma delas (E031). Os nomes P1 a P8 do GDD antigo ficam só como histórico; a tabela faz a ponte.
+
+| Id | Liga | Era | Estado na 1.1.0 |
+|---|---|---|---|
+| `hall-sala` | Hall e Sala | P8 | Aberta pelo código (4.2, 14.1). Propriedade `trancadaAte = porta` no ponto |
+| `cozinha-sala` | Cozinha e Sala | P7 | Aberta (passagem) |
+| `escritorio-sala` | Escritório e Sala | P3 | Aberta (Marco 2) |
+| `quarto-sala` | Quarto da Oli e Sala | P2 | Aberta (Marco 2) |
+| `quarto_casal-sala` | Quarto do casal e Sala | P1 | Porta fechada (lado da Sala), "Essa porta está fechada." |
+| `banheiro1-quarto` | Banheiro 1 e Quarto da Oli | P4 | Porta fechada (lado do Quarto) |
+| `banheiro_escritorio-escritorio` | Banheiro do escritório e Escritório | P6 | Porta fechada (lado do Escritório) |
+| `cozinha-quartinho` | Cozinha e Quartinho | nova | Porta fechada (lado da Cozinha) |
+| `banheiro1-quarto_casal` | Banheiro 1 e Quarto do casal | P5 | Fora do conteúdo jogável: as duas áreas estão fechadas (como a P5 hoje) |
+
+Os ids e os pares acima saíram da posição dos 9 pontos da planta; o conversor confirma na primeira execução (21.9, PL2) e qualquer divergência volta ao Diretor.
+
+**Como a porta funciona (comportamento, a Especialista e o Dev detalham no ADR):**
+- A porta fica na aresta entre dois tiles. Atravessar = andar de um tile na direção da aresta (a "saída" da porta). Não existe tile de gatilho: um tile ao lado da porta não faz nada se o sobrinho só passar por ele.
+- **Aberta:** andar contra a porta atravessa (como hoje, sem apertar A); A de frente para ela também atravessa. Fade de 0,5 s (14.10.5). Chegada: o tile do outro lado da porta, olhando para dentro da nova área ("cai no início do cômodo", decisão de 2026-11-08). Quem chega não volta sozinho: atravessar de novo exige novo movimento.
+- **Com código (`hall-sala`):** igual à 14.1 (painel com A de frente; depois de aberta, andar ou A atravessa).
+- **Fechada** (destino fechado): bloqueia; A de frente mostra o diálogo de 14.10.3; andar contra a porta só para, sem texto.
+- **Desenho:** faixa fina sobre a aresta (já decidido, 14.10.9); porta aberta desenha vão aberto, porta fechada desenha porta fechada.
+- **Indicadores** (seta lateral, tapete, nada para cima; 14.10.10): seguem a direção da saída da porta, no tile de dentro. A Arte confere na captura.
+
+### 21.5 Paredes (muros finos): decisão proposta
+
+Hoje a colisão é por tile (ADR-003, seção 5). Um muro de 4 a 7 px cobre menos de 22% de um tile e some na regra dos 50%. Opções:
+
+- **A (recomendada): bloqueio por aresta entre tiles.** O conteúdo ganha, por área, um mapa de arestas bloqueadas (quais lados de cada tile têm parede). O jogador, o Nick e a rota não cruzam aresta bloqueada. O tile continua inteiro e andável; nenhum piso da planta do Diretor se perde. Custo: o motor e a rota passam a checar aresta (Dev), e o conversor transforma cada muro em arestas.
+- **B: engrossar o muro até um tile.** Tira andar de cada tile ao lado do muro. A planta perde piso, a Sala deixa de ter 70 tiles e portas de 1 tile viram vão. Descartada: contraria a planta que o Diretor desenhou.
+- **C: colisão em pixel.** Descartada: contraria o ADR-003 (tile) e o perfil HD.
+
+**Regra da recomendação A (o que o Produto fixa):**
+1. Um muro bloqueia uma aresta de tile quando cobre pelo menos metade do comprimento dela (16 px de 32) e a linha central dele está a no máximo 8 px da linha da grade.
+2. A fronteira entre duas áreas é parede por padrão, mesmo sem muro desenhado, exceto onde há porta (pergunta Q1). O conversor avisa onde não há muro desenhado.
+3. A fronteira entre um tile e o vazio já é parede.
+4. Muro dentro de uma área é parede dentro dela. A Cozinha e Lavanderia têm um muro interno com 1 tile de passagem.
+5. Cada área precisa continuar conexa depois dos muros (um tile andável alcança todos os outros); senão o conversor para.
+6. Móveis continuam como hoje: retângulo em `Objetos da casa bloqueantes`, colisão por tile (regra dos 50%). **Entregues na 1.1.0: 28 móveis nas 9 áreas, e eles bloqueiam o jogador e o Nick** (lista no relatório da Arte e em `content/maps/casa-real`).
+
+### 21.6 O que fica trancado ou aberto
+
+- **Abertas (as mesmas da 1.0.0):** Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório (`missions[].maps` sem mudança). Fechadas: Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho.
+- **Porta fechada** não leva a lugar nenhum, com o texto de 14.10.3 ("Essa porta está fechada." / "Hoje não dá para entrar."). Nenhum texto novo.
+- **Abrir os quartos e banheiros** fica para uma versão menor depois (1.2): acrescentar o id em `missions[].maps` e converter a porta, sem mexer no motor. Não entra na 1.1.0.
+- **Modo "Explorar a casa" (20.5):** anda nas mesmas áreas da missão (Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório). As quatro portas fechadas respondem igual. Sem porta nova aberta. Nasce na Sala, de frente para a árvore (tile novo, 21.7).
+
+### 21.7 Missões, peças, dica e Nick nas áreas novas
+
+Nenhuma regra de jogo muda. Mudam os tiles, que a Arte reposiciona na planta nova e o conversor valida.
+
+- **Missão e condução:** `luzes`, `parte1`, `parte2`, `parte3` e `enfeites` com as mesmas áreas. As coordenadas de `conducao` e `inicio` saem do conteúdo gerado (a árvore e o interruptor mudam de tile na Sala nova). A rota passa pelas portas abertas e respeita as paredes (21.5). Passos acima de 10 seguem a regra do 2× (14.11.3). **Posições entregues (2026-11-17, golden e `content/missions`):** `inicio` no Elevador do Hall (0, 1); `conducao` de todas as fases em Sala (2, 7), direção `baixo`, de frente para a árvore (2, 8); interruptor em Sala (6, 4). **Passos medidos pelo Dev (com `CUSTO_DA_PORTA` = 1):** 3, 5 e 8 passos nas rotas curtas (velocidade normal) e 16 a 22 passos nas longas, que são as de fora da Sala (2×). O Produto conferiu (2026-11-17): o 2× vale como está, sem mudança (a 4 tiles por segundo, 22 passos a 2× levam cerca de 3 s, mais o fade de 0,5 s em cada porta). O QA registra o número real de cada fase (PL9).
+- **Peças (entregues):** peça 1 na Sala (0, 5); peça 2 na Cozinha (3, 2); peça 3 na Lavanderia (5, 3) (regra 4.4: cômodos diferentes). A peça 3 fica na parte da área `cozinha` separada pelo muro interno (linhas 3 e 4); a passagem é a coluna 4. Decidido na pendência 46.
+- **Interruptor e árvore:** na Sala. O interruptor fica a mais de 3 tiles do tile de chegada da porta `hall-sala` (regra de 14.10.2, item 5). A árvore fica a uma distância confortável da chegada (3 a 8 passos; sugestão).
+- **Bilhete (pista):** no Hall (2, 0), encostado na parede de cima, ao lado da `hall-sala`: o A de frente para a parede lê o bilhete. O texto "Há um bilhete perto dela" (`orientacao.2`) segue certo.
+- **Examináveis da Cozinha:** Pia, Fogão e Geladeira, com os textos de 14.10.4, na metade Cozinha. A Lavanderia segue sem objeto.
+- **Caixa de enfeite (parte 3):** no Escritório (decisão de 2026-11-09), tile (5, 1).
+- **Nick:** dorme onde 16.2 diz (Sala na porta e nas luzes; Cozinha e Lavanderia na parte 1; Quarto da Oli na parte 2; Escritório na parte 3; Sala depois). Os 5 cômodos continuam a uma porta da Sala. Tiles de dormir entregues: Sala (9, 5) (no lugar de (8, 5), ocupado pela mesa; padrão aplicado, 2026-11-17), Cozinha (1, 1), Quarto da Oli (1, 2), Escritório (4, 2). Seguir, acordar e voltar a dormir não mudam; o seguir não atravessa parede (usa a mesma rota).
+- **Farejar e seta (16.5):** a seta mostra a porta a seguir, agora a porta de aresta mais próxima na rota. Mesma regra, mesmo tempo.
+- **Dica (tela e texto):** não muda. **Conferido pelo Produto (2026-11-17):** nenhum texto em `content/texts/pt-BR.json` (dicas, diálogos, examináveis, créditos) cita lugar, posição ou móvel que mudou; nada a corrigir. Os únicos lugares citados são "Procure em outro cômodo" (dica da parte 3), "um bilhete perto dela" e "Leia o bilhete na parede" (continuam certos) e a Pia, o Fogão e a Geladeira (continuam na Cozinha).
+- **Enfeites do modo explorar (20.6):** a Arte refaz por área na planta nova, sem colisão nova.
+
+### 21.8 O que a Arte entregou na cópia de trabalho (2026-11-17)
+
+Rótulos (id, nome, `escuro` na Sala e na Cozinha), spawn `elevador`, interruptor, árvore, bilhete, Pia, Fogão e Geladeira, peças 1 a 3, caixa de enfeite, **28 móveis bloqueantes nas 9 áreas**, enfeites e a propriedade `trancadaAte` na porta `hall-sala`. Pendente: o Diretor aprova no golden e nas capturas (21.9, PL12). Os móveis e as paredes desenhadas giram como imagem, como na 1.0.0.
+
+**Móveis da Sala (indicados pelo Diretor):** sofá (3,3)-(4,4); rack nas colunas 2 a 5, linha 1; mesa nas colunas 6 a 8, linhas 5 e 6; cômoda na coluna 10, linhas 5 a 7; cacto (0,3), ver 21.14. **Quarto da Oli:** cama (1,0)-(1,1); cômoda (3,1); cadeira de amamentação cinza (3,3).
+
+### 21.9 Critérios de aceite (QA)
+
+- **PL1 (áreas):** o conversor gera 9 áreas, com 8, 70, **30**, 13, 17, 24, 12, 4 e 6 tiles de piso (Hall, Sala, Cozinha e Lavanderia, Quarto da Oli, Escritório, Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho), Cozinha e Lavanderia em 6×5, ids de 21.3, sem erro.
+- **PL2 (portas):** 9 portas com os ids e as áreas de 21.4. Cada uma está numa aresta entre áreas diferentes; nenhum ponto exige ajuste maior que 12 px.
+- **PL3 (paredes):** nenhuma aresta de fronteira entre áreas fica livre, exceto as das 9 portas; o muro interno da Cozinha e Lavanderia (entre as linhas 2 e 3) deixa 1 tile de passagem, na coluna 4; cada área é conexa (os móveis não a dividem).
+- **PL4 (giro):** o golden sai girado 90° (horário), com Sala 11×10, e todas as caixas ≤ 15×11. A linha 10 da tela fica sem tile.
+- **PL5 (atravessar):** com o jogo no teclado e no toque, as quatro portas abertas atravessam por andar contra elas e por A, nos dois sentidos, com fade, chegada no tile do outro lado e sem voltar sozinho.
+- **PL6 (parede):** o sobrinho não cruza muro nem fronteira entre áreas, em nenhum lado e em nenhuma esquina (amostra: 3 muros da Sala, o muro interno da Cozinha). Nick também não.
+- **PL7 (fechada):** as quatro portas fechadas mostram o diálogo de 14.10.3 ao A e só param ao andar contra. A `banheiro1-quarto_casal` não existe no jogo.
+- **PL8 (código):** a porta `hall-sala` abre pelo painel com o código dos 4 sobrinhos, como em 14.1.
+- **PL9 (fluxo):** luzes, parte 1, parte 2, parte 3, enfeites e créditos, do início ao fim, com os 4 sobrinhos, sem bloqueio; condução e rotas dentro das paredes; nenhuma peça, caixa ou tile de dormir inalcançável.
+- **PL10 (Nick e dica):** acordar, seguir, farejar (seta na porta certa) e dormir em cada fase; a dica orienta sem bloquear.
+- **PL11 (explorar):** o modo anda nas 5 áreas, sem dica e sem missão.
+- **PL12 (golden e captura):** o diff do golden (`.txt` e `resumo.json`) e as capturas de cada área aprovados pelo Diretor antes de qualquer artifact ou release (regra de 2026-11-08).
+- **PL13 (regressão):** suítes do jogo, `verificar:conteudo` e `validar:perfil` passam; a build de playtest e a release continuam dentro dos limites de peso (20.7); título e créditos mostram "1.1.0".
+- **PL14 (cacto):** na Sala, andar contra o cacto (0, 3) empurra o sobrinho 1 tile para longe e o cacto pisca por cerca de 1 s (só o sprite do cacto; no máximo 3 ciclos por segundo, AC4; nenhuma tela inteira pisca). Sem texto, sem som novo, sem bloqueio: dá para repetir. Se o tile de empurrão estiver ocupado ou for parede, o sobrinho não atravessa nada (nem móvel, nem parede, nem muro). O A de frente para o cacto não trava o jogo. Nick e a condução não disparam o cacto, e a rota passa longe dele. Teclado e toque iguais.
+- **PL15 (móveis):** os 28 móveis bloqueiam o sobrinho e o Nick; nenhuma peça, caixa, interruptor, árvore, tile de dormir ou porta fica inalcançável ou coberto; cada área segue conexa. Amostra: sofá, rack, mesa e cômoda da Sala; cama e cadeira do Quarto da Oli; os da Cozinha. Móvel não deixa o sobrinho preso (sempre há saída).
+- **PL16 (enfeites sobre móveis):** no modo "Explorar a casa", a luz, a guirlanda e as meias sobre o rack da Sala, a vela e a mini-árvore grande sobre a cômoda, as luzes e meias do Escritório e o presente do Quarto da Oli respondem ao A com o texto de `pt-BR.json` (20.6); o A de frente para o móvel com enfeite mostra o texto do enfeite. Pano de prato e demais enfeites não respondem. Nenhum enfeite muda a colisão.
+
+### 21.10 Fora de escopo da 1.1.0
+
+Abrir Quarto do casal, Banheiro 1, Banheiro do escritório e Quartinho; missão nova; texto novo; móveis novos além dos da planta; save; mudar o código do enigma, as peças, o Nick ou a dica.
+
+### 21.11 Padrões aplicados (sem pergunta ao Diretor)
+
+- a. Versão 1.1.0 (menor); a release segue o fluxo de tag de ADR-002.
+- b. Ids de 21.3 e 21.4; renomear `suite_casal` e `banheiro_casal` no conteúdo, nos testes e no golden.
+- c. Mesmas áreas abertas e mesmos textos da 1.0.0.
+- d. A Arte propõe os objetos de jogo; o Diretor aprova no golden.
+- e. A planta do Diretor é a verdade: o conversor não a corrige.
+
+### 21.12 Perguntas ao Diretor
+
+Pendências 45 a 49 (seção 12): todas decididas em 2026-11-17 ("siga as sugestões"). Aberta, com padrão aplicado: o OK do Diretor ao deslocamento do Quartinho em uma coluna (21.3) e à posição dos objetos e móveis nas capturas (PL12).
+
+### 21.14 Easter egg do cacto (decisão do Diretor, 2026-11-17)
+
+O cacto da Sala, no tile (0, 3), é um móvel bloqueante. Quando o sobrinho anda contra ele, o jogo o empurra 1 tile para longe e o cacto pisca por cerca de 1 s. É uma surpresa engraçada, sem texto, sem som novo e sem efeito na missão. Segurança: pisca só o sprite, no máximo 3 ciclos por segundo (AC4); o empurrão não atravessa móvel nem parede; Nick e a condução não o disparam. Aceite em PL14. O Produto assume (padrão): dispara por andar contra, não por A. Mudança disso volta ao Diretor.
+
+### 21.13 Riscos
+
+| # | Risco | Tratamento |
+|---|---|---|
+| 1 | Colisão por aresta toca motor, Nick, rota e condução, e pode abrir brecha (sobrinho atravessa a parede) | PL6 em esquinas e arestas; teste de domínio com a grade de arestas; ADR novo antes do código |
+| 2 | Atravessar a porta "andando" dispara sem querer ao caminhar rente à parede | A porta só dispara andando contra ela; PL5 e PL6 |
+| 3 | Ponto de porta a uns 10 px da aresta lê a aresta errada | Tolerância de 12 px, erro se ambíguo; PL2 |
+| 4 | Cozinha e Lavanderia ficaram menores e a peça 2 ou 3 não acha tile | Arte propõe, conversor valida (E010, E023) |
+| 5 | Diretor muda a planta depois | O conversor recusa o que viola as regras; o golden mostra o diff |

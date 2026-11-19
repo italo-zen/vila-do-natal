@@ -3,7 +3,7 @@
   "conducao": {
     "parte3": {
       "mapa": "sala",
-      "x": 3,
+      "x": 2,
       "y": 7,
       "direcao": "baixo"
     }
@@ -14,8 +14,8 @@
   "nick": {
     "dorme": {
       "mapa": "escritorio",
-      "x": 6,
-      "y": 1,
+      "x": 4,
+      "y": 2,
       "direcao": "baixo"
     },
     "alvo": "cozinha"

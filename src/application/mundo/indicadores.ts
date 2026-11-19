@@ -1,13 +1,11 @@
 import type { MapaDoJogo, ObjetoDoMapa } from '../content/Mapa';
-import { deslocamentoDaSubarea, ladoDaPorta, vaoDaPorta, type LadoDaPorta } from './subarea';
+import { deslocamentoDaSubarea, ladoDaPorta, type LadoDaPorta } from './subarea';
 
 /**
  * Indicadores de porta (GDD 14.10.10, item 046). Só desenho: não cria objeto, gatilho nem colisão.
  *
- * A direção de saída é o campo `saida` do conteúdo (`porta.saida` e `portaFechada.saida`, ADR-004 seção 13.18), gerado
- * pelo conversor. Não se deriva mais da chegada, porque o par com chegada declarada pode ter chegada de lado.
- * Saída para a direita ou esquerda: seta sobre o gatilho. Saída para baixo (só `porta`): tapete no vão, fora do piso.
- * Saída para cima: nada.
+ * A direção é o campo `lado` da `porta` (ADR-011 seção 3.4; substitui o `saida` do ADR-004), no tile da porta.
+ * Lado direita ou esquerda: seta. Lado baixo: tapete. Lado cima: nada.
  *
  * Coordenadas em tiles locais da subárea (como o conteúdo). A posição na tela é a local mais o deslocamento.
  */
@@ -39,27 +37,22 @@ export function indicadoresDaSubarea(mapa: MapaDoJogo, tela: { colunas: number; 
   const desl = deslocamentoDaSubarea(mapa, tela);
   const saida: IndicadorDePorta[] = [];
   for (const objeto of mapa.objetos) {
-    if (objeto.tipo !== 'porta' && objeto.tipo !== 'portaFechada') continue;
+    if (objeto.tipo !== 'porta') continue;
     const id = String(objeto.dados.id);
     const lado = ladoDaPorta(objeto);
     if (!lado) continue;
     let tipo: TipoDeIndicador | null = null;
-    let local: { x: number; y: number } = objeto;
     if (lado === 'esquerda') tipo = 'seta-esquerda';
     else if (lado === 'direita') tipo = 'seta-direita';
-    else if (lado === 'baixo' && objeto.tipo === 'porta') {
-      // Tapete no vão, fora do piso (GDD 14.10.10): não ocupa o gatilho nem o chão de dentro.
-      tipo = 'tapete';
-      local = vaoDaPorta(objeto, lado);
-    }
+    else if (lado === 'baixo') tipo = 'tapete';
     if (!tipo) continue;
     // Fora da caixa da tela, ou na última linha (a barra): não desenha (cobertura por teste).
-    const xDaTela = local.x + desl.x;
-    const yDaTela = local.y + desl.y;
+    const xDaTela = objeto.x + desl.x;
+    const yDaTela = objeto.y + desl.y;
     if (xDaTela < 0 || yDaTela < 0 || xDaTela >= tela.colunas || yDaTela >= tela.linhas - 1) continue;
     // C24: nada sobre bilhete, árvore ou interruptor.
-    if (mapa.objetos.some((o) => TIPOS_SEM_INDICADOR.has(o.tipo) && o.x === local.x && o.y === local.y)) continue;
-    saida.push({ tipo, x: local.x, y: local.y, porta: id });
+    if (mapa.objetos.some((o) => TIPOS_SEM_INDICADOR.has(o.tipo) && o.x === objeto.x && o.y === objeto.y)) continue;
+    saida.push({ tipo, x: objeto.x, y: objeto.y, porta: id });
   }
   return saida;
 }

@@ -1,6 +1,7 @@
 import type { MapaDoJogo, ObjetoDoMapa } from '../content/Mapa';
 import type { Fase } from '../../domain/progresso/Fase';
 import type { EstadoDoEnfeite } from '../../domain/progresso/enfeite';
+import type { Direcao } from '../../domain/shared/Direcao';
 
 /**
  * Deslocamento da subárea dentro da tela (ADR-004 seção 2): centralizada, em tiles, sem rolagem.
@@ -42,20 +43,14 @@ export const CONTEXTO_PADRAO: ContextoDeArea = {
 };
 
 /**
- * Bloqueios da subárea em tempo de jogo (local): a colisão do conversor, mais a árvore (vira bloqueio,
- * ADR-003 seção 5), a porta fechada, o examinável, o gatilho trancado, o par com destino fechado (age como porta
- * fechada, ADR-004 seção 3) e a peça visível (ADR-004 seção 6).
+ * Bloqueios por tile da área em tempo de jogo (local): a colisão do conversor, mais a árvore (vira bloqueio, ADR-003
+ * seção 5), o examinável e a peça visível (ADR-004 seção 6) e a caixa de enfeite visível. A porta e o bilhete não
+ * bloqueiam tile (ADR-011 seção 3.4): a porta é uma aresta, e quem a barra é `paredes`. As arestas ficam em `arestas.ts`.
  */
-export function bloqueiosDaSubarea(mapa: MapaDoJogo, concluida: Concluida, ctx: ContextoDeArea = CONTEXTO_PADRAO): boolean[][] {
+export function bloqueiosDaSubarea(mapa: MapaDoJogo, _concluida: Concluida, ctx: ContextoDeArea = CONTEXTO_PADRAO): boolean[][] {
   const grade = mapa.colisao.map((linha) => [...linha]);
   for (const o of mapa.objetos) {
-    // Porta fechada, examinável e bilhete são tiles bloqueados pelo contrato do conversor (ADR-004 seção 6).
-    if (o.tipo === 'arvore' || o.tipo === 'portaFechada' || o.tipo === 'examinavel' || o.tipo === 'bilhete') grade[o.y][o.x] = true;
-    if (o.tipo === 'porta') {
-      const trancada = o.dados.trancadaAte !== undefined && !concluida(String(o.dados.trancadaAte) as Fase);
-      const fechadaPeloDestino = !ctx.areaAberta(String(o.dados.destino));
-      if (trancada || fechadaPeloDestino) grade[o.y][o.x] = true;
-    }
+    if (o.tipo === 'arvore' || o.tipo === 'examinavel') grade[o.y][o.x] = true;
     if (o.tipo === 'peca' && ctx.estadoDaPeca(Number(o.dados.ordem)) === 'visivel') grade[o.y][o.x] = true;
     // Caixa de enfeite: bloqueia como a peça visível (ADR-006 seção 2.4; ADR-004 seção 6).
     if (o.tipo === 'enfeite' && ctx.estadoDoEnfeite() === 'visivel') grade[o.y][o.x] = true;
@@ -63,70 +58,39 @@ export function bloqueiosDaSubarea(mapa: MapaDoJogo, concluida: Concluida, ctx: 
   return grade;
 }
 
-/** Lado de saída de uma porta (ADR-004 seção 6; GDD 14.10.10). Vem do campo `saida` do conteúdo. */
-export type LadoDaPorta = 'cima' | 'baixo' | 'esquerda' | 'direita';
+/** Lado de uma porta ou de um bilhete (ADR-011 seção 3.2). */
+export type LadoDaPorta = Direcao;
 
-/** Vetor de um tile para o lado de saída (y cresce para baixo, como no mapa). */
-const VETOR_DA_SAIDA: Readonly<Record<LadoDaPorta, { x: number; y: number }>> = {
-  cima: { x: 0, y: -1 },
-  baixo: { x: 0, y: 1 },
-  esquerda: { x: -1, y: 0 },
-  direita: { x: 1, y: 0 },
-};
-
-/** Lado de saída de um gatilho ou de uma porta fechada, lido do campo `saida` (ADR-004 seção 13.18). */
+/** Lado (`lado`) de uma porta ou de um bilhete, lido do conteúdo. Sem lado válido: undefined. */
 export function ladoDaPorta(objeto: { dados: Record<string, unknown> }): LadoDaPorta | undefined {
-  const s = objeto.dados.saida;
+  const s = objeto.dados.lado;
   return s === 'cima' || s === 'baixo' || s === 'esquerda' || s === 'direita' ? s : undefined;
 }
 
-/** Lado (cima, baixo, esquerda, direita) de um vetor de um tile. Vetor que não é de um tile não tem lado. */
-export function ladoDoVetor(dx: number, dy: number): LadoDaPorta | undefined {
-  if (dx === 0 && dy === -1) return 'cima';
-  if (dx === 0 && dy === 1) return 'baixo';
-  if (dx === -1 && dy === 0) return 'esquerda';
-  if (dx === 1 && dy === 0) return 'direita';
-  return undefined;
-}
+/** O estado de uma porta em tempo de jogo (ADR-011 seção 3.3): decidido pelo motor, nunca pelo mapa. */
+export type EstadoDaPorta = 'aberta' | 'fechada' | 'trancada';
 
 /**
- * Lado da aresta de um par fechado (ADR-004 seção 3, "Arestas"): o lado do gatilho voltado para a chegada, que é o
- * lado de dentro da área aberta. Para P3 é a esquerda (chegada em (7, 2)); para P2 é a baixo (chegada em (7, 2)).
+ * Fechada se o destino não está em `missions[ativa].maps`; com código se tem `trancadaAte` e a fase não está concluída;
+ * aberta nos demais casos. Fechada vence a trancada (a área do outro lado nem existe nesta missão).
  */
-export function arestaDoParFechado(gatilho: { x: number; y: number }, chegada: { x: number; y: number }): LadoDaPorta | undefined {
-  return ladoDoVetor(chegada.x - gatilho.x, chegada.y - gatilho.y);
-}
-
-/** Vetor de um tile até o lado de saída (ADR-004 seção 13.18). */
-export function vetorDaSaida(lado: LadoDaPorta): { x: number; y: number } {
-  return VETOR_DA_SAIDA[lado];
+export function estadoDaPorta(o: ObjetoDoMapa, concluida: Concluida, ctx: ContextoDeArea = CONTEXTO_PADRAO): EstadoDaPorta {
+  if (!ctx.areaAberta(String(o.dados.destino))) return 'fechada';
+  if (o.dados.trancadaAte !== undefined && !concluida(String(o.dados.trancadaAte) as Fase)) return 'trancada';
+  return 'aberta';
 }
 
 /**
- * Vão de uma porta (ADR-004 seções 3 e 13.18): o primeiro tile fora do gatilho, no lado de saída `saida` do conteúdo
- * (`porta.saida`). O motor não deriva mais a saída da chegada (G − S), porque o par com chegada declarada pode ter
- * chegada de lado. Vale em qualquer sistema de coordenadas (local ou de tela). Não é andável (ADR-004 seção 3).
- */
-export function vaoDaPorta(gatilho: { x: number; y: number }, saida: LadoDaPorta): { x: number; y: number } {
-  const v = VETOR_DA_SAIDA[saida];
-  return { x: gatilho.x + v.x, y: gatilho.y + v.y };
-}
-
-/**
- * Resultado de andar sobre (ou apertar A na frente de) um gatilho de porta. `fechada` é o par cujo destino não
- * está aberto nesta missão: age como porta fechada, sem transição (ADR-004 seção 3).
+ * Resultado de andar contra (ou apertar A de frente para) uma porta (ADR-011 seção 3.4). `fechada`: o destino não está
+ * aberto nesta missão. `trancada`: falta o código. `entrar`: leva à outra área, ao spawn de chegada (o nome do spawn é o
+ * id da porta).
  */
 export type ResultadoDaPorta = { tipo: 'trancada' } | { tipo: 'fechada' } | { tipo: 'entrar'; mapa: string; spawn: string };
 
-/**
- * Regra do gatilho (ADR-004 seção 3 e GDD 14.10.5): trancado, a passagem não acontece (o A abre o painel);
- * destino fechado nesta missão, nada acontece (porta fechada); senão, leva ao destino e ao spawn de chegada
- * (o nome do spawn é o id da porta).
- */
 export function resolverPorta(o: ObjetoDoMapa, concluida: Concluida, ctx: ContextoDeArea = CONTEXTO_PADRAO): ResultadoDaPorta {
-  const trancada = o.dados.trancadaAte !== undefined;
-  if (trancada && !concluida(String(o.dados.trancadaAte) as Fase)) return { tipo: 'trancada' };
-  if (!ctx.areaAberta(String(o.dados.destino))) return { tipo: 'fechada' };
+  const estado = estadoDaPorta(o, concluida, ctx);
+  if (estado === 'fechada') return { tipo: 'fechada' };
+  if (estado === 'trancada') return { tipo: 'trancada' };
   return { tipo: 'entrar', mapa: String(o.dados.destino), spawn: String(o.dados.spawnDestino) };
 }
 
