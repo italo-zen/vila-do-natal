@@ -165,7 +165,7 @@
   "pasta": "assets/gba-240x160",
   "sprites": {
     "sobrinho": {
-      "coresMin": 16
+      "coresMin": 8
     }
   }
 }

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """
+ATENÇÃO (2026-11-19): no perfil hd-480x352 os sprites saem de tools-arte/proposta-personagens/gerar_proposta.py --aplicar
+(acabamento 3/4 aprovado pelo Diretor). Rodar este script com --perfil hd-480x352 volta ao desenho antigo.
+
 Converte a folha oficial do Nick (Diretor) em sprites de jogo em pixel art, perfil hd-480x352 (ADR-003).
 
 Entrada : assets/referencia/ref_nick_folha.webp   (1536×1024)

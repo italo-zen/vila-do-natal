@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """
+ATENÇÃO (2026-11-19): no perfil hd-480x352 os sprites saem de tools-arte/proposta-personagens/gerar_proposta.py --aplicar
+(acabamento 3/4 aprovado pelo Diretor). Rodar este script com --perfil hd-480x352 volta ao desenho antigo.
+
 Converte as folhas de referência dos 4 Sobrinhos (Diretor) em sprites de jogo em pixel art.
 
 Entrada : assets/referencia/ref_<nome>_folha.webp   (1536×1024; nome = lolo, bibi, dandan, tutu)

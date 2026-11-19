@@ -144,10 +144,10 @@ describe('sprites.json do v1 (ADR-003 seção 4)', () => {
 });
 
 describe('cores mínimas por sprite de sobrinho (validar:perfil)', () => {
-  it('os dois perfis declaram sprites.sobrinho.coresMin = 16 e são válidos', async () => {
+  it('os dois perfis declaram sprites.sobrinho.coresMin = 8 (o máximo de 16 cores da visão 3/4 não admite mínimo 16) e são válidos', async () => {
     const hd = JSON.parse(readFileSync(join(RAIZ, 'content', 'art-profiles', 'hd-480x352.json'), 'utf-8')) as PerfilDeArte;
-    expect(hd.sprites.sobrinho.coresMin).toBe(16);
-    expect(lerV1().sprites.sobrinho.coresMin).toBe(16);
+    expect(hd.sprites.sobrinho.coresMin).toBe(8);
+    expect(lerV1().sprites.sobrinho.coresMin).toBe(8);
     expect(validarPerfilDeArte(hd, 'hd-480x352').ok).toBe(true);
   });
 
@@ -159,10 +159,10 @@ describe('cores mínimas por sprite de sobrinho (validar:perfil)', () => {
     if (!r.ok) expect(r.erros.join(' ')).toMatch(/sprites\.sobrinho\.coresMin precisa ser inteiro/);
   });
 
-  it('sprite de sobrinho com 4 cores falha; de 16 passa; sprite que não é de sobrinho não conta', () => {
+  it('sprite de sobrinho com 4 cores falha; de 8 ou mais passa; sprite que não é de sobrinho não conta', () => {
     const p = lerV1();
     expect(validarCoresDosSobrinhos({ 'spr_lolo_idle.png': 4 }, p)).toHaveLength(1);
-    expect(validarCoresDosSobrinhos({ 'spr_tutu_walk_left.png': 15 }, p)[0]).toMatch(/15 cores; o mínimo por sprite de sobrinho é 16/);
+    expect(validarCoresDosSobrinhos({ 'spr_tutu_walk_left.png': 7 }, p)[0]).toMatch(/7 cores; o mínimo por sprite de sobrinho é 8/);
     expect(validarCoresDosSobrinhos({ 'spr_lolo_idle.png': 16, 'spr_bibi_walk_up.png': 32 }, p)).toEqual([]);
     expect(validarCoresDosSobrinhos({ 'spr_bilhete.png': 4, 'tiles_casa.png': 2 }, p)).toEqual([]);
   });

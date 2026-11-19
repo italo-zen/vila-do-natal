@@ -1227,8 +1227,9 @@ def sprites_json(imagens_sobrinho_quadro=(32, 48)):
         for estado in ("idle", "interact", "celebrate"):
             imagens.append({"arquivo": f"spr_{nome}_{estado}.png", "tipo": "imagem"})
         for direcao in ("down", "up", "left", "right"):
+            # 4 quadros desde o acabamento 3/4 (2026-11-19): parado, passo, parado, passo (proposta-personagens/gerar_proposta.py)
             imagens.append({"arquivo": f"spr_{nome}_walk_{direcao}.png", "tipo": "folhas",
-                            "quadro": {"w": w, "h": h}, "quadros": 2})
+                            "quadro": {"w": w, "h": h}, "quadros": 4})
     for nome in ("porta", "porta_vertical", "porta_codigo", "porta_codigo_vertical", "porta_aberta", "porta_aberta_vertical",
                  "parede_h", "parede_v", "armario_da_cozinha", "forno", "armario_da_lavanderia", "lava_roupas", "tanque", "cama_da_oli", "comoda_da_oli", "cadeira_de_amamentacao", "cama_do_casal", "armario_do_casal", "mesa_do_escritorio", "cama_do_escritorio", "box_do_banheiro_1", "privada_do_banheiro_1", "pia_do_banheiro_1", "pia_do_banheiro_do_escritorio", "privada_do_banheiro_do_escritorio", "box_do_banheiro_do_escritorio", "prateleira", "prateleira_pequena", "sofa", "rack_da_sala", "cacto", "mesa_de_jantar", "comoda", "interruptor", "lampada", "bilhete", "arvore_desmontada", "arvore_1parte",
                  "arvore_2partes", "arvore_completa", "pia", "fogao", "geladeira", "indicador_seta_direita",

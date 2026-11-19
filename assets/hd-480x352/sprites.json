@@ -340,7 +340,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_bibi_walk_left.png",
@@ -349,7 +349,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_bibi_walk_right.png",
@@ -358,7 +358,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_bibi_walk_up.png",
@@ -367,7 +367,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_bilhete.png",
@@ -574,7 +574,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_dandan_walk_left.png",
@@ -583,7 +583,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_dandan_walk_right.png",
@@ -592,7 +592,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_dandan_walk_up.png",
@@ -601,7 +601,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_enfeite_caixa.png",
@@ -753,7 +753,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_lolo_walk_left.png",
@@ -762,7 +762,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_lolo_walk_right.png",
@@ -771,7 +771,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_lolo_walk_up.png",
@@ -780,7 +780,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_mesa_de_jantar.png",
@@ -1392,7 +1392,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_tutu_walk_left.png",
@@ -1401,7 +1401,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_tutu_walk_right.png",
@@ -1410,7 +1410,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "spr_tutu_walk_up.png",
@@ -1419,7 +1419,7 @@
         "w": 32,
         "h": 48
       },
-      "quadros": 2
+      "quadros": 4
     },
     {
       "arquivo": "tiles_casa.png",

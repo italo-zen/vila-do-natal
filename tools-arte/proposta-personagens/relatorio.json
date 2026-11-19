@@ -1,0 +1,547 @@
+{
+  "lolo": {
+    "_cores_sem_mapa": [],
+    "spr_lolo_idle.png": {
+      "cores": 16,
+      "bytes": 1348,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_interact.png": {
+      "cores": 16,
+      "bytes": 1310,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_celebrate.png": {
+      "cores": 16,
+      "bytes": 1339,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_idle_down.png": {
+      "cores": 16,
+      "bytes": 1348,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_walk_down.png": {
+      "cores": 16,
+      "bytes": 2302,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_lolo_idle_up.png": {
+      "cores": 16,
+      "bytes": 1316,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_walk_up.png": {
+      "cores": 16,
+      "bytes": 2196,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_lolo_idle_left.png": {
+      "cores": 16,
+      "bytes": 1257,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_walk_left.png": {
+      "cores": 16,
+      "bytes": 2066,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_lolo_idle_right.png": {
+      "cores": 16,
+      "bytes": 1275,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_lolo_walk_right.png": {
+      "cores": 16,
+      "bytes": 2136,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "_bytes_antes": 19132,
+    "_bytes_depois_jogo": 12697
+  },
+  "bibi": {
+    "_cores_sem_mapa": [
+      "#0c0204",
+      "#1a0101",
+      "#450c02",
+      "#571d0f",
+      "#593e3a",
+      "#6f2916",
+      "#7e3d29",
+      "#83716d",
+      "#89341a",
+      "#9b593e",
+      "#9c4325",
+      "#b3532f",
+      "#b89b99",
+      "#ba7554",
+      "#c8683b",
+      "#d8956a",
+      "#df834e",
+      "#e7cebb",
+      "#f5756f",
+      "#f6ac6b",
+      "#faf3e2",
+      "#fcc47c"
+    ],
+    "spr_bibi_idle.png": {
+      "cores": 15,
+      "bytes": 1355,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_interact.png": {
+      "cores": 16,
+      "bytes": 1373,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_celebrate.png": {
+      "cores": 16,
+      "bytes": 1385,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_idle_down.png": {
+      "cores": 15,
+      "bytes": 1355,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_walk_down.png": {
+      "cores": 16,
+      "bytes": 2330,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_bibi_idle_up.png": {
+      "cores": 15,
+      "bytes": 1365,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_walk_up.png": {
+      "cores": 15,
+      "bytes": 2306,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_bibi_idle_left.png": {
+      "cores": 15,
+      "bytes": 1310,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_walk_left.png": {
+      "cores": 16,
+      "bytes": 2225,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_bibi_idle_right.png": {
+      "cores": 16,
+      "bytes": 1294,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_bibi_walk_right.png": {
+      "cores": 16,
+      "bytes": 2173,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "_bytes_antes": 22198,
+    "_bytes_depois_jogo": 13147
+  },
+  "dandan": {
+    "_cores_sem_mapa": [
+      "#0d0202",
+      "#4b1201",
+      "#553014",
+      "#634933",
+      "#742104",
+      "#76696c",
+      "#7f4118",
+      "#88613f",
+      "#965524",
+      "#a5805c",
+      "#ab6731",
+      "#ab9e9b",
+      "#b53a17",
+      "#c17b3e",
+      "#c69b6d",
+      "#d58f4d",
+      "#dcb78b",
+      "#e2471b",
+      "#e7a555",
+      "#f0b06a",
+      "#f6e9d1",
+      "#fac37d",
+      "#facf8f",
+      "#fbdda6"
+    ],
+    "spr_dandan_idle.png": {
+      "cores": 15,
+      "bytes": 1377,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_interact.png": {
+      "cores": 15,
+      "bytes": 1371,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_celebrate.png": {
+      "cores": 15,
+      "bytes": 1370,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_idle_down.png": {
+      "cores": 15,
+      "bytes": 1377,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_walk_down.png": {
+      "cores": 15,
+      "bytes": 2373,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_dandan_idle_up.png": {
+      "cores": 15,
+      "bytes": 1346,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_walk_up.png": {
+      "cores": 15,
+      "bytes": 2213,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_dandan_idle_left.png": {
+      "cores": 15,
+      "bytes": 1330,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_walk_left.png": {
+      "cores": 15,
+      "bytes": 2301,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_dandan_idle_right.png": {
+      "cores": 15,
+      "bytes": 1335,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_dandan_walk_right.png": {
+      "cores": 16,
+      "bytes": 2373,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "_bytes_antes": 21960,
+    "_bytes_depois_jogo": 13378
+  },
+  "tutu": {
+    "_cores_sem_mapa": [
+      "#0b0104",
+      "#2a2e52",
+      "#4e1804",
+      "#50463f",
+      "#592e19",
+      "#6a6767",
+      "#6f2e0e",
+      "#783d20",
+      "#8a5c3f",
+      "#8c8984",
+      "#954c24",
+      "#ac6235",
+      "#b0815b",
+      "#bbab8f",
+      "#c1713c",
+      "#cd7c46",
+      "#d2c7b8",
+      "#dc8e59",
+      "#ecd234",
+      "#eda36b",
+      "#f3ebdb",
+      "#f9c489",
+      "#fab97a"
+    ],
+    "spr_tutu_idle.png": {
+      "cores": 16,
+      "bytes": 1375,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_interact.png": {
+      "cores": 15,
+      "bytes": 1346,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_celebrate.png": {
+      "cores": 16,
+      "bytes": 1392,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_idle_down.png": {
+      "cores": 16,
+      "bytes": 1375,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_walk_down.png": {
+      "cores": 16,
+      "bytes": 2306,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_tutu_idle_up.png": {
+      "cores": 14,
+      "bytes": 1296,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_walk_up.png": {
+      "cores": 14,
+      "bytes": 2103,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_tutu_idle_left.png": {
+      "cores": 15,
+      "bytes": 1307,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_walk_left.png": {
+      "cores": 16,
+      "bytes": 2181,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "spr_tutu_idle_right.png": {
+      "cores": 15,
+      "bytes": 1288,
+      "tam": [
+        32,
+        48
+      ]
+    },
+    "spr_tutu_walk_right.png": {
+      "cores": 15,
+      "bytes": 2241,
+      "tam": [
+        128,
+        48
+      ]
+    },
+    "_bytes_antes": 20344,
+    "_bytes_depois_jogo": 12944
+  },
+  "nick": {
+    "_cores_sem_mapa": [],
+    "spr_nick_happy.png": {
+      "cores": 14,
+      "bytes": 1589,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_idle_down.png": {
+      "cores": 13,
+      "bytes": 1092,
+      "tam": [
+        32,
+        32
+      ]
+    },
+    "spr_nick_idle_left.png": {
+      "cores": 13,
+      "bytes": 1086,
+      "tam": [
+        32,
+        32
+      ]
+    },
+    "spr_nick_idle_right.png": {
+      "cores": 13,
+      "bytes": 1071,
+      "tam": [
+        32,
+        32
+      ]
+    },
+    "spr_nick_idle_up.png": {
+      "cores": 11,
+      "bytes": 1048,
+      "tam": [
+        32,
+        32
+      ]
+    },
+    "spr_nick_sleep.png": {
+      "cores": 13,
+      "bytes": 1463,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_sniff.png": {
+      "cores": 14,
+      "bytes": 1460,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_wake.png": {
+      "cores": 14,
+      "bytes": 1720,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_walk_down.png": {
+      "cores": 13,
+      "bytes": 1543,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_walk_left.png": {
+      "cores": 13,
+      "bytes": 1461,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_walk_right.png": {
+      "cores": 13,
+      "bytes": 1488,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "spr_nick_walk_up.png": {
+      "cores": 11,
+      "bytes": 1390,
+      "tam": [
+        128,
+        32
+      ]
+    },
+    "_bytes_antes": 24321,
+    "_bytes_depois_jogo": 16411
+  }
+}
