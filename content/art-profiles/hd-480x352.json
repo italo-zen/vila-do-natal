@@ -33,7 +33,7 @@
       "quadrosDeAndar": 4
     },
     "sobrinho": {
-      "fpsAndar": 6,
+      "fpsAndar": 8,
       "pes": {
         "h": 16,
         "w": 24
@@ -42,7 +42,7 @@
         "h": 48,
         "w": 32
       },
-      "quadrosDeAndar": 2
+      "quadrosDeAndar": 4
     }
   },
   "dialogo": {
@@ -236,10 +236,10 @@
   },
   "sprites": {
     "nick": {
-      "coresMin": 16
+      "coresMin": 8
     },
     "sobrinho": {
-      "coresMin": 16
+      "coresMin": 8
     }
   },
   "vista": {
