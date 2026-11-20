@@ -10,6 +10,15 @@ export interface PecaSorteada {
   y: number;
 }
 
+/** Caixa de enfeite sorteada (GDD 21.16.12): na área que sobra depois das 3 peças. */
+export interface CaixaSorteada {
+  area: string;
+  comodo: string;
+  mapa: string;
+  x: number;
+  y: number;
+}
+
 /** Onde o Nick dorme durante uma missão, e a área que a seta de farejar procura nela (`alvo`). */
 export interface NickSorteado {
   missao: string;
@@ -24,11 +33,12 @@ export interface NickSorteado {
 export interface Plano {
   semente: number;
   pecas: readonly [PecaSorteada, PecaSorteada, PecaSorteada];
+  caixa: CaixaSorteada;
   /** Por id de missão. */
   nick: Readonly<Record<string, NickSorteado>>;
 }
 
 /** Assinatura estável do plano (compara dois planos; a anti-repetição guarda só isto da partida anterior). */
 export function assinaturaDoPlano(p: Plano): string {
-  return JSON.stringify([p.pecas.map((x) => [x.area, x.comodo, x.x, x.y]), Object.keys(p.nick).sort().map((k) => [k, p.nick[k].mapa, p.nick[k].x, p.nick[k].y])]);
+  return JSON.stringify([p.pecas.map((x) => [x.area, x.comodo, x.x, x.y]), [p.caixa.area, p.caixa.comodo, p.caixa.x, p.caixa.y], Object.keys(p.nick).sort().map((k) => [k, p.nick[k].mapa, p.nick[k].x, p.nick[k].y])]);
 }

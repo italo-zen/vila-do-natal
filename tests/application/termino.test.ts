@@ -164,7 +164,7 @@ descreverComConteudoNovo('validarNick da caixa e do fim (N007, N014, N015; ADR-0
     const x = await carregar();
     const escritorio = x.todosOsMapas.get('escritorio')!;
     const caixa = escritorio.objetos.find((o) => o.tipo === 'enfeite')!;
-    const t = candidatosDoNick(escritorio, { linhasDaTela: x.perfil.sala.linhas, pecas: [] });
+    const t = candidatosDoNick(escritorio, { linhasDaTela: x.perfil.sala.linhas, pecas: [], caixa: { x: caixa.x, y: caixa.y } });
     expect(t.some((q) => Math.abs(q.x - caixa.x) + Math.abs(q.y - caixa.y) < 2)).toBe(false);
   });
 

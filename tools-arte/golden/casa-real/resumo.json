@@ -160,7 +160,6 @@
         "fronteirasSemMuro": 0,
         "livres": 10,
         "objetos": {
-          "enfeite": 1,
           "movel": 2,
           "porta": 2,
           "spawn": 2
@@ -199,7 +198,7 @@
           ]
         }
       ],
-      "sha256": "4687af3c45b76041edb151ffb027d2e979f6d9b2dd2606c04a92bae89028424f"
+      "sha256": "927dc7483f31ce8909bddcff84eaf7a3c398ce0757602eb708dc2f377c479555"
     },
     {
       "altura": 3,

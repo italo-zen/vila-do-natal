@@ -814,8 +814,9 @@ def converter(caminho, perfil, col, girar=False):
         faltam = sorted({1, 2, 3} - set(ordens))
         if ordens and faltam:
             col.erro("E021", f"peças ausentes: {faltam}; ou nenhuma peça (sorteio do motor, ADR-013) ou 1, 2 e 3 (cada uma uma vez)")
-        if len(enfeites_lidos) != 1:
-            col.erro("E029", f"caixa de enfeite: esperada 1 (classe 'enfeite'), há {len(enfeites_lidos)}")
+        # 1.3.0 (ADR-013, adendo): a caixa é sorteada pelo motor; o TMX pode ter zero. Com mais de uma, é erro.
+        if len(enfeites_lidos) > 1:
+            col.erro("E029", f"caixa de enfeite: no máximo 1 (classe 'enfeite'; zero = sorteio do motor), há {len(enfeites_lidos)}")
     for ordem, sub, t, estado in pecas_lidas:
         esperado = "visivel" if ordem == 1 else "escondida"
         if estado != esperado:

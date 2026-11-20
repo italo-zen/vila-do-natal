@@ -35,6 +35,18 @@ describe('validarSorteio: S001 a S008', () => {
     expect(codigos(rodar(t).erros)).toContain('S002');
   });
 
+  it('S002: sem área sobrando para a caixa (3 áreas para 3 peças) é erro', () => {
+    const s = real();
+    s.pecas.areas = s.pecas.areas.slice(0, 3);
+    expect(rodar(s).erros.some((x) => x.startsWith('S002') && x.includes('caixa'))).toBe(true);
+  });
+
+  it('S006: foraDaAreaDaCaixa fora da missão da caixa é erro', () => {
+    const s = real();
+    s.nick.parte1.foraDaAreaDaCaixa = true;
+    expect(rodar(s).erros.some((x) => x.startsWith('S006') && x.includes('caixa'))).toBe(true);
+  });
+
   it('S003: área proibida, mapa inexistente ou retângulos que se sobrepõem', () => {
     const proibida = real();
     proibida.pecas.areas.push({ id: 'sala', minimo: 1, comodos: [{ id: 'sala', mapa: 'sala' }] });

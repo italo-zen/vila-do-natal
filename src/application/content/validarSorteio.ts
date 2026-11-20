@@ -38,7 +38,7 @@ export function validarSorteio(e: EntradaDoSorteio): ResultadoDoSorteio {
 
   // S002
   if (sorteio.pecas.quantidade !== 3) erros.push(`S002 pecas.quantidade é ${String(sorteio.pecas.quantidade)}; precisa ser 3.`);
-  else if (sorteio.pecas.areas.length < sorteio.pecas.quantidade) erros.push(`S002 há ${sorteio.pecas.areas.length} áreas para ${sorteio.pecas.quantidade} peças: não dá para ter áreas distintas.`);
+  else if (sorteio.pecas.areas.length < sorteio.pecas.quantidade + 1) erros.push(`S002 há ${sorteio.pecas.areas.length} áreas para ${sorteio.pecas.quantidade} peças e a caixa: precisa de pelo menos ${sorteio.pecas.quantidade + 1} (a caixa fica na área que sobra, GDD 21.16.12).`);
 
   // S003 e S004
   const idsDeArea = new Set<string>();
@@ -99,6 +99,9 @@ export function validarSorteio(e: EntradaDoSorteio): ResultadoDoSorteio {
     if (r.dentroDaLuzDeEntrada && !e.todos.get(r.dentroDaLuzDeEntrada.mapa)?.objetos.some((o) => o.tipo === 'spawn' && o.dados.nome === r.dentroDaLuzDeEntrada!.spawn)) {
       erros.push(`S005 sorteio.nick."${mid}": spawn "${r.dentroDaLuzDeEntrada.spawn}" da luz de entrada não existe.`);
     }
+    if (r.foraDaAreaDaCaixa !== undefined && (r.foraDaAreaDaCaixa !== true || !Object.keys(missao.missao.conquistas).includes('enfeites'))) {
+      erros.push(`S006 sorteio.nick."${mid}": foraDaAreaDaCaixa só vale como true na missão da caixa de enfeite.`);
+    }
     const n = candidatosDeNickDaRegra(e.todos, e.missoes, mid, r, e.perfil, [], sorteio.pecas.areas).length;
     if (n === 0) erros.push(`S007 sorteio.nick."${mid}" sem nenhum tile válido para o Nick.`);
     else if (r.minimo !== undefined && n < r.minimo) erros.push(`S007 sorteio.nick."${mid}" tem ${n} tiles válidos; o mínimo é ${r.minimo}.`);
@@ -106,9 +109,9 @@ export function validarSorteio(e: EntradaDoSorteio): ResultadoDoSorteio {
   void ids;
 
   // S008
-  const comPeca = [...e.todos.values()].filter((m) => m.objetos.some((o) => o.tipo === 'peca')).map((m) => m.id);
+  const comPeca = [...e.todos.values()].filter((m) => m.objetos.some((o) => o.tipo === 'peca' || o.tipo === 'enfeite')).map((m) => m.id);
   if (comPeca.length > 0) {
-    const msg = `S008 mapa(s) ${comPeca.join(', ')} ainda tem(têm) objeto "peca": o sorteio é o dono das peças (ADR-013).`;
+    const msg = `S008 mapa(s) ${comPeca.join(', ')} ainda tem(têm) objeto "peca" ou "enfeite" (a caixa): o sorteio é o dono das peças e da caixa (ADR-013).`;
     (e.pecaFixaEAviso ? avisos : erros).push(msg);
   }
   return { erros, avisos };

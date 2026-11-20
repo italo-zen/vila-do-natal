@@ -85,7 +85,7 @@ export class CarregarConteudo {
     const rs = validarSorteio({ bruto: await this.fonte.sorteio(), manifesto, todos, missoes, perfil, pecaFixaEAviso: PECA_FIXA_E_AVISO });
     if (rs.erros.some((e) => e.startsWith('S001'))) throw new ConteudoInvalidoError(rs.erros);
     const sorteio = interpretarSorteio(await this.fonte.sorteio());
-    for (const [id, m] of todos) if (m.objetos.some((o) => o.tipo === 'peca')) todos.set(id, { ...m, objetos: m.objetos.filter((o) => o.tipo !== 'peca') });
+    for (const [id, m] of todos) if (m.objetos.some((o) => o.tipo === 'peca' || o.tipo === 'enfeite')) todos.set(id, { ...m, objetos: m.objetos.filter((o) => o.tipo !== 'peca' && o.tipo !== 'enfeite') });
 
     const erros = [...rs.erros, ...validarConteudo({ manifesto, todos, missoes, textos, perfil, sorteio })];
     if (erros.length > 0) throw new ConteudoInvalidoError(erros);

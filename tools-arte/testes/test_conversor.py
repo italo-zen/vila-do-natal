@@ -477,7 +477,7 @@ class ObjetosDeJogo(unittest.TestCase):
         res, col = converter_texto(construir_tmx(["aa"], [(0, 0, "x")],
                                                  jogo=[{"classe": "interruptor", "tx": 0, "ty": 0}]))
         self.assertNotIn("E021", " ".join(codigos(col)[0]))     # zero peças vale (sorteio do motor, ADR-013)
-        self.assertIn("E029", codigos(col)[0])
+        self.assertNotIn("E029", " ".join(codigos(col)[0]))     # zero caixas vale (sorteio do motor)
 
     def test_pecas_incompletas_sao_erro(self):
         res, col = converter_texto(construir_tmx(["aa"], [(0, 0, "x")],

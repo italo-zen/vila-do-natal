@@ -12,7 +12,7 @@ import { descreverComConteudoNovo } from '../helpers/conteudoNovo';
 const RAIZ = join(__dirname, '..', '..');
 // V4 (ADR-011 seção 8): a linha de base é a da planta nova. O `colisao-0.12.0.json` saiu de uso (o histórico fica no git).
 // Gere o arquivo novo com `node tools/gerar-linha-de-base.mjs` quando o conteúdo gerado pela Arte estiver completo e o Diretor aprovar.
-const CAMINHO_DA_BASE = join(RAIZ, 'tests', 'fixtures', 'colisao-1.3.0.json');
+const CAMINHO_DA_BASE = join(RAIZ, 'tests', 'fixtures', 'colisao-1.4.0.json');
 const base = (existsSync(CAMINHO_DA_BASE) ? JSON.parse(readFileSync(CAMINHO_DA_BASE, 'utf-8')) : { mapas: {} }) as { mapas: Record<string, string> };
 
 function listar(pasta: string): string[] {

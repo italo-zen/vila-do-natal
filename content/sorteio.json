@@ -17,6 +17,6 @@
     "parte1": { "areas": ["sala"], "minimo": 4, "direcao": "baixo" },
     "parte2": { "areas": ["sala", "cozinha", "quarto", "escritorio", "quarto_casal"], "foraDaAreaDaPeca": 2, "direcao": "baixo" },
     "parte3": { "areas": ["sala", "cozinha", "quarto", "escritorio", "quarto_casal"], "foraDaAreaDaPeca": 3, "direcao": "baixo" },
-    "enfeites": { "areas": ["sala", "cozinha", "quarto", "quarto_casal"], "direcao": "baixo" }
+    "enfeites": { "areas": ["sala", "cozinha", "quarto", "escritorio", "quarto_casal"], "foraDaAreaDaCaixa": true, "direcao": "baixo" }
   }
 }

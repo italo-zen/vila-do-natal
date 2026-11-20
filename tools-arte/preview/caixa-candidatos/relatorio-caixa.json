@@ -1,0 +1,314 @@
+[
+ {
+  "k": "quarto:3,0",
+  "seed": 1,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 256,
+    "y": 96,
+    "profundidade": 256
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:1,3",
+  "seed": 2,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 160,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:2,3",
+  "seed": 3,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 192,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "quarto:3,2",
+  "seed": 4,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 256,
+    "y": 160,
+    "profundidade": 320
+   }
+  ]
+ },
+ {
+  "k": "cozinha:1,4",
+  "seed": 5,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 160,
+    "y": 224,
+    "profundidade": 384
+   }
+  ]
+ },
+ {
+  "k": "cozinha:5,3",
+  "seed": 6,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 288,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "cozinha:2,0",
+  "seed": 7,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 192,
+    "y": 96,
+    "profundidade": 256
+   }
+  ]
+ },
+ {
+  "k": "quarto:2,0",
+  "seed": 9,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 224,
+    "y": 96,
+    "profundidade": 256
+   }
+  ]
+ },
+ {
+  "k": "quarto:2,1",
+  "seed": 10,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 224,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "quarto:2,2",
+  "seed": 11,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 224,
+    "y": 160,
+    "profundidade": 320
+   }
+  ]
+ },
+ {
+  "k": "cozinha:2,3",
+  "seed": 13,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 192,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "escritorio:5,1",
+  "seed": 14,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 288,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "escritorio:4,2",
+  "seed": 17,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 256,
+    "y": 160,
+    "profundidade": 320
+   }
+  ]
+ },
+ {
+  "k": "escritorio:6,1",
+  "seed": 19,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 320,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "quarto:1,2",
+  "seed": 20,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 192,
+    "y": 160,
+    "profundidade": 320
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:0,0",
+  "seed": 22,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 128,
+    "y": 96,
+    "profundidade": 256
+   }
+  ]
+ },
+ {
+  "k": "quarto:2,3",
+  "seed": 23,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 224,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:0,1",
+  "seed": 30,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 128,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "cozinha:3,0",
+  "seed": 31,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 224,
+    "y": 96,
+    "profundidade": 256
+   }
+  ]
+ },
+ {
+  "k": "escritorio:4,1",
+  "seed": 32,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 256,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "cozinha:1,3",
+  "seed": 33,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 160,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "cozinha:1,1",
+  "seed": 34,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 160,
+    "y": 128,
+    "profundidade": 288
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:0,3",
+  "seed": 57,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 128,
+    "y": 192,
+    "profundidade": 352
+   }
+  ]
+ },
+ {
+  "k": "quarto_casal:0,2",
+  "seed": 78,
+  "imagens": [
+   {
+    "chave": "spr_enfeite_caixa",
+    "quadro": 0,
+    "x": 128,
+    "y": 160,
+    "profundidade": 320
+   }
+  ]
+ }
+]

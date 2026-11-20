@@ -1,4 +1,4 @@
-import type { NickSorteado, PecaSorteada, Plano } from '../../domain/plano/Plano';
+import type { CaixaSorteada, NickSorteado, PecaSorteada, Plano } from '../../domain/plano/Plano';
 import type { Rng } from '../../domain/shared/Rng';
 import type { Fase } from '../../domain/progresso/Fase';
 import type { PerfilDeArte } from '../arte/PerfilDeArte';
@@ -24,11 +24,12 @@ export interface EntradaDoPlano {
 const k = (m: string, x: number, y: number) => `${m}:${x}:${y}`;
 
 /** Mapa que tem o item de uma fase: interruptor (luzes), peça N (parteN) ou caixa (enfeites). Nenhum nome de cômodo no código (ADR-013 seção 1). */
-function alvoDaMissao(m: MissaoCarregada, todos: ReadonlyMap<string, MapaDoJogo>, pecas: readonly PecaSorteada[]): string {
+function alvoDaMissao(m: MissaoCarregada, todos: ReadonlyMap<string, MapaDoJogo>, pecas: readonly PecaSorteada[], caixa: CaixaSorteada): string {
   for (const fase of Object.keys(m.missao.conquistas)) {
     const ordem = fase === 'luzes' ? undefined : ordemDaFase(fase as Fase);
     if (ordem !== undefined) return pecas.find((p) => p.ordem === ordem)!.mapa;
-    const tipo = fase === FASE_DO_ENFEITE ? 'enfeite' : fase === 'luzes' ? 'interruptor' : undefined;
+    if (fase === FASE_DO_ENFEITE) return caixa.mapa;
+    const tipo = fase === 'luzes' ? 'interruptor' : undefined;
     if (tipo) for (const mp of todos.values()) if (mp.objetos.some((o) => o.tipo === tipo)) return mp.id;
   }
   throw new Error(`Sorteio: missão "${m.id}" sem item para o farejar.`);
@@ -38,11 +39,11 @@ function alvoDaMissao(m: MissaoCarregada, todos: ReadonlyMap<string, MapaDoJogo>
  * Tiles de Nick válidos de uma área nesta missão, com as 3 peças do plano: regra N004 a N007, alcance (candidatosDeNickDaRegra) e N009:
  * com o tile bloqueado, a rota de toda condução da missão continua existindo. Rota só é refeita se o tile cai na rota base.
  */
-export function tilesDoNick(e: EntradaDoPlano, missaoId: string, regra: RegraDoNick, area: string, pecas: readonly PecaSorteada[]): { x: number; y: number }[] {
-  const base = candidatosDeNickDaRegra(e.todos as Map<string, MapaDoJogo>, e.missoes, missaoId, { ...regra, areas: [area] }, e.perfil, pecas, e.sorteio.pecas.areas);
+export function tilesDoNick(e: EntradaDoPlano, missaoId: string, regra: RegraDoNick, area: string, pecas: readonly PecaSorteada[], caixa?: CaixaSorteada): { x: number; y: number }[] {
+  const base = candidatosDeNickDaRegra(e.todos as Map<string, MapaDoJogo>, e.missoes, missaoId, { ...regra, areas: [area] }, e.perfil, pecas, e.sorteio.pecas.areas, caixa);
   if (base.length === 0) return [];
   const missao = e.missoes.find((m) => m.id === missaoId)!;
-  const comPlano = mapasComPlano(e.todos, { pecas });
+  const comPlano = mapasComPlano(e.todos, { pecas, caixa });
   const fases = Object.keys(missao.missao.conducao) as Fase[];
   // Rota base de cada fase (primeira partida com rota).
   const emRota = new Set<string>();
@@ -73,7 +74,7 @@ export function tilesDoNick(e: EntradaDoPlano, missaoId: string, regra: RegraDoN
 
 /**
  * Sorteia o plano da partida (GDD 21.16; ADR-013 seção 2). Ordem de consumo do RNG (contrato; mudar muda todo plano):
- * 1. peças 1, 2 e 3: `inteiro` da área entre as ainda não usadas; se a área tem mais de um cômodo, `inteiro` do cômodo; `inteiro` do tile
+ * 1. peças 1, 2 e 3 (e, depois delas, a caixa: `inteiro` da área entre as que sobraram, do cômodo se houver mais de um, e do tile): `inteiro` da área entre as ainda não usadas; se a área tem mais de um cômodo, `inteiro` do cômodo; `inteiro` do tile
  *    (lista na ordem y, x). 2. Nick de cada missão do manifesto, em ordem: `inteiro` da área elegível e `inteiro` do tile.
  * `areaAnteriorDaPeca1`: a peça 1 não cai nessa área (anti-repetição só da entropia; com semente fixa não se passa).
  */
@@ -91,19 +92,26 @@ export function sortearPlano(e: EntradaDoPlano, rng: Rng, semente: number, areaA
     const t = tiles[rng.inteiro(tiles.length)];
     pecas.push({ ordem: ordem as 1 | 2 | 3, area: area.id, comodo: comodo.id, mapa: comodo.mapa, x: t.x, y: t.y });
   }
+  // Caixa de enfeite (GDD 21.16.12): na área que sobra depois das peças (sorteio uniforme entre as que sobrarem), cômodo e tile como nas peças.
+  const sobras = sorteio.pecas.areas.filter((a) => !usadas.has(a.id));
+  const areaDaCaixa = sobras[rng.inteiro(sobras.length)];
+  const comodoDaCaixa = areaDaCaixa.comodos.length > 1 ? areaDaCaixa.comodos[rng.inteiro(areaDaCaixa.comodos.length)] : areaDaCaixa.comodos[0];
+  const tilesDaCaixa = candidatosDePeca(e.todos.get(comodoDaCaixa.mapa)!, e.perfil.sala.linhas, comodoDaCaixa.retangulo, areaDaCaixa.passagem);
+  const tc = tilesDaCaixa[rng.inteiro(tilesDaCaixa.length)];
+  const caixa: CaixaSorteada = { area: areaDaCaixa.id, comodo: comodoDaCaixa.id, mapa: comodoDaCaixa.mapa, x: tc.x, y: tc.y };
   const nick: Record<string, NickSorteado> = {};
   for (const m of e.missoes) {
     const regra = sorteio.nick[m.id];
     if (!regra) continue;
-    const areaDaPeca = regra.foraDaAreaDaPeca !== undefined ? pecas[regra.foraDaAreaDaPeca - 1].mapa : undefined;
+    const areaDaPeca = regra.foraDaAreaDaPeca !== undefined ? pecas[regra.foraDaAreaDaPeca - 1].mapa : regra.foraDaAreaDaCaixa ? caixa.mapa : undefined;
     const elegiveis = regra.areas
       .filter((a) => a !== areaDaPeca)
-      .map((a) => ({ area: a, tiles: tilesDoNick(e, m.id, regra, a, pecas) }))
+      .map((a) => ({ area: a, tiles: tilesDoNick(e, m.id, regra, a, pecas, caixa) }))
       .filter((x) => x.tiles.length > 0);
     if (elegiveis.length === 0) throw new Error(`Sorteio: nenhuma área elegível para o Nick em "${m.id}".`);
     const el = elegiveis[rng.inteiro(elegiveis.length)];
     const t = el.tiles[rng.inteiro(el.tiles.length)];
-    nick[m.id] = { missao: m.id, mapa: el.area, x: t.x, y: t.y, direcao: regra.direcao, alvo: alvoDaMissao(m, e.todos, pecas) };
+    nick[m.id] = { missao: m.id, mapa: el.area, x: t.x, y: t.y, direcao: regra.direcao, alvo: alvoDaMissao(m, e.todos, pecas, caixa) };
   }
-  return { semente, pecas: pecas as unknown as Plano['pecas'], nick };
+  return { semente, pecas: pecas as unknown as Plano['pecas'], caixa, nick };
 }
