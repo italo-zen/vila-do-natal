@@ -555,3 +555,7 @@ Sem bug confirmado. Observações para o Dev:
 - Nenhum bug P0 a P3. 4 sobrinhos: caminhada em 4 quadros (0>1>2>3>0, sem salto de ordem) e parado nas 4 direções, sem corte, sem erro de console; seleção e tela de fim com os rostos novos sem cor errada.
 - Observação P3: DanDan e TuTu (cabelo cacheado, loiro-claro x castanho) ficam parecidos na Sala em escala pequena; a roupa (laranja x azul-marinho) ajuda. Decisão do Diretor.
 - `v110-portas.mjs` dá 3 "FALHA" em `fechada ...` (quarto_casal-sala, banheiro1-quarto, banheiro_escritorio-escritorio): é expectativa antiga do script; essas portas abrem desde a 1.3.0. Usar `v130-portas.mjs`.
+
+## 1.4.0, rodada 1
+- Nenhum bug P0 a P3 de jogo. 40 planos (sementes 108..4047): caixa sempre em cozinha, quarto, escritório ou quarto do casal; 4 áreas distintas (3 peças + caixa); tile de piso, fora de móvel e fora da passagem da Cozinha; Nick de `enfeites` nunca na área da caixa; mesma semente repete o plano. Farejar da fase enfeites: 6 de 6 com a seta na porta certa.
+- Simulação (v140-pl27.mjs, 21 partidas, 4 sobrinhos): `__irACaixa` sempre devolveu vizinho alcançável; conduções 13 a 22 passos, todas 2×. Fim e créditos confirmados em 1 partida (v140-fim.mjs); nas outras os scripts expiraram (polling lento sob 7 processos), falha de script. Várias leituras de passos nulas, idem.

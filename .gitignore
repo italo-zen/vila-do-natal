@@ -20,3 +20,6 @@ assets/**/preview.png
 
 # Linha de base 0.10.0 (item 121, QA 2026-11-09): capturas geradas localmente, fora do Git
 qa/baseline-0100/
+
+# Propostas descartadas dos sobrinhos (Diretor, 2026-11-20): não versionar
+tools-arte/proposta-sobrinhos-opus/

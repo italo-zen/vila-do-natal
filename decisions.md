@@ -813,8 +813,19 @@
 ## 2026-11-19 — ADR-013 aceito (sorteio das peças e do Nick) e padrões aplicados
 - **Decisões (Orquestrador, o Diretor dorme; ordem dele: "realize todas as melhorias"):** (1) ADR-013 aceito: `content/sorteio.json`, candidatos calculados dos mapas por função pura, RNG mulberry32 injetável, manifesto schema 4, plano só em memória, `nick.dorme`/`nick.alvo` derivados, gancho de QA `__semente`/`__plano` só sob `__QA__`; (2) Nick das luzes (marco1) usa distância Chebyshev ≥ 2 da chegada (peças seguem Manhattan); (3) 21.16.1: remover "nem vizinho dela" (vale a tabela e a conectividade); (4) o gancho de semente existe só no build de QA (segue o código); (5) anti-repetição: a peça 1 não cai na mesma área da partida anterior (só com semente da entropia, só em memória); (6) sorteio em duas etapas (área uniforme, depois tile uniforme); (7) a semente não aparece na tela do playtest; (8) GDD 16.2.2/N1/E21 desatualizados corrigidos.
 - **Quem decidiu:** Orquestrador (padrão aplicado), a confirmar com o Diretor.
+- **Diretor (pedido) e Produto (padrão), 2026-11-20 — caixa de enfeite sorteada:** "sorteie também o enfeite". GDD 21.16.12 e backlog 195 a 197: a caixa nasce na única área que sobra depois das 3 peças (entre cozinha, quarto, escritório e quarto do casal), em tile candidato com as regras das peças (1 vizinho livre); nunca na Sala, no Hall, nos banheiros nem no Quartinho; o objeto sai do mapa e entra pelo plano; `nick.alvo` da fase `enfeites` = área da caixa; Nick nunca na área da caixa; dica e textos não mudam; decoração do explorar sem conflito; sem arte nova. Substitui o "caixa fixa no Escritório" de 21.16.8.
 - **Produto (2026-11-19):** GDD 21.16 e backlog 187 a 194 alinhados ao ADR-013. Sobre o círculo de luz: a regra de 3 tiles do 14.5 vale só para o interruptor; o Nick das luzes não precisa estar dentro dele (GDD 21.16.10); 16.2.2 e N1 corrigidos; E21 marcado obsoleto (substituído por PL5 e PL17).
 
 ## 2026-11-19 — Desvios do Dev no sorteio, aceitos por padrão
 - **Decisões (Orquestrador):** (1) enfeites de decoração (só no modo explorar, depois das peças) não excluem tiles de peça nem de Nick; (2) campo `passagem` em `content/sorteio.json` (área `cozinha`, retângulo (3,2) 2×2): a peça e o Nick não ficam nele; (3) faixa da barra: "fora das 2 últimas linhas da tela"; (4) `PECA_FIXA_E_AVISO = true` até a Arte regerar os mapas sem `peca`, depois vira `false` (S008 vira erro); (5) gancho extra `?plano=referencia` só no build de QA (posições antigas), usado pelo smoke-navegador.
 - **Quem decidiu:** Orquestrador (padrão aplicado), a confirmar com o Diretor.
+
+## 2026-11-20 — Caixa de enfeite sorteada e nova LoLô (Diretor)
+- **Pedidos literais:** "sorteie também o enfeite" e "refaça do zero os sobrinhos, queria testar uma nova versão deles, feito pelo Opus; me mande para aprovar" (depois: "peça ao Opus fazer 1 sobrinho só; se aprovar um, ele replica o processo para os outros e também para o Nick").
+- **Decisões:** (1) caixa de enfeite sorteada na única área que sobra depois das 3 peças (GDD 21.16.12); Escritório com 4 candidatos (total 24 tiles) por padrão do Dev, a confirmar com o Produto; versão 1.4.0; (2) nova LoLô feita do zero pelo Opus em tools-arte/proposta-sobrinhos-opus/, aguardando aprovação do Diretor (laços simples, saia em A, cabelo mais limpo); nada trocado no jogo.
+- **Quem decidiu:** Diretor (1 e 2), Orquestrador (padrões).
+
+## 2026-11-20 — Personagens congelados (Diretor)
+- **Retorno literal:** "está péssimo a nova LoLô, mantenha a antiga e não vamos mais alterar os personagens."
+- **Decisão:** a LoLô nova do Opus (v1 e v2) é descartada; ficam os sprites que estão no jogo (acabamento 3/4 da 1.3.1) para LoLô, BiBi, DanDan, TuTu e Nick. Nenhuma alteração adicional nos personagens. As propostas em tools-arte/proposta-sobrinhos-opus/ ficam fora do git. O trabalho do Opus na arte dos sobrinhos termina aqui.
+- **Quem decidiu:** Diretor.
