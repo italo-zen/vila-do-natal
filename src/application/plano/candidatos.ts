@@ -18,8 +18,8 @@ export interface Tile2 {
 const chave = (x: number, y: number) => `${x},${y}`;
 const manhattan = (a: Tile2, b: Tile2) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 
-/** Cópia do mapa sem objetos `peca` (as peças do plano são injetadas por `mapasComPlano`). */
-export const semPecas = (m: MapaDoJogo): MapaDoJogo => ({ ...m, objetos: m.objetos.filter((o) => o.tipo !== 'peca') });
+/** Cópia do mapa sem objetos `peca` nem `enfeite` (a caixa) (as peças do plano são injetadas por `mapasComPlano`). */
+export const semPecas = (m: MapaDoJogo): MapaDoJogo => ({ ...m, objetos: m.objetos.filter((o) => o.tipo !== 'peca' && o.tipo !== 'enfeite') });
 
 const portasDe = (m: MapaDoJogo): Tile2[] => m.objetos.filter((o) => o.tipo === 'porta').map((o) => ({ x: o.x, y: o.y }));
 
@@ -89,6 +89,8 @@ export function candidatosDePeca(mapa: MapaDoJogo, linhasDaTela: number, retangu
 
 export interface OpcoesDoNick {
   linhasDaTela: number;
+  /** Caixa de enfeite do plano nesta área, se houver (o Nick não dorme encostado nela). */
+  caixa?: Tile2;
   /** Tiles de peça do plano nesta área (a peça e os vizinhos dela não servem). */
   pecas: readonly Tile2[];
   /** Destino da condução da missão, quando está nesta área (não serve). */
@@ -108,11 +110,11 @@ export interface OpcoesDoNick {
 export function candidatosDoNick(mapa: MapaDoJogo, opcoes: OpcoesDoNick): Tile2[] {
   const m = semPecas(mapa);
   const pecas = opcoes.pecas;
-  const mComPecas: MapaDoJogo = { ...m, objetos: [...m.objetos, ...pecas.map((p) => ({ tipo: 'peca', x: p.x, y: p.y, dados: {} }))] };
+  const mComPecas: MapaDoJogo = { ...m, objetos: [...m.objetos, ...pecas.map((p) => ({ tipo: 'peca', x: p.x, y: p.y, dados: {} })), ...(opcoes.caixa ? [{ tipo: 'enfeite', x: opcoes.caixa.x, y: opcoes.caixa.y, dados: {} }] : [])] };
   const ocup = new Set(m.objetos.filter((o) => o.tipo !== 'movel').map((o) => chave(o.x, o.y)));
   const portas = portasDe(m);
   const arvore = new Set(tilesDaArvore(m).map((t) => chave(t.x, t.y)));
-  const caixas = m.objetos.filter((o) => o.tipo === 'enfeite');
+  const caixas = opcoes.caixa ? [opcoes.caixa] : [];
   const out: Tile2[] = [];
   for (let y = 0; y < m.altura; y++) {
     for (let x = 0; x < m.largura; x++) {

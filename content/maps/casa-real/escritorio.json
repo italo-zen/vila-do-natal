@@ -111,14 +111,6 @@
       "y": 4
     },
     {
-      "estadoInicial": "escondida",
-      "id": "enfeite",
-      "ordem": 4,
-      "tipo": "enfeite",
-      "x": 5,
-      "y": 1
-    },
-    {
       "h": 2,
       "id": "cama_do_escritorio",
       "nome": "Cama do escritório",

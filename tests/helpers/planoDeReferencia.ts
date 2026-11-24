@@ -16,6 +16,7 @@ export const PLANO_DE_REFERENCIA: Plano = {
     { ordem: 2, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 3, y: 1 },
     { ordem: 3, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 5, y: 3 },
   ],
+  caixa: { area: 'escritorio', comodo: 'escritorio', mapa: 'escritorio', x: 5, y: 1 },
   nick: {
     marco1: { missao: 'marco1', mapa: 'sala', x: 9, y: 5, direcao: 'baixo', alvo: 'sala' },
     parte1: { missao: 'parte1', mapa: 'cozinha', x: 1, y: 1, direcao: 'baixo', alvo: 'sala' },

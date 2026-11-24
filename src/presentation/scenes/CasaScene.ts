@@ -259,6 +259,8 @@ export class CasaScene extends Phaser.Scene {
   private fatorConducao = 1;
   /** Passos da rota da condução atual (o gancho de QA lê; não muda o jogo). */
   passosDaConducao = 0;
+  /** Quantas conduções começaram na sessão (o gancho de QA distingue uma nova da anterior). */
+  conducoesIniciadas = 0;
   /** Fase que a condução atual conclui ao chegar (`luzes`, `parte1` a `parte3`). */
   private faseDaConducao: Fase = 'luzes';
 
@@ -369,6 +371,7 @@ export class CasaScene extends Phaser.Scene {
     this.indiceRota = 0;
     this.fatorConducao = fatorDaConducao(r.passos);
     this.passosDaConducao = r.passos;
+    this.conducoesIniciadas += 1;
     this.faseDaConducao = f;
     this.estado = 'conducao';
     this.barra.setVisible(false);
@@ -962,8 +965,10 @@ export class CasaScene extends Phaser.Scene {
     const tile = this.perfil.tile;
     const x = o.x * tile;
     const y = o.y * tile;
-    this.brilhoDoTile(x, y);
-    this.registrar(this.add.image(x, y, CHAVE_DO_ENFEITE.caixa, 0).setOrigin(0, 0).setDepth(y + tile));
+    // Como a peça: a caixa e o halo sempre acima dos móveis (a caixa nasce em qualquer cômodo candidato, GDD 21.16.12).
+    const sobe = ALTURA_MAXIMA_DE_MOVEL_EM_TILES * tile;
+    this.brilhoDoTile(x, y, sobe);
+    this.registrar(this.add.image(x, y, CHAVE_DO_ENFEITE.caixa, 0).setOrigin(0, 0).setDepth(y + tile + sobe));
   }
 
   /** Brilho dourado pulsante atrás de um objeto de tile (GDD 15.2.4; a peça e a caixa usam o mesmo, ADR-006 seção 2.4). */

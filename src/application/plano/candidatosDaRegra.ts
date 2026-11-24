@@ -13,6 +13,7 @@ export function candidatosDeNickDaRegra(
   perfil: PerfilDeArte,
   pecas: readonly { mapa: string; x: number; y: number }[] = [],
   areasDePeca: readonly AreaDePeca[] = [],
+  caixa?: { mapa: string; x: number; y: number },
 ): { mapa: string; x: number; y: number }[] {
   const missao = missoes.find((m) => m.id === idDaMissao);
   const destinos = Object.values(missao?.missao.conducao ?? {});
@@ -26,7 +27,7 @@ export function candidatosDeNickDaRegra(
       if (sp) luz = { chegada: { x: sp.x, y: sp.y }, raio: perfil.luz.raioEmTiles };
     }
     const d = destinos.find((q) => q.mapa === area);
-    for (const t of candidatosDoNick(m, { linhasDaTela: perfil.sala.linhas, pecas: pecas.filter((p) => p.mapa === area), destino: d ? { x: d.x, y: d.y } : undefined, luz, passagem: areasDePeca.find((a) => a.id === area)?.passagem })) out.push({ mapa: area, ...t });
+    for (const t of candidatosDoNick(m, { linhasDaTela: perfil.sala.linhas, pecas: pecas.filter((p) => p.mapa === area), destino: d ? { x: d.x, y: d.y } : undefined, luz, caixa: caixa && caixa.mapa === area ? { x: caixa.x, y: caixa.y } : undefined, passagem: areasDePeca.find((a) => a.id === area)?.passagem })) out.push({ mapa: area, ...t });
   }
   return out;
 }

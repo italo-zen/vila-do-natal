@@ -24,6 +24,7 @@ describe('sortearPlano (GDD 21.16; ADR-013 seção 7, itens 4 a 6)', () => {
 
   it('propriedade, 1000 sementes: o plano é sempre válido', () => {
     const areasDePeca1 = new Set<string>();
+    const caixasPorArea = new Set<string>();
     for (let semente = 0; semente < 1000; semente++) {
       const p = plano(semente);
       // 3 áreas distintas, em ordem 1, 2, 3, fora de Sala, Hall, banheiros e Quartinho.
@@ -39,23 +40,31 @@ describe('sortearPlano (GDD 21.16; ADR-013 seção 7, itens 4 a 6)', () => {
       expect(p.nick.parte1.mapa).toBe('sala');
       expect(p.nick.parte2.mapa).not.toBe(p.pecas[1].mapa);
       expect(p.nick.parte3.mapa).not.toBe(p.pecas[2].mapa);
-      expect(p.nick.enfeites.mapa).not.toBe('escritorio');
+      // Caixa (GDD 21.16.12): na única área que sobra, em tile candidato; nunca na área de peça; o Nick dos enfeites nunca na área da caixa.
+      const sobra = ['cozinha', 'quarto', 'escritorio', 'quarto_casal'].filter((a) => !p.pecas.some((x) => x.area === a));
+      expect(sobra).toHaveLength(1);
+      expect(p.caixa.area, `semente ${semente}`).toBe(sobra[0]);
+      expect(candidatosDePeca(c.todosOsMapas.get(p.caixa.mapa)!, c.perfil.sala.linhas, undefined, c.sorteio.pecas.areas.find((a) => a.id === p.caixa.area)!.passagem).some((t) => t.x === p.caixa.x && t.y === p.caixa.y), `semente ${semente}: caixa`).toBe(true);
+      expect(p.nick.enfeites.mapa).not.toBe(p.caixa.mapa);
+      expect(p.nick.enfeites.alvo).toBe(p.caixa.mapa);
+      caixasPorArea.add(p.caixa.area);
       expect(PROIBIDAS.filter((a) => a !== 'sala').includes(p.nick.parte2.mapa)).toBe(false);
       // Alvo do farejar: Sala (interruptor) nas luzes, mapa da peça N na parte N, mapa da caixa nos enfeites.
       expect(p.nick.marco1.alvo).toBe('sala');
       expect(p.nick.parte1.alvo).toBe(p.pecas[0].mapa);
       expect(p.nick.parte2.alvo).toBe(p.pecas[1].mapa);
       expect(p.nick.parte3.alvo).toBe(p.pecas[2].mapa);
-      expect(p.nick.enfeites.alvo).toBe('escritorio');
       // `mapasComPlano` põe exatamente 3 peças e todas as rotas de condução existem com o Nick da missão bloqueado.
       const mapas = mapasComPlano(c.todosOsMapas, p);
       expect([...mapas.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'peca'))).toHaveLength(3);
+      expect([...mapas.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'enfeite'))).toHaveLength(1);
       for (const m of c.missoes) {
         const n = p.nick[m.id];
-        const tiles = tilesDoNick(e, m.id, c.sorteio.nick[m.id], n.mapa, p.pecas);
+        const tiles = tilesDoNick(e, m.id, c.sorteio.nick[m.id], n.mapa, p.pecas, p.caixa);
         expect(tiles.some((t) => t.x === n.x && t.y === n.y), `semente ${semente}: Nick de ${m.id} em ${n.mapa} (${n.x}, ${n.y})`).toBe(true);
       }
     }
+    expect(caixasPorArea.size).toBe(4); // a caixa também já caiu em todas as áreas
     expect(areasDePeca1.size).toBe(4); // a peça 1 já caiu em todas as áreas sorteáveis
   }, 120_000);
 

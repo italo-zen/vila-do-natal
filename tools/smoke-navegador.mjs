@@ -132,6 +132,7 @@ const PX_POR_QUADRO = (VELOCIDADE_TILES_S * T * 16) / 1000;
 const subareas = Object.fromEntries(manifesto.maps.map((m) => [m.id, lerJson(`content/${m.file}`)]));
 // Os mapas não têm mais `peca` (ADR-013): o smoke usa as posições de `?plano=referencia` (as de antes do sorteio), como o gancho de QA.
 for (const [mapa, ordem, x, y] of [['sala', 1, 0, 5], ['cozinha', 2, 3, 1], ['cozinha', 3, 5, 3]]) subareas[mapa].objetos.push({ tipo: 'peca', ordem, x, y });
+subareas.escritorio.objetos.push({ tipo: 'enfeite', ordem: 4, x: 5, y: 1 }); // caixa de referência (a do plano)
 const missao = lerJson('content/missions/marco1.json');
 const deslocamentoDe = (s) => ({ x: Math.floor((TELA.colunas - s.largura) / 2), y: Math.floor((TELA.linhas - s.altura) / 2) });
 const BLOQUEANTES = new Set(['arvore', 'examinavel']);

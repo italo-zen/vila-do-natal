@@ -415,7 +415,8 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
 
   // Caixa de enfeite (ADR-006 seções 2 e 9): T006 (uma caixa, ordem 4, escondida), T007 (tile), T008 (subárea do farejar).
   const caixas = [...todos.values()].flatMap((m) => m.objetos.filter((o) => o.tipo === 'enfeite').map((o) => ({ mapa: m, o })));
-  if (caixas.length !== 1) erros.push(`T006 Deve haver exatamente uma caixa de enfeite (tipo enfeite); há ${caixas.length} (ADR-006 seção 2.2).`);
+  // Com o sorteio (ADR-013, GDD 21.16.12) a caixa vem do plano: o mapa cru não tem nenhuma.
+  if (caixas.length !== 1 && !(e.sorteio && caixas.length === 0)) erros.push(`T006 Deve haver exatamente uma caixa de enfeite (tipo enfeite); há ${caixas.length} (ADR-006 seção 2.2).`);
   const missaoDosEnfeites = missoes.find((m) => FASE_DO_ENFEITE in m.missao.conquistas);
   for (const { mapa, o } of caixas) {
     const rotulo = `Subárea "${mapa.id}": enfeite em (${o.x}, ${o.y})`;
@@ -536,6 +537,26 @@ function analisarConteudo(e: EntradaDeConteudo): { erros: string[]; avisos: stri
       } else if (fase === FASE_DO_ENFEITE) {
         // Caixa de enfeite: parte dos vizinhos livres dela (ADR-006 seção 2.5).
         partidas = pontosDaCaixa(todos);
+        if (partidas.length === 0 && e.sorteio) {
+          // Por candidato (ADR-013): com a caixa em cada tile do pool, a rota até o destino existe.
+          const sem: string[] = [];
+          let total = 0;
+          for (const a of e.sorteio.pecas.areas) {
+            for (const c of a.comodos) {
+              const m = todos.get(c.mapa);
+              if (!m) continue;
+              for (const t of candidatosDePeca(m, tela.linhas, c.retangulo, a.passagem)) {
+                total += 1;
+                const comCaixa = mapasComPlano(todos, { pecas: [], caixa: { mapa: c.mapa, x: t.x, y: t.y } });
+                const pontos = vizinhosLivresPorAresta(comCaixa.get(c.mapa)!, t.x, t.y).map((p) => ({ mapa: c.mapa, ...p }));
+                if (!pontos.some((p) => calcularRotaDeConducao(comCaixa, p, { mapa: d.mapa, x: d.x, y: d.y }, concluida, ctx))) sem.push(`${c.mapa} (${t.x}, ${t.y})`);
+              }
+            }
+          }
+          if (total > 0 && sem.length === total) erros.push(`${rotulo}: destino ${d.mapa} (${d.x}, ${d.y}) sem rota a partir da caixa de enfeite (em nenhum dos ${total} tiles candidatos).`);
+          else if (sem.length > 0) erros.push(`${rotulo}: com a caixa em ${sem.slice(0, 5).join(', ')}${sem.length > 5 ? ` e mais ${sem.length - 5}` : ''} o destino ${d.mapa} (${d.x}, ${d.y}) fica sem rota.`);
+          continue;
+        }
       } else if (ordem !== undefined && FASE_DA_PECA[ordem] === fase) {
         const peca = pecas.find((p) => Number(p.o.dados.ordem) === ordem);
         if (peca) {

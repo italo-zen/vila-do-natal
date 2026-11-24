@@ -27,6 +27,7 @@ const PLANO_DE_REFERENCIA = {
     { ordem: 2, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 3, y: 1 },
     { ordem: 3, area: 'cozinha', comodo: 'cozinha', mapa: 'cozinha', x: 5, y: 3 },
   ],
+  caixa: { area: 'escritorio', comodo: 'escritorio', mapa: 'escritorio', x: 5, y: 1 },
   nick: {
     marco1: { missao: 'marco1', mapa: 'sala', x: 9, y: 5, direcao: 'baixo', alvo: 'sala' },
     parte1: { missao: 'parte1', mapa: 'cozinha', x: 1, y: 1, direcao: 'baixo', alvo: 'sala' },
@@ -49,6 +50,7 @@ interface CasaPorDentro {
   interagir(time: number): void;
   rota: unknown[];
   fatorConducao: number;
+  conducoesIniciadas: number;
   passosDaConducao: number;
   faseDaConducao: string;
   time: { now: number };
@@ -241,26 +243,29 @@ export function instalarGancho(jogo: Phaser.Game): void {
    * PL27 (passos robustos para jogar uma partida inteira sem coordenadas escritas à mão; build de QA): leva o sobrinho ao vizinho livre
    * alcançável da peça `n` do plano, virado para ela, e abre a área da peça se preciso. Devolve onde ficou, ou null se não deu.
    */
-  janela.__irAPeca = (n: number) => {
+  const irAoItem = (pegar: (plano: { pecas: { ordem: number; mapa: string; x: number; y: number }[]; caixa: { mapa: string; x: number; y: number } }) => { mapa: string; x: number; y: number } | undefined) => {
     const c = casa();
-    const sv = jogo.registry.get('servicos') as { sessao: { plano: { pecas: { ordem: number; mapa: string; x: number; y: number }[] }; mapas: Map<string, MapaDoJogo> } };
-    const peca = sv.sessao.plano.pecas.find((p) => p.ordem === n);
-    if (!c || !peca) return null;
-    const mapa = sv.sessao.mapas.get(peca.mapa);
+    const sv = jogo.registry.get('servicos') as { sessao: { plano: { pecas: { ordem: number; mapa: string; x: number; y: number }[]; caixa: { mapa: string; x: number; y: number } }; mapas: Map<string, MapaDoJogo> } };
+    const alvo = pegar(sv.sessao.plano);
+    if (!c || !alvo) return null;
+    const mapa = sv.sessao.mapas.get(alvo.mapa);
     if (!mapa) return null;
-    const v = vizinhosLivresAlcancaveis(mapa, peca.x, peca.y)[0];
+    const v = vizinhosLivresAlcancaveis(mapa, alvo.x, alvo.y)[0];
     if (!v) return null;
     const spawn = mapa.objetos.find((o) => o.tipo === 'spawn');
-    if (c.mapa?.id !== peca.mapa) {
+    if (c.mapa?.id !== alvo.mapa) {
       if (!spawn) return null;
       c.transitando = false;
       c.estado = 'livre';
-      c.carregarSubarea(peca.mapa, String(spawn.dados.nome));
+      c.carregarSubarea(alvo.mapa, String(spawn.dados.nome));
     }
-    const dir = v.x < peca.x ? 'direita' : v.x > peca.x ? 'esquerda' : v.y < peca.y ? 'baixo' : 'cima';
+    const dir = v.x < alvo.x ? 'direita' : v.x > alvo.x ? 'esquerda' : v.y < alvo.y ? 'baixo' : 'cima';
     (janela.__posicionar as (x: number, y: number, d: string) => boolean)(v.x, v.y, dir);
-    return { mapa: peca.mapa, x: v.x, y: v.y, dir, peca: { x: peca.x, y: peca.y } };
+    return { mapa: alvo.mapa, x: v.x, y: v.y, dir, peca: { x: alvo.x, y: alvo.y } };
   };
+  janela.__irAPeca = (n: number) => irAoItem((pl) => pl.pecas.find((p) => p.ordem === n));
+  /** Como `__irAPeca`, para a caixa de enfeite do plano (GDD 21.16.12); depois `__coletarPeca()` aperta o A. Build de QA. */
+  janela.__irACaixa = () => irAoItem((pl) => pl.caixa);
   /** Aperta o A como no jogo, de onde o sobrinho está (depois de `__irAPeca`, coleta a peça). Build de QA. */
   janela.__coletarPeca = () => {
     const c = casa();
@@ -274,8 +279,28 @@ export function instalarGancho(jogo: Phaser.Game): void {
    */
   janela.__passosDaConducao = () => {
     const cena = jogo.scene.getScene('Casa') as unknown as CasaPorDentro | undefined;
-    if (!cena || !cena.passosDaConducao) return null;
-    return { fase: cena.faseDaConducao, passos: cena.passosDaConducao, fator: cena.fatorConducao, dobro: cena.fatorConducao > 1, emAndamento: cena.estado === 'conducao' };
+    if (!cena || !cena.conducoesIniciadas) return null;
+    return { n: cena.conducoesIniciadas, fase: cena.faseDaConducao, passos: cena.passosDaConducao, fator: cena.fatorConducao, dobro: cena.fatorConducao > 1, emAndamento: cena.estado === 'conducao' };
+  };
+  /**
+   * Estado da partida para o roteiro de QA (PL27): fase atual, fases concluídas, se a partida acabou (caixa encaixada), os créditos
+   * abertos, as cenas ativas e se a Casa está ativa (`__irAPeca`, `__irACaixa` e `__coletarPeca` só agem com a Casa ativa: fora dela
+   * devolvem null/false). Build de QA.
+   */
+  janela.__estadoDaPartida = () => {
+    const sv = jogo.registry.get('servicos') as { sessao: { temPartida: boolean; fase: string; modo: string; faseConcluida(f: string): boolean } };
+    const tem = sv.sessao.temPartida;
+    const ativas = jogo.scene.getScenes(true).map((c) => c.scene.key);
+    return {
+      temPartida: tem,
+      fase: tem ? sv.sessao.fase : null,
+      concluidas: tem ? FASES.filter((f) => sv.sessao.faseConcluida(f)) : [],
+      partidaConcluida: tem ? sv.sessao.faseConcluida('enfeites') : false,
+      modo: tem ? sv.sessao.modo : null,
+      creditosAbertos: ativas.includes('Creditos'),
+      casaAtiva: ativas.includes('Casa'),
+      cenasAtivas: ativas,
+    };
   };
   /** Plano da partida atual como dado simples: semente, 3 peças (área, cômodo, mapa, tile) e Nick por missão (mapa, tile, alvo). Nunca vai à tela. */
   janela.__plano = () => {

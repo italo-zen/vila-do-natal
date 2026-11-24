@@ -15,7 +15,7 @@
         "area": "escritorio",
         "comodo": "escritorio",
         "mapa": "escritorio",
-        "x": 4,
+        "x": 5,
         "y": 1
       },
       {
@@ -27,11 +27,18 @@
         "y": 0
       }
     ],
+    "caixa": {
+      "area": "quarto",
+      "comodo": "quarto",
+      "mapa": "quarto",
+      "x": 3,
+      "y": 0
+    },
     "nick": {
       "marco1": {
         "missao": "marco1",
         "mapa": "sala",
-        "x": 2,
+        "x": 3,
         "y": 6,
         "direcao": "baixo",
         "alvo": "sala"
@@ -40,33 +47,33 @@
         "missao": "parte1",
         "mapa": "sala",
         "x": 0,
-        "y": 5,
+        "y": 8,
         "direcao": "baixo",
         "alvo": "cozinha"
       },
       "parte2": {
         "missao": "parte2",
-        "mapa": "quarto",
-        "x": 2,
-        "y": 3,
+        "mapa": "sala",
+        "x": 4,
+        "y": 6,
         "direcao": "baixo",
         "alvo": "escritorio"
       },
       "parte3": {
         "missao": "parte3",
-        "mapa": "sala",
-        "x": 4,
-        "y": 6,
+        "mapa": "quarto",
+        "x": 2,
+        "y": 1,
         "direcao": "baixo",
         "alvo": "quarto_casal"
       },
       "enfeites": {
         "missao": "enfeites",
-        "mapa": "quarto",
-        "x": 2,
-        "y": 1,
+        "mapa": "cozinha",
+        "x": 1,
+        "y": 3,
         "direcao": "baixo",
-        "alvo": "escritorio"
+        "alvo": "quarto"
       }
     }
   },
@@ -78,7 +85,7 @@
         "area": "escritorio",
         "comodo": "escritorio",
         "mapa": "escritorio",
-        "x": 4,
+        "x": 5,
         "y": 1
       },
       {
@@ -98,46 +105,53 @@
         "y": 3
       }
     ],
+    "caixa": {
+      "area": "quarto_casal",
+      "comodo": "quarto_casal",
+      "mapa": "quarto_casal",
+      "x": 1,
+      "y": 3
+    },
     "nick": {
       "marco1": {
         "missao": "marco1",
         "mapa": "sala",
-        "x": 6,
-        "y": 7,
+        "x": 2,
+        "y": 6,
         "direcao": "baixo",
         "alvo": "sala"
       },
       "parte1": {
         "missao": "parte1",
         "mapa": "sala",
-        "x": 2,
-        "y": 4,
+        "x": 9,
+        "y": 6,
         "direcao": "baixo",
         "alvo": "escritorio"
       },
       "parte2": {
         "missao": "parte2",
-        "mapa": "quarto_casal",
-        "x": 1,
-        "y": 3,
+        "mapa": "escritorio",
+        "x": 4,
+        "y": 2,
         "direcao": "baixo",
         "alvo": "cozinha"
       },
       "parte3": {
         "missao": "parte3",
-        "mapa": "quarto_casal",
-        "x": 0,
-        "y": 3,
+        "mapa": "cozinha",
+        "x": 3,
+        "y": 0,
         "direcao": "baixo",
         "alvo": "quarto"
       },
       "enfeites": {
         "missao": "enfeites",
-        "mapa": "cozinha",
-        "x": 3,
-        "y": 0,
+        "mapa": "quarto",
+        "x": 2,
+        "y": 1,
         "direcao": "baixo",
-        "alvo": "escritorio"
+        "alvo": "quarto_casal"
       }
     }
   },
@@ -169,28 +183,35 @@
         "y": 2
       }
     ],
+    "caixa": {
+      "area": "escritorio",
+      "comodo": "escritorio",
+      "mapa": "escritorio",
+      "x": 4,
+      "y": 1
+    },
     "nick": {
       "marco1": {
         "missao": "marco1",
         "mapa": "sala",
-        "x": 4,
-        "y": 5,
+        "x": 3,
+        "y": 6,
         "direcao": "baixo",
         "alvo": "sala"
       },
       "parte1": {
         "missao": "parte1",
         "mapa": "sala",
-        "x": 2,
-        "y": 5,
+        "x": 1,
+        "y": 8,
         "direcao": "baixo",
         "alvo": "cozinha"
       },
       "parte2": {
         "missao": "parte2",
-        "mapa": "sala",
-        "x": 1,
-        "y": 8,
+        "mapa": "quarto",
+        "x": 2,
+        "y": 0,
         "direcao": "baixo",
         "alvo": "quarto_casal"
       },
@@ -204,9 +225,9 @@
       },
       "enfeites": {
         "missao": "enfeites",
-        "mapa": "quarto",
+        "mapa": "cozinha",
         "x": 2,
-        "y": 0,
+        "y": 1,
         "direcao": "baixo",
         "alvo": "escritorio"
       }

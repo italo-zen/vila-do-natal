@@ -6,6 +6,25 @@ Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelo
 
 - Nada por enquanto. As próximas versões entram aqui.
 
+## [1.4.1] - 2026-11-20
+
+Correção de arte dos personagens. Nenhuma missão, regra, mapa ou texto mudou.
+
+### Corrigido
+- Pixels sem cor dentro do desenho dos quatro sobrinhos e do Nick, que deixavam furos aparecerem na tela, sobretudo no cabelo de costas da BiBi.
+
+## [1.4.0] - 2026-11-20
+
+A caixa de enfeites também muda de lugar a cada partida. Nenhuma missão ou texto mudou.
+
+### Adicionado
+- A caixa de enfeites nasce, a cada partida, na única área que sobra entre a Cozinha e Lavanderia, o Quarto da Oli, o Escritório e o Quarto do casal depois das três partes da árvore. Nunca na Sala. O Nick da última fase dorme em outro lugar (nunca na área da caixa) e a seta de farejar leva à porta certa.
+- Para o QA (só no build de QA): `__plano()` traz a caixa; `__irACaixa()` leva o sobrinho até ela.
+
+### Mudou
+- A caixa e o brilho dela desenham sempre acima dos móveis.
+- Para quem mantém o conteúdo: o objeto `enfeite` (a caixa) sai do mapa gerado e entra pelo plano (como as peças). Com a caixa fora do mapa, o Escritório passa a ter 4 tiles candidatos (e não 2), 24 no total. S008 (peça ou caixa fixa no mapa) agora é erro.
+
 ## [1.3.1] - 2026-11-20
 
 Acabamento dos personagens. Nenhuma missão, regra, mapa ou texto mudou.

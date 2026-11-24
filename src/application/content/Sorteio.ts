@@ -27,6 +27,8 @@ export interface RegraDoNick {
   direcao: Direcao;
   /** Não sorteia o Nick na área da peça de ordem N. */
   foraDaAreaDaPeca?: number;
+  /** Não sorteia o Nick na área da caixa de enfeite (só na missão que tem a caixa, GDD 21.16.12). */
+  foraDaAreaDaCaixa?: boolean;
   /** Tile a `perfil.luz.raioEmTiles` ou menos do spawn dado, e a Chebyshev 2 ou mais dele. */
   dentroDaLuzDeEntrada?: { mapa: string; spawn: string };
 }

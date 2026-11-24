@@ -39,7 +39,7 @@ describe('gancho de QA fora dos builds que não são de QA', () => {
 describe('gancho de QA do sorteio e do PL27 (ADR-013 seção 8)', () => {
   const gancho = readFileSync(join(RAIZ, 'src', 'presentation', 'qa', 'ganchoQa.ts'), 'utf-8');
   it('expõe __semente, __plano, __irAPeca, __coletarPeca e __passosDaConducao', () => {
-    for (const nome of ['__semente', '__plano', '__irAPeca', '__coletarPeca', '__passosDaConducao']) expect(gancho).toContain(`janela.${nome} =`);
+    for (const nome of ['__semente', '__plano', '__irAPeca', '__irACaixa', '__coletarPeca', '__passosDaConducao', '__estadoDaPartida']) expect(gancho).toContain(`janela.${nome} =`);
   });
   it('nenhum deles existe fora do gancho (que só entra sob __QA__)', () => {
     for (const f of ['CasaScene.ts', 'SelecaoScene.ts']) {
