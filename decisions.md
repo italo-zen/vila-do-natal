@@ -829,3 +829,8 @@
 - **Retorno literal:** "está péssimo a nova LoLô, mantenha a antiga e não vamos mais alterar os personagens."
 - **Decisão:** a LoLô nova do Opus (v1 e v2) é descartada; ficam os sprites que estão no jogo (acabamento 3/4 da 1.3.1) para LoLô, BiBi, DanDan, TuTu e Nick. Nenhuma alteração adicional nos personagens. As propostas em tools-arte/proposta-sobrinhos-opus/ ficam fora do git. O trabalho do Opus na arte dos sobrinhos termina aqui.
 - **Quem decidiu:** Diretor.
+
+## 2026-11-20 — Modelo da Arte volta a Sonnet (Diretor)
+- **Retorno literal:** "Utilize o Sonnet para isso, não mais o Opus."
+- **Decisão:** a limpeza de pixels vazios dos sobrinhos e do Nick (v1.4.1) é feita pelo agente de Arte em Sonnet 5.5 Médio; o Opus não é mais usado.
+- **Quem decidiu:** Diretor.

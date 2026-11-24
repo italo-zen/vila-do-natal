@@ -6,6 +6,13 @@ Mudanças notáveis do jogo, no formato [Keep a Changelog](https://keepachangelo
 
 - Nada por enquanto. As próximas versões entram aqui.
 
+## [1.4.1] - 2026-11-20
+
+Correção de arte dos personagens. Nenhuma missão, regra, mapa ou texto mudou.
+
+### Corrigido
+- Pixels sem cor dentro do desenho dos quatro sobrinhos e do Nick, que deixavam furos aparecerem na tela, sobretudo no cabelo de costas da BiBi.
+
 ## [1.4.0] - 2026-11-20
 
 A caixa de enfeites também muda de lugar a cada partida. Nenhuma missão ou texto mudou.

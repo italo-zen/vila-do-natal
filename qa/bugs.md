@@ -559,3 +559,6 @@ Sem bug confirmado. Observações para o Dev:
 ## 1.4.0, rodada 1
 - Nenhum bug P0 a P3 de jogo. 40 planos (sementes 108..4047): caixa sempre em cozinha, quarto, escritório ou quarto do casal; 4 áreas distintas (3 peças + caixa); tile de piso, fora de móvel e fora da passagem da Cozinha; Nick de `enfeites` nunca na área da caixa; mesma semente repete o plano. Farejar da fase enfeites: 6 de 6 com a seta na porta certa.
 - Simulação (v140-pl27.mjs, 21 partidas, 4 sobrinhos): `__irACaixa` sempre devolveu vizinho alcançável; conduções 13 a 22 passos, todas 2×. Fim e créditos confirmados em 1 partida (v140-fim.mjs); nas outras os scripts expiraram (polling lento sob 7 processos), falha de script. Várias leituras de passos nulas, idem.
+
+## 1.4.1, rodada 1
+- Nenhum bug P0 a P3. verificar_buracos: 0 buracos; validar:perfil válido; capturas dos 4 sobrinhos sem furos/faixas (BiBi de costas parada, sólida). Título/créditos: '1.4.1' confirmado no HTML; captura das telas não lida.
